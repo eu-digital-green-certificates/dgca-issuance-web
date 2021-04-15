@@ -59,7 +59,7 @@ The following channels are available for discussions, feedback, and support requ
 | Type                     | Channel                                                |
 | ------------------------ | ------------------------------------------------------ |
 | **Federation gateway issues**    | <a href="/../../issues" title="Open Issues"><img src="https://img.shields.io/github/issues/eu-digital-green-certificates/dgca-issuance-web?style=flat"></a>  |
-| **Other requests**    | <a href="mailto:opensource@telekom.de" title="Email EFGS Team"><img src="https://img.shields.io/badge/email-EFGS%20team-green?logo=mail.ru&style=flat-square&logoColor=white"></a>   |
+| **Other requests**    | <a href="mailto:opensource@telekom.de" title="Email DGC Team"><img src="https://img.shields.io/badge/email-DGC%20team-green?logo=mail.ru&style=flat-square&logoColor=white"></a>   |
 
 ## How to contribute  
 
