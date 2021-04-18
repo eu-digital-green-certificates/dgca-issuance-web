@@ -1,5 +1,5 @@
 /*
- * Corona-Warn-App / cwa-quick-test-frontend
+ * eu-digital-green-certificates/ dgca-issuance-web
  *
  * (C) 2021, T-Systems International GmbH
  *
@@ -29,7 +29,7 @@ import sha256 from 'crypto-js/sha256';
 
 import useNavigation from '../misc/navigation';
 import Patient from '../misc/patient';
-import CwaSpinner from './spinner/spinner.component';
+import Spinner from './spinner/spinner.component';
 import utils from '../misc/utils';
 import { Sex } from '../misc/enum'
 import DatePicker from "react-datepicker";
@@ -37,7 +37,7 @@ import { registerLocale } from "react-datepicker";
 
 import "react-datepicker/dist/react-datepicker.css";
 import de from 'date-fns/locale/de';
-import { useGetUuid } from '../api';
+// import { useGetUuid } from '../api';
 
 registerLocale('de', de)
 
@@ -78,7 +78,7 @@ const RecordPatientData = (props: any) => {
         props.setError({ error: error, message: msg, onCancel: navigation!.toLanding });
     }
 
-    const uuid = useGetUuid(props?.patient?.uuId, undefined, handleError);
+    // const uuid = useGetUuid(props?.patient?.uuId, undefined, handleError);
 
     // set values from props or new uuid on mount
     React.useEffect(() => {
@@ -102,24 +102,24 @@ const RecordPatientData = (props: any) => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    // set hash from uuid
-    React.useEffect(() => {
-        if (uuid) {
-            setUuIdHash(sha256(uuid).toString());
-        }
-    }, [uuid]);
+    // // set hash from uuid
+    // React.useEffect(() => {
+    //     if (uuid) {
+    //         setUuIdHash(sha256(uuid).toString());
+    //     }
+    // }, [uuid]);
 
-    // set process id from hash
-    React.useEffect(() => {
-        setProcessId(utils.shortHash(uuIdHash));
-    }, [uuIdHash]);
+    // // set process id from hash
+    // React.useEffect(() => {
+    //     setProcessId(utils.shortHash(uuIdHash));
+    // }, [uuIdHash]);
 
     // set ready state for spinner
     React.useEffect(() => {
-        if (processId && navigation) {
+        if (navigation) {
             setTimeout(setIsInit, 200, true);
         }
-    }, [processId, navigation]);
+    }, [navigation]);
 
     // check completness on value change
     React.useEffect(() => {
@@ -135,14 +135,15 @@ const RecordPatientData = (props: any) => {
             && emailAddress !== ''
             && consent
             && privacyAgreement
-            && uuid) {
+            //&& uuid
+        ) {
             setCanGoNext(true);
             setPatient({
                 firstName: firstName,
                 name: name,
                 dateOfBirth: dateOfBirth,
                 processingConsens: consent,
-                uuId: uuid,
+                //uuId: uuid,
                 includePersData: persDataInQR,
                 privacyAgreement: privacyAgreement,
                 sex: sex,
@@ -158,7 +159,7 @@ const RecordPatientData = (props: any) => {
             setCanGoNext(false);
             setPatient(undefined);
         }
-    }, [firstName, name, dateOfBirth, sex, zip, city, street, houseNumber, phoneNumber, emailAddress, consent, uuid, persDataInQR, privacyAgreement])
+    }, [firstName, name, dateOfBirth, sex, zip, city, street, houseNumber, phoneNumber, emailAddress, consent, persDataInQR, privacyAgreement])
 
 
     // emit patient object to parent
@@ -236,12 +237,12 @@ const RecordPatientData = (props: any) => {
     }
 
     return (
-        !isInit ? <CwaSpinner /> :
+        !isInit ? <Spinner /> :
             <>
-                <Row id='process-row'>
+                {/* <Row id='process-row'>
                     <span className='font-weight-bold mr-2'>{t('translation:process')}</span>
                     <span>{processId}</span>
-                </Row>
+                </Row> */}
                 <Card id='data-card'>
 
                     <Form onSubmit={handleSubmit} validated={validated}>

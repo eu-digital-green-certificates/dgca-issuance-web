@@ -1,5 +1,5 @@
 /*
- * Corona-Warn-App / cwa-quick-test-frontend
+ * eu-digital-green-certificates/ dgca-issuance-web
  *
  * (C) 2021, T-Systems International GmbH
  *
@@ -33,10 +33,10 @@ import sha256 from 'crypto-js/sha256';
 import QRCode from 'qrcode.react';
 import utils from '../misc/utils';
 
-import CwaSpinner from './spinner/spinner.component';
+import Spinner from './spinner/spinner.component';
 import { Sex } from '../misc/enum';
 import { getQrCodeValueString } from '../misc/qr-code-value';
-import { usePostPatient } from '../api';
+// import { usePostPatient } from '../api';
 
 const ShowPatientData = (props: any) => {
 
@@ -86,10 +86,10 @@ const ShowPatientData = (props: any) => {
 
     // set ready state for spinner
     React.useEffect(() => {
-        if (processId && navigation) {
+        if (navigation) {
             setTimeout(setIsInit, 200, true);
         }
-    }, [processId, navigation]);
+    }, [navigation]);
 
     const finishProcess = () => {
         props.setPatient(undefined);
@@ -108,15 +108,15 @@ const ShowPatientData = (props: any) => {
         props.setError({ error: error, message: msg, onCancel: navigation!.toLanding });
     }
 
-    const postPatient = usePostPatient(patientToPost, processId, finishProcess, handleError);
+    // const postPatient = usePostPatient(patientToPost, processId, finishProcess, handleError);
 
     return (
-        !isInit ? <CwaSpinner /> :
+        !isInit ? <Spinner /> :
             <>
-                <Row id='process-row'>
+                {/* <Row id='process-row'>
                     <span className='font-weight-bold mr-2'>{t('translation:process')}</span>
                     <span>{processId}</span>
-                </Row>
+                </Row> */}
                 <Card id='data-card'>
 
                     {/*

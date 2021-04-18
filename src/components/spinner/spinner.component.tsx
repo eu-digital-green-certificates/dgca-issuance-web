@@ -1,5 +1,5 @@
 /*
- * Corona-Warn-App / cwa-quick-test-frontend
+ * eu-digital-green-certificates/ dgca-issuance-web
  *
  * (C) 2021, T-Systems International GmbH
  *
@@ -21,11 +21,11 @@
 
 import './spinner.component.scss';
 
-const CwaSpinner = (props: any) => {
+const Spinner = (props: any) => {
 
     return (
         <div className={'loader'}>Loading...</div>
     )
 }
 
-export default CwaSpinner;
+export default Spinner;

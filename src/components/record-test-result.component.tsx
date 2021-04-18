@@ -1,5 +1,5 @@
 /*
- * Corona-Warn-App / cwa-quick-test-frontend
+ * eu-digital-green-certificates/ dgca-issuance-web
  *
  * (C) 2021, T-Systems International GmbH
  *
@@ -31,7 +31,7 @@ import { TestResult } from '../misc/enum';
 import { usePostTestResult } from '../api';
 import ITestResult from '../misc/test-result';
 import useLocalStorage from '../misc/local-storage';
-import CwaSpinner from './spinner/spinner.component';
+import Spinner from './spinner/spinner.component';
 
 const RecordTestResult = (props: any) => {
 
@@ -148,7 +148,7 @@ const RecordTestResult = (props: any) => {
 
     const postTestResult = usePostTestResult(testResultToPost, processNo, finishProcess, handleError);
 
-    return (!isInit? <CwaSpinner />:
+    return (!isInit? <Spinner />:
         <>
             <Card id='data-card'>
 

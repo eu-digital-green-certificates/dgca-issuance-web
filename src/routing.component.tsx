@@ -1,5 +1,5 @@
 /*
- * Corona-Warn-App / cwa-quick-test-frontend
+ * eu-digital-green-certificates/ dgca-issuance-web
  *
  * (C) 2021, T-Systems International GmbH
  *
@@ -73,7 +73,7 @@ const Routing = (props: any) => {
     header, every time shown. fit its children
     */}
             <Route path={routes.root}>
-                <Header />
+                {/* <Header /> */}
                 <ErrorPage error={error} show={errorShow} onCancel={error?.onCancel} onHide={() => setErrorShow(false)} />
                 <NotificationPage show={notificationShow} setNotificationShow={setNotificationShow} />
             </Route>
@@ -91,34 +91,46 @@ const Routing = (props: any) => {
                     <LandingPage setNotificationShow={setNotificationShow} />
                 </Route>
 
+                <Route
+                    exact
+                    path={routes.recordPatient}
+                >
+                    <RecordPatientData setPatient={setPatient} patient={patient} setError={setError} />
+                </Route>
+
+                <Route
+                    path={routes.showPatientRecord}
+                >
+                    <ShowPatientData setPatient={setPatient} patient={patient} setError={setError} setNotificationShow={setNotificationShow}  />
+                </Route>
 
                 {/* Record Patient Data */}
-                <PrivateRoute
+                {/* <PrivateRoute
                     exact
                     roles={['c19_quick_test_counter']}
                     path={routes.recordPatient}
                     component={RecordPatientData}
                     render={(props) => <RecordPatientData {...props} setPatient={setPatient} patient={patient} setError={setError} />}
-                />
+                /> */}
 
                 {/* Show Patient Data */}
-                <PrivateRoute
+                {/* <PrivateRoute
                     roles={['c19_quick_test_counter']}
                     path={routes.showPatientRecord}
                     component={ShowPatientData}
                     render={(props) => <ShowPatientData {...props} setPatient={setPatient} patient={patient} setError={setError} setNotificationShow={setNotificationShow} />}
-                />
+                /> */}
 
                 {/* Record Test Result */}
-                <PrivateRoute
+                {/* <PrivateRoute
                     roles={['c19_quick_test_lab']}
                     path={routes.recordTestResult}
                     component={RecordTestResult}
                     render={(props) => <RecordTestResult {...props} setError={setError} setNotificationShow={setNotificationShow} />}
-                />
+                /> */}
 
                 {/* QR Scan */}
-                <PrivateRoute
+                {/* <PrivateRoute
                     exact
                     path={routes.qrScan}
                     roles={['c19_quick_test_lab']}
@@ -140,7 +152,7 @@ const Routing = (props: any) => {
                     roles={['c19_quick_test_lab']}
                     component={FailedReport}
                     render={(props) => <FailedReport {...props} setError={setError} />}
-                />
+                /> */}
 
             </Container>
 
