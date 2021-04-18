@@ -1,5 +1,5 @@
 /*
- * Corona-Warn-App / cwa-quick-test-frontend
+ * eu-digital-green-certificates/ dgca-issuance-web
  *
  * (C) 2021, T-Systems International GmbH
  *
@@ -26,7 +26,7 @@ import '../i18n';
 import { useTranslation } from 'react-i18next';
 
 import useNavigation from '../misc/navigation';
-import CwaSpinner from './spinner/spinner.component';
+import Spinner from './spinner/spinner.component';
 import { useStatistics } from '../api';
 import StatisticData from '../misc/statistic-data'
 
@@ -55,7 +55,7 @@ const Statistics = (props: any) => {
     }, [navigation, statisticData])
 
     return (
-        !isInit ? <CwaSpinner /> :
+        !isInit ? <Spinner /> :
             <>
                 <Card id='data-card'>
                     <Card.Header id='data-header' className='pb-0'>

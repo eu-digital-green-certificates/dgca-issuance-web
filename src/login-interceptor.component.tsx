@@ -1,5 +1,5 @@
 /*
- * Corona-Warn-App / cwa-quick-test-frontend
+ * eu-digital-green-certificates/ dgca-issuance-web
  *
  * (C) 2021, T-Systems International GmbH
  *
@@ -23,7 +23,7 @@ import React from 'react';
 
 import { useKeycloak } from '@react-keycloak/web';
 
-import CwaSpinner from './components/spinner/spinner.component';
+import Spinner from './components/spinner/spinner.component';
 
 
 const LoginInterceptor = (props: any) => {
@@ -45,7 +45,7 @@ const LoginInterceptor = (props: any) => {
       {
         initialized && keycloak.authenticated
           ? props.children
-          : <CwaSpinner
+          : <Spinner
           />}
     </>
   );

@@ -1,5 +1,5 @@
 /*
- * Corona-Warn-App / cwa-quick-test-frontend
+ * eu-digital-green-certificates/ dgca-issuance-web
  *
  * (C) 2021, T-Systems International GmbH
  *
@@ -29,7 +29,7 @@ import { useTranslation } from 'react-i18next';
 
 import useNavigation from '../misc/navigation';
 import { getPatientFromScan } from '../misc/qr-code-value';
-import CwaSpinner from './spinner/spinner.component';
+import Spinner from './spinner/spinner.component';
 
 //const testFull = 'https://s.coronwarn.app?v=1#eyJmbiI6IkdvcmRvbiIsImxuIjoiR3J1bmQiLCJkb2IiOiIxOTkwLTAxLTAzIiwiZ3VpZCI6ImQ3ZWM2MDU4LWUyMzEtNGU4Yy1hNDFmLTViZjg1ZDdmZTI3MiIsInRpbWVzdGFtcCI6MTYxNzk3ODg4NDY4NX0=';
 
@@ -76,7 +76,7 @@ const QrScan = (props: any) => {
         </div>;
     }
 
-    return (!isInit? <CwaSpinner />:
+    return (!isInit? <Spinner />:
         <>
             <Card id='data-card'>
                 <Card.Header id='data-header' className='pb-0'>

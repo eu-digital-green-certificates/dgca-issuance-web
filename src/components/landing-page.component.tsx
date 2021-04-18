@@ -1,5 +1,5 @@
 /*
- * Corona-Warn-App / cwa-quick-test-frontend
+ * eu-digital-green-certificates/ dgca-issuance-web
  *
  * (C) 2021, T-Systems International GmbH
  *
@@ -26,7 +26,7 @@ import { useTranslation } from 'react-i18next';
 
 import useNavigation from '../misc/navigation';
 import React from 'react';
-import CwaSpinner from './spinner/spinner.component';
+import Spinner from './spinner/spinner.component';
 
 const LandingPage = (props: any) => {
 
@@ -43,16 +43,16 @@ const LandingPage = (props: any) => {
         props.setNotificationShow(true);
     }
 
-    return (!isInit? <CwaSpinner />:
+    return (!isInit? <Spinner />:
         <Container className='center-content'>
 
             <h1 className='mx-auto mb-5'>{t('translation:welcome')}</h1>
 
             <Button block className='landing-btn' onClick={navigation!.toRecordPatient}>{t('translation:record-patient-data')}</Button>
-            <Button block className='landing-btn' onClick={navigation!.toRecordTestResult}>{t('translation:record-result')}</Button>
+            {/* <Button block className='landing-btn' onClick={navigation!.toRecordTestResult}>{t('translation:record-result')}</Button>
             <Button block className='landing-btn' onClick={navigation!.toQRScan}>{t('translation:record-qr-scan')}</Button>
             <Button block className='landing-btn' onClick={navigation!.toFailedReport}>{t('translation:failed-report')}</Button>
-            <Button block className='landing-btn' onClick={navigation!.toStatistics}>{t('translation:statistics')}</Button>
+            <Button block className='landing-btn' onClick={navigation!.toStatistics}>{t('translation:statistics')}</Button> */}
 
         </Container>
     )

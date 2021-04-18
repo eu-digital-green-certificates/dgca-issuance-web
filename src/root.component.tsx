@@ -1,5 +1,5 @@
 /*
- * Corona-Warn-App / cwa-quick-test-frontend
+ * eu-digital-green-certificates/ dgca-issuance-web
  *
  * (C) 2021, T-Systems International GmbH
  *
@@ -22,14 +22,15 @@
 import React from 'react';
 import { useParams } from 'react-router';
 
-import { ReactKeycloakProvider } from '@react-keycloak/web';
-import Keycloak from 'keycloak-js'
+// import { ReactKeycloakProvider } from '@react-keycloak/web';
+// import Keycloak from 'keycloak-js'
 
 import LoginInterceptor from './login-interceptor.component';
 import Routing from './routing.component';
 
 import useLocalStorage from './misc/local-storage';
-import { useGetKeycloakConfig } from './api';
+// import { useGetKeycloakConfig } from './api';
+import Spinner from './components/spinner/spinner.component';
 
 interface UrlMandant {
   mandant: string;
@@ -39,11 +40,11 @@ const Root = (props: any) => {
 
   const { mandant } = useParams<UrlMandant>();
 
-  const keycloakConfig = useGetKeycloakConfig();
+  // const keycloakConfig = useGetKeycloakConfig();
 
   const [storedMandant, setStoredMandant] = useLocalStorage('mandant', '');
 
-  const [keycloak, setKeycloak] = React.useState<Keycloak.KeycloakInstance>();
+  // const [keycloak, setKeycloak] = React.useState<Keycloak.KeycloakInstance>();
 
 
   React.useEffect(() => {
@@ -52,31 +53,33 @@ const Root = (props: any) => {
       setStoredMandant(mandant);
     }
 
-    updateKeycloakConfig();
+    // updateKeycloakConfig();
 
-  }, [mandant, keycloakConfig]);
+    // }, [mandant, keycloakConfig]);
+  }, [mandant]);
 
 
-  const updateKeycloakConfig = () => {
+  // const updateKeycloakConfig = () => {
 
-    if (keycloakConfig && storedMandant) {
+  //   if (keycloakConfig && storedMandant) {
 
-      keycloakConfig.realm = storedMandant;
+  //     keycloakConfig.realm = storedMandant;
 
-      setKeycloak(Keycloak(keycloakConfig));
+  //     setKeycloak(Keycloak(keycloakConfig));
 
-    }
+  //   }
 
-  }
+  // }
 
-  return (!keycloak ? <></> :
-    <ReactKeycloakProvider
-      authClient={keycloak}
-    >
-      <LoginInterceptor>
-        <Routing />
-      </LoginInterceptor>
-    </ReactKeycloakProvider>
+  return (!mandant ? <Spinner /> :
+    // !keycloak ? <></> :
+    // <ReactKeycloakProvider
+    //   authClient={keycloak}
+    // >
+    //<LoginInterceptor>
+    <Routing />
+    //</LoginInterceptor>
+    //</ReactKeycloakProvider>
   );
 }
 
