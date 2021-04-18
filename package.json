@@ -1,0 +1,87 @@
+{
+  "name": "cwa-quick-test-frontend",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@react-keycloak/web": "^3.4.0",
+    "@testing-library/jest-dom": "^5.11.4",
+    "@testing-library/react": "^11.1.0",
+    "@testing-library/user-event": "^12.1.10",
+    "@types/crypto-js": "^4.0.1",
+    "@types/jest": "^26.0.15",
+    "@types/node": "^12.0.0",
+    "@types/qrcode.react": "^1.0.1",
+    "@types/react": "^17.0.0",
+    "@types/react-datepicker": "^3.1.8",
+    "@types/react-dom": "^17.0.0",
+    "@types/react-router-dom": "^5.1.7",
+    "@types/uuid": "^8.3.0",
+    "axios": "^0.21.1",
+    "bootstrap": "^4.6.0",
+    "crypto-js": "^4.0.0",
+    "generate-license-file": "^1.1.0",
+    "husky": "^5.1.3",
+    "i18next": "^19.9.2",
+    "i18next-resource-store-loader": "^0.1.2",
+    "keycloak-js": "^10.0.1",
+    "lint-staged": "^10.5.4",
+    "moment": "^2.29.1",
+    "node-sass": "^5.0.0",
+    "prettier": "^2.2.1",
+    "qrcode.react": "^1.0.1",
+    "react": "^17.0.1",
+    "react-bootstrap": "^1.5.2",
+    "react-date-picker": "^8.1.1",
+    "react-datepicker": "^3.7.0",
+    "react-dom": "^17.0.1",
+    "react-i18next": "^11.8.10",
+    "react-moment": "^1.1.1",
+    "react-qr-reader": "^2.2.1",
+    "react-router-dom": "^5.2.0",
+    "react-scripts": "4.0.3",
+    "typescript": "^4.1.2",
+    "uuid": "^8.3.2",
+    "web-vitals": "^1.0.1"
+  },
+  "lint-staged": {
+    "src/**/*.{js,jsx,ts,tsx,json,css,scss,md}": [
+      "prettier --write"
+    ]
+  },
+  "proxy": "https://6155b8d7d3c6.schnelltestportal.de",
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
+    "license": "generate-license-file --input package.json --output THIRD-PARTY-NOTICES"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "devDependencies": {
+    "@types/react-qr-reader": "^2.1.3",
+    "http-proxy-middleware": "^1.1.1",
+    "https-proxy-agent": "^5.0.0"
+  }
+}

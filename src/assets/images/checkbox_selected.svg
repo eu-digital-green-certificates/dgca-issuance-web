@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+  <g id="checkbox_selected" transform="translate(-366 -573.58)">
+    <g id="Rechteck_337" data-name="Rechteck 337" transform="translate(366 573.58)" fill="#00739f" stroke="#262626" stroke-width="1">
+      <rect width="24" height="24" rx="4" stroke="none"/>
+      <rect x="0.5" y="0.5" width="23" height="23" rx="3.5" fill="none"/>
+    </g>
+    <g id="icon_action_success_selected" data-name="icon/action/success/selected" transform="translate(368 576)">
+      <path id="Path" d="M6.381,13.211.293,7.123A1.042,1.042,0,0,1,1.764,5.648l4.617,4.617,10-10a1.042,1.042,0,0,1,1.471,1.471Z" transform="translate(1.119 3.635)" fill="#fff"/>
+    </g>
+  </g>
+</svg>
