@@ -365,8 +365,8 @@ const RecordPatientData = (props: any) => {
                                                     type='radio'
                                                     name="sex-radios"
                                                     id="sex-radio3"
-                                                    checked={sex === Sex.DIVERSE}
-                                                    onChange={() => setSex(Sex.DIVERSE)}
+                                                    checked={sex === Sex.OTHER}
+                                                    onChange={() => setSex(Sex.OTHER)}
                                                 />
                                                 <Form.Label className='rdb-label mb-0'>{t('translation:diverse')}</Form.Label>
                                             </Form.Check>
