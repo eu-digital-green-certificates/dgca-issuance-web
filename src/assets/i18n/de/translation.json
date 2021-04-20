@@ -63,7 +63,8 @@
   "positiveTestCount": "Anzahl der positiven Tests",
   "successfull-transferred": "Die Daten wurden erfolgreich übermittelt",
 
-  "record-vaccination-cert-dat": "Impfpass",
+  "record-vaccination-cert-dat": "Impfpass erstellen",
+  "vaccination-cert": "Impfpass erstellen",
   "identifierType": "Art des Ausweises",
   "country": "Land",
   "identifierNumber": "Ausweisnummer",

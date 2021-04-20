@@ -31,7 +31,8 @@ const useRoutes = () => {
         recordTestResult: bastPath + '/record/result',
         qrScan: bastPath + '/qr/scan',
         statistics: bastPath + '/statistics',
-        failedReport: bastPath + '/failedreport'
+        failedReport: bastPath + '/failedreport',
+        recordVaccineCert: bastPath + '/recordVaccineCert'
     }
 
     return result;

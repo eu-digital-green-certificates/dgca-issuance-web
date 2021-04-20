@@ -43,6 +43,7 @@ import PrivateRoute from './components/private-route.component';
 import IError from './misc/error';
 import ErrorPage from './components/error-page.component';
 import NotificationPage from './components/notification-page.component';
+import RecordVaccinationCertData from './components/record-vaccination-cert-data.component';
 
 const Routing = (props: any) => {
 
@@ -102,6 +103,13 @@ const Routing = (props: any) => {
                     path={routes.showPatientRecord}
                 >
                     <ShowPatientData setPatient={setPatient} patient={patient} setError={setError} setNotificationShow={setNotificationShow}  />
+                </Route>
+
+                <Route
+                    exact
+                    path={routes.recordVaccineCert}
+                >
+                    <RecordVaccinationCertData setPatient={setPatient} patient={patient} setError={setError} />
                 </Route>
 
                 {/* Record Patient Data */}

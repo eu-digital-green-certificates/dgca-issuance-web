@@ -46,7 +46,7 @@ export default interface Vaccine {
     identifierNumber: string;
 
     dateOfBirth: Date;
-    sex?:Sex;
+    sex:Sex;
     //TODO: Die oberen Attribute sind für alle drei Fälle Impfstoff, Testergebnis und Recovery statement gleich
     // besser extra klasse und vererben
     
