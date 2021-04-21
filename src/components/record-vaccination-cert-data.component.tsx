@@ -38,6 +38,7 @@ import { registerLocale } from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import de from 'date-fns/locale/de';
 import Vaccine from '../misc/vaccine';
+import { getAllByPlaceholderText } from '@testing-library/dom';
 // import { useGetUuid } from '../api';
 var iso3311a2 = require('iso-3166-1-alpha-2');
 
@@ -59,7 +60,7 @@ const RecordVaccinationCertData = ( props: any) => {
     const [nameTrans, setNameTrans] = React.useState('');
     const [identifierType, setIdentifierType] = React.useState('');
     const [country, setCountry] = React.useState('');
-    const [identifierNumber, setIdentifierNumber] = React.useState<IdentifierType>();
+    const [identifierNumber, setIdentifierNumber] = React.useState('');
     const [dateOfBirth, setDateOfBirth] = React.useState<Date>();
     const [sex, setSex] = React.useState<Sex>();
     const [disease, setDisease] = React.useState('');
@@ -76,6 +77,7 @@ const RecordVaccinationCertData = ( props: any) => {
     const [identifierTypeOptions, setIdentifierTypeOptions] = React.useState<any[]>();
     const [selectedIsoCountry, setSelectedIsoCountry] = React.useState<string>('');
     const [isoCountryOptions, setIsoCountryOptions] = React.useState<any[]>();
+    const [selectedVacCountry, setSelectedVacCountry] = React.useState<string>('');
 
     React.useEffect(() => {
         if (navigation) {
@@ -97,6 +99,16 @@ const RecordVaccinationCertData = ( props: any) => {
         props.setError({ error: error, message: msg, onCancel: navigation!.toLanding });
     }
 
+    const handleDateOfBirthChange = (evt: Date | [Date, Date] | null) => {
+        const date = handleDateChange(evt);
+        setDateOfBirth(date);
+    }
+
+    const handleVacLastDate = (evt: Date | [Date, Date] | null) => {
+        const date = handleDateChange(evt);
+        setVacLastDate(date);
+    }
+
     const handleDateChange = (evt: Date | [Date, Date] | null) => {
         let date: Date;
 
@@ -109,7 +121,7 @@ const RecordVaccinationCertData = ( props: any) => {
             date.setHours(12);
         }
 
-        setDateOfBirth(date);
+        return date;
     }
 
     const handleCancel = () => {
@@ -223,7 +235,7 @@ const RecordVaccinationCertData = ( props: any) => {
                                 <Col xs='7' sm='9' className='d-flex'>
                                     <DatePicker
                                         selected={dateOfBirth}
-                                        onChange={handleDateChange}
+                                        onChange={handleDateOfBirthChange}
                                         locale='de'
                                         dateFormat='dd. MM. yyyy'
                                         isClearable
@@ -334,6 +346,184 @@ const RecordVaccinationCertData = ( props: any) => {
                                     </Form.Control>
                                 </Col>
                             </Form.Group>
+
+                            {/* input identifierNumber */}
+                            <Form.Group as={Row} controlId='formNameInput' className='mb-1'>
+                                <Form.Label className='input-label' column xs='5' sm='3'>{t('translation:identifierNumber')}</Form.Label>
+
+                                <Col xs='7' sm='9' className='d-flex'>
+                                    <Form.Control
+                                        className='qt-input'
+                                        value={identifierNumber}
+                                        onChange={event => setIdentifierNumber(event.target.value)}
+                                        placeholder={t('translation:identifierNumber')}
+                                        type='text'
+                                        required
+                                        maxLength={79}
+                                    />
+                                </Col>
+                            </Form.Group>
+
+                            {/* input disease */}
+                            <Form.Group as={Row} controlId='formNameInput' className='mb-1'>
+                                <Form.Label className='input-label' column xs='5' sm='3'>{t('translation:disease-agent')}</Form.Label>
+
+                                <Col xs='7' sm='9' className='d-flex'>
+                                    <Form.Control
+                                        className='qt-input'
+                                        value={disease}
+                                        onChange={event => setDisease(event.target.value)}
+                                        placeholder={t('translation:def-disease-agent')}
+                                        type='text'
+                                        required
+                                        maxLength={79}
+                                    />
+                                </Col>
+                            </Form.Group>
+
+                            {/* input vaccine */}
+                            <Form.Group as={Row} controlId='formNameInput' className='mb-1'>
+                                <Form.Label className='input-label' column xs='5' sm='3'>{t('translation:vaccine')}</Form.Label>
+
+                                <Col xs='7' sm='9' className='d-flex'>
+                                    <Form.Control
+                                        className='qt-input'
+                                        value={vaccine}
+                                        onChange={event => setVaccine(event.target.value)}
+                                        placeholder={t('translation:def-vaccine')}
+                                        type='text'
+                                        required
+                                        maxLength={79}
+                                    />
+                                </Col>
+                            </Form.Group>
+
+                            {/* input medicalProduct */}
+                            <Form.Group as={Row} controlId='formNameInput' className='mb-1'>
+                                <Form.Label className='input-label' column xs='5' sm='3'>{t('translation:vac-medical-product')}</Form.Label>
+
+                                <Col xs='7' sm='9' className='d-flex'>
+                                    <Form.Control
+                                        className='qt-input'
+                                        value={medicalProduct}
+                                        onChange={event => setMedicalProduct(event.target.value)}
+                                        placeholder={t('translation:def-vac-medical-product')}
+                                        type='text'
+                                        required
+                                        maxLength={79}
+                                    />
+                                </Col>
+                            </Form.Group>
+
+                            {/* input marketingHolder */}
+                            <Form.Group as={Row} controlId='formNameInput' className='mb-1'>
+                                <Form.Label className='input-label' column xs='5' sm='3'>{t('translation:vac-marketing-holder')}</Form.Label>
+
+                                <Col xs='7' sm='9' className='d-flex'>
+                                    <Form.Control
+                                        className='qt-input'
+                                        value={marketingHolder}
+                                        onChange={event => setMarketingHolder(event.target.value)}
+                                        placeholder={t('translation:def-vac-marketing-holder')}
+                                        type='text'
+                                        required
+                                        maxLength={79}
+                                    />
+                                </Col>
+                            </Form.Group>
+
+                            {/* tot */}
+                            <Form.Group as={Row} controlId='formNameInput' className='mb-1'>
+                                <Form.Label className='input-label' column xs='5' sm='3'>{t('translation:tot')}</Form.Label>
+
+                                <Col xs='7' sm='9' className='d-flex'>
+                                    <Form.Control
+                                        className='qt-input'
+                                        value={tot}
+                                        onChange={event => setTot(event.target.value)}
+                                        placeholder={t('translation:def-tot')}
+                                        type='text'
+                                        required
+                                        maxLength={79}
+                                    />
+                                </Col>
+                            </Form.Group>
+
+                            {/* vacLastDate */}
+                            <Form.Group as={Row} className='mb-1'>
+                                <Form.Label className='input-label txt-no-wrap' column xs='5' sm='3'>{t('translation:vac-last-date')}</Form.Label>
+
+                                <Col xs='7' sm='9' className='d-flex'>
+                                    <DatePicker
+                                        selected={vacLastDate}
+                                        onChange={handleVacLastDate}
+                                        locale='de'
+                                        dateFormat='dd. MM. yyyy'
+                                        isClearable
+                                        placeholderText={t('translation:vac-last-date')}
+                                        className='qt-input form-control'
+                                        wrapperClassName='align-self-center'
+                                        showMonthDropdown
+                                        showYearDropdown
+                                        dropdownMode="select"
+                                        maxDate={new Date()}
+                                        minDate={new Date(2020, 10)}
+                                        openToDate={new Date()}
+                                        required
+                                    />
+                                </Col>
+                            </Form.Group>
+
+                             {/* Combobox for the vaccin countries in iso-3166-1-alpha-2 */}
+                            <Form.Group as={Row} controlId='formNameInput' className='mb-1 mt-1 sb-1 st-1'>
+                                <Form.Label className='input-label' column xs='5' sm='3'>{t('translation:country')}</Form.Label>
+                                
+                                <Col xs='7' sm='9' className='d-flex'>
+                                    <Form.Control as="select"
+                                        value={selectedVacCountry}
+                                        onChange={event => setSelectedVacCountry(event.target.value)}
+                                        placeholder={t('translation:country')}
+                                        required  
+                                    >
+                                        { isoCountryOptions } 
+                                    </Form.Control>
+                                </Col>
+                            </Form.Group>
+
+                            {/* lot */}
+                            <Form.Group as={Row} controlId='formNameInput' className='mb-1'>
+                                <Form.Label className='input-label' column xs='5' sm='3'>{t('translation:lot')}</Form.Label>
+
+                                <Col xs='7' sm='9' className='d-flex'>
+                                    <Form.Control
+                                        className='qt-input'
+                                        value={lot}
+                                        onChange={event => setLot(event.target.value)}
+                                        placeholder={t('translation:def-lot')}
+                                        type='text'
+                                        required
+                                        maxLength={79}
+                                    />
+                                </Col>
+                            </Form.Group>
+
+                            {/* adm */}
+                            <Form.Group as={Row} controlId='formNameInput' className='mb-1'>
+                                <Form.Label className='input-label' column xs='5' sm='3'>{t('translation:adm')}</Form.Label>
+
+                                <Col xs='7' sm='9' className='d-flex'>
+                                    <Form.Control
+                                        className='qt-input'
+                                        value={adm}
+                                        onChange={event => setAdm(event.target.value)}
+                                        placeholder={t('translation:def-adm')}
+                                        type='text'
+                                        required
+                                        maxLength={79}
+                                    />
+                                </Col>
+                            </Form.Group>
+
 
                         </Card.Body>
 
