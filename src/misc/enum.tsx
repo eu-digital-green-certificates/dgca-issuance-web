@@ -46,6 +46,6 @@ export enum IdentifierType {
     NI = "NI",
     // Member Number
     MB = "MB",
-    // National Helth Plan Identifier
+    // National Health Plan Identifier
     NH = "NH"
 }
