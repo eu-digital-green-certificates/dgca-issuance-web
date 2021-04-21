@@ -53,14 +53,15 @@ const ShowPatientData = (props: any) => {
 
     // set patient data on mount and set hash from uuid
     React.useEffect(() => {
-
-        if (props.patient) {
-            setPatient(props.patient)
-        }
-        else
-            props.setError({ error: '', message: t('translation:error-patient-data-load'), onCancel: navigation!.toLanding });
+        if(isInit) { 
+            if (props.patient) {
+                setPatient(props.patient)
+            }
+            else
+                props.setError({ error: '', message: t('translation:error-patient-data-load'), onCancel: navigation!.toLanding });
+        }   
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [])
+    }, [isInit])
 
     React.useEffect(() => {
         if (patient && patient.uuId) {
