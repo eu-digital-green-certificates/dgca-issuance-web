@@ -17,7 +17,8 @@
   "sex": "Sex",
   "male": "male",
   "female": "female",
-  "diverse": "diverse",
+  "other": "other",
+  "unknown": "unknown",
   "day": "Day",
   "month": "Month",
   "year": "Year",
@@ -59,5 +60,20 @@
   "failed-report": "Failed Test Report",
   "totalTestCount": "Total test count",
   "positiveTestCount": "Positive test count",
-  "successfull-transferred": "Data successfully transferred"
+  "successfull-transferred": "Data successfully transferred",
+
+  "record-vaccination-cert-dat": "Record vaccination certification",
+  "identifierType": "Identifier Type",
+  "country": "Country",
+  "identifierNumber": "Identifier Number",
+  "disease-agent": "Disease/Agent", 
+  "vaccine": "Vaccine/Prophylaxis",
+  "vac-medical-product": "Medicinal Product",
+  "vac-marketing-holder": "Organisations Management System",
+  "sequence": "Sequence",
+  "tot": "Complete Doses",
+  "vac-last-date": "Last Date",
+  "vac-country": "Member State",
+  "lot": "Identifier",
+  "adm": "Administering Centre"
 }

@@ -37,6 +37,7 @@ export interface INavigation {
     toQRScan: () => void,
     toStatistics: () => void,
     toFailedReport: () => void,
+    toRecordVaccineCert: () => void
 }
 
 export const useRoutes = () => {
@@ -51,7 +52,8 @@ export const useRoutes = () => {
         recordTestResult: basePath + '/record/result',
         qrScan: basePath + '/qr/scan',
         statistics: basePath + '/statistics',
-        failedReport: basePath + '/failedreport'
+        failedReport: basePath + '/failedreport',
+        recordVaccineCert: basePath + '/recordVaccineCert'
     }
 
     return result;
@@ -78,6 +80,7 @@ export const useNavigation = () => {
             c.qrScan = routes.qrScan.replace(':mandant', mandant as string);
             c.statistics = routes.statistics.replace(':mandant', mandant as string);
             c.failedReport = routes.failedReport.replace(':mandant', mandant as string);
+            c.recordVaccineCert = routes.recordVaccineCert.replace(':mandant', mandant as string);
 
             setCalculatedRoutes(c);
         }
@@ -97,6 +100,7 @@ export const useNavigation = () => {
                 toQRScan: () => { history.push(calculatedRoutes.qrScan); },
                 toStatistics: () => { history.push(calculatedRoutes.statistics); },
                 toFailedReport: () => { history.push(calculatedRoutes.failedReport); },
+                toRecordVaccineCert: () => { history.push(calculatedRoutes.recordVaccineCert); }
             }
 
             setResult(n);

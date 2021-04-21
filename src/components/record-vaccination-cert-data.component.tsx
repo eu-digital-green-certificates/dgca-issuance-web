@@ -1,0 +1,310 @@
+/*
+ * eu-digital-green-certificates/ dgca-issuance-web
+ *
+ * (C) 2021, T-Systems International GmbH
+ *
+ * Deutsche Telekom AG and all other contributors /
+ * copyright owners license this file to you under the Apache
+ * License, Version 2.0 (the "License"); you may not use this
+ * file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+import React, { MouseEventHandler } from 'react';
+import { Button, Card, Col, Form, Row } from 'react-bootstrap';
+
+import '../i18n';
+import { useTranslation } from 'react-i18next';
+
+import sha256 from 'crypto-js/sha256';
+
+import useNavigation from '../misc/navigation';
+import Patient from '../misc/patient';
+import Spinner from './spinner/spinner.component';
+import utils from '../misc/utils';
+import { IdentifierType, Sex } from '../misc/enum'
+import DatePicker from "react-datepicker";
+import { registerLocale } from "react-datepicker";
+
+import "react-datepicker/dist/react-datepicker.css";
+import de from 'date-fns/locale/de';
+import Vaccine from '../misc/vaccine';
+// import { useGetUuid } from '../api';
+
+registerLocale('de', de)
+
+
+const RecordVaccinationCertData = ( props: any) => {
+
+    const navigation = useNavigation();
+    const { t } = useTranslation();
+
+    const [isInit, setIsInit] = React.useState(false)
+    // const [uuIdHash, setUuIdHash] = React.useState('');
+    // const [processId, setProcessId] = React.useState('');
+
+    const [firstName, setFirstName] = React.useState('');
+    const [name, setName] = React.useState('');
+    const [firstNameTrans, setFirstNameTrans] = React.useState('');
+    const [nameTrans, setNameTrans] = React.useState('');
+    const [identifierType, setIdentifierType] = React.useState('');
+    const [country, setCountry] = React.useState('');
+    const [identifierNumber, setIdentifierNumber] = React.useState<IdentifierType>();
+    const [dateOfBirth, setDateOfBirth] = React.useState<Date>();
+    const [sex, setSex] = React.useState<Sex>();
+    const [disease, setDisease] = React.useState('');
+    const [vaccine, setVaccine] = React.useState('');
+    const [medicalProduct, setMedicalProduct] = React.useState('');
+    const [marketingHolder, setMarketingHolder] = React.useState('');
+    const [sequence, setSequence] = React.useState('');
+    const [tot, setTot] = React.useState('');
+    const [vacLastDate, setVacLastDate] = React.useState<Date>();
+    const [vacCountry, setVacCountry] = React.useState('');
+    const [lot, setLot] = React.useState('');
+    const [adm, setAdm] = React.useState('');
+
+    React.useEffect(() => {
+        if (navigation) {
+            setTimeout(setIsInit, 200, true);
+        }
+    }, [navigation]);
+
+    const handleError = (error: any) => {
+        let msg = '';
+
+        if (error) {
+            msg = error.message
+        }
+        props.setError({ error: error, message: msg, onCancel: navigation!.toLanding });
+    }
+
+    const handleDateChange = (evt: Date | [Date, Date] | null) => {
+        let date: Date;
+
+        if (Array.isArray(evt))
+            date = evt[0];
+        else
+            date = evt as Date;
+
+        if (date) {
+            date.setHours(12);
+        }
+
+        setDateOfBirth(date);
+    }
+
+    const handleCancel = () => {
+        props.setPatient(undefined);
+    } 
+
+    const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+        const form = event.currentTarget;
+
+        event.preventDefault();
+        event.stopPropagation();
+
+        if (form.checkValidity()) {
+            const vaccine  : Patient = {firstName: firstName, name: name, dateOfBirth: dateOfBirth!};
+
+            //TODO Weiterleitung ans Backend oder eine Seite mit Anzeige 
+            props.setPatient(vaccine);
+            navigation!.toRecordPatient();
+            setTimeout(navigation!.toShowRecordPatient, 200);
+        }
+    }
+
+    return (
+        !isInit ? <Spinner /> :
+            <>
+                {/* <Row id='process-row'>
+                    <span className='font-weight-bold mr-2'>{t('translation:process')}</span>
+                    <span>{processId}</span>
+                </Row> */}
+                <Card id='data-card'>
+
+                    <Form onSubmit={handleSubmit} /*validated={validated}*/>
+
+                        {/*
+                            header with title and id card query
+                        */}
+                        <Card.Header id='data-header' className='pb-0'>
+                            <Row>
+                                <Col md='4'>
+                                    <Card.Title className='m-md-0 jcc-xs-jcfs-md' as={'h2'} >{t('translation:vaccination-cert')}</Card.Title>
+                                </Col>
+                                <Col md='8' className='d-flex justify-content-center'>
+                                    <Card.Text id='id-query-text'>{t('translation:query-id-card')}</Card.Text>
+                                </Col>
+                            </Row>
+                            <hr />
+                        </Card.Header>
+
+                        {/*
+                            content area with patient inputs and check box
+                        */}
+                        <Card.Body id='data-body' className='pt-0'>
+
+                            {/* first name input */}
+                            <Form.Group as={Row} controlId='formNameInput' className='mb-1'>
+                                <Form.Label className='input-label' column xs='5' sm='3'>{t('translation:first-name')}</Form.Label>
+
+                                <Col xs='7' sm='9' className='d-flex'>
+                                    <Form.Control
+                                        className='qt-input'
+                                        value={firstName}
+                                        onChange={event => setFirstName(event.target.value)}
+                                        placeholder={t('translation:first-name')}
+                                        type='text'
+                                        required
+                                        maxLength={79}
+                                    />
+                                </Col>
+                            </Form.Group>
+
+                            {/* name input */}
+                            <Form.Group as={Row} controlId='formNameInput' className='mb-1'>
+                                <Form.Label className='input-label' column xs='5' sm='3'>{t('translation:name')}</Form.Label>
+
+                                <Col xs='7' sm='9' className='d-flex'>
+                                    <Form.Control
+                                        className='qt-input'
+                                        value={name}
+                                        onChange={event => setName(event.target.value)}
+                                        placeholder={t('translation:name')}
+                                        type='text'
+                                        required
+                                        maxLength={79}
+                                    />
+                                </Col>
+                            </Form.Group>
+
+                            {/* date of birth input */}
+                            <Form.Group as={Row} className='mb-1'>
+                                <Form.Label className='input-label txt-no-wrap' column xs='5' sm='3'>{t('translation:date-of-birth')}</Form.Label>
+
+                                <Col xs='7' sm='9' className='d-flex'>
+                                    <DatePicker
+                                        selected={dateOfBirth}
+                                        onChange={handleDateChange}
+                                        locale='de'
+                                        dateFormat='dd. MM. yyyy'
+                                        isClearable
+                                        placeholderText={t('translation:date-of-birth')}
+                                        className='qt-input form-control'
+                                        wrapperClassName='align-self-center'
+                                        showMonthDropdown
+                                        showYearDropdown
+                                        dropdownMode="select"
+                                        maxDate={new Date()}
+                                        minDate={new Date(1900, 0, 1, 12)}
+                                        openToDate={new Date(1990, 0, 1)}
+                                        required
+                                    />
+                                </Col>
+                            </Form.Group>
+
+                            {/* sex input */}
+                            <Row>
+                                <Form.Label className='input-label txt-no-wrap' column xs='5' sm='3' lg='3'>{t('translation:sex')}</Form.Label>
+
+                                <Col xs='7' sm='9' lg='9' className='d-flex'>
+                                    <Row>
+                                        <Form.Group as={Col} xs='12' sm='4' lg='3' className='d-flex mb-0' controlId='sex-radio1'>
+                                            <Form.Check className='d-flex align-self-center'>
+                                                <Form.Check.Input
+                                                    className='rdb-input'
+                                                    type='radio'
+                                                    name="sex-radios"
+                                                    id="sex-radio1"
+                                                    checked={sex === Sex.MALE}
+                                                    onChange={() => setSex(Sex.MALE)}
+                                                />
+                                                <Form.Label className='rdb-label mb-0'>{t('translation:male')}</Form.Label>
+                                            </Form.Check>
+                                        </Form.Group>
+                                        <Form.Group as={Col} xs='12' sm='4' lg='3' className='d-flex mb-0' controlId='sex-radio2'>
+                                            <Form.Check className='d-flex align-self-center'>
+                                                <Form.Check.Input required
+                                                    className='rdb-input'
+                                                    type='radio'
+                                                    name="sex-radios"
+                                                    id="sex-radio2"
+                                                    checked={sex === Sex.FEMALE}
+                                                    onChange={() => setSex(Sex.FEMALE)}
+                                                />
+                                                <Form.Label className='rdb-label mb-0'>{t('translation:female')}</Form.Label>
+                                            </Form.Check>
+                                        </Form.Group>
+                                        <Form.Group as={Col} xs='12' sm='4' lg='3' className='d-flex mb-0' controlId='sex-radio3'>
+                                            <Form.Check className='d-flex align-self-center'>
+                                                <Form.Check.Input
+                                                    className='rdb-input'
+                                                    type='radio'
+                                                    name="sex-radios"
+                                                    id="sex-radio3"
+                                                    checked={sex === Sex.OTHER}
+                                                    onChange={() => setSex(Sex.OTHER)}
+                                                />
+                                                <Form.Label className='rdb-label mb-0'>{t('translation:other')}</Form.Label>
+                                            </Form.Check>
+                                        </Form.Group>
+                                        <Form.Group as={Col} xs='12' sm='4' lg='3' className='d-flex mb-0' controlId='sex-radio3'>
+                                            <Form.Check className='d-flex align-self-center'>
+                                                <Form.Check.Input
+                                                    className='rdb-input'
+                                                    type='radio'
+                                                    name="sex-radios"
+                                                    id="sex-radio4"
+                                                    checked={sex === Sex.UNKNOWN}
+                                                    onChange={() => setSex(Sex.UNKNOWN)}
+                                                />
+                                                <Form.Label className='rdb-label mb-0'>{t('translation:unknown')}</Form.Label>
+                                            </Form.Check>
+                                        </Form.Group>
+                                    </Row>
+                                </Col>
+                            </Row>
+                        </Card.Body>
+
+                        {/*
+                            footer with clear and nex button
+                        */}
+                        <Card.Footer id='data-footer'>
+                            <Row>
+                                <Col xs='6' md='3'>
+                                    <Button
+                                        className='my-1 my-md-0 p-0'
+                                        block
+                                        onClick={handleCancel}
+                                    >
+                                        {t('translation:cancel')}
+                                    </Button>
+                                </Col>
+                                <Col xs='6' md='3' className='pr-md-0'>
+                                    <Button
+                                        className='my-1 my-md-0 p-0'
+                                        block
+                                        type='submit'
+                                    >
+                                        {t('translation:next')}
+                                    </Button>
+                                </Col>
+                            </Row>
+                        </Card.Footer>
+
+                    </Form>
+                </Card>
+            </>
+    )
+}
+
+export default RecordVaccinationCertData;

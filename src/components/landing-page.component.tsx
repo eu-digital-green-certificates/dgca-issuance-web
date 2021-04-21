@@ -49,6 +49,7 @@ const LandingPage = (props: any) => {
             <h1 className='mx-auto mb-5'>{t('translation:welcome')}</h1>
 
             <Button block className='landing-btn' onClick={navigation!.toRecordPatient}>{t('translation:record-patient-data')}</Button>
+            <Button block className='landing-btn' onClick={navigation!.toRecordVaccineCert}>{t('translation:record-vaccination-cert-dat')}</Button>
             {/* <Button block className='landing-btn' onClick={navigation!.toRecordTestResult}>{t('translation:record-result')}</Button>
             <Button block className='landing-btn' onClick={navigation!.toQRScan}>{t('translation:record-qr-scan')}</Button>
             <Button block className='landing-btn' onClick={navigation!.toFailedReport}>{t('translation:failed-report')}</Button>

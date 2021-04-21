@@ -1,5 +1,5 @@
 {
-  "title": "Schnelltest Portal",
+  "title": "Digital Green Certificate",
   "imprint": "Impressum",
   "data-privacy": "Datenschutz",
   "record-patient-data": "Patientendaten erfassen",
@@ -18,7 +18,8 @@
   "sex": "Geschlecht*",
   "male": "Männlich",
   "female": "Weiblich",
-  "diverse": "Divers",
+  "other": "Andere",
+  "unknown": "Unbekannt",
   "day": "Tag",
   "month": "Monat",
   "year": "Jahr",
@@ -60,6 +61,21 @@
   "failed-report": "Meldungen positiver Tests",
   "totalTestCount": "Gesamtanzahl der Tests",
   "positiveTestCount": "Anzahl der positiven Tests",
-  "successfull-transferred": "Die Daten wurden erfolgreich übermittelt"
+  "successfull-transferred": "Die Daten wurden erfolgreich übermittelt",
 
+  "record-vaccination-cert-dat": "Impfpass erstellen",
+  "vaccination-cert": "Impfpass erstellen",
+  "identifierType": "Art des Ausweises",
+  "country": "Land",
+  "identifierNumber": "Ausweisnummer",
+  "disease-agent": "Krankheit/Erreger gezielt", 
+  "vaccine": "Impfstoff/Prophylaxe",
+  "vac-medical-product": "Impfstoff/Arzneimittel",
+  "vac-marketing-holder": "Inhaber/Hersteller",
+  "sequence": "Nummer der Impfreihe",
+  "tot": "Gesamtzahl der Dosen",
+  "vac-last-date": "Letzter Impfdatum",
+  "vac-country": "Land",
+  "lot": "Chargennummer",
+  "adm": "Verwaltungzentrum"
 }

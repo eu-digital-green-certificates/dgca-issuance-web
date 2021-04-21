@@ -29,5 +29,23 @@ export enum TestResult {
 export enum Sex {
     MALE = 'MALE',
     FEMALE = 'FEMALE',
-    DIVERSE = 'DIVERSE',
+    OTHER = "OTHER",
+    UNKNOWN = "UNKNOWN"
+}
+
+export enum IdentifierType {
+    // Passport Number
+    PPN = "PPN",
+    // National Person Identifier
+    NN = "NN",
+    // Citizenship Card Number
+    CZ = "CZ", 
+    // Health Card number
+    HC = "HC",
+    // National Unique Individual Identifier
+    NI = "NI",
+    // Member Number
+    MB = "MB",
+    // National Helth Plan Identifier
+    NH = "NH"
 }
