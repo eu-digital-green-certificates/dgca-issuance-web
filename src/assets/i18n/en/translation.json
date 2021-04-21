@@ -75,5 +75,12 @@
   "vac-last-date": "Last Date",
   "vac-country": "Member State",
   "lot": "Identifier",
-  "adm": "Administering Centre"
+  "adm": "Administering Centre",
+  "PPN": "Passport Number",
+  "NN": "National Person Identifier",
+  "CZ": "Citizenship Card Number",
+  "HC": "Health Card number",
+  "NI": "National Unique Individual Identifier",
+  "MB": "Member Number",
+  "NH": "National Health Plan Identifier"
 }

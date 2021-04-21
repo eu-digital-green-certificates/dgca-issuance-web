@@ -39,6 +39,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import de from 'date-fns/locale/de';
 import Vaccine from '../misc/vaccine';
 // import { useGetUuid } from '../api';
+var iso3311a2 = require('iso-3166-1-alpha-2');
 
 registerLocale('de', de)
 
@@ -71,12 +72,21 @@ const RecordVaccinationCertData = ( props: any) => {
     const [vacCountry, setVacCountry] = React.useState('');
     const [lot, setLot] = React.useState('');
     const [adm, setAdm] = React.useState('');
+    const [selectedOption, setSelectedOption] = React.useState<string>(IdentifierType.PPN);
+    const [identifierTypeOptions, setIdentifierTypeOptions] = React.useState<any[]>();
+    const [selectedIsoCountry, setSelectedIsoCountry] = React.useState<string>('');
+    const [isoCountryOptions, setIsoCountryOptions] = React.useState<any[]>();
 
     React.useEffect(() => {
         if (navigation) {
             setTimeout(setIsInit, 200, true);
         }
     }, [navigation]);
+
+    React.useEffect(() => {
+        setOptions();
+        setIso3311a2();
+    }, []);
 
     const handleError = (error: any) => {
         let msg = '';
@@ -120,6 +130,25 @@ const RecordVaccinationCertData = ( props: any) => {
             navigation!.toRecordPatient();
             setTimeout(navigation!.toShowRecordPatient, 200);
         }
+    }
+ 
+    const setOptions = () => {
+        const options : any[] = [];
+        for(let option in IdentifierType) {
+            options.push(<option key={option}>{ t('translation:' + option) }</option>)
+        }
+
+        setIdentifierTypeOptions(options);
+    }
+
+    const setIso3311a2  = () => {
+        const options : any[] = [];
+        const codes : any[] = iso3311a2.getCodes().sort() ;
+        for(let i = 0; i<codes.length; i++) {
+            options.push(<option key={codes[i]}>{ codes[i] + " : " + iso3311a2.getCountry(codes[i])}</option>)
+        }
+
+        setIsoCountryOptions(options);
     }
 
     return (
@@ -213,7 +242,7 @@ const RecordVaccinationCertData = ( props: any) => {
                             </Form.Group>
 
                             {/* sex input */}
-                            <Row>
+                            <Row className='mb-1 sb-1'>
                                 <Form.Label className='input-label txt-no-wrap' column xs='5' sm='3' lg='3'>{t('translation:sex')}</Form.Label>
 
                                 <Col xs='7' sm='9' lg='9' className='d-flex'>
@@ -273,6 +302,39 @@ const RecordVaccinationCertData = ( props: any) => {
                                     </Row>
                                 </Col>
                             </Row>
+
+                            {/* Combobox for Identifier Type */}
+                            <Form.Group as={Row} controlId='formNameInput' className='mb-1 mt-1 sb-1 st-1'>
+                                <Form.Label className='input-label' column xs='5' sm='3'>{t('translation:identifierType')}</Form.Label>
+                                
+                                <Col xs='7' sm='9' className='d-flex'>
+                                    <Form.Control as="select"
+                                        value={selectedOption}
+                                        onChange={event => setSelectedOption(event.target.value)}
+                                        placeholder={t('translation:name')}
+                                        required  
+                                    >
+                                        { identifierTypeOptions } 
+                                    </Form.Control>
+                                </Col>
+                            </Form.Group>
+
+                            {/* Combobox for the countries in iso-3166-1-alpha-2 */}
+                            <Form.Group as={Row} controlId='formNameInput' className='mb-1 mt-1 sb-1 st-1'>
+                                <Form.Label className='input-label' column xs='5' sm='3'>{t('translation:country')}</Form.Label>
+                                
+                                <Col xs='7' sm='9' className='d-flex'>
+                                    <Form.Control as="select"
+                                        value={selectedIsoCountry}
+                                        onChange={event => setSelectedIsoCountry(event.target.value)}
+                                        placeholder={t('translation:country')}
+                                        required  
+                                    >
+                                        { isoCountryOptions } 
+                                    </Form.Control>
+                                </Col>
+                            </Form.Group>
+
                         </Card.Body>
 
                         {/*

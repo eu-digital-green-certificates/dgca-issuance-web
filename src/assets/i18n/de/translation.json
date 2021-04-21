@@ -77,5 +77,12 @@
   "vac-last-date": "Letzter Impfdatum",
   "vac-country": "Land",
   "lot": "Chargennummer",
-  "adm": "Verwaltungzentrum"
+  "adm": "Verwaltungzentrum",
+  "PPN": "Ausweisnummer",
+  "NN": "Nationale Personenkennung",
+  "CZ": "Staatsbürgerschaftskartennummer",
+  "HC": "Gesundheitskartennummer",
+  "NI": "Nationale eindeutige individuelle Kennung",
+  "MB": "Mitgliedsnummer",
+  "NH": "National Health Plan Identifier"
 }
