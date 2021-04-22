@@ -45,7 +45,7 @@ var iso3311a2 = require('iso-3166-1-alpha-2');
 registerLocale('de', de)
 
 
-const RecordVaccinationCertData = ( props: any) => {
+const RecordVaccinationCertData = (props: any) => {
 
     const navigation = useNavigation();
     const { t } = useTranslation();
@@ -73,11 +73,11 @@ const RecordVaccinationCertData = ( props: any) => {
     const [vacCountry, setVacCountry] = React.useState('');
     const [lot, setLot] = React.useState('');
     const [adm, setAdm] = React.useState('');
-    const [selectedOption, setSelectedOption] = React.useState<string>(IdentifierType.PPN);
+    const [selectedOption, setSelectedOption] = React.useState<string>();
     const [identifierTypeOptions, setIdentifierTypeOptions] = React.useState<any[]>();
-    const [selectedIsoCountry, setSelectedIsoCountry] = React.useState<string>('');
+    const [selectedIsoCountry, setSelectedIsoCountry] = React.useState<string>();
     const [isoCountryOptions, setIsoCountryOptions] = React.useState<any[]>();
-    const [selectedVacCountry, setSelectedVacCountry] = React.useState<string>('');
+    const [selectedVacCountry, setSelectedVacCountry] = React.useState<string>();
 
     React.useEffect(() => {
         if (navigation) {
@@ -126,7 +126,8 @@ const RecordVaccinationCertData = ( props: any) => {
 
     const handleCancel = () => {
         props.setPatient(undefined);
-    } 
+        navigation?.toLanding();
+    }
 
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         const form = event.currentTarget;
@@ -135,7 +136,7 @@ const RecordVaccinationCertData = ( props: any) => {
         event.stopPropagation();
 
         if (form.checkValidity()) {
-            const vaccine  : Patient = {firstName: firstName, name: name, dateOfBirth: dateOfBirth!};
+            const vaccine: Patient = { firstName: firstName, name: name, dateOfBirth: dateOfBirth! };
 
             //TODO Weiterleitung ans Backend oder eine Seite mit Anzeige 
             props.setPatient(vaccine);
@@ -143,21 +144,21 @@ const RecordVaccinationCertData = ( props: any) => {
             setTimeout(navigation!.toShowRecordPatient, 200);
         }
     }
- 
+
     const setOptions = () => {
-        const options : any[] = [];
-        for(let option in IdentifierType) {
-            options.push(<option key={option}>{ t('translation:' + option) }</option>)
+        const options: any[] = [];
+        for (let option in IdentifierType) {
+            options.push(<option key={option}>{t('translation:' + option)}</option>)
         }
 
         setIdentifierTypeOptions(options);
     }
 
-    const setIso3311a2  = () => {
-        const options : any[] = [];
-        const codes : any[] = iso3311a2.getCodes().sort() ;
-        for(let i = 0; i<codes.length; i++) {
-            options.push(<option key={codes[i]}>{ codes[i] + " : " + iso3311a2.getCountry(codes[i])}</option>)
+    const setIso3311a2 = () => {
+        const options: any[] = [];
+        const codes: any[] = iso3311a2.getCodes().sort();
+        for (let i = 0; i < codes.length; i++) {
+            options.push(<option key={codes[i]}>{codes[i] + " : " + iso3311a2.getCountry(codes[i])}</option>)
         }
 
         setIsoCountryOptions(options);
@@ -195,7 +196,7 @@ const RecordVaccinationCertData = ( props: any) => {
                         <Card.Body id='data-body' className='pt-0'>
 
                             {/* first name input */}
-                            <Form.Group as={Row} controlId='formNameInput' className='mb-1'>
+                            <Form.Group as={Row} controlId='formFirstNameInput' className='mb-1'>
                                 <Form.Label className='input-label' column xs='5' sm='3'>{t('translation:first-name')}</Form.Label>
 
                                 <Col xs='7' sm='9' className='d-flex'>
@@ -229,7 +230,7 @@ const RecordVaccinationCertData = ( props: any) => {
                             </Form.Group>
 
                             {/* date of birth input */}
-                            <Form.Group as={Row} className='mb-1'>
+                            <Form.Group as={Row} controlId='formDateOfBirthInput' className='mb-1'>
                                 <Form.Label className='input-label txt-no-wrap' column xs='5' sm='3'>{t('translation:date-of-birth')}</Form.Label>
 
                                 <Col xs='7' sm='9' className='d-flex'>
@@ -259,7 +260,7 @@ const RecordVaccinationCertData = ( props: any) => {
 
                                 <Col xs='7' sm='9' lg='9' className='d-flex'>
                                     <Row>
-                                        <Form.Group as={Col} xs='12' sm='4' lg='3' className='d-flex mb-0' controlId='sex-radio1'>
+                                        <Form.Group as={Col} xs='12' sm='6' md='3' className='d-flex mb-0' controlId='sex-radio1'>
                                             <Form.Check className='d-flex align-self-center'>
                                                 <Form.Check.Input
                                                     className='rdb-input'
@@ -272,7 +273,7 @@ const RecordVaccinationCertData = ( props: any) => {
                                                 <Form.Label className='rdb-label mb-0'>{t('translation:male')}</Form.Label>
                                             </Form.Check>
                                         </Form.Group>
-                                        <Form.Group as={Col} xs='12' sm='4' lg='3' className='d-flex mb-0' controlId='sex-radio2'>
+                                        <Form.Group as={Col} xs='12' sm='6' md='3' className='d-flex mb-0' controlId='sex-radio2'>
                                             <Form.Check className='d-flex align-self-center'>
                                                 <Form.Check.Input required
                                                     className='rdb-input'
@@ -285,7 +286,7 @@ const RecordVaccinationCertData = ( props: any) => {
                                                 <Form.Label className='rdb-label mb-0'>{t('translation:female')}</Form.Label>
                                             </Form.Check>
                                         </Form.Group>
-                                        <Form.Group as={Col} xs='12' sm='4' lg='3' className='d-flex mb-0' controlId='sex-radio3'>
+                                        <Form.Group as={Col} xs='12' sm='6' md='3' className='d-flex mb-0' controlId='sex-radio3'>
                                             <Form.Check className='d-flex align-self-center'>
                                                 <Form.Check.Input
                                                     className='rdb-input'
@@ -298,7 +299,7 @@ const RecordVaccinationCertData = ( props: any) => {
                                                 <Form.Label className='rdb-label mb-0'>{t('translation:other')}</Form.Label>
                                             </Form.Check>
                                         </Form.Group>
-                                        <Form.Group as={Col} xs='12' sm='4' lg='3' className='d-flex mb-0' controlId='sex-radio3'>
+                                        <Form.Group as={Col} xs='12' sm='6' md='3' className='d-flex mb-0' controlId='sex-radio4'>
                                             <Form.Check className='d-flex align-self-center'>
                                                 <Form.Check.Input
                                                     className='rdb-input'
@@ -314,41 +315,43 @@ const RecordVaccinationCertData = ( props: any) => {
                                     </Row>
                                 </Col>
                             </Row>
-
+                            <hr />
                             {/* Combobox for Identifier Type */}
-                            <Form.Group as={Row} controlId='formNameInput' className='mb-1 mt-1 sb-1 st-1'>
+                            <Form.Group as={Row} controlId='formIdentifyerTypeInput' className='mb-1 mt-1 sb-1 st-1'>
                                 <Form.Label className='input-label' column xs='5' sm='3'>{t('translation:identifierType')}</Form.Label>
-                                
+
                                 <Col xs='7' sm='9' className='d-flex'>
                                     <Form.Control as="select"
+                                        className='qt-input'
                                         value={selectedOption}
                                         onChange={event => setSelectedOption(event.target.value)}
                                         placeholder={t('translation:name')}
-                                        required  
+                                        required
                                     >
-                                        { identifierTypeOptions } 
+                                        {identifierTypeOptions}
                                     </Form.Control>
                                 </Col>
                             </Form.Group>
 
                             {/* Combobox for the countries in iso-3166-1-alpha-2 */}
-                            <Form.Group as={Row} controlId='formNameInput' className='mb-1 mt-1 sb-1 st-1'>
+                            <Form.Group as={Row} controlId='formIsoCountryInput' className='mb-1 mt-1 sb-1 st-1'>
                                 <Form.Label className='input-label' column xs='5' sm='3'>{t('translation:country')}</Form.Label>
-                                
+
                                 <Col xs='7' sm='9' className='d-flex'>
                                     <Form.Control as="select"
+                                        className='qt-input'
                                         value={selectedIsoCountry}
                                         onChange={event => setSelectedIsoCountry(event.target.value)}
                                         placeholder={t('translation:country')}
-                                        required  
+                                        required
                                     >
-                                        { isoCountryOptions } 
+                                        {isoCountryOptions}
                                     </Form.Control>
                                 </Col>
                             </Form.Group>
 
                             {/* input identifierNumber */}
-                            <Form.Group as={Row} controlId='formNameInput' className='mb-1'>
+                            <Form.Group as={Row} controlId='formIdentifyerNumberInput' className='mb-1'>
                                 <Form.Label className='input-label' column xs='5' sm='3'>{t('translation:identifierNumber')}</Form.Label>
 
                                 <Col xs='7' sm='9' className='d-flex'>
@@ -363,9 +366,9 @@ const RecordVaccinationCertData = ( props: any) => {
                                     />
                                 </Col>
                             </Form.Group>
-
+                            <hr />
                             {/* input disease */}
-                            <Form.Group as={Row} controlId='formNameInput' className='mb-1'>
+                            <Form.Group as={Row} controlId='formDiseseInput' className='mb-1'>
                                 <Form.Label className='input-label' column xs='5' sm='3'>{t('translation:disease-agent')}</Form.Label>
 
                                 <Col xs='7' sm='9' className='d-flex'>
@@ -382,7 +385,7 @@ const RecordVaccinationCertData = ( props: any) => {
                             </Form.Group>
 
                             {/* input vaccine */}
-                            <Form.Group as={Row} controlId='formNameInput' className='mb-1'>
+                            <Form.Group as={Row} controlId='formVaccineInput' className='mb-1'>
                                 <Form.Label className='input-label' column xs='5' sm='3'>{t('translation:vaccine')}</Form.Label>
 
                                 <Col xs='7' sm='9' className='d-flex'>
@@ -399,7 +402,7 @@ const RecordVaccinationCertData = ( props: any) => {
                             </Form.Group>
 
                             {/* input medicalProduct */}
-                            <Form.Group as={Row} controlId='formNameInput' className='mb-1'>
+                            <Form.Group as={Row} controlId='formMedicalProductInput' className='mb-1'>
                                 <Form.Label className='input-label' column xs='5' sm='3'>{t('translation:vac-medical-product')}</Form.Label>
 
                                 <Col xs='7' sm='9' className='d-flex'>
@@ -414,9 +417,9 @@ const RecordVaccinationCertData = ( props: any) => {
                                     />
                                 </Col>
                             </Form.Group>
-
+                            <hr />
                             {/* input marketingHolder */}
-                            <Form.Group as={Row} controlId='formNameInput' className='mb-1'>
+                            <Form.Group as={Row} controlId='formMarketingHolderInput' className='mb-1'>
                                 <Form.Label className='input-label' column xs='5' sm='3'>{t('translation:vac-marketing-holder')}</Form.Label>
 
                                 <Col xs='7' sm='9' className='d-flex'>
@@ -433,7 +436,7 @@ const RecordVaccinationCertData = ( props: any) => {
                             </Form.Group>
 
                             {/* tot */}
-                            <Form.Group as={Row} controlId='formNameInput' className='mb-1'>
+                            <Form.Group as={Row} controlId='formTotInput' className='mb-1'>
                                 <Form.Label className='input-label' column xs='5' sm='3'>{t('translation:tot')}</Form.Label>
 
                                 <Col xs='7' sm='9' className='d-flex'>
@@ -450,7 +453,7 @@ const RecordVaccinationCertData = ( props: any) => {
                             </Form.Group>
 
                             {/* vacLastDate */}
-                            <Form.Group as={Row} className='mb-1'>
+                            <Form.Group as={Row} controlId='formLastDateInput' className='mb-1'>
                                 <Form.Label className='input-label txt-no-wrap' column xs='5' sm='3'>{t('translation:vac-last-date')}</Form.Label>
 
                                 <Col xs='7' sm='9' className='d-flex'>
@@ -474,24 +477,25 @@ const RecordVaccinationCertData = ( props: any) => {
                                 </Col>
                             </Form.Group>
 
-                             {/* Combobox for the vaccin countries in iso-3166-1-alpha-2 */}
-                            <Form.Group as={Row} controlId='formNameInput' className='mb-1 mt-1 sb-1 st-1'>
+                            {/* Combobox for the vaccin countries in iso-3166-1-alpha-2 */}
+                            <Form.Group as={Row} controlId='formVacCountryInput' className='mb-1 mt-1 sb-1 st-1'>
                                 <Form.Label className='input-label' column xs='5' sm='3'>{t('translation:vac-country')}</Form.Label>
-                                
+
                                 <Col xs='7' sm='9' className='d-flex'>
                                     <Form.Control as="select"
+                                        className='qt-input'
                                         value={selectedVacCountry}
                                         onChange={event => setSelectedVacCountry(event.target.value)}
                                         placeholder={t('translation:country')}
-                                        required  
+                                        required
                                     >
-                                        { isoCountryOptions } 
+                                        {isoCountryOptions}
                                     </Form.Control>
                                 </Col>
                             </Form.Group>
-
+                            <hr />
                             {/* lot */}
-                            <Form.Group as={Row} controlId='formNameInput' className='mb-1'>
+                            <Form.Group as={Row} controlId='formLotInput' className='mb-1'>
                                 <Form.Label className='input-label' column xs='5' sm='3'>{t('translation:lot')}</Form.Label>
 
                                 <Col xs='7' sm='9' className='d-flex'>
@@ -508,7 +512,7 @@ const RecordVaccinationCertData = ( props: any) => {
                             </Form.Group>
 
                             {/* adm */}
-                            <Form.Group as={Row} controlId='formNameInput' className='mb-1'>
+                            <Form.Group as={Row} controlId='formAdmInput' className='mb-1'>
                                 <Form.Label className='input-label' column xs='5' sm='3'>{t('translation:adm')}</Form.Label>
 
                                 <Col xs='7' sm='9' className='d-flex'>
@@ -523,8 +527,7 @@ const RecordVaccinationCertData = ( props: any) => {
                                     />
                                 </Col>
                             </Form.Group>
-
-
+                            <hr />
                         </Card.Body>
 
                         {/*
