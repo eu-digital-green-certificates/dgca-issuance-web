@@ -476,7 +476,7 @@ const RecordVaccinationCertData = ( props: any) => {
 
                              {/* Combobox for the vaccin countries in iso-3166-1-alpha-2 */}
                             <Form.Group as={Row} controlId='formNameInput' className='mb-1 mt-1 sb-1 st-1'>
-                                <Form.Label className='input-label' column xs='5' sm='3'>{t('translation:country')}</Form.Label>
+                                <Form.Label className='input-label' column xs='5' sm='3'>{t('translation:vac-country')}</Form.Label>
                                 
                                 <Col xs='7' sm='9' className='d-flex'>
                                     <Form.Control as="select"
