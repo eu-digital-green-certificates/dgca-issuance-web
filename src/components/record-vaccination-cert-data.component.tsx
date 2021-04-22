@@ -197,7 +197,7 @@ const RecordVaccinationCertData = (props: any) => {
 
                             {/* first name input */}
                             <Form.Group as={Row} controlId='formFirstNameInput' className='mb-1'>
-                                <Form.Label className='input-label' column xs='5' sm='3'>{t('translation:first-name')}</Form.Label>
+                                <Form.Label className='input-label' column xs='5' sm='3'>{t('translation:first-name') + '*'}</Form.Label>
 
                                 <Col xs='7' sm='9' className='d-flex'>
                                     <Form.Control
@@ -214,7 +214,7 @@ const RecordVaccinationCertData = (props: any) => {
 
                             {/* name input */}
                             <Form.Group as={Row} controlId='formNameInput' className='mb-1'>
-                                <Form.Label className='input-label' column xs='5' sm='3'>{t('translation:name')}</Form.Label>
+                                <Form.Label className='input-label' column xs='5' sm='3'>{t('translation:name') + '*'}</Form.Label>
 
                                 <Col xs='7' sm='9' className='d-flex'>
                                     <Form.Control
@@ -231,7 +231,7 @@ const RecordVaccinationCertData = (props: any) => {
 
                             {/* date of birth input */}
                             <Form.Group as={Row} controlId='formDateOfBirthInput' className='mb-1'>
-                                <Form.Label className='input-label txt-no-wrap' column xs='5' sm='3'>{t('translation:date-of-birth')}</Form.Label>
+                                <Form.Label className='input-label txt-no-wrap' column xs='5' sm='3'>{t('translation:date-of-birth') + '*'}</Form.Label>
 
                                 <Col xs='7' sm='9' className='d-flex'>
                                     <DatePicker
@@ -256,7 +256,7 @@ const RecordVaccinationCertData = (props: any) => {
 
                             {/* sex input */}
                             <Row className='mb-1 sb-1'>
-                                <Form.Label className='input-label txt-no-wrap' column xs='5' sm='3' lg='3'>{t('translation:sex')}</Form.Label>
+                                <Form.Label className='input-label txt-no-wrap' column xs='5' sm='3' lg='3'>{t('translation:sex') + '*'}</Form.Label>
 
                                 <Col xs='7' sm='9' lg='9' className='d-flex'>
                                     <Row>
@@ -318,7 +318,7 @@ const RecordVaccinationCertData = (props: any) => {
                             <hr />
                             {/* Combobox for Identifier Type */}
                             <Form.Group as={Row} controlId='formIdentifyerTypeInput' className='mb-1 mt-1 sb-1 st-1'>
-                                <Form.Label className='input-label' column xs='5' sm='3'>{t('translation:identifierType')}</Form.Label>
+                                <Form.Label className='input-label' column xs='5' sm='3'>{t('translation:identifierType') + '*'}</Form.Label>
 
                                 <Col xs='7' sm='9' className='d-flex'>
                                     <Form.Control as="select"
@@ -335,7 +335,7 @@ const RecordVaccinationCertData = (props: any) => {
 
                             {/* Combobox for the countries in iso-3166-1-alpha-2 */}
                             <Form.Group as={Row} controlId='formIsoCountryInput' className='mb-1 mt-1 sb-1 st-1'>
-                                <Form.Label className='input-label' column xs='5' sm='3'>{t('translation:country')}</Form.Label>
+                                <Form.Label className='input-label' column xs='5' sm='3'>{t('translation:country') + '*'}</Form.Label>
 
                                 <Col xs='7' sm='9' className='d-flex'>
                                     <Form.Control as="select"
@@ -352,7 +352,7 @@ const RecordVaccinationCertData = (props: any) => {
 
                             {/* input identifierNumber */}
                             <Form.Group as={Row} controlId='formIdentifyerNumberInput' className='mb-1'>
-                                <Form.Label className='input-label' column xs='5' sm='3'>{t('translation:identifierNumber')}</Form.Label>
+                                <Form.Label className='input-label' column xs='5' sm='3'>{t('translation:identifierNumber') + '*'}</Form.Label>
 
                                 <Col xs='7' sm='9' className='d-flex'>
                                     <Form.Control
@@ -369,7 +369,7 @@ const RecordVaccinationCertData = (props: any) => {
                             <hr />
                             {/* input disease */}
                             <Form.Group as={Row} controlId='formDiseseInput' className='mb-1'>
-                                <Form.Label className='input-label' column xs='5' sm='3'>{t('translation:disease-agent')}</Form.Label>
+                                <Form.Label className='input-label' column xs='5' sm='3'>{t('translation:disease-agent') + '*'}</Form.Label>
 
                                 <Col xs='7' sm='9' className='d-flex'>
                                     <Form.Control
@@ -386,7 +386,7 @@ const RecordVaccinationCertData = (props: any) => {
 
                             {/* input vaccine */}
                             <Form.Group as={Row} controlId='formVaccineInput' className='mb-1'>
-                                <Form.Label className='input-label' column xs='5' sm='3'>{t('translation:vaccine')}</Form.Label>
+                                <Form.Label className='input-label' column xs='5' sm='3'>{t('translation:vaccine') + '*'}</Form.Label>
 
                                 <Col xs='7' sm='9' className='d-flex'>
                                     <Form.Control
@@ -403,7 +403,7 @@ const RecordVaccinationCertData = (props: any) => {
 
                             {/* input medicalProduct */}
                             <Form.Group as={Row} controlId='formMedicalProductInput' className='mb-1'>
-                                <Form.Label className='input-label' column xs='5' sm='3'>{t('translation:vac-medical-product')}</Form.Label>
+                                <Form.Label className='input-label' column xs='5' sm='3'>{t('translation:vac-medical-product') + '*'}</Form.Label>
 
                                 <Col xs='7' sm='9' className='d-flex'>
                                     <Form.Control
@@ -420,7 +420,7 @@ const RecordVaccinationCertData = (props: any) => {
                             <hr />
                             {/* input marketingHolder */}
                             <Form.Group as={Row} controlId='formMarketingHolderInput' className='mb-1'>
-                                <Form.Label className='input-label' column xs='5' sm='3'>{t('translation:vac-marketing-holder')}</Form.Label>
+                                <Form.Label className='input-label' column xs='5' sm='3'>{t('translation:vac-marketing-holder') + '*'}</Form.Label>
 
                                 <Col xs='7' sm='9' className='d-flex'>
                                     <Form.Control
@@ -428,16 +428,34 @@ const RecordVaccinationCertData = (props: any) => {
                                         value={marketingHolder}
                                         onChange={event => setMarketingHolder(event.target.value)}
                                         placeholder={t('translation:def-vac-marketing-holder')}
-                                        type='text'
+                                        type='string'
                                         required
-                                        maxLength={79}
+                                    />
+                                </Col>
+                            </Form.Group>
+
+                            {/* sequence */}
+                            <Form.Group as={Row} controlId='formTotInput' className='mb-1'>
+                                <Form.Label className='input-label' column xs='5' sm='3'>{t('translation:sequence') + '*'}</Form.Label>
+
+                                <Col xs='7' sm='9' className='d-flex'>
+                                    <Form.Control
+                                        className='qt-input'
+                                        value={sequence}
+                                        onChange={event => setSequence(event.target.value)}
+                                        placeholder={t('translation:def-sequence')}
+                                        type='number'
+                                        required
+                                        pattern={utils.pattern.sequence}
+                                        minLength={1}
+                                        maxLength={6}
                                     />
                                 </Col>
                             </Form.Group>
 
                             {/* tot */}
                             <Form.Group as={Row} controlId='formTotInput' className='mb-1'>
-                                <Form.Label className='input-label' column xs='5' sm='3'>{t('translation:tot')}</Form.Label>
+                                <Form.Label className='input-label' column xs='5' sm='3'>{t('translation:tot') + '*'}</Form.Label>
 
                                 <Col xs='7' sm='9' className='d-flex'>
                                     <Form.Control
@@ -445,16 +463,18 @@ const RecordVaccinationCertData = (props: any) => {
                                         value={tot}
                                         onChange={event => setTot(event.target.value)}
                                         placeholder={t('translation:def-tot')}
-                                        type='text'
+                                        type='number'
                                         required
-                                        maxLength={79}
+                                        pattern={utils.pattern.tot}
+                                        minLength={1}
+                                        maxLength={2}
                                     />
                                 </Col>
                             </Form.Group>
 
                             {/* vacLastDate */}
                             <Form.Group as={Row} controlId='formLastDateInput' className='mb-1'>
-                                <Form.Label className='input-label txt-no-wrap' column xs='5' sm='3'>{t('translation:vac-last-date')}</Form.Label>
+                                <Form.Label className='input-label txt-no-wrap' column xs='5' sm='3'>{t('translation:vac-last-date') + '*'}</Form.Label>
 
                                 <Col xs='7' sm='9' className='d-flex'>
                                     <DatePicker
@@ -479,7 +499,7 @@ const RecordVaccinationCertData = (props: any) => {
 
                             {/* Combobox for the vaccin countries in iso-3166-1-alpha-2 */}
                             <Form.Group as={Row} controlId='formVacCountryInput' className='mb-1 mt-1 sb-1 st-1'>
-                                <Form.Label className='input-label' column xs='5' sm='3'>{t('translation:vac-country')}</Form.Label>
+                                <Form.Label className='input-label' column xs='5' sm='3'>{t('translation:vac-country') + '*'}</Form.Label>
 
                                 <Col xs='7' sm='9' className='d-flex'>
                                     <Form.Control as="select"
@@ -505,7 +525,6 @@ const RecordVaccinationCertData = (props: any) => {
                                         onChange={event => setLot(event.target.value)}
                                         placeholder={t('translation:def-lot')}
                                         type='text'
-                                        required
                                         maxLength={79}
                                     />
                                 </Col>
@@ -522,7 +541,6 @@ const RecordVaccinationCertData = (props: any) => {
                                         onChange={event => setAdm(event.target.value)}
                                         placeholder={t('translation:def-adm')}
                                         type='text'
-                                        required
                                         maxLength={79}
                                     />
                                 </Col>
