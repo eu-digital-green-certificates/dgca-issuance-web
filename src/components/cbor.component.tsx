@@ -27,9 +27,7 @@ import { useTranslation } from 'react-i18next';
 
 import useNavigation from '../misc/navigation';
 import Spinner from './spinner/spinner.component';
-import cbor, { Map, Simple, Encoder } from 'cbor'
-import sha256 from 'crypto-js/sha256';
-import CryptoJS from 'crypto-js';
+import { createCertificateQRData } from '../misc/edgcProcessor'
 
 const Cbor = (props: any) => {
 
@@ -38,6 +36,7 @@ const Cbor = (props: any) => {
 
     const [isInit, setIsInit] = React.useState(false);
     const [test, setTest] = React.useState<any>();
+    const [qrCode, setQrCode] = React.useState("");
 
     const data: any = {
         sub: {
@@ -97,18 +96,8 @@ const Cbor = (props: any) => {
             
             const vac = { "sub": { "gn": "Gabriele", "fn": "Musterfrau", "id": [ { "t": "PP", "i": "12345ABC-321", "c": "AT" } ], "dob": "1998-02-26" }, "vac": [ { "dis": "840539006", "vap": "1119305005", "mep": "EU\/1\/20\/1528", "aut": "ORG-100030215", "seq": 1, "tot": 2, "dat": "2021-02-18", "cou": "AT", "lot": "C22-862FF-001", "adm": "Vaccination centre Vienna 23" }, { "dis": "840539006", "vap": "1119305005", "mep": "EU\/1\/20\/1528", "aut": "ORG-100030215", "seq": 2, "tot": 2, "dat": "2021-03-12", "cou": "AT", "lot": "C22-H62FF-010", "adm": "Vaccination centre Vienna 23" } ], "v": "v1.0.0", "dgcid": "01AT42196560275230427402470256520250042" }
             
-            const payloadMap = new cbor.Map();
-            payloadMap.set(1,vac)
+            createCertificateQRData(vac,{countryCode: 'DE', kid: 'eeeeee'}, (hash) => Promise.resolve("dummy signature"+hash)).then( c => setQrCode(c));
             
-            const cborMap = new cbor.Map();
-            cborMap.set((4 as number),1650689337);
-            cborMap.set((6 as number),1619153337);
-            cborMap.set((1 as number),'AT');
-            cborMap.set((-260 as number),payloadMap);
-            
-            
-            var c = cbor.encode(cborMap);
-            console.log("cborMap: "+ c.toString('base64'));
             
             
             console.log("finished");
@@ -123,6 +112,7 @@ const Cbor = (props: any) => {
 
     React.useEffect(() => {
         if (test) {
+            /*
             console.log(test);
             console.log(JSON.stringify(test));
 
@@ -140,7 +130,7 @@ const Cbor = (props: any) => {
             console.log(map);
 
             console.log(cbor.encode(map).toString('base64'));
-            
+            */
         }
 
 
@@ -165,7 +155,9 @@ const Cbor = (props: any) => {
     */}
                     <Card.Body id='data-header'>
                         <Row>
-                            TODO Hier kommt noch was.
+                        QRCode
+                            <pre>
+                                 {qrCode}</pre>
                         </Row>
                     </Card.Body>
 
