@@ -59,7 +59,7 @@ const RecordVaccinationCertData = (props: any) => {
     const [identifierType, setIdentifierType] = React.useState('');
     const [identifierNumber, setIdentifierNumber] = React.useState('');
     const [dateOfBirth, setDateOfBirth] = React.useState<Date>();
-    const [sex, setSex] = React.useState<Sex>();
+    const [sex, setSex] = React.useState<Sex>(Sex.MALE);
     const [disease, setDisease] = React.useState('');
     const [vaccine, setVaccine] = React.useState('');
     const [medicalProduct, setMedicalProduct] = React.useState('');
@@ -69,16 +69,18 @@ const RecordVaccinationCertData = (props: any) => {
     const [vacLastDate, setVacLastDate] = React.useState<Date>();
     const [lot, setLot] = React.useState('');
     const [adm, setAdm] = React.useState('');
-    const [identifierTypeOptions, setIdentifierTypeOptions] = React.useState<any[]>();
+    const [selectedIdentifierTypeOptionValue, setSelectedIdentifierTypeOptionValue] = React.useState<string>();
     const [personCountry, setPersonCountry] = React.useState<string>();
-    const [isoCountryOptions, setIsoCountryOptions] = React.useState<any[]>();
     const [issuerCountry, setIssuerCountry] = React.useState<string>();
+    
+    const [identifierTypeOptions, setIdentifierTypeOptions] = React.useState<HTMLSelectElement[]>();
+    const [isoCountryOptions, setIsoCountryOptions] = React.useState<HTMLSelectElement[]>();
 
     //TODO: Options to be read from the gateway
-    const [deseasOptions, setDeseasOptions] = React.useState<any[]>();
-    const [vaccineOptions, setVaccineOptions] = React.useState<any[]>();
-    const [medicalProductOptions, setMedicalProductOptions] = React.useState<any[]>();
-    const [marketingHolderOptions, setMarketingHolderOptions] = React.useState<any[]>();
+    const [diseasOptions, setDiseasOptions] = React.useState<HTMLSelectElement[]>();
+    const [vaccineOptions, setVaccineOptions] = React.useState<HTMLSelectElement[]>();
+    const [medicalProductOptions, setMedicalProductOptions] = React.useState<HTMLSelectElement[]>();
+    const [marketingHolderOptions, setMarketingHolderOptions] = React.useState<HTMLSelectElement[]>();
 
     React.useEffect(() => {
         if (navigation) {
@@ -90,6 +92,9 @@ const RecordVaccinationCertData = (props: any) => {
         setOptions();
         setIso3311a2();
         initDynamicOptions();
+
+        setIdentifierType(IdentifierType.PPN);
+        setSelectedIdentifierTypeOptionValue(IdentifierType.PPN);
     }, []);
 
     const handleError = (error: any) => {
@@ -133,15 +138,35 @@ const RecordVaccinationCertData = (props: any) => {
 
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         const form = event.currentTarget;
+        
+        // data for the backend
+        // alert(  
+        //     firstName + " " +  
+        //     name + " " +  
+        //     dateOfBirth?.toDateString() + " " +
+        //     sex + " " +  
+        //     selectedIdentifierTypeOptionValue + " " +  
+        //     personCountry?.substr(0,2) + " " +  
+        //     identifierNumber + " " +  
+        //     disease + " " +  
+        //     vaccine + " " +  
+        //     medicalProduct + " " +
+        //     marketingHolder + " " +  
+        //     sequence + " " +  
+        //     tot + " " +  
+        //     vacLastDate?.toDateString() + " " +  
+        //     issuerCountry?.substr(0,2) + " " +   
+        //     lot+ " " +  
+        //     adm );
 
         event.preventDefault();
         event.stopPropagation();
 
         if (form.checkValidity()) {
-            const vaccine: Patient = { firstName: firstName, name: name, dateOfBirth: dateOfBirth! };
+            const patient : Patient = { firstName: firstName, name: name, dateOfBirth: dateOfBirth! };
 
             //TODO Weiterleitung ans Backend oder eine Seite mit Anzeige 
-            props.setPatient(vaccine);
+            props.setPatient(patient);
             navigation!.toRecordPatient();
             setTimeout(navigation!.toShowRecordPatient, 200);
         }
@@ -150,7 +175,7 @@ const RecordVaccinationCertData = (props: any) => {
     const setOptions = () => {
         const options: any[] = [];
         for (let option in IdentifierType) {
-            options.push(<option key={option}>{t('translation:' + option)}</option>)
+            options.push(<option key={option} value={option}>{t('translation:' + option)}</option>)
         }
 
         setIdentifierTypeOptions(options);
@@ -159,26 +184,30 @@ const RecordVaccinationCertData = (props: any) => {
     //TODO: These options will be read dynamically from the gateway
     const initDynamicOptions = () => {
         const tmpDeseasOptions : string[] = ['840539006', '2.16.840.1.113883.6.96'];
-        setDeseasOptions(setDynamicOptions(tmpDeseasOptions));
+        setDiseasOptions(setDynamicOptions(tmpDeseasOptions));
+        setDisease(tmpDeseasOptions[0]);
 
         const tmpVaccineOptions : string[] = ['1119305005', '1119349007', 'J07BX03'];
         setVaccineOptions(setDynamicOptions(tmpVaccineOptions));
+        setVaccine(tmpVaccineOptions[0]);
 
         const tmpMedicalOptions : string[] = ['EU/1/20/1528', 'EU/1/20/1507', 'EU/1/21/1529', 'EU/1/20/1525', 'CVnCoV', 'NVX-CoV2373',
                                             'Sputnik-V', 'Convidecia', 'EpiVacCorona', 'BBIBP-CorV', 'Inactivated-SARS-CoV-2-Vero-Cell',
                                             'CoronaVac', 'Covaxin'];
         setMedicalProductOptions(setDynamicOptions(tmpMedicalOptions));
+        setMedicalProduct(tmpMedicalOptions[0]);
 
         const tmpMarketingHolderOptions : string[] = ['ORG-100001699', 'ORG-100030215', 'ORG-100001417', 'ORG-100031184', 'ORG-100006270', 
                                             'ORG-100013793', 'ORG-100020693', 'ORG-100020693', 'ORG-100010771', 'ORG-100024420', 'ORG-100032020',
                                             'Gamaleya-Research-Institute', 'Vector-Institute', 'Sinovac-Biotech', 'Bharat-Biotech'];
         setMarketingHolderOptions(setDynamicOptions(tmpMarketingHolderOptions));
+        setMarketingHolder(tmpMarketingHolderOptions[0]);
     }
 
     const setDynamicOptions = (dynamicOptions: string[]) => {
         const options: any[] = [];
         for (let i = 0; i < dynamicOptions.length; i++) {
-            options.push(<option key={i}>{ dynamicOptions[i] }</option>)
+            options.push(<option key={i} value={ dynamicOptions[i] }>{ dynamicOptions[i] }</option>)
         }
 
         return options;
@@ -192,6 +221,13 @@ const RecordVaccinationCertData = (props: any) => {
         }
 
         setIsoCountryOptions(options);
+        setPersonCountry(codes[0]);
+        setIssuerCountry(codes[0]);
+    }
+
+    const handleIdentifierTypeChanged = (event: React.ChangeEvent<HTMLSelectElement>) => {
+        setIdentifierType(event.target.value);
+        setSelectedIdentifierTypeOptionValue(event.target.value);
     }
 
     return (
@@ -355,7 +391,7 @@ const RecordVaccinationCertData = (props: any) => {
                                     <Form.Control as="select"
                                         className='qt-input'
                                         value={identifierType}
-                                        onChange={event => setIdentifierType(event.target.value)}
+                                        onChange={ handleIdentifierTypeChanged }
                                         placeholder={t('translation:name')}
                                         required
                                     >
@@ -412,7 +448,7 @@ const RecordVaccinationCertData = (props: any) => {
                                         placeholder={t('translation:def-disease-agent')}
                                         required
                                     >
-                                        {deseasOptions}
+                                        {diseasOptions}
                                     </Form.Control>
                                 </Col>
                             </Form.Group>
