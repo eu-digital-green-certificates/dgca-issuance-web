@@ -270,11 +270,11 @@ const RecordVaccinationCertData = (props: any) => {
                                     <Form.Control
                                         className='qt-input'
                                         value={firstName}
-                                        onChange={event => setFirstName(event.target.value)}
+                                        onChange={event => setFirstName(event.target.value.toUpperCase())}
                                         placeholder={t('translation:first-name')}
                                         type='text'
                                         required
-                                        maxLength={79}
+                                        maxLength={50}
                                     />
                                 </Col>
                             </Form.Group>
@@ -287,11 +287,11 @@ const RecordVaccinationCertData = (props: any) => {
                                     <Form.Control
                                         className='qt-input'
                                         value={name}
-                                        onChange={event => setName(event.target.value)}
+                                        onChange={event => setName(event.target.value.toUpperCase())}
                                         placeholder={t('translation:name')}
                                         type='text'
                                         required
-                                        maxLength={79}
+                                        maxLength={50}
                                     />
                                 </Col>
                             </Form.Group>
@@ -518,8 +518,8 @@ const RecordVaccinationCertData = (props: any) => {
                                         placeholder={t('translation:def-sequence')}
                                         type='number'
                                         required
-                                        pattern={utils.pattern.sequence}
-                                        minLength={1}
+                                        min={0}
+                                        max={999999999}
                                         maxLength={6}
                                     />
                                 </Col>
@@ -537,9 +537,8 @@ const RecordVaccinationCertData = (props: any) => {
                                         placeholder={t('translation:def-tot')}
                                         type='number'
                                         required
-                                        pattern={utils.pattern.tot}
-                                        minLength={1}
-                                        maxLength={2}
+                                        min={1}
+                                        max={9}
                                     />
                                 </Col>
                             </Form.Group>
