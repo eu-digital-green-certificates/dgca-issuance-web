@@ -37,7 +37,7 @@ import ShowPatientData from './components/show-patient-data.component';
 import RecordTestResult from './components/record-test-result.component';
 import QrScan from './components/qr-scan.component';
 import Statistics from './components/statistics.component';
-import FailedReport from './components/failed-report.component';
+import Cbor from './components/cbor.component';
 
 import PrivateRoute from './components/private-route.component';
 import IError from './misc/error';
@@ -112,9 +112,17 @@ const Routing = (props: any) => {
                     <RecordVaccinationCertData setPatient={setPatient} patient={patient} setError={setError} />
                 </Route>
 
+                <Route
+                exact
+                path={routes.root+'/cbor'}
+                >
+                    <Cbor/>
+                </Route>
+
                 {/* Record Patient Data */}
                 {/* <PrivateRoute
                     exact
+
                     roles={['c19_quick_test_counter']}
                     path={routes.recordPatient}
                     component={RecordPatientData}
