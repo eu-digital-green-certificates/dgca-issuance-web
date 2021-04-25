@@ -45,9 +45,8 @@
     "web-vitals": "^1.0.1"
   },
   "lint-staged": {
-    "src/**/*.{js,jsx,ts,tsx,json,css,scss,md}": [
-      "prettier --write"
-    ]
+    "*.{js,jsx,ts,tsx}": ["eslint --fix"],
+    "src/**/*.{js,jsx,ts,tsx,json,css,scss,md}": ["prettier --write"]
   },
   "proxy": "https://6155b8d7d3c6.schnelltestportal.de",
   "scripts": {
