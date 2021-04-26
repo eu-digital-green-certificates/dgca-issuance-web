@@ -54,7 +54,7 @@
       "prettier --write"
     ]
   },
-  "proxy": "https://6155b8d7d3c6.schnelltestportal.de",
+  "proxy": "http://localhost:8090",
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",

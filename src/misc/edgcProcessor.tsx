@@ -32,8 +32,9 @@ export function decode(str: string): ArrayBuffer;
 import base45 from 'base45-js'
 import sha256 from 'crypto-js/sha256';
 import CryptoJS from 'crypto-js';
+
 import zlib from 'browserify-zlib'
-import CborMap from 'cbor/types/lib/map';
+
 
 const expiredSeconds = 60*60*24*364;
 const edgcPrefix = 'HC1:'
@@ -41,6 +42,7 @@ const edgcPrefix = 'HC1:'
 export interface CertificateMetaData {
     countryCode: string,
     kid: string,
+    algId: number,
 }
 
 export interface SignService {
@@ -62,16 +64,16 @@ function encodeCBOR(certData: any, certMetaData: CertificateMetaData) : Buffer {
 }
 
 function computeCOSEHash(coseSigData: Buffer) : string {
-    // TODO compute hash
-    return coseSigData.toString('base64');
+    const wordArray = CryptoJS.lib.WordArray.create((coseSigData as unknown) as number[]);
+    return CryptoJS.SHA256(wordArray).toString(CryptoJS.enc.Base64);
 }
 
-function coseSign(cborData : Buffer, signService : SignService, kid64: string) : Promise<Buffer> {
+function coseSign(cborData : Buffer, signService : SignService, kid64: string, algId: number) : Promise<Buffer> {
     // TODO see: https://github.com/erdtman/cose-js/blob/master/lib/sign.js
     var protectedData = new cbor.Map();
     // ALG - RSA_PSS_256(-37, 0, 0),
     // COSE.AlgorithmID
-    protectedData.set(1,-37);
+    protectedData.set(1,algId);
     // KID
     protectedData.set(4,Buffer.from(kid64,'base64'))
     var sigData = [
@@ -81,9 +83,10 @@ function coseSign(cborData : Buffer, signService : SignService, kid64: string) :
         cborData
     ]
     const hash = computeCOSEHash(cbor.encode(sigData));
-    return signService(hash).then( sig => {
-        var unprotectedData = null;
-        const signed = [protectedData, unprotectedData, cborData, sig];
+    return signService(hash).then( sigBase64 => {
+        const sig = Buffer.from(sigBase64,'base64');
+        const unprotectedData = new cbor.Map();
+        const signed = [cbor.encode(protectedData), unprotectedData, cborData, sig];
         return Promise.resolve(cbor.encode(new cbor.Tagged(18,signed)));
     })
 }
@@ -103,7 +106,7 @@ function dataPrefix(data: string) : string {
 
 export function createCertificateQRData(certData: any, certMetaData: CertificateMetaData, signService: SignService) : Promise<string> {
     var cbor = encodeCBOR(certData, certMetaData);
-    return coseSign(cbor, signService, certMetaData.kid).then( coseData => {
+    return coseSign(cbor, signService, certMetaData.kid, certMetaData.algId).then( coseData => {
         console.log("cose raw: "+coseData.toString('base64'));
         var compressedCoseData = compress(coseData);
         var base45data = base45encode(compressedCoseData);

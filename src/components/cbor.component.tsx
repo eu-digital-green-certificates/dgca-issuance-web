@@ -28,6 +28,13 @@ import { useTranslation } from 'react-i18next';
 import useNavigation from '../misc/navigation';
 import Spinner from './spinner/spinner.component';
 import { createCertificateQRData } from '../misc/edgcProcessor'
+import axios from 'axios'
+
+interface CertInit {
+    id: number,
+    dgci: string,
+    kid: string
+}
 
 const Cbor = (props: any) => {
 
@@ -87,6 +94,10 @@ const Cbor = (props: any) => {
         }
     }
 
+    const api = axios.create({
+        baseURL: ''
+    });
+
     React.useEffect(() => {
         if (navigation) {
 
@@ -95,11 +106,13 @@ const Cbor = (props: any) => {
             console.log("start cbor");
             
             const vac = { "sub": { "gn": "Gabriele", "fn": "Musterfrau", "id": [ { "t": "PP", "i": "12345ABC-321", "c": "AT" } ], "dob": "1998-02-26" }, "vac": [ { "dis": "840539006", "vap": "1119305005", "mep": "EU\/1\/20\/1528", "aut": "ORG-100030215", "seq": 1, "tot": 2, "dat": "2021-02-18", "cou": "AT", "lot": "C22-862FF-001", "adm": "Vaccination centre Vienna 23" }, { "dis": "840539006", "vap": "1119305005", "mep": "EU\/1\/20\/1528", "aut": "ORG-100030215", "seq": 2, "tot": 2, "dat": "2021-03-12", "cou": "AT", "lot": "C22-H62FF-010", "adm": "Vaccination centre Vienna 23" } ], "v": "v1.0.0", "dgcid": "01AT42196560275230427402470256520250042" }
-            
-            createCertificateQRData(vac,{countryCode: 'DE', kid: 'eeeeee'}, (hash) => Promise.resolve("dummy signature"+hash)).then( c => setQrCode(c));
-            
-            
-            
+
+            api.post('/dgci', {lot: 'dummy'}).then(response  => {
+                createCertificateQRData(vac,{countryCode: 'DE', kid: 'eeeeee', algId: -37}, (hash) => {
+                    return api.put('/dgci/'+response.data.id.toString(),{hash:hash}).then(res => res.data.signature);
+                }).then( c => setQrCode(c));
+            });
+                        
             console.log("finished");
             
 
