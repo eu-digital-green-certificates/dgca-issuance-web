@@ -64,6 +64,7 @@ function encodeCBOR(certData: any, certMetaData: CertificateMetaData) : Buffer {
 }
 
 function computeCOSEHash(coseSigData: Buffer) : string {
+    // console.log("data to sig: "+coseSigData.toString('base64'));
     const wordArray = CryptoJS.lib.WordArray.create((coseSigData as unknown) as number[]);
     return CryptoJS.SHA256(wordArray).toString(CryptoJS.enc.Base64);
 }
@@ -75,18 +76,22 @@ function coseSign(cborData : Buffer, signService : SignService, kid64: string, a
     // COSE.AlgorithmID
     protectedData.set(1,algId);
     // KID
-    protectedData.set(4,Buffer.from(kid64,'base64'))
+    protectedData.set(4,Buffer.from(kid64,'base64'));
+    const protedctedDataBytes = cbor.encode(protectedData);
+    // console.log("protectedData "+protedctedDataBytes.toString('hex'));
     var sigData = [
-        'Signature',
-        cbor.encode(protectedData),
+        'Signature1',
+        protedctedDataBytes,
         Buffer.alloc(0),
         cborData
     ]
     const hash = computeCOSEHash(cbor.encode(sigData));
+    console.log("hash to sign "+hash);
     return signService(hash).then( sigBase64 => {
+        // console.log("signature "+sigBase64);
         const sig = Buffer.from(sigBase64,'base64');
         const unprotectedData = new cbor.Map();
-        const signed = [cbor.encode(protectedData), unprotectedData, cborData, sig];
+        const signed = [protedctedDataBytes, unprotectedData, cborData, sig];
         return Promise.resolve(cbor.encode(new cbor.Tagged(18,signed)));
     })
 }
@@ -107,7 +112,7 @@ function dataPrefix(data: string) : string {
 export function createCertificateQRData(certData: any, certMetaData: CertificateMetaData, signService: SignService) : Promise<string> {
     var cbor = encodeCBOR(certData, certMetaData);
     return coseSign(cbor, signService, certMetaData.kid, certMetaData.algId).then( coseData => {
-        console.log("cose raw: "+coseData.toString('base64'));
+        // console.log("cose raw: "+coseData.toString('base64'));
         var compressedCoseData = compress(coseData);
         var base45data = base45encode(compressedCoseData);
         var prefixedData = dataPrefix(base45data);
