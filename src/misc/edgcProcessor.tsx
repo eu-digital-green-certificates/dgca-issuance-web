@@ -20,17 +20,7 @@
  */
 
 import cbor, { Map, Simple, Encoder } from 'cbor'
-/*
-need to fix following file for type script
-node_modules/base45-js/index.d.ts
-
-import {encode, decode} './lib/base45-js'
-
-export function encode(buffer: ArrayBuffer): string;
-export function decode(str: string): ArrayBuffer;
-*/
-import base45 from 'base45-js'
-import sha256 from 'crypto-js/sha256';
+import base45 from './wbase45'
 import CryptoJS from 'crypto-js';
 
 import zlib from 'browserify-zlib'
@@ -101,8 +91,10 @@ function compress(cose: Buffer) : Buffer {
 }
 
 function base45encode(data: Buffer) : string {
-    return base45.encode(data);
-
+    console.log("data"+data.toString('base64'));
+    const r = base45.encode(data);
+    console.log("base45"+r);
+    return r;
 }
 
 function dataPrefix(data: string) : string {
