@@ -31,13 +31,8 @@ export interface INavigation {
     routes: IRoute,
     calculatedRoutes: IRoute,
     toLanding: () => void,
-    toRecordPatient: () => void,
-    toShowRecordPatient: () => void,
-    toRecordTestResult: () => void,
-    toQRScan: () => void,
-    toStatistics: () => void,
-    toFailedReport: () => void,
-    toRecordVaccineCert: () => void
+    toRecordVac: () => void,
+    toShowCert: () => void
 }
 
 export const useRoutes = () => {
@@ -47,13 +42,8 @@ export const useRoutes = () => {
     const result: IRoute = {
         root: basePath,
         landing: basePath,
-        recordPatient: basePath + '/record',
-        showPatientRecord: basePath + '/record/show',
-        recordTestResult: basePath + '/record/result',
-        qrScan: basePath + '/qr/scan',
-        statistics: basePath + '/statistics',
-        failedReport: basePath + '/failedreport',
-        recordVaccineCert: basePath + '/recordVaccineCert'
+        recordVac: basePath + '/record/vac',
+        showCert: basePath + '/record/show'
     }
 
     return result;
@@ -74,13 +64,8 @@ export const useNavigation = () => {
 
             c.root = routes.root.replace(':mandant', mandant as string);
             c.landing = routes.landing.replace(':mandant', mandant as string);
-            c.recordPatient = routes.recordPatient.replace(':mandant', mandant as string);
-            c.showPatientRecord = routes.showPatientRecord.replace(':mandant', mandant as string);
-            c.recordTestResult = routes.recordTestResult.replace(':mandant', mandant as string);
-            c.qrScan = routes.qrScan.replace(':mandant', mandant as string);
-            c.statistics = routes.statistics.replace(':mandant', mandant as string);
-            c.failedReport = routes.failedReport.replace(':mandant', mandant as string);
-            c.recordVaccineCert = routes.recordVaccineCert.replace(':mandant', mandant as string);
+            c.recordVac = routes.recordVac.replace(':mandant', mandant as string);
+            c.showCert = routes.showCert.replace(':mandant', mandant as string);
 
             setCalculatedRoutes(c);
         }
@@ -94,13 +79,8 @@ export const useNavigation = () => {
                 calculatedRoutes: calculatedRoutes,
 
                 toLanding: () => { history.push(calculatedRoutes.landing); },
-                toRecordPatient: () => { history.push(calculatedRoutes.recordPatient); },
-                toShowRecordPatient: () => { history.push(calculatedRoutes.showPatientRecord); },
-                toRecordTestResult: () => { history.push(calculatedRoutes.recordTestResult); },
-                toQRScan: () => { history.push(calculatedRoutes.qrScan); },
-                toStatistics: () => { history.push(calculatedRoutes.statistics); },
-                toFailedReport: () => { history.push(calculatedRoutes.failedReport); },
-                toRecordVaccineCert: () => { history.push(calculatedRoutes.recordVaccineCert); }
+                toRecordVac: () => { history.push(calculatedRoutes.recordVac); },
+                toShowCert: () => { history.push(calculatedRoutes.showCert); }
             }
 
             setResult(n);
