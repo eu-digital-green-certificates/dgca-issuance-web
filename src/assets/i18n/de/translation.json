@@ -77,6 +77,7 @@
   "vac-marketing-holder": "Inhaber/Hersteller",
   "def-vac-marketing-holder": "Code wie in EMA SPOR - Organisationsmanagementsystem definiert (z.B. ORG-100030215)",					 
   "sequence": "Nummer der Impfreihe",
+  "def-sequence": "Anzahl der in einem Zyklus verabreichten Dosen (e.g. 2)",
   "tot": "Gesamtzahl der Dosen",
   "def-tot": "Anzahl der erwarteten Dosen für einen vollständigen Zyklus (z.B. 1)",						   
   "vac-last-date": "Letzter Impfdatum",

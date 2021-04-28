@@ -41,7 +41,7 @@ export default interface Vaccine {
     nameTrans?: string;
 
     identifierType: IdentifierType;
-    country?: string;
+    personCountry?: string;
     //TODO: event. Regex
     identifierNumber: string;
 
@@ -74,7 +74,7 @@ export default interface Vaccine {
 
     //TODO: Event. Enum mit den ganzen Staaten
     //Country (member state) of vaccination (ISO 3166-1 alpha-2 Country Code) (viz. VS-2021-04-14), e.g. "SE"
-    vacCountry: string;
+    issuerCountry: string;
 
     // A distinctive combination of numbers and/or letters which specifically identifies a batch, optional
     lot?: string;

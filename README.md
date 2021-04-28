@@ -1,5 +1,5 @@
 <h1 align="center">
-    EU Digital Green Certificates Issuance - Web
+    EU Digital Green Certificates Issuance Web Frontend
 </h1>
 
 <p align="center">
@@ -9,6 +9,7 @@
 </p>
 
 <p align="center">
+  <a href="#about">About</a> •
   <a href="#development">Development</a> •
   <a href="#documentation">Documentation</a> •
   <a href="#support-and-feedback">Support</a> •
@@ -17,13 +18,18 @@
   <a href="#licensing">Licensing</a>
 </p>
 
-- [ ] TODO
+## About
+
+This repository contains the source code of the Digital Green Certificates Issuance Web Frontend.
+
+The issuer application frontend provides a user interface that is used by the issuer to enter the
+necessary data for DGC issuance.
 
 ## Development
 
 ### Prerequisites
 
-- [ ] TODO
+- [ ] TODO: Describe prerequisites
 
 ### Build
 
@@ -31,21 +37,13 @@ Whether you cloned or downloaded the 'zipped' sources you will either find the s
 
 In either case open a terminal pointing to the directory you put the sources in. The local build process is described afterwards depending on the way you choose.
 
-#### XYZ (Maven, ...) based build
+#### XYZ (Maven, Docker ...) based build
 
-- [ ] TODO
-
-#### Build Docker Image
-
-- [ ] TODO
-
-#### API documentation  
-
-- [ ] TODO
+- [ ] TODO: Add instructions for different build types
 
 ## Documentation  
 
-- [ ] TODO
+- [ ] TODO: Link to documentation
 
 ## Support and feedback
 

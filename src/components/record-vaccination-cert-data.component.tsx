@@ -56,28 +56,31 @@ const RecordVaccinationCertData = (props: any) => {
 
     const [firstName, setFirstName] = React.useState('');
     const [name, setName] = React.useState('');
-    const [firstNameTrans, setFirstNameTrans] = React.useState('');
-    const [nameTrans, setNameTrans] = React.useState('');
     const [identifierType, setIdentifierType] = React.useState('');
-    const [country, setCountry] = React.useState('');
     const [identifierNumber, setIdentifierNumber] = React.useState('');
     const [dateOfBirth, setDateOfBirth] = React.useState<Date>();
-    const [sex, setSex] = React.useState<Sex>();
+    const [sex, setSex] = React.useState<Sex>(Sex.MALE);
     const [disease, setDisease] = React.useState('');
     const [vaccine, setVaccine] = React.useState('');
     const [medicalProduct, setMedicalProduct] = React.useState('');
     const [marketingHolder, setMarketingHolder] = React.useState('');
-    const [sequence, setSequence] = React.useState('');
-    const [tot, setTot] = React.useState('');
+    const [sequence, setSequence] = React.useState<number>();
+    const [tot, setTot] = React.useState<number>();
     const [vacLastDate, setVacLastDate] = React.useState<Date>();
-    const [vacCountry, setVacCountry] = React.useState('');
     const [lot, setLot] = React.useState('');
     const [adm, setAdm] = React.useState('');
-    const [selectedOption, setSelectedOption] = React.useState<string>();
-    const [identifierTypeOptions, setIdentifierTypeOptions] = React.useState<any[]>();
-    const [selectedIsoCountry, setSelectedIsoCountry] = React.useState<string>();
-    const [isoCountryOptions, setIsoCountryOptions] = React.useState<any[]>();
-    const [selectedVacCountry, setSelectedVacCountry] = React.useState<string>();
+    const [selectedIdentifierTypeOptionValue, setSelectedIdentifierTypeOptionValue] = React.useState<string>();
+    const [personCountry, setPersonCountry] = React.useState<string>();
+    const [issuerCountry, setIssuerCountry] = React.useState<string>();
+    
+    const [identifierTypeOptions, setIdentifierTypeOptions] = React.useState<HTMLSelectElement[]>();
+    const [isoCountryOptions, setIsoCountryOptions] = React.useState<HTMLSelectElement[]>();
+
+    //TODO: Options to be read from the gateway
+    const [diseasOptions, setDiseasOptions] = React.useState<HTMLSelectElement[]>();
+    const [vaccineOptions, setVaccineOptions] = React.useState<HTMLSelectElement[]>();
+    const [medicalProductOptions, setMedicalProductOptions] = React.useState<HTMLSelectElement[]>();
+    const [marketingHolderOptions, setMarketingHolderOptions] = React.useState<HTMLSelectElement[]>();
 
     React.useEffect(() => {
         if (navigation) {
@@ -88,6 +91,10 @@ const RecordVaccinationCertData = (props: any) => {
     React.useEffect(() => {
         setOptions();
         setIso3311a2();
+        initDynamicOptions();
+
+        setIdentifierType(IdentifierType.PPN);
+        setSelectedIdentifierTypeOptionValue(IdentifierType.PPN);
     }, []);
 
     const handleError = (error: any) => {
@@ -131,15 +138,35 @@ const RecordVaccinationCertData = (props: any) => {
 
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         const form = event.currentTarget;
+        
+        // data for the backend
+        // alert(  
+        //     firstName + " " +  
+        //     name + " " +  
+        //     dateOfBirth?.toDateString() + " " +
+        //     sex + " " +  
+        //     selectedIdentifierTypeOptionValue + " " +  
+        //     personCountry?.substr(0,2) + " " +  
+        //     identifierNumber + " " +  
+        //     disease + " " +  
+        //     vaccine + " " +  
+        //     medicalProduct + " " +
+        //     marketingHolder + " " +  
+        //     sequence + " " +  
+        //     tot + " " +  
+        //     vacLastDate?.toDateString() + " " +  
+        //     issuerCountry?.substr(0,2) + " " +   
+        //     lot+ " " +  
+        //     adm );
 
         event.preventDefault();
         event.stopPropagation();
 
         if (form.checkValidity()) {
-            const vaccine: Patient = { firstName: firstName, name: name, dateOfBirth: dateOfBirth! };
+            const patient : Patient = { firstName: firstName, name: name, dateOfBirth: dateOfBirth! };
 
             //TODO Weiterleitung ans Backend oder eine Seite mit Anzeige 
-            props.setPatient(vaccine);
+            props.setPatient(patient);
             navigation!.toRecordPatient();
             setTimeout(navigation!.toShowRecordPatient, 200);
         }
@@ -148,10 +175,42 @@ const RecordVaccinationCertData = (props: any) => {
     const setOptions = () => {
         const options: any[] = [];
         for (let option in IdentifierType) {
-            options.push(<option key={option}>{t('translation:' + option)}</option>)
+            options.push(<option key={option} value={option}>{t('translation:' + option)}</option>)
         }
 
         setIdentifierTypeOptions(options);
+    }
+
+    //TODO: These options will be read dynamically from the gateway
+    const initDynamicOptions = () => {
+        const tmpDeseasOptions : string[] = ['840539006', '2.16.840.1.113883.6.96'];
+        setDiseasOptions(setDynamicOptions(tmpDeseasOptions));
+        setDisease(tmpDeseasOptions[0]);
+
+        const tmpVaccineOptions : string[] = ['1119305005', '1119349007', 'J07BX03'];
+        setVaccineOptions(setDynamicOptions(tmpVaccineOptions));
+        setVaccine(tmpVaccineOptions[0]);
+
+        const tmpMedicalOptions : string[] = ['EU/1/20/1528', 'EU/1/20/1507', 'EU/1/21/1529', 'EU/1/20/1525', 'CVnCoV', 'NVX-CoV2373',
+                                            'Sputnik-V', 'Convidecia', 'EpiVacCorona', 'BBIBP-CorV', 'Inactivated-SARS-CoV-2-Vero-Cell',
+                                            'CoronaVac', 'Covaxin'];
+        setMedicalProductOptions(setDynamicOptions(tmpMedicalOptions));
+        setMedicalProduct(tmpMedicalOptions[0]);
+
+        const tmpMarketingHolderOptions : string[] = ['ORG-100001699', 'ORG-100030215', 'ORG-100001417', 'ORG-100031184', 'ORG-100006270', 
+                                            'ORG-100013793', 'ORG-100020693', 'ORG-100020693', 'ORG-100010771', 'ORG-100024420', 'ORG-100032020',
+                                            'Gamaleya-Research-Institute', 'Vector-Institute', 'Sinovac-Biotech', 'Bharat-Biotech'];
+        setMarketingHolderOptions(setDynamicOptions(tmpMarketingHolderOptions));
+        setMarketingHolder(tmpMarketingHolderOptions[0]);
+    }
+
+    const setDynamicOptions = (dynamicOptions: string[]) => {
+        const options: any[] = [];
+        for (let i = 0; i < dynamicOptions.length; i++) {
+            options.push(<option key={i} value={ dynamicOptions[i] }>{ dynamicOptions[i] }</option>)
+        }
+
+        return options;
     }
 
     const setIso3311a2 = () => {
@@ -162,6 +221,13 @@ const RecordVaccinationCertData = (props: any) => {
         }
 
         setIsoCountryOptions(options);
+        setPersonCountry(codes[0]);
+        setIssuerCountry(codes[0]);
+    }
+
+    const handleIdentifierTypeChanged = (event: React.ChangeEvent<HTMLSelectElement>) => {
+        setIdentifierType(event.target.value);
+        setSelectedIdentifierTypeOptionValue(event.target.value);
     }
 
     return (
@@ -180,11 +246,12 @@ const RecordVaccinationCertData = (props: any) => {
                         */}
                         <Card.Header id='data-header' className='pb-0'>
                             <Row>
-                                <Col md='4'>
-                                    <Card.Title className='m-md-0 jcc-xs-jcfs-md' as={'h2'} >{t('translation:vaccination-cert')}</Card.Title>
-                                </Col>
-                                <Col md='8' className='d-flex justify-content-center'>
+                                
+                                <Col md='4' className='d-flex justify-content-left'>
                                     <Card.Text id='id-query-text'>{t('translation:query-id-card')}</Card.Text>
+                                </Col>
+                                <Col md='8'>
+                                    <Card.Title className='m-md-0 jcc-xs-jcfs-md' as={'h2'} >{t('translation:vaccination-cert')}</Card.Title>
                                 </Col>
                             </Row>
                             <hr />
@@ -197,41 +264,41 @@ const RecordVaccinationCertData = (props: any) => {
 
                             {/* first name input */}
                             <Form.Group as={Row} controlId='formFirstNameInput' className='mb-1'>
-                                <Form.Label className='input-label' column xs='5' sm='3'>{t('translation:first-name')}</Form.Label>
+                                <Form.Label className='input-label' column xs='5' sm='3'>{t('translation:first-name') + '*'}</Form.Label>
 
                                 <Col xs='7' sm='9' className='d-flex'>
                                     <Form.Control
                                         className='qt-input'
                                         value={firstName}
-                                        onChange={event => setFirstName(event.target.value)}
+                                        onChange={event => setFirstName(event.target.value.toUpperCase())}
                                         placeholder={t('translation:first-name')}
                                         type='text'
                                         required
-                                        maxLength={79}
+                                        maxLength={50}
                                     />
                                 </Col>
                             </Form.Group>
 
                             {/* name input */}
                             <Form.Group as={Row} controlId='formNameInput' className='mb-1'>
-                                <Form.Label className='input-label' column xs='5' sm='3'>{t('translation:name')}</Form.Label>
+                                <Form.Label className='input-label' column xs='5' sm='3'>{t('translation:name') + '*'}</Form.Label>
 
                                 <Col xs='7' sm='9' className='d-flex'>
                                     <Form.Control
                                         className='qt-input'
                                         value={name}
-                                        onChange={event => setName(event.target.value)}
+                                        onChange={event => setName(event.target.value.toUpperCase())}
                                         placeholder={t('translation:name')}
                                         type='text'
                                         required
-                                        maxLength={79}
+                                        maxLength={50}
                                     />
                                 </Col>
                             </Form.Group>
 
                             {/* date of birth input */}
                             <Form.Group as={Row} controlId='formDateOfBirthInput' className='mb-1'>
-                                <Form.Label className='input-label txt-no-wrap' column xs='5' sm='3'>{t('translation:date-of-birth')}</Form.Label>
+                                <Form.Label className='input-label txt-no-wrap' column xs='5' sm='3'>{t('translation:date-of-birth') + '*'}</Form.Label>
 
                                 <Col xs='7' sm='9' className='d-flex'>
                                     <DatePicker
@@ -256,7 +323,7 @@ const RecordVaccinationCertData = (props: any) => {
 
                             {/* sex input */}
                             <Row className='mb-1 sb-1'>
-                                <Form.Label className='input-label txt-no-wrap' column xs='5' sm='3' lg='3'>{t('translation:sex')}</Form.Label>
+                                <Form.Label className='input-label txt-no-wrap' column xs='5' sm='3' lg='3'>{t('translation:sex') + '*'}</Form.Label>
 
                                 <Col xs='7' sm='9' lg='9' className='d-flex'>
                                     <Row>
@@ -318,13 +385,13 @@ const RecordVaccinationCertData = (props: any) => {
                             <hr />
                             {/* Combobox for Identifier Type */}
                             <Form.Group as={Row} controlId='formIdentifyerTypeInput' className='mb-1 mt-1 sb-1 st-1'>
-                                <Form.Label className='input-label' column xs='5' sm='3'>{t('translation:identifierType')}</Form.Label>
+                                <Form.Label className='input-label' column xs='5' sm='3'>{t('translation:identifierType') + '*'}</Form.Label>
 
                                 <Col xs='7' sm='9' className='d-flex'>
                                     <Form.Control as="select"
                                         className='qt-input'
-                                        value={selectedOption}
-                                        onChange={event => setSelectedOption(event.target.value)}
+                                        value={identifierType}
+                                        onChange={ handleIdentifierTypeChanged }
                                         placeholder={t('translation:name')}
                                         required
                                     >
@@ -335,13 +402,13 @@ const RecordVaccinationCertData = (props: any) => {
 
                             {/* Combobox for the countries in iso-3166-1-alpha-2 */}
                             <Form.Group as={Row} controlId='formIsoCountryInput' className='mb-1 mt-1 sb-1 st-1'>
-                                <Form.Label className='input-label' column xs='5' sm='3'>{t('translation:country')}</Form.Label>
+                                <Form.Label className='input-label' column xs='5' sm='3'>{t('translation:country') + '*'}</Form.Label>
 
                                 <Col xs='7' sm='9' className='d-flex'>
                                     <Form.Control as="select"
                                         className='qt-input'
-                                        value={selectedIsoCountry}
-                                        onChange={event => setSelectedIsoCountry(event.target.value)}
+                                        value={personCountry}
+                                        onChange={event => setPersonCountry(event.target.value)}
                                         placeholder={t('translation:country')}
                                         required
                                     >
@@ -352,7 +419,7 @@ const RecordVaccinationCertData = (props: any) => {
 
                             {/* input identifierNumber */}
                             <Form.Group as={Row} controlId='formIdentifyerNumberInput' className='mb-1'>
-                                <Form.Label className='input-label' column xs='5' sm='3'>{t('translation:identifierNumber')}</Form.Label>
+                                <Form.Label className='input-label' column xs='5' sm='3'>{t('translation:identifierNumber') + '*'}</Form.Label>
 
                                 <Col xs='7' sm='9' className='d-flex'>
                                     <Form.Control
@@ -366,95 +433,119 @@ const RecordVaccinationCertData = (props: any) => {
                                     />
                                 </Col>
                             </Form.Group>
+                            
                             <hr />
-                            {/* input disease */}
-                            <Form.Group as={Row} controlId='formDiseseInput' className='mb-1'>
-                                <Form.Label className='input-label' column xs='5' sm='3'>{t('translation:disease-agent')}</Form.Label>
+
+                            {/* combobox disease */}
+                            <Form.Group as={Row} controlId='formDiseaseInput' className='mb-1 mt-1 sb-1 st-1'>
+                                <Form.Label className='input-label' column xs='5' sm='3'>{t('translation:disease-agent') + '*'}</Form.Label>
 
                                 <Col xs='7' sm='9' className='d-flex'>
-                                    <Form.Control
+                                    <Form.Control as="select"
                                         className='qt-input'
                                         value={disease}
                                         onChange={event => setDisease(event.target.value)}
                                         placeholder={t('translation:def-disease-agent')}
-                                        type='text'
                                         required
-                                        maxLength={79}
-                                    />
+                                    >
+                                        {diseasOptions}
+                                    </Form.Control>
                                 </Col>
                             </Form.Group>
 
-                            {/* input vaccine */}
-                            <Form.Group as={Row} controlId='formVaccineInput' className='mb-1'>
-                                <Form.Label className='input-label' column xs='5' sm='3'>{t('translation:vaccine')}</Form.Label>
+                            {/* combobox vaccine */}
+                            <Form.Group as={Row} controlId='formVaccineInput' className='mb-1 mt-1 sb-1 st-1'>
+                                <Form.Label className='input-label' column xs='5' sm='3'>{t('translation:vaccine') + '*'}</Form.Label>
 
                                 <Col xs='7' sm='9' className='d-flex'>
-                                    <Form.Control
+                                    <Form.Control as="select"
                                         className='qt-input'
                                         value={vaccine}
                                         onChange={event => setVaccine(event.target.value)}
-                                        placeholder={t('translation:def-vaccine')}
-                                        type='text'
+                                        placeholder={t('translation:vaccine')}
                                         required
-                                        maxLength={79}
-                                    />
+                                    >
+                                        {vaccineOptions}
+                                    </Form.Control>
                                 </Col>
                             </Form.Group>
 
-                            {/* input medicalProduct */}
-                            <Form.Group as={Row} controlId='formMedicalProductInput' className='mb-1'>
-                                <Form.Label className='input-label' column xs='5' sm='3'>{t('translation:vac-medical-product')}</Form.Label>
+                            {/* combobox medicalProduct */}
+                            <Form.Group as={Row} controlId='formMedicalProductInput' className='mb-1 mt-1 sb-1 st-1'>
+                                <Form.Label className='input-label' column xs='5' sm='3'>{t('translation:vac-medical-product') + '*'}</Form.Label>
 
                                 <Col xs='7' sm='9' className='d-flex'>
-                                    <Form.Control
+                                    <Form.Control as="select"
                                         className='qt-input'
                                         value={medicalProduct}
                                         onChange={event => setMedicalProduct(event.target.value)}
-                                        placeholder={t('translation:def-vac-medical-product')}
-                                        type='text'
+                                        placeholder={t('translation:vaccine')}
                                         required
-                                        maxLength={79}
-                                    />
+                                    >
+                                        {medicalProductOptions}
+                                    </Form.Control>
                                 </Col>
                             </Form.Group>
+
                             <hr />
-                            {/* input marketingHolder */}
-                            <Form.Group as={Row} controlId='formMarketingHolderInput' className='mb-1'>
-                                <Form.Label className='input-label' column xs='5' sm='3'>{t('translation:vac-marketing-holder')}</Form.Label>
+
+                            {/* combobox marketingHolder */}
+                            <Form.Group as={Row} controlId='formMarketingHolderInput' className='mb-1 mt-1 sb-1 st-1'>
+                                <Form.Label className='input-label' column xs='5' sm='3'>{t('translation:vac-marketing-holder') + '*'}</Form.Label>
 
                                 <Col xs='7' sm='9' className='d-flex'>
-                                    <Form.Control
+                                    <Form.Control as="select"
                                         className='qt-input'
                                         value={marketingHolder}
                                         onChange={event => setMarketingHolder(event.target.value)}
                                         placeholder={t('translation:def-vac-marketing-holder')}
-                                        type='text'
                                         required
-                                        maxLength={79}
+                                    >
+                                        {marketingHolderOptions}
+                                    </Form.Control>
+                                </Col>
+                            </Form.Group>
+
+                            {/* sequence */}
+                            <Form.Group as={Row} controlId='formTotInput' className='mb-1'>
+                                <Form.Label className='input-label' column xs='5' sm='3'>{t('translation:sequence') + '*'}</Form.Label>
+
+                                <Col xs='7' sm='9' className='d-flex'>
+                                    <Form.Control
+                                        className='qt-input'
+                                        value={sequence}
+                                        onChange={event => setSequence(parseInt(event.target.value))}
+                                        placeholder={t('translation:def-sequence')}
+                                        type='number'
+                                        required
+                                        min={0}
+                                        max={999999999}
+                                        maxLength={6}
                                     />
                                 </Col>
                             </Form.Group>
 
                             {/* tot */}
                             <Form.Group as={Row} controlId='formTotInput' className='mb-1'>
-                                <Form.Label className='input-label' column xs='5' sm='3'>{t('translation:tot')}</Form.Label>
+                                <Form.Label className='input-label' column xs='5' sm='3'>{t('translation:tot') + '*'}</Form.Label>
 
                                 <Col xs='7' sm='9' className='d-flex'>
                                     <Form.Control
                                         className='qt-input'
                                         value={tot}
-                                        onChange={event => setTot(event.target.value)}
+                                        onChange={event => setTot(parseInt(event.target.value))}
                                         placeholder={t('translation:def-tot')}
-                                        type='text'
+                                        type='number'
                                         required
-                                        maxLength={79}
+                                        min={1}
+                                        max={9}
                                     />
                                 </Col>
                             </Form.Group>
 
                             {/* vacLastDate */}
                             <Form.Group as={Row} controlId='formLastDateInput' className='mb-1'>
-                                <Form.Label className='input-label txt-no-wrap' column xs='5' sm='3'>{t('translation:vac-last-date')}</Form.Label>
+                                <Form.Label className='input-label txt-no-wrap' column xs='5' sm='3'>{t('translation:vac-last-date') + '*'}</Form.Label>
 
                                 <Col xs='7' sm='9' className='d-flex'>
                                     <DatePicker
@@ -479,13 +570,13 @@ const RecordVaccinationCertData = (props: any) => {
 
                             {/* Combobox for the vaccin countries in iso-3166-1-alpha-2 */}
                             <Form.Group as={Row} controlId='formVacCountryInput' className='mb-1 mt-1 sb-1 st-1'>
-                                <Form.Label className='input-label' column xs='5' sm='3'>{t('translation:country')}</Form.Label>
+                                <Form.Label className='input-label' column xs='5' sm='3'>{t('translation:vac-country') + '*'}</Form.Label>
 
                                 <Col xs='7' sm='9' className='d-flex'>
                                     <Form.Control as="select"
                                         className='qt-input'
-                                        value={selectedVacCountry}
-                                        onChange={event => setSelectedVacCountry(event.target.value)}
+                                        value={issuerCountry}
+                                        onChange={event => setIssuerCountry(event.target.value)}
                                         placeholder={t('translation:country')}
                                         required
                                     >
@@ -505,7 +596,6 @@ const RecordVaccinationCertData = (props: any) => {
                                         onChange={event => setLot(event.target.value)}
                                         placeholder={t('translation:def-lot')}
                                         type='text'
-                                        required
                                         maxLength={79}
                                     />
                                 </Col>
@@ -522,7 +612,6 @@ const RecordVaccinationCertData = (props: any) => {
                                         onChange={event => setAdm(event.target.value)}
                                         placeholder={t('translation:def-adm')}
                                         type='text'
-                                        required
                                         maxLength={79}
                                     />
                                 </Col>
