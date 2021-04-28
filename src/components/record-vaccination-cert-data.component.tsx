@@ -40,8 +40,10 @@ import de from 'date-fns/locale/de';
 import { EUDGC, VaccinationEntry, DiseaseAgentTargeted } from '../generated-files/dgc-schema-object';
 
 // import { useGetUuid } from '../api';
-var iso3311a2 = require('iso-3166-1-alpha-2');
-let schema = require('../generated-files/DGC-all-schemas-combined.json');
+const iso3311a2 = require('iso-3166-1-alpha-2');
+const schema = require('../generated-files/DGC-all-schemas-combined.json');
+const Validator = require('jsonschema').Validator;
+const validator = new Validator();
 
 registerLocale('de', de)
 
@@ -174,7 +176,7 @@ const RecordVaccinationCertData = (props: any) => {
             ma: marketingHolder,
             dn: sequence!,
             sd: tot!,
-            dt: vacLastDate!.toDateString(),
+            dt: formatDate(vacLastDate!),
             co: issuerCountry!.substr(0,2),
             // TODO: was bedeutet das?
             is: adm,
@@ -192,8 +194,14 @@ const RecordVaccinationCertData = (props: any) => {
                 fnt: name,
                 gnt: firstName
             },
-            dob:dateOfBirth!.toDateString(),
+            dob:formatDate(dateOfBirth!),
             v:[vacc]
+        }
+
+        var result = validator.validate(eudgc, schema);
+        if(!result.valid) {
+            console.error(result);
+            alert("Eingabe passt nicht zum Schema. Siehe Konsoleausgabe!");
         }
 
         console.log(vacc);
@@ -209,6 +217,10 @@ const RecordVaccinationCertData = (props: any) => {
             navigation!.toRecordPatient();
             setTimeout(navigation!.toShowRecordPatient, 200);
         }
+    }
+    
+    const formatDate = (date: Date) : string => {
+        return  `${date.toISOString().substr(0, 10)}`;
     }
 
     const setOptions = () => {
