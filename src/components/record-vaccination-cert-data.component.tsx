@@ -37,13 +37,20 @@ import { registerLocale } from "react-datepicker";
 
 import "react-datepicker/dist/react-datepicker.css";
 import de from 'date-fns/locale/de';
-import Vaccine from '../misc/vaccine';
-import { getAllByPlaceholderText } from '@testing-library/dom';
+import { EUDGC, VaccinationEntry, DiseaseAgentTargeted } from '../generated-files/dgc-schema-object';
+
 // import { useGetUuid } from '../api';
-var iso3311a2 = require('iso-3166-1-alpha-2');
+const iso3311a2 = require('iso-3166-1-alpha-2');
+const schema = require('../generated-files/DGC-all-schemas-combined.json');
+const Validator = require('jsonschema').Validator;
+const validator = new Validator();
 
 registerLocale('de', de)
 
+enum DESEASES {
+    // diseases
+    _840539006 = "840539006"
+}
 
 const RecordVaccinationCertData = (props: any) => {
 
@@ -61,9 +68,9 @@ const RecordVaccinationCertData = (props: any) => {
     const [dateOfBirth, setDateOfBirth] = React.useState<Date>();
     const [sex, setSex] = React.useState<Sex>(Sex.MALE);
     const [disease, setDisease] = React.useState('');
-    const [vaccine, setVaccine] = React.useState('');
-    const [medicalProduct, setMedicalProduct] = React.useState('');
-    const [marketingHolder, setMarketingHolder] = React.useState('');
+    const [vaccine, setVaccine] = React.useState<any>('');
+    const [medicalProduct, setMedicalProduct] = React.useState<any>('');
+    const [marketingHolder, setMarketingHolder] = React.useState<any>('');
     const [sequence, setSequence] = React.useState<number>();
     const [tot, setTot] = React.useState<number>();
     const [vacLastDate, setVacLastDate] = React.useState<Date>();
@@ -140,24 +147,64 @@ const RecordVaccinationCertData = (props: any) => {
         const form = event.currentTarget;
         
         // data for the backend
-        // alert(  
-        //     firstName + " " +  
-        //     name + " " +  
-        //     dateOfBirth?.toDateString() + " " +
-        //     sex + " " +  
-        //     selectedIdentifierTypeOptionValue + " " +  
-        //     personCountry?.substr(0,2) + " " +  
-        //     identifierNumber + " " +  
-        //     disease + " " +  
-        //     vaccine + " " +  
-        //     medicalProduct + " " +
-        //     marketingHolder + " " +  
-        //     sequence + " " +  
-        //     tot + " " +  
-        //     vacLastDate?.toDateString() + " " +  
-        //     issuerCountry?.substr(0,2) + " " +   
-        //     lot+ " " +  
-        //     adm );
+        alert(  
+            firstName + " " +  
+            name + " " +  
+            dateOfBirth?.toDateString() + " " +
+            sex + " " +  
+            selectedIdentifierTypeOptionValue + " " +  
+            personCountry?.substr(0,2) + " " +  
+            identifierNumber + " " +  
+            disease + " " +  
+            vaccine + " " +  
+            medicalProduct + " " +
+            marketingHolder + " " +  
+            sequence + " " +  
+            tot + " " +  
+            vacLastDate?.toDateString() + " " +  
+            issuerCountry?.substr(0,2) + " " +   
+            lot+ " " +  
+            adm );
+        
+        const vacc:VaccinationEntry = {
+            // tg: disease,
+            //TODO:
+            
+            tg: disease as DiseaseAgentTargeted ,
+            vp: vaccine,
+            mp: medicalProduct,
+            ma: marketingHolder,
+            dn: sequence!,
+            sd: tot!,
+            dt: formatDate(vacLastDate!),
+            co: issuerCountry!.substr(0,2),
+            // TODO: was bedeutet das?
+            is: adm,
+            /**
+             * Unique Certificate Identifier: UVCI
+             * TODO: Wo kommt das her?
+             */
+            ci: "Wo kommt das her?"
+        };
+
+        const eudgc:EUDGC = {
+            //TODO: Welche Version
+            ver: '0.1.0',
+            nam: {
+                fnt: name,
+                gnt: firstName
+            },
+            dob:formatDate(dateOfBirth!),
+            v:[vacc]
+        }
+
+        var result = validator.validate(eudgc, schema);
+        if(!result.valid) {
+            console.error(result);
+            alert("Eingabe passt nicht zum Schema. Siehe Konsoleausgabe!");
+        }
+
+        console.log(vacc);
 
         event.preventDefault();
         event.stopPropagation();
@@ -171,6 +218,10 @@ const RecordVaccinationCertData = (props: any) => {
             setTimeout(navigation!.toShowRecordPatient, 200);
         }
     }
+    
+    const formatDate = (date: Date) : string => {
+        return  `${date.toISOString().substr(0, 10)}`;
+    }
 
     const setOptions = () => {
         const options: any[] = [];
@@ -183,7 +234,7 @@ const RecordVaccinationCertData = (props: any) => {
 
     //TODO: These options will be read dynamically from the gateway
     const initDynamicOptions = () => {
-        const tmpDeseasOptions : string[] = ['840539006', '2.16.840.1.113883.6.96'];
+        const tmpDeseasOptions : string[] = ['840539006'];
         setDiseasOptions(setDynamicOptions(tmpDeseasOptions));
         setDisease(tmpDeseasOptions[0]);
 
