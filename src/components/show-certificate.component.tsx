@@ -35,55 +35,47 @@ import utils from '../misc/utils';
 
 import Spinner from './spinner/spinner.component';
 import { Sex } from '../misc/enum';
-import { getQrCodeValueString } from '../misc/qr-code-value';
+import { EUDGC } from '../generated-files/dgc-schema-object';
+import genEDGCQR, {CertResult} from '../misc/edgcQRGenerator';
+
 // import { usePostPatient } from '../api';
 
-const ShowPatientData = (props: any) => {
+const ShowCertificate = (props: any) => {
 
     const navigation = useNavigation();
     const { t } = useTranslation();
 
     const [isInit, setIsInit] = React.useState(false)
-    const [patient, setPatient] = React.useState<Patient>();
+    const [eudgc, setEudgc] = React.useState<EUDGC>();
     const [patientToPost, setPatientToPost] = React.useState<Patient>();
     const [qrCodeValue, setQrCodeValue] = React.useState('');
-    const [uuIdHash, setUuIdHash] = React.useState('');
-    const [processId, setProcessId] = React.useState('');
+    const [dgci, setDGCI] = React.useState('');
+    const [tan, setTAN] = React.useState('');
 
 
     // set patient data on mount and set hash from uuid
     React.useEffect(() => {
-        if(isInit) { 
-            if (props.patient) {
-                setPatient(props.patient)
+        if (isInit) {
+            if (props.eudgc) {
+                setEudgc(props.eudgc)
             }
             else
                 props.setError({ error: '', message: t('translation:error-patient-data-load'), onCancel: navigation!.toLanding });
-        }   
+        }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isInit])
 
     React.useEffect(() => {
-        if (patient && patient.uuId) {
-            setUuIdHash(sha256(patient.uuId).toString());
-
-            if (patient.includePersData) {
-
-                setQrCodeValue(getQrCodeValueString(patient.uuId, patient.firstName, patient.name, patient.dateOfBirth));
-            } else {
-                setQrCodeValue(getQrCodeValueString(patient.uuId));
-            }
+        if (eudgc) {
+            // TODO catch errors and handle them du to possible server connection problems
+            genEDGCQR(eudgc).then((certResult: CertResult) => {
+                setQrCodeValue(certResult.qrCode);
+                setTAN(certResult.tan);
+                setDGCI(certResult.dgci);
+            });
         }
-    }, [patient])
+    }, [eudgc])
 
-
-    
-    // set process id from hash
-    React.useEffect(() => {
-        if (uuIdHash) {
-            setProcessId(utils.shortHash(uuIdHash));
-        }
-    }, [uuIdHash]);
 
     // set ready state for spinner
     React.useEffect(() => {
@@ -93,7 +85,7 @@ const ShowPatientData = (props: any) => {
     }, [navigation]);
 
     const finishProcess = () => {
-        props.setPatient(undefined);
+        props.setEudgc(undefined);
         props.setNotificationShow(true);
         navigation!.toLanding();
     }
@@ -103,7 +95,7 @@ const ShowPatientData = (props: any) => {
 
         if (error) {
 
-            
+
             msg = error.message
         }
         props.setError({ error: error, message: msg, onCancel: navigation!.toLanding });
@@ -128,9 +120,11 @@ const ShowPatientData = (props: any) => {
                             <Col sm='5'>
                                 <Card.Title className='m-sm-0 jcc-xs-jcfs-sm' as={'h2'}>{t('translation:qr-code')}</Card.Title>
                                 <hr />
+                                <Card.Text className='input-label jcc-xs-jcfs-sm mb-0' >DGCI: {dgci}</Card.Text>
+                                <Card.Text className='input-label jcc-xs-jcfs-sm mb-0' >TAN: {tan}</Card.Text>
                                 {/* <Card.Text className='input-label font-weight-bold mt-4 jcc-xs-jcfs-sm' >{t('translation:process')}</Card.Text>
                                 <Card.Text className='input-label jcc-xs-jcfs-sm mb-0' >{processId}</Card.Text> */}
-                                <Card.Text className='input-label font-weight-bold mt-4 jcc-xs-jcfs-sm' >{t('translation:patient-data')}</Card.Text>
+                                {/* <Card.Text className='input-label font-weight-bold mt-4 jcc-xs-jcfs-sm' >{t('translation:patient-data')}</Card.Text>
                                 <Card.Text className='input-label jcc-xs-jcfs-sm mb-0' >{patient?.firstName + ' ' + patient?.name}</Card.Text>
                                 <Moment className='input-label mb-3 jcc-xs-jcfs-sm' locale='de' format='DD. MM. yyyy' >{patient?.dateOfBirth as Date}</Moment>
                                 <Card.Text className='input-label jcc-xs-jcfs-sm' >{patient?.sex === Sex.MALE ? t('translation:male') : patient?.sex === Sex.FEMALE ? t('translation:female') : t('translation:diverse')}</Card.Text>
@@ -138,13 +132,14 @@ const ShowPatientData = (props: any) => {
                                 <Card.Text className='input-label jcc-xs-jcfs-sm' >{patient?.zip + ' ' + patient?.city}</Card.Text>
                                 <Card.Text className='input-label jcc-xs-jcfs-sm mb-0' >{patient?.phoneNumber}</Card.Text>
                                 <Card.Text className='input-label jcc-xs-jcfs-sm' >{patient?.emailAddress}</Card.Text>
-                                <Card.Text className='input-label jcc-xs-jcfs-sm' >{patient?.testId}</Card.Text>
+                                <Card.Text className='input-label jcc-xs-jcfs-sm' >{patient?.testId}</Card.Text> */}
                             </Col>
                             <Col sm='7' className='px-4'>
                                 <Container id='qr-code-container'>
                                     {qrCodeValue ? <><QRCode id='qr-code' size={256} renderAs='svg' value={qrCodeValue} />
                                         {/* <Card.Text className='input-label' >{qrCodeValue}</Card.Text> */}
                                     </> : <></>}
+                                    <pre>{qrCodeValue}</pre>
                                 </Container>
                             </Col>
                         </Row>
@@ -159,7 +154,7 @@ const ShowPatientData = (props: any) => {
                                 <Button
                                     className='my-1 my-md-0 p-0'
                                     block
-                                    onClick={navigation!.toRecordPatient}
+                                    onClick={navigation!.toRecordVac}
                                 >
                                     {t('translation:patient-data-correction')}
                                 </Button>
@@ -168,7 +163,7 @@ const ShowPatientData = (props: any) => {
                                 <Button
                                     className='my-1 my-md-0 p-0'
                                     block
-                                    onClick={() => setPatientToPost(patient)}
+                                    onClick={finishProcess}
                                 >
                                     {t('translation:process-finish')}
                                 </Button>
@@ -181,4 +176,4 @@ const ShowPatientData = (props: any) => {
     )
 }
 
-export default ShowPatientData;
+export default ShowCertificate;

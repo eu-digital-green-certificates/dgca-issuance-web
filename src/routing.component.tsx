@@ -26,30 +26,25 @@ import { Container } from 'react-bootstrap'
 import './i18n';
 import { useTranslation } from 'react-i18next';
 
-import useRoutes from './misc/routes';
-import Patient from './misc/patient';
+import {useRoutes} from './misc/navigation';
 
 import Footer from './components/footer.component';
 import Header from './components/header.component';
 import LandingPage from './components/landing-page.component';
-import RecordPatientData from './components/record-patient-data.component';
-import ShowPatientData from './components/show-patient-data.component';
-import RecordTestResult from './components/record-test-result.component';
-import QrScan from './components/qr-scan.component';
-import Statistics from './components/statistics.component';
-import FailedReport from './components/failed-report.component';
 
 import PrivateRoute from './components/private-route.component';
 import IError from './misc/error';
 import ErrorPage from './components/error-page.component';
 import NotificationPage from './components/notification-page.component';
 import RecordVaccinationCertData from './components/record-vaccination-cert-data.component';
+import ShowCertificate from './components/show-certificate.component';
+import { EUDGC } from './generated-files/dgc-schema-object';
 
 const Routing = (props: any) => {
 
     const routes = useRoutes();
     const { t } = useTranslation();
-    const [patient, setPatient] = React.useState<Patient>();
+    const [eudgc, setEudgc] = React.useState<EUDGC>();
     const [error, setError] = React.useState<IError>();
     const [errorShow, setErrorShow] = React.useState(false);
     const [notificationShow, setNotificationShow] = React.useState(false);
@@ -94,27 +89,22 @@ const Routing = (props: any) => {
 
                 <Route
                     exact
-                    path={routes.recordPatient}
+                    path={routes.recordVac}
                 >
-                    <RecordPatientData setPatient={setPatient} patient={patient} setError={setError} />
-                </Route>
-
-                <Route
-                    path={routes.showPatientRecord}
-                >
-                    <ShowPatientData setPatient={setPatient} patient={patient} setError={setError} setNotificationShow={setNotificationShow}  />
+                    <RecordVaccinationCertData setEudgc={setEudgc} eudgc={eudgc} setError={setError} />
                 </Route>
 
                 <Route
                     exact
-                    path={routes.recordVaccineCert}
+                    path={routes.showCert}
                 >
-                    <RecordVaccinationCertData setPatient={setPatient} patient={patient} setError={setError} />
+                    <ShowCertificate setEudgc={setEudgc} eudgc={eudgc} setError={setError} />
                 </Route>
 
                 {/* Record Patient Data */}
                 {/* <PrivateRoute
                     exact
+
                     roles={['c19_quick_test_counter']}
                     path={routes.recordPatient}
                     component={RecordPatientData}
