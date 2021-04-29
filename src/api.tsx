@@ -68,7 +68,6 @@ export const useGetVaccinMedicalData = () => {
         // get object via public
         const medicalProductsData = MedicalProducts.valueSetValues;
         setMedicalProducts(medicalProductsData);
-        console.log({ medicalProductsData }); // !TODO: remove debugging statement
     }, [])
 
     return medicalProducts;
@@ -84,7 +83,6 @@ export const useGetDiseaseAgents = () => {
         // get object via public
         const diseaseAgentsData = DiseaseAgents.valueSetValues;
         setDiseaseAgents(diseaseAgentsData);
-        console.log({ diseaseAgentsData }); // !TODO: remove debugging statement
     }, [])
     return diseaseAgents;
 }
@@ -99,7 +97,6 @@ export const useGetVaccineManufacturers = () => {
         // get object via public
         const vaccineManufacturersData = VaccineManufacturers.valueSetValues;
         setVaccineManufacturers(vaccineManufacturersData);
-        console.log({ vaccineManufacturersData }); // !TODO: remove debugging statement
     }, [])
     return vaccineManufacturers;
 }
@@ -114,7 +111,6 @@ export const useGetVaccines = () => {
         // get object via public
         const vaccinesData = Vaccines.valueSetValues;
         setVaccines(vaccinesData);
-        console.log({ vaccinesData }); // !TODO: remove debugging statement
     }, [])
     return vaccines;
 }

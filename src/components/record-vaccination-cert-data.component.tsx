@@ -37,7 +37,7 @@ import { registerLocale } from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import de from 'date-fns/locale/de';
 import { EUDGC, VaccinationEntry, DiseaseAgentTargeted } from '../generated-files/dgc-combined-schema';
-import { useGetVaccinMedicalData } from '../api';
+import { useGetDiseaseAgents, useGetVaccineManufacturers, useGetVaccines, useGetVaccinMedicalData } from '../api';
 
 // import { useGetUuid } from '../api';
 const iso3311a2 = require('iso-3166-1-alpha-2');
@@ -56,7 +56,6 @@ const RecordVaccinationCertData = (props: any) => {
 
     const navigation = useNavigation();
     const { t } = useTranslation();
-    const vacMedData = useGetVaccinMedicalData();
 
     const [isInit, setIsInit] = React.useState(false)
     // const [uuIdHash, setUuIdHash] = React.useState('');
@@ -67,7 +66,6 @@ const RecordVaccinationCertData = (props: any) => {
     const [identifierType, setIdentifierType] = React.useState('');
     const [identifierNumber, setIdentifierNumber] = React.useState('');
     const [dateOfBirth, setDateOfBirth] = React.useState<Date>();
-    const [sex, setSex] = React.useState<Sex>(Sex.MALE);
     const [disease, setDisease] = React.useState('');
     const [vaccine, setVaccine] = React.useState<any>('');
     const [medicalProduct, setMedicalProduct] = React.useState<any>('');
@@ -75,7 +73,6 @@ const RecordVaccinationCertData = (props: any) => {
     const [sequence, setSequence] = React.useState<number>();
     const [tot, setTot] = React.useState<number>();
     const [vacLastDate, setVacLastDate] = React.useState<Date>();
-    const [lot, setLot] = React.useState('');
     const [adm, setAdm] = React.useState('');
     const [selectedIdentifierTypeOptionValue, setSelectedIdentifierTypeOptionValue] = React.useState<string>();
     const [personCountry, setPersonCountry] = React.useState<string>();
@@ -90,6 +87,12 @@ const RecordVaccinationCertData = (props: any) => {
     const [medicalProductOptions, setMedicalProductOptions] = React.useState<HTMLSelectElement[]>();
     const [marketingHolderOptions, setMarketingHolderOptions] = React.useState<HTMLSelectElement[]>();
 
+    // data read from the API
+    const vacMedsData = useGetVaccinMedicalData();
+    const diseaseAgentsData = useGetDiseaseAgents();
+    const vaccineManufacturers = useGetVaccineManufacturers();
+    const vaccines = useGetVaccines();
+
     React.useEffect(() => {
         if (navigation) {
             setTimeout(setIsInit, 200, true);
@@ -99,17 +102,56 @@ const RecordVaccinationCertData = (props: any) => {
     React.useEffect(() => {
         setOptions();
         setIso3311a2();
-        initDynamicOptions();
 
         setIdentifierType(IdentifierType.PPN);
         setSelectedIdentifierTypeOptionValue(IdentifierType.PPN);
     }, []);
 
-    React.useEffect(()=> {
-        if (vacMedData){
-            // set combo options
+    React.useEffect(() => {
+        if (vacMedsData) {
+            let possibleOptions: string[] = []
+            Object.keys(vacMedsData).forEach((key) => {
+                // transcribes the IDs to the display names
+                possibleOptions = [...possibleOptions, vacMedsData[key]["display"]]
+            })
+            setMedicalProductOptions(setDynamicOptions(possibleOptions));
         }
-    }, [vacMedData])
+    }, [vacMedsData])
+
+    React.useEffect(() => {
+        if (diseaseAgentsData) {
+            let possibleOptions: string[] = []
+            Object.keys(diseaseAgentsData).forEach((key) => {
+                // transcribes the IDs to the display names
+                possibleOptions = [...possibleOptions, diseaseAgentsData[key]["display"]]
+            })
+            setDiseasOptions(setDynamicOptions(possibleOptions));
+        }
+    }, [diseaseAgentsData])
+
+    React.useEffect(() => {
+        if (vaccineManufacturers) {
+            let possibleOptions: string[] = []
+            Object.keys(vaccineManufacturers).forEach((key) => {
+                // transcribes the IDs to the display names
+                possibleOptions = [...possibleOptions, vaccineManufacturers[key]["display"]]
+            })
+            setMarketingHolderOptions(setDynamicOptions(possibleOptions));
+        }
+    }, [vaccineManufacturers])
+
+    React.useEffect(() => {
+        if (vaccines) {
+            let possibleOptions: string[] = []
+            Object.keys(vaccines).forEach((key) => {
+                // transcribes the IDs to the display names
+                possibleOptions = [...possibleOptions, vaccines[key]["display"]]
+            })
+            setVaccineOptions(setDynamicOptions(possibleOptions));
+        }
+    }, [vaccines])
+
+
 
     const handleError = (error: any) => {
         let msg = '';
@@ -153,30 +195,7 @@ const RecordVaccinationCertData = (props: any) => {
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         const form = event.currentTarget;
 
-        // data for the backend
-        alert(
-            firstName + " " +
-            name + " " +
-            dateOfBirth?.toDateString() + " " +
-            sex + " " +
-            selectedIdentifierTypeOptionValue + " " +
-            personCountry?.substr(0, 2) + " " +
-            identifierNumber + " " +
-            disease + " " +
-            vaccine + " " +
-            medicalProduct + " " +
-            marketingHolder + " " +
-            sequence + " " +
-            tot + " " +
-            vacLastDate?.toDateString() + " " +
-            issuerCountry?.substr(0, 2) + " " +
-            lot + " " +
-            adm);
-
         const vacc: VaccinationEntry = {
-            // tg: disease,
-            //TODO:
-
             tg: disease as DiseaseAgentTargeted,
             vp: vaccine,
             mp: medicalProduct,
@@ -195,8 +214,7 @@ const RecordVaccinationCertData = (props: any) => {
         };
 
         const eudgc: EUDGC = {
-            //TODO: Welche Version
-            ver: '0.1.0',
+            ver: '1.0.0',
             nam: {
                 fnt: name,
                 gnt: firstName
@@ -222,9 +240,7 @@ const RecordVaccinationCertData = (props: any) => {
         }
     }
 
-    const formatDate = (date: Date): string => {
-        return `${date.toISOString().substr(0, 10)}`;
-    }
+    const formatDate = (date: Date): string => `${date.toISOString().substr(0, 10)}`;
 
     const setOptions = () => {
         const options: any[] = [];
@@ -233,29 +249,6 @@ const RecordVaccinationCertData = (props: any) => {
         }
 
         setIdentifierTypeOptions(options);
-    }
-
-    //TODO: These options will be read dynamically from the gateway
-    const initDynamicOptions = () => {
-        const tmpDeseasOptions: string[] = ['840539006'];
-        setDiseasOptions(setDynamicOptions(tmpDeseasOptions));
-        setDisease(tmpDeseasOptions[0]);
-
-        const tmpVaccineOptions: string[] = ['1119305005', '1119349007', 'J07BX03'];
-        setVaccineOptions(setDynamicOptions(tmpVaccineOptions));
-        setVaccine(tmpVaccineOptions[0]);
-
-        const tmpMedicalOptions: string[] = ['EU/1/20/1528', 'EU/1/20/1507', 'EU/1/21/1529', 'EU/1/20/1525', 'CVnCoV', 'NVX-CoV2373',
-            'Sputnik-V', 'Convidecia', 'EpiVacCorona', 'BBIBP-CorV', 'Inactivated-SARS-CoV-2-Vero-Cell',
-            'CoronaVac', 'Covaxin'];
-        setMedicalProductOptions(setDynamicOptions(tmpMedicalOptions));
-        setMedicalProduct(tmpMedicalOptions[0]);
-
-        const tmpMarketingHolderOptions: string[] = ['ORG-100001699', 'ORG-100030215', 'ORG-100001417', 'ORG-100031184', 'ORG-100006270',
-            'ORG-100013793', 'ORG-100020693', 'ORG-100020693', 'ORG-100010771', 'ORG-100024420', 'ORG-100032020',
-            'Gamaleya-Research-Institute', 'Vector-Institute', 'Sinovac-Biotech', 'Bharat-Biotech'];
-        setMarketingHolderOptions(setDynamicOptions(tmpMarketingHolderOptions));
-        setMarketingHolder(tmpMarketingHolderOptions[0]);
     }
 
     const setDynamicOptions = (dynamicOptions: string[]) => {
@@ -350,6 +343,8 @@ const RecordVaccinationCertData = (props: any) => {
                                 </Col>
                             </Form.Group>
 
+                            {/* !TODO: implement input for the standardized name */}
+
                             {/* date of birth input */}
                             <Form.Group as={Row} controlId='formDateOfBirthInput' className='mb-1'>
                                 <Form.Label className='input-label txt-no-wrap' column xs='5' sm='3'>{t('translation:date-of-birth') + '*'}</Form.Label>
@@ -374,68 +369,6 @@ const RecordVaccinationCertData = (props: any) => {
                                     />
                                 </Col>
                             </Form.Group>
-
-                            {/* sex input */}
-                            <Row className='mb-1 sb-1'>
-                                <Form.Label className='input-label txt-no-wrap' column xs='5' sm='3' lg='3'>{t('translation:sex') + '*'}</Form.Label>
-
-                                <Col xs='7' sm='9' lg='9' className='d-flex'>
-                                    <Row>
-                                        <Form.Group as={Col} xs='12' sm='6' md='3' className='d-flex mb-0' controlId='sex-radio1'>
-                                            <Form.Check className='d-flex align-self-center'>
-                                                <Form.Check.Input
-                                                    className='rdb-input'
-                                                    type='radio'
-                                                    name="sex-radios"
-                                                    id="sex-radio1"
-                                                    checked={sex === Sex.MALE}
-                                                    onChange={() => setSex(Sex.MALE)}
-                                                />
-                                                <Form.Label className='rdb-label mb-0'>{t('translation:male')}</Form.Label>
-                                            </Form.Check>
-                                        </Form.Group>
-                                        <Form.Group as={Col} xs='12' sm='6' md='3' className='d-flex mb-0' controlId='sex-radio2'>
-                                            <Form.Check className='d-flex align-self-center'>
-                                                <Form.Check.Input required
-                                                    className='rdb-input'
-                                                    type='radio'
-                                                    name="sex-radios"
-                                                    id="sex-radio2"
-                                                    checked={sex === Sex.FEMALE}
-                                                    onChange={() => setSex(Sex.FEMALE)}
-                                                />
-                                                <Form.Label className='rdb-label mb-0'>{t('translation:female')}</Form.Label>
-                                            </Form.Check>
-                                        </Form.Group>
-                                        <Form.Group as={Col} xs='12' sm='6' md='3' className='d-flex mb-0' controlId='sex-radio3'>
-                                            <Form.Check className='d-flex align-self-center'>
-                                                <Form.Check.Input
-                                                    className='rdb-input'
-                                                    type='radio'
-                                                    name="sex-radios"
-                                                    id="sex-radio3"
-                                                    checked={sex === Sex.OTHER}
-                                                    onChange={() => setSex(Sex.OTHER)}
-                                                />
-                                                <Form.Label className='rdb-label mb-0'>{t('translation:other')}</Form.Label>
-                                            </Form.Check>
-                                        </Form.Group>
-                                        <Form.Group as={Col} xs='12' sm='6' md='3' className='d-flex mb-0' controlId='sex-radio4'>
-                                            <Form.Check className='d-flex align-self-center'>
-                                                <Form.Check.Input
-                                                    className='rdb-input'
-                                                    type='radio'
-                                                    name="sex-radios"
-                                                    id="sex-radio4"
-                                                    checked={sex === Sex.UNKNOWN}
-                                                    onChange={() => setSex(Sex.UNKNOWN)}
-                                                />
-                                                <Form.Label className='rdb-label mb-0'>{t('translation:unknown')}</Form.Label>
-                                            </Form.Check>
-                                        </Form.Group>
-                                    </Row>
-                                </Col>
-                            </Row>
                             <hr />
                             {/* Combobox for Identifier Type */}
                             <Form.Group as={Row} controlId='formIdentifyerTypeInput' className='mb-1 mt-1 sb-1 st-1'>
@@ -533,7 +466,7 @@ const RecordVaccinationCertData = (props: any) => {
                                         className='qt-input'
                                         value={medicalProduct}
                                         onChange={event => setMedicalProduct(event.target.value)}
-                                        placeholder={t('translation:vaccine')}
+                                        placeholder="{t('translation:vaccine')}"
                                         required
                                     >
                                         {medicalProductOptions}
@@ -597,6 +530,7 @@ const RecordVaccinationCertData = (props: any) => {
                                 </Col>
                             </Form.Group>
 
+                            {/* !TODO: change label to a clearer name then "Last Date" */}
                             {/* vacLastDate */}
                             <Form.Group as={Row} controlId='formLastDateInput' className='mb-1'>
                                 <Form.Label className='input-label txt-no-wrap' column xs='5' sm='3'>{t('translation:vac-last-date') + '*'}</Form.Label>
@@ -639,22 +573,6 @@ const RecordVaccinationCertData = (props: any) => {
                                 </Col>
                             </Form.Group>
                             <hr />
-                            {/* lot */}
-                            <Form.Group as={Row} controlId='formLotInput' className='mb-1'>
-                                <Form.Label className='input-label' column xs='5' sm='3'>{t('translation:lot')}</Form.Label>
-
-                                <Col xs='7' sm='9' className='d-flex'>
-                                    <Form.Control
-                                        className='qt-input'
-                                        value={lot}
-                                        onChange={event => setLot(event.target.value)}
-                                        placeholder={t('translation:def-lot')}
-                                        type='text'
-                                        maxLength={79}
-                                    />
-                                </Col>
-                            </Form.Group>
-
                             {/* adm */}
                             <Form.Group as={Row} controlId='formAdmInput' className='mb-1'>
                                 <Form.Label className='input-label' column xs='5' sm='3'>{t('translation:adm')}</Form.Label>
