@@ -24,7 +24,13 @@ import { useKeycloak } from '@react-keycloak/web';
 import React from 'react';
 import StatisticData from './misc/statistic-data';
 import ITestResult from './misc/test-result';
-import MedicalProducts from '../public/json-res/vaccine-medicinal-product.json';
+
+
+// json data
+import MedicalProducts from './assets/json-res/vaccine-medicinal-product.json';
+import DiseaseAgents from './assets/json-res/disease-agent-targeted.json';
+import VaccineManufacturers from './assets/json-res/vaccine-mah-manf.json';
+import Vaccines from './assets/json-res/vaccine-prophylaxis.json';
 
 export const api = axios.create({
     baseURL: ''
@@ -32,22 +38,144 @@ export const api = axios.create({
 
 const TRYS = 2;
 
+
+// Medical Products
+interface medicalProduct {
+    active: boolean,
+    display: string,
+    lang: string,
+    system: string,
+    version: string
+}
+
+interface medicalProductsData {
+    [key: string]: medicalProduct;
+}
+
 export const useGetVaccinMedicalData = () => {
-
-    const [medicalProduct, setMedicalProduct] = React.useState<any>();
-
+    const [medicalProducts, setMedicalProducts] = React.useState<medicalProductsData>();
     React.useEffect(() => {
 
         // get object via api
 
         // get object via public
-        const medicalProductData = MedicalProducts.valueSetValues;
-        console.log(medicalProductData);
-
-        setMedicalProduct('');
-
+        const medicalProductsData = MedicalProducts.valueSetValues;
+        setMedicalProducts(medicalProductsData);
+        console.log({ medicalProductsData }); // !TODO: remove debugging statement
     }, [])
 
+    return medicalProducts;
+}
 
-    return medicalProduct;
+
+// Disease Agents
+interface diseaseAgent {
+    active: boolean,
+    display: string,
+    lang: string,
+    system: string,
+    version: string
+}
+
+interface diseaseAgents {
+    [key: string]: diseaseAgent;
+}
+
+export const useGetDiseaseAgents = () => {
+    const [diseaseAgents, setDiseaseAgents] = React.useState<diseaseAgents>();
+    React.useEffect(() => {
+
+        // get object via api
+
+        // get object via public
+        const diseaseAgentsData = DiseaseAgents.valueSetValues;
+        setDiseaseAgents(diseaseAgentsData);
+        console.log({ diseaseAgentsData }); // !TODO: remove debugging statement
+    }, [])
+    return diseaseAgents;
+}
+
+// Vaccine Manufacturers
+interface vaccineManufacturer {
+    active: boolean,
+    display: string,
+    lang: string,
+    system: string,
+    version: string,
+    valueSetId: string,
+}
+
+interface vaccineManufacturers {
+    [key: string]: vaccineManufacturer;
+}
+
+export const useGetVaccineManufacturers = () => {
+    const [vaccineManufacturers, setVaccineManufacturers] = React.useState<diseaseAgents>();
+    React.useEffect(() => {
+
+        // get object via api
+
+        // get object via public
+        const vaccineManufacturersData = VaccineManufacturers.valueSetValues;
+        setVaccineManufacturers(vaccineManufacturersData);
+        console.log({ vaccineManufacturersData }); // !TODO: remove debugging statement
+    }, [])
+    return vaccineManufacturers;
+}
+
+// Vaccine / Prophylaxis
+interface vaccine {
+    active: boolean,
+    display: string,
+    lang: string,
+    system: string,
+    version: string,
+}
+
+interface vaccines {
+    [key: string]: vaccine;
+}
+
+export const useGetVaccines = () => {
+    const [vaccines, setVaccines] = React.useState<diseaseAgents>();
+    React.useEffect(() => {
+
+        // get object via api
+
+        // get object via public
+        const vaccinesData = Vaccines.valueSetValues;
+        setVaccines(vaccinesData);
+        console.log({ vaccinesData }); // !TODO: remove debugging statement
+    }, [])
+    return vaccines;
+}
+
+export const useStatistics = (onSuccess?: (status: number) => void, onError?: (error: any) => void) => {
+    const { keycloak, initialized } = useKeycloak();
+    const [statisticData, setStatisticData] = React.useState<StatisticData>();
+
+    const header = {
+        "Authorization": initialized ? `Bearer ${keycloak.token}` : "",
+        'Content-Type': 'application/json'
+    };
+
+    React.useEffect(() => {
+        /* setStatisticData({totalTestCount: 20, positiveTestCount: 5}); */
+        if (!statisticData) {
+            api.get('/api/quickteststatistics', { headers: header })
+                .then(response => {
+                    setStatisticData(response.data);
+                    if (onSuccess) {
+                        onSuccess(response?.status);
+                    }
+                })
+                .catch(error => {
+                    if (onError) {
+                        onError(error);
+                    }
+                });
+        }
+    }, []);
+
+    return statisticData;
 }
