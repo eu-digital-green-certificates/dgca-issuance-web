@@ -38,7 +38,7 @@ interface IValue {
     valueSetId?: string,
 }
 
-interface IValueSet {
+export interface IValueSet {
     [key: string]: IValue;
 }
 

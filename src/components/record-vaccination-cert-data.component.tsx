@@ -20,7 +20,7 @@
  */
 
 import React from 'react';
-import { Button, Card, Col, Form, Row } from 'react-bootstrap';
+import { Button, Card, Col, Form, FormControlProps, Row } from 'react-bootstrap';
 
 import '../i18n';
 import { useTranslation } from 'react-i18next';
@@ -35,10 +35,11 @@ import "react-datepicker/dist/react-datepicker.css";
 import de from 'date-fns/locale/de';
 
 import { EUDGC, VaccinationEntry, DiseaseAgentTargeted } from '../generated-files/dgc-combined-schema';
-import { useGetDiseaseAgents, useGetVaccineManufacturers, useGetVaccines, useGetVaccinMedicalData } from '../api';
+import { useGetDiseaseAgents, useGetVaccineManufacturers, useGetVaccines, useGetVaccinMedicalData, IValueSet } from '../api';
 
 import schema from '../generated-files/DGC.combined-schema.json';
 import { Validator } from 'jsonschema';
+import utils from '../misc/utils';
 const validator = new Validator();
 const iso3311a2 = require('iso-3166-1-alpha-2');
 
@@ -49,7 +50,7 @@ const RecordVaccinationCertData = (props: any) => {
 
     const navigation = useNavigation();
     const { t } = useTranslation();
-    
+
     // data read from the API
     const vacMedsData = useGetVaccinMedicalData();
     const diseaseAgentsData = useGetDiseaseAgents();
@@ -58,31 +59,36 @@ const RecordVaccinationCertData = (props: any) => {
 
     const [isInit, setIsInit] = React.useState(false)
 
-    const [firstName, setFirstName] = React.useState('');
-    const [name, setName] = React.useState('');
-    const [identifierType, setIdentifierType] = React.useState('');
-    const [identifierNumber, setIdentifierNumber] = React.useState('');
+    const [givenName, setGivenName] = React.useState<string>('');
+    const [familyName, setFamilyName] = React.useState<string>('');
+
+    const [standardisedGivenName, setStandardisedGivenName] = React.useState<string>('');
+    const [standardisedFamilyName, setStandardisedFamilyName] = React.useState<string>('');
+
     const [dateOfBirth, setDateOfBirth] = React.useState<Date>();
-    const [disease, setDisease] = React.useState('');
-    const [vaccine, setVaccine] = React.useState<any>('');
-    const [medicalProduct, setMedicalProduct] = React.useState<any>('');
-    const [marketingHolder, setMarketingHolder] = React.useState<any>('');
-    const [sequence, setSequence] = React.useState<number>();
-    const [tot, setTot] = React.useState<number>();
+
+    const [disease, setDisease] = React.useState<string>('');
+    const [vaccine, setVaccine] = React.useState<string>('');
+    const [medicalProduct, setMedicalProduct] = React.useState<string>('');
+    const [marketingHolder, setMarketingHolder] = React.useState<string>('');
+
+    const [diseasOptions, setDiseasOptions] = React.useState<JSX.Element[]>();
+    const [vaccineOptions, setVaccineOptions] = React.useState<JSX.Element[]>();
+    const [medicalProductOptions, setMedicalProductOptions] = React.useState<JSX.Element[]>();
+    const [marketingHolderOptions, setMarketingHolderOptions] = React.useState<JSX.Element[]>();
+
+    const [doseNumber, setDoseNumber] = React.useState<number>(0);
+    const [totalDoseNumber, setTotalDoseNumber] = React.useState<number>(0);
     const [vacLastDate, setVacLastDate] = React.useState<Date>();
-    const [adm, setAdm] = React.useState('');
-    const [selectedIdentifierTypeOptionValue, setSelectedIdentifierTypeOptionValue] = React.useState<string>();
-    const [personCountry, setPersonCountry] = React.useState<string>();
-    const [issuerCountry, setIssuerCountry] = React.useState<string>();
+    const [certificateIssuer, setCertificateIssuer] = React.useState('');
+    const [issuerCountryCode, setIssuerCountryCode] = React.useState<string>('');
 
-    const [identifierTypeOptions, setIdentifierTypeOptions] = React.useState<HTMLSelectElement[]>();
-    const [isoCountryOptions, setIsoCountryOptions] = React.useState<HTMLSelectElement[]>();
+    const [isoCountryOptions, setIsoCountryOptions] = React.useState<JSX.Element[]>();
 
-    //TODO: Options to be read from the gateway
-    const [diseasOptions, setDiseasOptions] = React.useState<HTMLSelectElement[]>();
-    const [vaccineOptions, setVaccineOptions] = React.useState<HTMLSelectElement[]>();
-    const [medicalProductOptions, setMedicalProductOptions] = React.useState<HTMLSelectElement[]>();
-    const [marketingHolderOptions, setMarketingHolderOptions] = React.useState<HTMLSelectElement[]>();
+
+    React.useEffect(() => {
+        setIso3311a2();
+    }, []);
 
 
     React.useEffect(() => {
@@ -93,61 +99,61 @@ const RecordVaccinationCertData = (props: any) => {
 
 
     React.useEffect(() => {
-        setOptions();
-        setIso3311a2();
-
-        setIdentifierType(IdentifierType.PPN);
-        setSelectedIdentifierTypeOptionValue(IdentifierType.PPN);
-    }, []);
-
-
-    React.useEffect(() => {
-        if (vacMedsData) {
-            let possibleOptions: string[] = []
-            Object.keys(vacMedsData).forEach((key) => {
-                // transcribes the IDs to the display names
-                possibleOptions = [...possibleOptions, vacMedsData[key]["display"]]
-            })
-            setMedicalProductOptions(setDynamicOptions(possibleOptions));
-        }
-    }, [vacMedsData])
-
-
-    React.useEffect(() => {
         if (diseaseAgentsData) {
-            let possibleOptions: string[] = []
-            Object.keys(diseaseAgentsData).forEach((key) => {
-                // transcribes the IDs to the display names
-                possibleOptions = [...possibleOptions, diseaseAgentsData[key]["display"]]
-            })
-            setDiseasOptions(setDynamicOptions(possibleOptions));
+            const options = getOptionsForValueSet(diseaseAgentsData)
+            setDiseasOptions(options);
         }
     }, [diseaseAgentsData])
 
 
     React.useEffect(() => {
+        if (vaccines) {
+            const options = getOptionsForValueSet(vaccines)
+            setVaccineOptions(options);
+        }
+    }, [vaccines])
+
+
+    React.useEffect(() => {
+        if (vacMedsData) {
+            const options = getOptionsForValueSet(vacMedsData)
+            setMedicalProductOptions(options);
+        }
+    }, [vacMedsData])
+
+
+    React.useEffect(() => {
         if (vaccineManufacturers) {
-            let possibleOptions: string[] = []
-            Object.keys(vaccineManufacturers).forEach((key) => {
-                // transcribes the IDs to the display names
-                possibleOptions = [...possibleOptions, vaccineManufacturers[key]["display"]]
-            })
-            setMarketingHolderOptions(setDynamicOptions(possibleOptions));
+            const options = getOptionsForValueSet(vaccineManufacturers)
+            setMarketingHolderOptions(options);
         }
     }, [vaccineManufacturers])
 
 
-    React.useEffect(() => {
-        if (vaccines) {
-            let possibleOptions: string[] = []
-            Object.keys(vaccines).forEach((key) => {
-                // transcribes the IDs to the display names
-                possibleOptions = [...possibleOptions, vaccines[key]["display"]]
-            })
-            setVaccineOptions(setDynamicOptions(possibleOptions));
-        }
-    }, [vaccines])
+    const getOptionsForValueSet = (valueSet: IValueSet): JSX.Element[] => {
+        const result: JSX.Element[] = [];
 
+        result.push(<option key={0} value={''} >{ }</option>);
+
+        for (const key of Object.keys(valueSet)) {
+            result.push(<option key={key} value={key}>{valueSet[key].display}</option>)
+        }
+
+        return result;
+    }
+
+    const setIso3311a2 = () => {
+        const options: JSX.Element[] = [];
+        const codes: string[] = iso3311a2.getCodes().sort();
+
+        options.push(<option key={0} value={''} >{ }</option>);
+
+        for (const code of codes) {
+            options.push(<option key={code} value={code}>{code + " : " + iso3311a2.getCountry(code)}</option>)
+        }
+
+        setIsoCountryOptions(options);
+    }
 
     const handleError = (error: any) => {
         let msg = '';
@@ -158,6 +164,13 @@ const RecordVaccinationCertData = (props: any) => {
         props.setError({ error: error, message: msg, onCancel: navigation!.toLanding });
     }
 
+    const handleStandardisedNameChanged = (changedValue: string, setStandardisedName: (value: string) => void) => {
+        const upperCaseChangedValue = changedValue.toUpperCase();
+
+        if (utils.isStandardisedNameValid(upperCaseChangedValue)) {
+            setStandardisedName(upperCaseChangedValue);
+        }
+    }
 
     const handleDateOfBirthChange = (evt: Date | [Date, Date] | null) => {
         const date = handleDateChange(evt);
@@ -184,95 +197,70 @@ const RecordVaccinationCertData = (props: any) => {
         return date;
     }
 
+    const handleNumber = (value: string, setNumber: (num: number) => void) => {
+        const num = parseInt(value);
+
+        if (!isNaN(num)) {
+            setNumber(num);
+        }
+    }
+
     const handleCancel = () => {
         props.setEudgc(undefined);
         navigation?.toLanding();
     }
 
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-        const form = event.currentTarget;
-
-        const vacc: VaccinationEntry = {
-            tg: disease as DiseaseAgentTargeted,
-            vp: vaccine,
-            mp: medicalProduct,
-            ma: marketingHolder,
-            dn: sequence!,
-            sd: tot!,
-            dt: formatDate(vacLastDate!),
-            co: issuerCountry!.substr(0, 2),
-            // TODO: was bedeutet das?
-            is: adm,
-            /**
-             * Unique Certificate Identifier: UVCI
-             * TODO: Wo kommt das her?
-             */
-            ci: "Wo kommt das her?"
-        };
-
-        const eudgc: EUDGC = {
-            ver: '1.0.0',
-            nam: {
-                fnt: name,
-                gnt: firstName
-            },
-            dob: formatDate(dateOfBirth!),
-            v: [vacc]
-        }
-
-        var result = validator.validate(eudgc, schema);
-        if (!result.valid) {
-            console.error(result);
-            alert("Eingabe passt nicht zum Schema. Siehe Konsoleausgabe!");
-        }
-
-        console.log(vacc);
 
         event.preventDefault();
         event.stopPropagation();
 
+        const form = event.currentTarget;
+
         if (form.checkValidity()) {
-            props.setEudgc(eudgc);
-            setTimeout(navigation!.toShowCert, 200);
+
+            const vacc: VaccinationEntry = {
+                tg: disease,
+                vp: vaccine,
+                mp: medicalProduct,
+                ma: marketingHolder,
+                dn: doseNumber!,
+                sd: totalDoseNumber!,
+                dt: vacLastDate!.toISOString().split('T')[0],
+                co: issuerCountryCode,
+                is: certificateIssuer,
+                ci: ''
+            };
+
+            const eudgc: EUDGC = {
+                ver: '1.0.0',
+                nam: {
+                    fn: familyName,
+                    fnt: standardisedFamilyName!,
+                    gn: givenName,
+                    gnt: standardisedGivenName
+                },
+                dob: dateOfBirth!.toISOString().split('T')[0],
+                v: [vacc]
+            }
+
+            var result = validator.validate(eudgc, schema);
+
+            if (result.valid) {
+                console.log(JSON.stringify(eudgc));
+
+                props.setEudgc(eudgc);
+                setTimeout(navigation!.toShowCert, 200);
+            }
+            else {
+                console.error(result);
+                props.setError({ error: result, message: result.errors[0].message, onCancel: navigation!.toLanding });
+            }
         }
     }
 
     const formatDate = (date: Date): string => `${date.toISOString().substr(0, 10)}`;
 
-    const setOptions = () => {
-        const options: any[] = [];
-        for (let option in IdentifierType) {
-            options.push(<option key={option} value={option}>{t('translation:' + option)}</option>)
-        }
-
-        setIdentifierTypeOptions(options);
-    }
-
-    const setDynamicOptions = (dynamicOptions: string[]) => {
-        const options: any[] = [];
-        for (let i = 0; i < dynamicOptions.length; i++) {
-            options.push(<option key={i} value={dynamicOptions[i]}>{dynamicOptions[i]}</option>)
-        }
-
-        return options;
-    }
-
-    const setIso3311a2 = () => {
-        const options: any[] = [];
-        const codes: any[] = iso3311a2.getCodes().sort();
-        for (let i = 0; i < codes.length; i++) {
-            options.push(<option key={codes[i]}>{codes[i] + " : " + iso3311a2.getCountry(codes[i])}</option>)
-        }
-
-        setIsoCountryOptions(options);
-        setPersonCountry(codes[0]);
-        setIssuerCountry(codes[0]);
-    }
-
-    const handleIdentifierTypeChanged = (event: React.ChangeEvent<HTMLSelectElement>) => {
-        setIdentifierType(event.target.value);
-        setSelectedIdentifierTypeOptionValue(event.target.value);
-    }
 
     return (
         !isInit ? <Spinner /> :
@@ -303,14 +291,14 @@ const RecordVaccinationCertData = (props: any) => {
                         <Card.Body id='data-body' className='pt-0'>
 
                             {/* first name input */}
-                            <Form.Group as={Row} controlId='formFirstNameInput' className='mb-1'>
+                            <Form.Group as={Row} controlId='formGivenNameInput' className='mb-1'>
                                 <Form.Label className='input-label' column xs='5' sm='3'>{t('translation:first-name') + '*'}</Form.Label>
 
                                 <Col xs='7' sm='9' className='d-flex'>
                                     <Form.Control
                                         className='qt-input'
-                                        value={firstName}
-                                        onChange={event => setFirstName(event.target.value.toUpperCase())}
+                                        value={givenName}
+                                        onChange={event => setGivenName(event.target.value)}
                                         placeholder={t('translation:first-name')}
                                         type='text'
                                         required
@@ -326,8 +314,8 @@ const RecordVaccinationCertData = (props: any) => {
                                 <Col xs='7' sm='9' className='d-flex'>
                                     <Form.Control
                                         className='qt-input'
-                                        value={name}
-                                        onChange={event => setName(event.target.value.toUpperCase())}
+                                        value={familyName}
+                                        onChange={event => setFamilyName(event.target.value)}
                                         placeholder={t('translation:name')}
                                         type='text'
                                         required
@@ -336,7 +324,45 @@ const RecordVaccinationCertData = (props: any) => {
                                 </Col>
                             </Form.Group>
 
-                            {/* !TODO: implement input for the standardized name */}
+                            <hr />
+
+                            {/* standardised first name input */}
+                            <Form.Group as={Row} controlId='formStandadisedGivenNameInput' className='mb-1'>
+                                <Form.Label className='input-label' column xs='5' sm='3'>{t('translation:standardised-first-name') + '*'}</Form.Label>
+
+                                <Col xs='7' sm='9' className='d-flex'>
+                                    <Form.Control
+                                        className='qt-input'
+                                        value={standardisedGivenName}
+                                        onChange={(evt) => handleStandardisedNameChanged(evt.target.value, setStandardisedGivenName)}
+                                        placeholder={t('translation:standardised-first-name')}
+                                        type='text'
+                                        required
+                                        pattern={utils.pattern.standardisedName}
+                                        maxLength={50}
+                                    />
+                                </Col>
+                            </Form.Group>
+
+                            {/*standardised name input */}
+                            <Form.Group as={Row} controlId='formStandadisedNameInput' className='mb-1'>
+                                <Form.Label className='input-label' column xs='5' sm='3'>{t('translation:standardised-name') + '*'}</Form.Label>
+
+                                <Col xs='7' sm='9' className='d-flex'>
+                                    <Form.Control
+                                        className='qt-input'
+                                        value={standardisedFamilyName}
+                                        onChange={(evt) => handleStandardisedNameChanged(evt.target.value, setStandardisedFamilyName)}
+                                        placeholder={t('translation:standardised-name')}
+                                        type='text'
+                                        required
+                                        pattern={utils.pattern.standardisedName}
+                                        maxLength={50}
+                                    />
+                                </Col>
+                            </Form.Group>
+
+                            <hr />
 
                             {/* date of birth input */}
                             <Form.Group as={Row} controlId='formDateOfBirthInput' className='mb-1'>
@@ -359,57 +385,6 @@ const RecordVaccinationCertData = (props: any) => {
                                         minDate={new Date(1900, 0, 1, 12)}
                                         openToDate={new Date(1990, 0, 1)}
                                         required
-                                    />
-                                </Col>
-                            </Form.Group>
-                            <hr />
-                            {/* Combobox for Identifier Type */}
-                            <Form.Group as={Row} controlId='formIdentifyerTypeInput' className='mb-1 mt-1 sb-1 st-1'>
-                                <Form.Label className='input-label' column xs='5' sm='3'>{t('translation:identifierType') + '*'}</Form.Label>
-
-                                <Col xs='7' sm='9' className='d-flex'>
-                                    <Form.Control as="select"
-                                        className='qt-input'
-                                        value={identifierType}
-                                        onChange={handleIdentifierTypeChanged}
-                                        placeholder={t('translation:name')}
-                                        required
-                                    >
-                                        {identifierTypeOptions}
-                                    </Form.Control>
-                                </Col>
-                            </Form.Group>
-
-                            {/* Combobox for the countries in iso-3166-1-alpha-2 */}
-                            <Form.Group as={Row} controlId='formIsoCountryInput' className='mb-1 mt-1 sb-1 st-1'>
-                                <Form.Label className='input-label' column xs='5' sm='3'>{t('translation:country') + '*'}</Form.Label>
-
-                                <Col xs='7' sm='9' className='d-flex'>
-                                    <Form.Control as="select"
-                                        className='qt-input'
-                                        value={personCountry}
-                                        onChange={event => setPersonCountry(event.target.value)}
-                                        placeholder={t('translation:country')}
-                                        required
-                                    >
-                                        {isoCountryOptions}
-                                    </Form.Control>
-                                </Col>
-                            </Form.Group>
-
-                            {/* input identifierNumber */}
-                            <Form.Group as={Row} controlId='formIdentifyerNumberInput' className='mb-1'>
-                                <Form.Label className='input-label' column xs='5' sm='3'>{t('translation:identifierNumber') + '*'}</Form.Label>
-
-                                <Col xs='7' sm='9' className='d-flex'>
-                                    <Form.Control
-                                        className='qt-input'
-                                        value={identifierNumber}
-                                        onChange={event => setIdentifierNumber(event.target.value)}
-                                        placeholder={t('translation:identifierNumber')}
-                                        type='text'
-                                        required
-                                        maxLength={79}
                                     />
                                 </Col>
                             </Form.Group>
@@ -467,8 +442,6 @@ const RecordVaccinationCertData = (props: any) => {
                                 </Col>
                             </Form.Group>
 
-                            <hr />
-
                             {/* combobox marketingHolder */}
                             <Form.Group as={Row} controlId='formMarketingHolderInput' className='mb-1 mt-1 sb-1 st-1'>
                                 <Form.Label className='input-label' column xs='5' sm='3'>{t('translation:vac-marketing-holder') + '*'}</Form.Label>
@@ -486,21 +459,23 @@ const RecordVaccinationCertData = (props: any) => {
                                 </Col>
                             </Form.Group>
 
+                            <hr />
+
                             {/* sequence */}
-                            <Form.Group as={Row} controlId='formTotInput' className='mb-1'>
+                            <Form.Group as={Row} controlId='formDoseNumberInput' className='mb-1'>
                                 <Form.Label className='input-label' column xs='5' sm='3'>{t('translation:sequence') + '*'}</Form.Label>
 
                                 <Col xs='7' sm='9' className='d-flex'>
                                     <Form.Control
                                         className='qt-input'
-                                        value={sequence}
-                                        onChange={event => setSequence(parseInt(event.target.value))}
+                                        value={doseNumber}
+                                        onChange={event => handleNumber(event.target.value, setDoseNumber)}
                                         placeholder={t('translation:def-sequence')}
                                         type='number'
                                         required
-                                        min={0}
-                                        max={999999999}
-                                        maxLength={6}
+                                        min={1}
+                                        max={9}
+                                        maxLength={1}
                                     />
                                 </Col>
                             </Form.Group>
@@ -512,13 +487,14 @@ const RecordVaccinationCertData = (props: any) => {
                                 <Col xs='7' sm='9' className='d-flex'>
                                     <Form.Control
                                         className='qt-input'
-                                        value={tot}
-                                        onChange={event => setTot(parseInt(event.target.value))}
+                                        value={totalDoseNumber}
+                                        onChange={event => handleNumber(event.target.value, setTotalDoseNumber)}
                                         placeholder={t('translation:def-tot')}
                                         type='number'
                                         required
                                         min={1}
                                         max={9}
+                                        maxLength={1}
                                     />
                                 </Col>
                             </Form.Group>
@@ -533,7 +509,7 @@ const RecordVaccinationCertData = (props: any) => {
                                         selected={vacLastDate}
                                         onChange={handleVacLastDate}
                                         locale='de'
-                                        dateFormat='dd. MM. yyyy'
+                                        dateFormat='dd.MM.yyyy'
                                         isClearable
                                         placeholderText={t('translation:vac-last-date')}
                                         className='qt-input form-control'
@@ -541,13 +517,14 @@ const RecordVaccinationCertData = (props: any) => {
                                         showMonthDropdown
                                         showYearDropdown
                                         dropdownMode="select"
-                                        maxDate={new Date()}
                                         minDate={new Date(2020, 10)}
                                         openToDate={new Date()}
                                         required
                                     />
                                 </Col>
                             </Form.Group>
+
+                            <hr />
 
                             {/* Combobox for the vaccin countries in iso-3166-1-alpha-2 */}
                             <Form.Group as={Row} controlId='formVacCountryInput' className='mb-1 mt-1 sb-1 st-1'>
@@ -556,8 +533,8 @@ const RecordVaccinationCertData = (props: any) => {
                                 <Col xs='7' sm='9' className='d-flex'>
                                     <Form.Control as="select"
                                         className='qt-input'
-                                        value={issuerCountry}
-                                        onChange={event => setIssuerCountry(event.target.value)}
+                                        value={issuerCountryCode}
+                                        onChange={event => setIssuerCountryCode(event.target.value)}
                                         placeholder={t('translation:country')}
                                         required
                                     >
@@ -565,19 +542,20 @@ const RecordVaccinationCertData = (props: any) => {
                                     </Form.Control>
                                 </Col>
                             </Form.Group>
-                            <hr />
-                            {/* adm */}
-                            <Form.Group as={Row} controlId='formAdmInput' className='mb-1'>
-                                <Form.Label className='input-label' column xs='5' sm='3'>{t('translation:adm')}</Form.Label>
+
+                            {/* certificateIssuer */}
+                            <Form.Group as={Row} controlId='formcertificateIssuerInput' className='mb-1'>
+                                <Form.Label className='input-label' column xs='5' sm='3'>{t('translation:certificateIssuer') + '*'}</Form.Label>
 
                                 <Col xs='7' sm='9' className='d-flex'>
                                     <Form.Control
                                         className='qt-input'
-                                        value={adm}
-                                        onChange={event => setAdm(event.target.value)}
-                                        placeholder={t('translation:def-adm')}
+                                        value={certificateIssuer}
+                                        onChange={event => setCertificateIssuer(event.target.value)}
+                                        placeholder={t('translation:certificateIssuer')}
                                         type='text'
-                                        maxLength={79}
+                                        required
+                                        maxLength={50}
                                     />
                                 </Col>
                             </Form.Group>
