@@ -62,7 +62,7 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "license": "generate-license-file --input package.json --output THIRD-PARTY-NOTICES",
-    "dgcs2ts": "json2ts -i  public/DGC-all-schemas-combined.json -o src/generated-files/dgc-schema-object.d.ts"
+    "dgcs2ts": "json2ts -i  public/DGC.combined-schema.json -o src/generated-files/dgc-combined-schema.d.ts"
   },
   "eslintConfig": {
     "extends": [

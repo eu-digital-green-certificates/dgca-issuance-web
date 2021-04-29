@@ -21,8 +21,7 @@
 
 import { createCertificateQRData, CertificateMetaData } from '../misc/edgcProcessor'
 import axios from 'axios';
-import { EUDGC } from '../generated-files/dgc-schema-object';
-import qrcode from 'qrcode.react';
+import { EUDGC } from '../generated-files/dgc-combined-schema';
 
 const api = axios.create({
     baseURL: ''
@@ -47,37 +46,48 @@ interface CertificateInit {
 }
 
 interface SigResponse {
-    signature : string,
+    signature: string,
     tan: string
 }
 
-function signerCall(id: string, hash : string) : Promise<SigResponse> {
-    return api.put('/dgci/'+id,{hash:hash}).then(res => {
-        const sigResponse : SigResponse = res.data;
-        return sigResponse;
-    });
+
+const signerCall = (id: string, hash: string): Promise<SigResponse> => {
+    return api.put('/dgci/' + id, { hash: hash })
+        .then(res => {
+            const sigResponse: SigResponse = res.data;
+            return sigResponse;
+        });
 }
 
-export default function generateQRCode(edgcPayload: EUDGC) : Promise<CertResult> {
+
+const generateQRCode = (edgcPayload: EUDGC): Promise<CertResult> => {
     // TODO set right cert type from EUDGC
     const certInit: CertificateInit = {
         type: CertType.Vaccination
     }
-    var tan: string = '';
-    return api.post('/dgci', certInit).then(response  => {
-        const certMetaData: CertificateMetaData = response.data;
-        // TODO copy dgci to EUDGC
-        return createCertificateQRData(edgcPayload,certMetaData, (hash) => {
-            return signerCall(response.data.id.toString(),hash).then(sigResponse => {
-                tan = sigResponse.tan;
-                return sigResponse.signature;
-            });
-        }).then((qrCode: string) => {
-            return {
-                qrCode: qrCode,
-                dgci: certMetaData.dgci,
-                tan: tan
-            }
+
+    let tan: string = '';
+
+    return api.post('/dgci', certInit)
+        .then(response => {
+            const certMetaData: CertificateMetaData = response.data;
+            // TODO copy dgci to EUDGC
+            return createCertificateQRData(edgcPayload, certMetaData,
+                (hash) => {
+                    return signerCall(response.data.id.toString(), hash)
+                        .then((sigResponse) => {
+                            tan = sigResponse.tan;
+                            return sigResponse.signature;
+                        });
+                })
+                .then((qrCode: string) => {
+                    return {
+                        qrCode: qrCode,
+                        dgci: certMetaData.dgci,
+                        tan: tan
+                    }
+                });
         });
-    });
 }
+
+export default generateQRCode;
