@@ -31,7 +31,6 @@ import {useRoutes} from './misc/navigation';
 import Footer from './components/footer.component';
 import Header from './components/header.component';
 import LandingPage from './components/landing-page.component';
-import Cbor from './components/cbor.component';
 
 import PrivateRoute from './components/private-route.component';
 import IError from './misc/error';
@@ -100,13 +99,6 @@ const Routing = (props: any) => {
                     path={routes.showCert}
                 >
                     <ShowCertificate setEudgc={setEudgc} eudgc={eudgc} setError={setError} />
-                </Route>
-
-                <Route
-                exact
-                path={routes.root+'/cbor'}
-                >
-                    <Cbor/>
                 </Route>
 
                 {/* Record Patient Data */}

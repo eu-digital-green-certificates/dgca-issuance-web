@@ -35,8 +35,9 @@ import utils from '../misc/utils';
 
 import Spinner from './spinner/spinner.component';
 import { Sex } from '../misc/enum';
-import { getQrCodeValueString } from '../misc/qr-code-value';
 import { EUDGC } from '../generated-files/dgc-schema-object';
+import genEDGCQR, {CertResult} from '../misc/edgcQRGenerator';
+
 // import { usePostPatient } from '../api';
 
 const ShowCertificate = (props: any) => {
@@ -48,8 +49,8 @@ const ShowCertificate = (props: any) => {
     const [eudgc, setEudgc] = React.useState<EUDGC>();
     const [patientToPost, setPatientToPost] = React.useState<Patient>();
     const [qrCodeValue, setQrCodeValue] = React.useState('');
-    const [uuIdHash, setUuIdHash] = React.useState('');
-    const [processId, setProcessId] = React.useState('');
+    const [dgci, setDGCI] = React.useState('');
+    const [tan, setTAN] = React.useState('');
 
 
     // set patient data on mount and set hash from uuid
@@ -66,12 +67,12 @@ const ShowCertificate = (props: any) => {
 
     React.useEffect(() => {
         if (eudgc) {
-
-            // Cbor / Cose / etc
-
-            const qrcodeString = ''
-
-            setQrCodeValue(qrcodeString);
+            // TODO catch errors and handle them du to possible server connection problems
+            genEDGCQR(eudgc).then((certResult: CertResult) => {
+                setQrCodeValue(certResult.qrCode);
+                setTAN(certResult.tan);
+                setDGCI(certResult.dgci);
+            });
         }
     }, [eudgc])
 
@@ -119,6 +120,8 @@ const ShowCertificate = (props: any) => {
                             <Col sm='5'>
                                 <Card.Title className='m-sm-0 jcc-xs-jcfs-sm' as={'h2'}>{t('translation:qr-code')}</Card.Title>
                                 <hr />
+                                <Card.Text className='input-label jcc-xs-jcfs-sm mb-0' >DGCI: {dgci}</Card.Text>
+                                <Card.Text className='input-label jcc-xs-jcfs-sm mb-0' >TAN: {tan}</Card.Text>
                                 {/* <Card.Text className='input-label font-weight-bold mt-4 jcc-xs-jcfs-sm' >{t('translation:process')}</Card.Text>
                                 <Card.Text className='input-label jcc-xs-jcfs-sm mb-0' >{processId}</Card.Text> */}
                                 {/* <Card.Text className='input-label font-weight-bold mt-4 jcc-xs-jcfs-sm' >{t('translation:patient-data')}</Card.Text>
@@ -136,6 +139,7 @@ const ShowCertificate = (props: any) => {
                                     {qrCodeValue ? <><QRCode id='qr-code' size={256} renderAs='svg' value={qrCodeValue} />
                                         {/* <Card.Text className='input-label' >{qrCodeValue}</Card.Text> */}
                                     </> : <></>}
+                                    <pre>{qrCodeValue}</pre>
                                 </Container>
                             </Col>
                         </Row>

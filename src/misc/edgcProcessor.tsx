@@ -30,9 +30,12 @@ const expiredSeconds = 60*60*24*364;
 const edgcPrefix = 'HC1:'
 
 export interface CertificateMetaData {
-    countryCode: string,
+    id: number,
+    dgci :string,
     kid: string,
     algId: number,
+    countryCode: string,
+    expired: number
 }
 
 export interface SignService {
