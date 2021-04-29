@@ -38,7 +38,7 @@ import ErrorPage from './components/error-page.component';
 import NotificationPage from './components/notification-page.component';
 import RecordVaccinationCertData from './components/record-vaccination-cert-data.component';
 import ShowCertificate from './components/show-certificate.component';
-import { EUDGC } from './generated-files/dgc-schema-object';
+import { EUDGC } from './generated-files/dgc-combined-schema';
 
 const Routing = (props: any) => {
 
