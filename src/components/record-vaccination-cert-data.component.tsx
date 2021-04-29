@@ -36,12 +36,12 @@ import { registerLocale } from "react-datepicker";
 
 import "react-datepicker/dist/react-datepicker.css";
 import de from 'date-fns/locale/de';
-import { EUDGC, VaccinationEntry, DiseaseAgentTargeted } from '../generated-files/dgc-schema-object';
+import { EUDGC, VaccinationEntry, DiseaseAgentTargeted } from '../generated-files/dgc-combined-schema';
 import { useGetVaccinMedicalData } from '../api';
 
 // import { useGetUuid } from '../api';
 const iso3311a2 = require('iso-3166-1-alpha-2');
-const schema = require('../generated-files/DGC-all-schemas-combined.json');
+const schema = require('../generated-files/DGC.combined-schema.json');
 const Validator = require('jsonschema').Validator;
 const validator = new Validator();
 

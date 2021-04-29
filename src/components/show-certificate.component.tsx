@@ -35,7 +35,7 @@ import utils from '../misc/utils';
 
 import Spinner from './spinner/spinner.component';
 import { Sex } from '../misc/enum';
-import { EUDGC } from '../generated-files/dgc-schema-object';
+import { EUDGC } from '../generated-files/dgc-combined-schema';
 import genEDGCQR, {CertResult} from '../misc/edgcQRGenerator';
 
 // import { usePostPatient } from '../api';

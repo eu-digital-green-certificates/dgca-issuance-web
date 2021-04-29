@@ -21,7 +21,7 @@
 
 import { createCertificateQRData, CertificateMetaData } from '../misc/edgcProcessor'
 import axios from 'axios';
-import { EUDGC } from '../generated-files/dgc-schema-object';
+import { EUDGC } from '../generated-files/dgc-combined-schema';
 import qrcode from 'qrcode.react';
 
 const api = axios.create({

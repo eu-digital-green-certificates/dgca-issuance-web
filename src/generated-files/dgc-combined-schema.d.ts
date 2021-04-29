@@ -31,8 +31,74 @@ export type StandardisedGivenName = string;
 export type DateOfBirth = string;
 /**
  * EU eHealthNetwork: Value Sets for Digital Green Certificates. version 1.0, 2021-04-16, section 2.1
+ *
+ * This interface was referenced by `EUDGC`'s JSON-Schema
+ * via the `definition` "disease-agent-targeted".
  */
-export type DiseaseAgentTargeted = "840539006";
+export type DiseaseAgentTargeted = string;
+/**
+ * Dose Number / Total doses in Series: positive integer, range: [1,9]
+ *
+ * This interface was referenced by `EUDGC`'s JSON-Schema
+ * via the `definition` "dose_posint".
+ */
+export type DosePosint = number;
+/**
+ * Country of Vaccination / Test, ISO 3166 where possible
+ *
+ * This interface was referenced by `EUDGC`'s JSON-Schema
+ * via the `definition` "country_vt".
+ */
+export type CountryVt = string;
+/**
+ * Certificate Issuer
+ *
+ * This interface was referenced by `EUDGC`'s JSON-Schema
+ * via the `definition` "issuer".
+ */
+export type Issuer = string;
+/**
+ * Certificate Identifier, UVCI
+ *
+ * This interface was referenced by `EUDGC`'s JSON-Schema
+ * via the `definition` "certificate_id".
+ */
+export type CertificateId = string;
+/**
+ * EU eHealthNetwork: Value Sets for Digital Green Certificates. version 1.0, 2021-04-16, section 2.2
+ *
+ * This interface was referenced by `EUDGC`'s JSON-Schema
+ * via the `definition` "vaccine-prophylaxis".
+ */
+export type VaccineProphylaxis = string;
+/**
+ * EU eHealthNetwork: Value Sets for Digital Green Certificates. version 1.0, 2021-04-16, section 2.3
+ *
+ * This interface was referenced by `EUDGC`'s JSON-Schema
+ * via the `definition` "vaccine-medicinal-product".
+ */
+export type VaccineMedicinalProduct = string;
+/**
+ * EU eHealthNetwork: Value Sets for Digital Green Certificates. version 1.0, 2021-04-16, section 2.4
+ *
+ * This interface was referenced by `EUDGC`'s JSON-Schema
+ * via the `definition` "vaccine-mah-manf".
+ */
+export type VaccineMahManf = string;
+/**
+ * EU eHealthNetwork: Value Sets for Digital Green Certificates. version 1.0, 2021-04-16, section 2.8
+ *
+ * This interface was referenced by `EUDGC`'s JSON-Schema
+ * via the `definition` "test-manf".
+ */
+export type TestManf = string;
+/**
+ * EU eHealthNetwork: Value Sets for Digital Green Certificates. version 1.0, 2021-04-16, section 2.9
+ *
+ * This interface was referenced by `EUDGC`'s JSON-Schema
+ * via the `definition` "test-result".
+ */
+export type TestResult = string;
 
 /**
  * EU Digital Green Certificate
@@ -66,52 +132,27 @@ export interface EUDGC {
 }
 /**
  * Vaccination Entry
+ *
+ * This interface was referenced by `EUDGC`'s JSON-Schema
+ * via the `definition` "vaccination_entry".
  */
 export interface VaccinationEntry {
   /**
    * disease or agent targeted
    */
-  tg: "840539006";
+  tg: string;
   /**
    * vaccine or prophylaxis
    */
-  vp: "1119305005" | "1119349007" | "J07BX03";
+  vp: string;
   /**
    * vaccine medicinal product
    */
-  mp:
-    | "EU/1/20/1528"
-    | "EU/1/20/1507"
-    | "EU/1/21/1529"
-    | "EU/1/20/1525"
-    | "CVnCoV"
-    | "NVX-CoV2373"
-    | "Sputnik-V"
-    | "Convidecia"
-    | "EpiVacCorona"
-    | "BBIBP-CorV"
-    | "Inactivated-SARS-CoV-2-Vero-Cell"
-    | "CoronaVac"
-    | "Covaxin";
+  mp: string;
   /**
    * Marketing Authorization Holder - if no MAH present, then manufacturer
    */
-  ma:
-    | "ORG-100001699"
-    | "ORG-100030215"
-    | "ORG-100001417"
-    | "ORG-100031184"
-    | "ORG-100006270"
-    | "ORG-100013793"
-    | "ORG-100020693"
-    | "ORG-100020693"
-    | "ORG-100010771"
-    | "ORG-100024420"
-    | "ORG-100032020"
-    | "Gamaleya-Research-Institute"
-    | "Vector-Institute"
-    | "Sinovac-Biotech"
-    | "Bharat-Biotech";
+  ma: string;
   /**
    * Dose Number
    */
@@ -140,6 +181,9 @@ export interface VaccinationEntry {
 }
 /**
  * Test Entry
+ *
+ * This interface was referenced by `EUDGC`'s JSON-Schema
+ * via the `definition` "test_entry".
  */
 export interface TestEntry {
   tg: DiseaseAgentTargeted;
@@ -154,31 +198,7 @@ export interface TestEntry {
   /**
    * RAT Test name and manufacturer
    */
-  ma?:
-    | "1232"
-    | "1304"
-    | "1065"
-    | "1331"
-    | "1484"
-    | "1242"
-    | "1223"
-    | "1173"
-    | "1244"
-    | "1360"
-    | "1363"
-    | "1767"
-    | "1333"
-    | "1268"
-    | "1180"
-    | "1481"
-    | "1162"
-    | "1271"
-    | "1097"
-    | "1489"
-    | "344"
-    | "345"
-    | "1218"
-    | "1343";
+  ma?: string;
   /**
    * Date/Time of Sample Collection
    */
@@ -190,7 +210,7 @@ export interface TestEntry {
   /**
    * Test Result
    */
-  tr: "260415000" | "260373001";
+  tr: string;
   /**
    * Testing Centre
    */
@@ -211,6 +231,9 @@ export interface TestEntry {
 }
 /**
  * Recovery Entry
+ *
+ * This interface was referenced by `EUDGC`'s JSON-Schema
+ * via the `definition` "recovery_entry".
  */
 export interface RecoveryEntry {
   tg: DiseaseAgentTargeted;
@@ -238,5 +261,18 @@ export interface RecoveryEntry {
    * Unique Certificate Identifier, UVCI
    */
   ci: string;
+  [k: string]: unknown;
+}
+/**
+ * Person name: Surname(s), given name(s) - in that order
+ *
+ * This interface was referenced by `EUDGC`'s JSON-Schema
+ * via the `definition` "person_name".
+ */
+export interface PersonName {
+  fn?: FamilyName;
+  fnt: StandardisedFamilyName;
+  gn?: GivenName;
+  gnt?: StandardisedGivenName;
   [k: string]: unknown;
 }
