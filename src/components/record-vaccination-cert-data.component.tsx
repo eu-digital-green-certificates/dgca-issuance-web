@@ -79,7 +79,7 @@ const RecordVaccinationCertData = (props: any) => {
     const [selectedIdentifierTypeOptionValue, setSelectedIdentifierTypeOptionValue] = React.useState<string>();
     const [personCountry, setPersonCountry] = React.useState<string>();
     const [issuerCountry, setIssuerCountry] = React.useState<string>();
-    
+
     const [identifierTypeOptions, setIdentifierTypeOptions] = React.useState<HTMLSelectElement[]>();
     const [isoCountryOptions, setIsoCountryOptions] = React.useState<HTMLSelectElement[]>();
 
@@ -145,39 +145,16 @@ const RecordVaccinationCertData = (props: any) => {
 
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         const form = event.currentTarget;
-        
-        // data for the backend
-        alert(  
-            firstName + " " +  
-            name + " " +  
-            dateOfBirth?.toDateString() + " " +
-            sex + " " +  
-            selectedIdentifierTypeOptionValue + " " +  
-            personCountry?.substr(0,2) + " " +  
-            identifierNumber + " " +  
-            disease + " " +  
-            vaccine + " " +  
-            medicalProduct + " " +
-            marketingHolder + " " +  
-            sequence + " " +  
-            tot + " " +  
-            vacLastDate?.toDateString() + " " +  
-            issuerCountry?.substr(0,2) + " " +   
-            lot+ " " +  
-            adm );
-        
-        const vacc:VaccinationEntry = {
-            // tg: disease,
-            //TODO:
-            
-            tg: disease as DiseaseAgentTargeted ,
+
+        const vacc: VaccinationEntry = {
+            tg: disease as DiseaseAgentTargeted,
             vp: vaccine,
             mp: medicalProduct,
             ma: marketingHolder,
             dn: sequence!,
             sd: tot!,
             dt: formatDate(vacLastDate!),
-            co: issuerCountry!.substr(0,2),
+            co: issuerCountry!.substr(0, 2),
             // TODO: was bedeutet das?
             is: adm,
             /**
@@ -187,30 +164,27 @@ const RecordVaccinationCertData = (props: any) => {
             ci: "Wo kommt das her?"
         };
 
-        const eudgc:EUDGC = {
+        const eudgc: EUDGC = {
             //TODO: Welche Version
-            ver: '0.1.0',
+            ver: '1.0.0',
             nam: {
                 fnt: name,
                 gnt: firstName
             },
-            dob:formatDate(dateOfBirth!),
-            v:[vacc]
+            dob: formatDate(dateOfBirth!),
+            v: [vacc]
         }
 
-        var result = validator.validate(eudgc, schema);
-        if(!result.valid) {
-            console.error(result);
+        const dataIsValid = validator.validate(eudgc, schema);
+        if (!dataIsValid.valid) {
             alert("Eingabe passt nicht zum Schema. Siehe Konsoleausgabe!");
         }
-
-        console.log(vacc);
 
         event.preventDefault();
         event.stopPropagation();
 
         if (form.checkValidity()) {
-            const patient : Patient = { firstName: firstName, name: name, dateOfBirth: dateOfBirth! };
+            const patient: Patient = { firstName: firstName, name: name, dateOfBirth: dateOfBirth! };
 
             //TODO Weiterleitung ans Backend oder eine Seite mit Anzeige 
             props.setPatient(patient);
@@ -218,10 +192,8 @@ const RecordVaccinationCertData = (props: any) => {
             setTimeout(navigation!.toShowRecordPatient, 200);
         }
     }
-    
-    const formatDate = (date: Date) : string => {
-        return  `${date.toISOString().substr(0, 10)}`;
-    }
+
+    const formatDate = (date: Date): string => `${date.toISOString().substr(0, 10)}`;
 
     const setOptions = () => {
         const options: any[] = [];
@@ -234,23 +206,23 @@ const RecordVaccinationCertData = (props: any) => {
 
     //TODO: These options will be read dynamically from the gateway
     const initDynamicOptions = () => {
-        const tmpDeseasOptions : string[] = ['840539006'];
+        const tmpDeseasOptions: string[] = ['840539006'];
         setDiseasOptions(setDynamicOptions(tmpDeseasOptions));
         setDisease(tmpDeseasOptions[0]);
 
-        const tmpVaccineOptions : string[] = ['1119305005', '1119349007', 'J07BX03'];
+        const tmpVaccineOptions: string[] = ['1119305005', '1119349007', 'J07BX03'];
         setVaccineOptions(setDynamicOptions(tmpVaccineOptions));
         setVaccine(tmpVaccineOptions[0]);
 
-        const tmpMedicalOptions : string[] = ['EU/1/20/1528', 'EU/1/20/1507', 'EU/1/21/1529', 'EU/1/20/1525', 'CVnCoV', 'NVX-CoV2373',
-                                            'Sputnik-V', 'Convidecia', 'EpiVacCorona', 'BBIBP-CorV', 'Inactivated-SARS-CoV-2-Vero-Cell',
-                                            'CoronaVac', 'Covaxin'];
+        const tmpMedicalOptions: string[] = ['EU/1/20/1528', 'EU/1/20/1507', 'EU/1/21/1529', 'EU/1/20/1525', 'CVnCoV', 'NVX-CoV2373',
+            'Sputnik-V', 'Convidecia', 'EpiVacCorona', 'BBIBP-CorV', 'Inactivated-SARS-CoV-2-Vero-Cell',
+            'CoronaVac', 'Covaxin'];
         setMedicalProductOptions(setDynamicOptions(tmpMedicalOptions));
         setMedicalProduct(tmpMedicalOptions[0]);
 
-        const tmpMarketingHolderOptions : string[] = ['ORG-100001699', 'ORG-100030215', 'ORG-100001417', 'ORG-100031184', 'ORG-100006270', 
-                                            'ORG-100013793', 'ORG-100020693', 'ORG-100020693', 'ORG-100010771', 'ORG-100024420', 'ORG-100032020',
-                                            'Gamaleya-Research-Institute', 'Vector-Institute', 'Sinovac-Biotech', 'Bharat-Biotech'];
+        const tmpMarketingHolderOptions: string[] = ['ORG-100001699', 'ORG-100030215', 'ORG-100001417', 'ORG-100031184', 'ORG-100006270',
+            'ORG-100013793', 'ORG-100020693', 'ORG-100020693', 'ORG-100010771', 'ORG-100024420', 'ORG-100032020',
+            'Gamaleya-Research-Institute', 'Vector-Institute', 'Sinovac-Biotech', 'Bharat-Biotech'];
         setMarketingHolderOptions(setDynamicOptions(tmpMarketingHolderOptions));
         setMarketingHolder(tmpMarketingHolderOptions[0]);
     }
@@ -258,7 +230,7 @@ const RecordVaccinationCertData = (props: any) => {
     const setDynamicOptions = (dynamicOptions: string[]) => {
         const options: any[] = [];
         for (let i = 0; i < dynamicOptions.length; i++) {
-            options.push(<option key={i} value={ dynamicOptions[i] }>{ dynamicOptions[i] }</option>)
+            options.push(<option key={i} value={dynamicOptions[i]}>{dynamicOptions[i]}</option>)
         }
 
         return options;
@@ -297,7 +269,7 @@ const RecordVaccinationCertData = (props: any) => {
                         */}
                         <Card.Header id='data-header' className='pb-0'>
                             <Row>
-                                
+
                                 <Col md='4' className='d-flex justify-content-left'>
                                     <Card.Text id='id-query-text'>{t('translation:query-id-card')}</Card.Text>
                                 </Col>
@@ -442,7 +414,7 @@ const RecordVaccinationCertData = (props: any) => {
                                     <Form.Control as="select"
                                         className='qt-input'
                                         value={identifierType}
-                                        onChange={ handleIdentifierTypeChanged }
+                                        onChange={handleIdentifierTypeChanged}
                                         placeholder={t('translation:name')}
                                         required
                                     >
@@ -484,7 +456,7 @@ const RecordVaccinationCertData = (props: any) => {
                                     />
                                 </Col>
                             </Form.Group>
-                            
+
                             <hr />
 
                             {/* combobox disease */}
