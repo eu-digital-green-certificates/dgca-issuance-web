@@ -26,7 +26,7 @@ import StatisticData from './misc/statistic-data';
 import ITestResult from './misc/test-result';
 
 
-// json data
+// json data from schema (will be replaced by API later)
 import MedicalProducts from './assets/json-res/vaccine-medicinal-product.json';
 import DiseaseAgents from './assets/json-res/disease-agent-targeted.json';
 import VaccineManufacturers from './assets/json-res/vaccine-mah-manf.json';
@@ -36,7 +36,14 @@ export const api = axios.create({
     baseURL: ''
 });
 
+
 const TRYS = 2;
+
+/* const getApiData = async (route: string) => {
+    const res = await fetch(`http://localhost:5000/api/v1/medicalProducts`);
+    const data = res.json();
+    return data;
+} */
 
 
 // Medical Products
@@ -57,6 +64,7 @@ export const useGetVaccinMedicalData = () => {
     React.useEffect(() => {
 
         // get object via api
+        // const medicalProductsData = getApiData('/medicalProducts');
 
         // get object via public
         const medicalProductsData = MedicalProducts.valueSetValues;
@@ -86,6 +94,7 @@ export const useGetDiseaseAgents = () => {
     React.useEffect(() => {
 
         // get object via api
+        // const diseaseAgentsData = getApiData('/diseaseAgents');
 
         // get object via public
         const diseaseAgentsData = DiseaseAgents.valueSetValues;
@@ -114,6 +123,7 @@ export const useGetVaccineManufacturers = () => {
     React.useEffect(() => {
 
         // get object via api
+        // const vaccineManufacturersData = getApiData('/vaccineManufacturers');
 
         // get object via public
         const vaccineManufacturersData = VaccineManufacturers.valueSetValues;
@@ -141,6 +151,8 @@ export const useGetVaccines = () => {
     React.useEffect(() => {
 
         // get object via api
+        // const vaccinesData = getApiData('/vaccines');
+
 
         // get object via public
         const vaccinesData = Vaccines.valueSetValues;
