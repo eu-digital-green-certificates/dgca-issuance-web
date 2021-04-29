@@ -24,6 +24,7 @@ import { useKeycloak } from '@react-keycloak/web';
 import React from 'react';
 import StatisticData from './misc/statistic-data';
 import ITestResult from './misc/test-result';
+import MedicalProducts from '../public/json-res/vaccine-medicinal-product.json';
 
 export const api = axios.create({
     baseURL: ''
@@ -33,19 +34,20 @@ const TRYS = 2;
 
 export const useGetVaccinMedicalData = () => {
 
-    const [result, setResult] = React.useState<any>();
+    const [medicalProduct, setMedicalProduct] = React.useState<any>();
 
     React.useEffect(() => {
 
         // get object via api
 
         // get object via public
+        const medicalProductData = MedicalProducts.valueSetValues;
+        console.log(medicalProductData);
 
-
-        setResult('');
+        setMedicalProduct('');
 
     }, [])
 
 
-    return result;
+    return medicalProduct;
 }
