@@ -20,10 +20,7 @@
  */
 
 import axios from 'axios';
-import { useKeycloak } from '@react-keycloak/web';
 import React from 'react';
-import StatisticData from './misc/statistic-data';
-import ITestResult from './misc/test-result';
 
 
 // json data from schema (will be replaced by API later)
@@ -31,19 +28,6 @@ import MedicalProducts from './assets/json-res/vaccine-medicinal-product.json';
 import DiseaseAgents from './assets/json-res/disease-agent-targeted.json';
 import VaccineManufacturers from './assets/json-res/vaccine-mah-manf.json';
 import Vaccines from './assets/json-res/vaccine-prophylaxis.json';
-
-export const api = axios.create({
-    baseURL: ''
-});
-
-
-const TRYS = 2;
-
-/* const getApiData = async (route: string) => {
-    const res = await fetch(`http://localhost:5000/api/v1/medicalProducts`);
-    const data = res.json();
-    return data;
-} */
 
 interface IValue {
     active: boolean,
@@ -58,9 +42,12 @@ interface IValueSet {
     [key: string]: IValue;
 }
 
+
 // Medical Products
 export const useGetVaccinMedicalData = () => {
+
     const [medicalProducts, setMedicalProducts] = React.useState<IValueSet>();
+
     React.useEffect(() => {
         // get object via api
         // const medicalProductsData = getApiData('/medicalProducts');
@@ -73,9 +60,12 @@ export const useGetVaccinMedicalData = () => {
     return medicalProducts;
 }
 
+
 // Disease Agents
 export const useGetDiseaseAgents = () => {
+
     const [diseaseAgents, setDiseaseAgents] = React.useState<IValueSet>();
+
     React.useEffect(() => {
         // get object via api
         // const diseaseAgentsData = getApiData('/diseaseAgents');
@@ -87,9 +77,12 @@ export const useGetDiseaseAgents = () => {
     return diseaseAgents;
 }
 
+
 // Vaccine Manufacturers
 export const useGetVaccineManufacturers = () => {
+
     const [vaccineManufacturers, setVaccineManufacturers] = React.useState<IValueSet>();
+
     React.useEffect(() => {
         // get object via api
         // const vaccineManufacturersData = getApiData('/vaccineManufacturers');
@@ -101,9 +94,12 @@ export const useGetVaccineManufacturers = () => {
     return vaccineManufacturers;
 }
 
+
 // Vaccine / Prophylaxis
 export const useGetVaccines = () => {
+
     const [vaccines, setVaccines] = React.useState<IValueSet>();
+
     React.useEffect(() => {
         // get object via api
         // const vaccinesData = getApiData('/vaccines');

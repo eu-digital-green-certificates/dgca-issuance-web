@@ -19,47 +19,44 @@
  * under the License.
  */
 
-import React, { MouseEventHandler } from 'react';
+import React from 'react';
 import { Button, Card, Col, Form, Row } from 'react-bootstrap';
 
 import '../i18n';
 import { useTranslation } from 'react-i18next';
 
-import sha256 from 'crypto-js/sha256';
-
 import useNavigation from '../misc/navigation';
 import Spinner from './spinner/spinner.component';
-import utils from '../misc/utils';
-import { IdentifierType, Sex } from '../misc/enum'
+import { IdentifierType } from '../misc/enum';
+
 import DatePicker from "react-datepicker";
 import { registerLocale } from "react-datepicker";
-
 import "react-datepicker/dist/react-datepicker.css";
 import de from 'date-fns/locale/de';
+
 import { EUDGC, VaccinationEntry, DiseaseAgentTargeted } from '../generated-files/dgc-combined-schema';
 import { useGetDiseaseAgents, useGetVaccineManufacturers, useGetVaccines, useGetVaccinMedicalData } from '../api';
 
-// import { useGetUuid } from '../api';
-const iso3311a2 = require('iso-3166-1-alpha-2');
-const schema = require('../generated-files/DGC.combined-schema.json');
-const Validator = require('jsonschema').Validator;
+import schema from '../generated-files/DGC.combined-schema.json';
+import { Validator } from 'jsonschema';
 const validator = new Validator();
+const iso3311a2 = require('iso-3166-1-alpha-2');
 
 registerLocale('de', de)
 
-enum DESEASES {
-    // diseases
-    _840539006 = "840539006"
-}
 
 const RecordVaccinationCertData = (props: any) => {
 
     const navigation = useNavigation();
     const { t } = useTranslation();
+    
+    // data read from the API
+    const vacMedsData = useGetVaccinMedicalData();
+    const diseaseAgentsData = useGetDiseaseAgents();
+    const vaccineManufacturers = useGetVaccineManufacturers();
+    const vaccines = useGetVaccines();
 
     const [isInit, setIsInit] = React.useState(false)
-    // const [uuIdHash, setUuIdHash] = React.useState('');
-    // const [processId, setProcessId] = React.useState('');
 
     const [firstName, setFirstName] = React.useState('');
     const [name, setName] = React.useState('');
@@ -87,17 +84,13 @@ const RecordVaccinationCertData = (props: any) => {
     const [medicalProductOptions, setMedicalProductOptions] = React.useState<HTMLSelectElement[]>();
     const [marketingHolderOptions, setMarketingHolderOptions] = React.useState<HTMLSelectElement[]>();
 
-    // data read from the API
-    const vacMedsData = useGetVaccinMedicalData();
-    const diseaseAgentsData = useGetDiseaseAgents();
-    const vaccineManufacturers = useGetVaccineManufacturers();
-    const vaccines = useGetVaccines();
 
     React.useEffect(() => {
         if (navigation) {
             setTimeout(setIsInit, 200, true);
         }
     }, [navigation]);
+
 
     React.useEffect(() => {
         setOptions();
@@ -106,6 +99,7 @@ const RecordVaccinationCertData = (props: any) => {
         setIdentifierType(IdentifierType.PPN);
         setSelectedIdentifierTypeOptionValue(IdentifierType.PPN);
     }, []);
+
 
     React.useEffect(() => {
         if (vacMedsData) {
@@ -118,6 +112,7 @@ const RecordVaccinationCertData = (props: any) => {
         }
     }, [vacMedsData])
 
+
     React.useEffect(() => {
         if (diseaseAgentsData) {
             let possibleOptions: string[] = []
@@ -129,6 +124,7 @@ const RecordVaccinationCertData = (props: any) => {
         }
     }, [diseaseAgentsData])
 
+
     React.useEffect(() => {
         if (vaccineManufacturers) {
             let possibleOptions: string[] = []
@@ -139,6 +135,7 @@ const RecordVaccinationCertData = (props: any) => {
             setMarketingHolderOptions(setDynamicOptions(possibleOptions));
         }
     }, [vaccineManufacturers])
+
 
     React.useEffect(() => {
         if (vaccines) {
@@ -152,7 +149,6 @@ const RecordVaccinationCertData = (props: any) => {
     }, [vaccines])
 
 
-
     const handleError = (error: any) => {
         let msg = '';
 
@@ -161,6 +157,7 @@ const RecordVaccinationCertData = (props: any) => {
         }
         props.setError({ error: error, message: msg, onCancel: navigation!.toLanding });
     }
+
 
     const handleDateOfBirthChange = (evt: Date | [Date, Date] | null) => {
         const date = handleDateChange(evt);
@@ -280,10 +277,6 @@ const RecordVaccinationCertData = (props: any) => {
     return (
         !isInit ? <Spinner /> :
             <>
-                {/* <Row id='process-row'>
-                    <span className='font-weight-bold mr-2'>{t('translation:process')}</span>
-                    <span>{processId}</span>
-                </Row> */}
                 <Card id='data-card'>
 
                     <Form onSubmit={handleSubmit} /*validated={validated}*/>
@@ -354,7 +347,7 @@ const RecordVaccinationCertData = (props: any) => {
                                         selected={dateOfBirth}
                                         onChange={handleDateOfBirthChange}
                                         locale='de'
-                                        dateFormat='dd. MM. yyyy'
+                                        dateFormat='dd.MM.yyyy'
                                         isClearable
                                         placeholderText={t('translation:date-of-birth')}
                                         className='qt-input form-control'

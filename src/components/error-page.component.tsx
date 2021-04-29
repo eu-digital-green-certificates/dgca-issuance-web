@@ -26,8 +26,6 @@ import '../i18n';
 import { useTranslation } from 'react-i18next';
 
 import useNavigation from '../misc/navigation';
-import { getPatientFromScan } from '../misc/qr-code-value';
-
 
 const ErrorPage = (props: any) => {
 

@@ -19,20 +19,6 @@
  * under the License.
  */
 
-
-export enum TestResult {
-    NEGATIVE = 6,
-    POSITIVE = 7,
-    INVALID = 8,
-}
-
-export enum Sex {
-    MALE = 'MALE',
-    FEMALE = 'FEMALE',
-    OTHER = "OTHER",
-    UNKNOWN = "UNKNOWN"
-}
-
 export enum IdentifierType {
     // Passport Number
     PPN = "PPN",

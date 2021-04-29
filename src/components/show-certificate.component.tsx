@@ -26,15 +26,10 @@ import '../i18n';
 import { useTranslation } from 'react-i18next';
 
 import useNavigation from '../misc/navigation';
-import Patient from '../misc/patient';
 
-import Moment from 'react-moment';
-import sha256 from 'crypto-js/sha256';
 import QRCode from 'qrcode.react';
-import utils from '../misc/utils';
 
 import Spinner from './spinner/spinner.component';
-import { Sex } from '../misc/enum';
 import { EUDGC } from '../generated-files/dgc-combined-schema';
 import genEDGCQR, {CertResult} from '../misc/edgcQRGenerator';
 
@@ -47,7 +42,6 @@ const ShowCertificate = (props: any) => {
 
     const [isInit, setIsInit] = React.useState(false)
     const [eudgc, setEudgc] = React.useState<EUDGC>();
-    const [patientToPost, setPatientToPost] = React.useState<Patient>();
     const [qrCodeValue, setQrCodeValue] = React.useState('');
     const [dgci, setDGCI] = React.useState('');
     const [tan, setTAN] = React.useState('');
