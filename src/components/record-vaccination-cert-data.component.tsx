@@ -37,6 +37,7 @@ import { registerLocale } from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import de from 'date-fns/locale/de';
 import { EUDGC, VaccinationEntry, DiseaseAgentTargeted } from '../generated-files/dgc-schema-object';
+import { useGetVaccinMedicalData } from '../api';
 
 // import { useGetUuid } from '../api';
 const iso3311a2 = require('iso-3166-1-alpha-2');
@@ -55,6 +56,7 @@ const RecordVaccinationCertData = (props: any) => {
 
     const navigation = useNavigation();
     const { t } = useTranslation();
+    const vacMedData = useGetVaccinMedicalData();
 
     const [isInit, setIsInit] = React.useState(false)
     // const [uuIdHash, setUuIdHash] = React.useState('');
@@ -102,6 +104,12 @@ const RecordVaccinationCertData = (props: any) => {
         setIdentifierType(IdentifierType.PPN);
         setSelectedIdentifierTypeOptionValue(IdentifierType.PPN);
     }, []);
+
+    React.useEffect(()=> {
+        if (vacMedData){
+            // set combo options
+        }
+    }, [vacMedData])
 
     const handleError = (error: any) => {
         let msg = '';
