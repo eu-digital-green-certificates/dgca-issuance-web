@@ -45,24 +45,23 @@ const TRYS = 2;
     return data;
 } */
 
-
-// Medical Products
-interface medicalProduct {
+interface IValue {
     active: boolean,
     display: string,
     lang: string,
     system: string,
     version: string
+    valueSetId?: string,
 }
 
-interface medicalProductsData {
-    [key: string]: medicalProduct;
+interface IValueSet {
+    [key: string]: IValue;
 }
 
+// Medical Products
 export const useGetVaccinMedicalData = () => {
-    const [medicalProducts, setMedicalProducts] = React.useState<medicalProductsData>();
+    const [medicalProducts, setMedicalProducts] = React.useState<IValueSet>();
     React.useEffect(() => {
-
         // get object via api
         // const medicalProductsData = getApiData('/medicalProducts');
 
@@ -75,24 +74,10 @@ export const useGetVaccinMedicalData = () => {
     return medicalProducts;
 }
 
-
 // Disease Agents
-interface diseaseAgent {
-    active: boolean,
-    display: string,
-    lang: string,
-    system: string,
-    version: string
-}
-
-interface diseaseAgents {
-    [key: string]: diseaseAgent;
-}
-
 export const useGetDiseaseAgents = () => {
-    const [diseaseAgents, setDiseaseAgents] = React.useState<diseaseAgents>();
+    const [diseaseAgents, setDiseaseAgents] = React.useState<IValueSet>();
     React.useEffect(() => {
-
         // get object via api
         // const diseaseAgentsData = getApiData('/diseaseAgents');
 
@@ -105,23 +90,9 @@ export const useGetDiseaseAgents = () => {
 }
 
 // Vaccine Manufacturers
-interface vaccineManufacturer {
-    active: boolean,
-    display: string,
-    lang: string,
-    system: string,
-    version: string,
-    valueSetId: string,
-}
-
-interface vaccineManufacturers {
-    [key: string]: vaccineManufacturer;
-}
-
 export const useGetVaccineManufacturers = () => {
-    const [vaccineManufacturers, setVaccineManufacturers] = React.useState<diseaseAgents>();
+    const [vaccineManufacturers, setVaccineManufacturers] = React.useState<IValueSet>();
     React.useEffect(() => {
-
         // get object via api
         // const vaccineManufacturersData = getApiData('/vaccineManufacturers');
 
@@ -134,25 +105,11 @@ export const useGetVaccineManufacturers = () => {
 }
 
 // Vaccine / Prophylaxis
-interface vaccine {
-    active: boolean,
-    display: string,
-    lang: string,
-    system: string,
-    version: string,
-}
-
-interface vaccines {
-    [key: string]: vaccine;
-}
-
 export const useGetVaccines = () => {
-    const [vaccines, setVaccines] = React.useState<diseaseAgents>();
+    const [vaccines, setVaccines] = React.useState<IValueSet>();
     React.useEffect(() => {
-
         // get object via api
         // const vaccinesData = getApiData('/vaccines');
-
 
         // get object via public
         const vaccinesData = Vaccines.valueSetValues;
