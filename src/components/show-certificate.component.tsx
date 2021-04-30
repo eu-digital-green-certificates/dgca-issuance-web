@@ -46,7 +46,6 @@ const ShowCertificate = (props: any) => {
     const [dgci, setDGCI] = React.useState('');
     const [tan, setTAN] = React.useState('');
 
-
     // set patient data on mount and set hash from uuid
     React.useEffect(() => {
         if (isInit) {
@@ -122,21 +121,21 @@ const ShowCertificate = (props: any) => {
                                 </div>
                                 <div className="vaccine-data pt-3">
                                     <Card.Text className='input-label jcc-xs-jcfs-sm mb-0 font-weight-bold' >{t('translation:vaccine-data')}</Card.Text>
-                                    <Card.Text className='input-label jcc-xs-jcfs-sm mb-0' >{`${t('translation:disease-agent')}: `}</Card.Text>
-                                    <Card.Text className='input-label jcc-xs-jcfs-sm mb-0' >{`${t('translation:vaccine')}: `}</Card.Text>
-                                    <Card.Text className='input-label jcc-xs-jcfs-sm mb-0' >{`${t('translation:vac-medical-product')}:`}</Card.Text>
-                                    <Card.Text className='input-label jcc-xs-jcfs-sm mb-0' >{`${t('translation:vac-marketing-holder')}:`}</Card.Text>
+                                    <Card.Text className='input-label jcc-xs-jcfs-sm mb-0' >{`${t('translation:disease-agent')}: ${eudgc?.v?.[0].tg}`}</Card.Text>
+                                    <Card.Text className='input-label jcc-xs-jcfs-sm mb-0' >{`${t('translation:vaccine')}: ${eudgc?.v?.[0].vp}`}</Card.Text>
+                                    <Card.Text className='input-label jcc-xs-jcfs-sm mb-0' >{`${t('translation:vac-medical-product')}: ${eudgc?.v?.[0].mp}`}</Card.Text>
+                                    <Card.Text className='input-label jcc-xs-jcfs-sm mb-0' >{`${t('translation:vac-marketing-holder')}: ${eudgc?.v?.[0].ma}`}</Card.Text>
                                 </div>
                                 <div className="vaccination-data pt-3">
                                     <Card.Text className='input-label jcc-xs-jcfs-sm mb-0 font-weight-bold' >{t('translation:vaccination-data')}</Card.Text>
-                                    <Card.Text className='input-label jcc-xs-jcfs-sm mb-0' >{`${t('translation:sequence')}: `}</Card.Text>
-                                    <Card.Text className='input-label jcc-xs-jcfs-sm mb-0' >{`${t('translation:tot')}:`}</Card.Text>
-                                    <Card.Text className='input-label jcc-xs-jcfs-sm mb-0' >{`${t('translation:vac-last-date')}:`}</Card.Text>
+                                    <Card.Text className='input-label jcc-xs-jcfs-sm mb-0' >{`${t('translation:sequence')}: ${eudgc?.v?.[0].dn}`}</Card.Text>
+                                    <Card.Text className='input-label jcc-xs-jcfs-sm mb-0' >{`${t('translation:tot')}: ${eudgc?.v?.[0].sd}`}</Card.Text>
+                                    <Card.Text className='input-label jcc-xs-jcfs-sm mb-0' >{`${t('translation:vac-last-date')}: ${eudgc?.v?.[0].dt}`}</Card.Text>
                                 </div>
                                 <div className="vaccination-data pt-3">
                                     <Card.Text className='input-label jcc-xs-jcfs-sm mb-0 font-weight-bold' >{t('translation:certificate-data')}</Card.Text>
-                                    <Card.Text className='input-label jcc-xs-jcfs-sm mb-0' >{`${t('translation:vac-country')}: `}</Card.Text>
-                                    <Card.Text className='input-label jcc-xs-jcfs-sm mb-0' >{`${t('translation:adm')}:`}</Card.Text>
+                                    <Card.Text className='input-label jcc-xs-jcfs-sm mb-0' >{`${t('translation:vac-country')}: ${eudgc?.v?.[0].co}`}</Card.Text>
+                                    <Card.Text className='input-label jcc-xs-jcfs-sm mb-0' >{`${t('translation:adm')}: ${eudgc?.v?.[0].is}`}</Card.Text>
                                 </div>
                             </Col>
                             <Col sm='6' className='px-4'>
@@ -144,8 +143,8 @@ const ShowCertificate = (props: any) => {
                                     {qrCodeValue ? <><QRCode id='qr-code' size={256} renderAs='svg' value={qrCodeValue} />
                                         {/* <Card.Text className='input-label' >{qrCodeValue}</Card.Text> */}
                                     </> : <></>}
-                                    <Card.Text className='input-label jcc-xs-jcfs-sm mb-0' >TAN: {tan}</Card.Text>
                                 </Container>
+                                <Card.Text className='input-label jcc-xs-sm m-2 font-weight-bold text-center' >TAN: {tan}</Card.Text>
                             </Col>
                         </Row>
                     </Card.Body>
