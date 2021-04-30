@@ -132,9 +132,6 @@ const RecordVaccinationCertData = (props: any) => {
 
     const getOptionsForValueSet = (valueSet: IValueSet): JSX.Element[] => {
         const result: JSX.Element[] = [];
-
-        result.push(<option key={0} value={''} >{ }</option>);
-
         for (const key of Object.keys(valueSet)) {
             result.push(<option key={key} value={key}>{valueSet[key].display}</option>)
         }
@@ -403,6 +400,7 @@ const RecordVaccinationCertData = (props: any) => {
                                         placeholder={t('translation:def-disease-agent')}
                                         required
                                     >
+                                        <option disabled key={0} value={''} >{t('translation:def-disease-agent')}</option>
                                         {diseasOptions}
                                     </Form.Control>
                                 </Col>
@@ -420,6 +418,7 @@ const RecordVaccinationCertData = (props: any) => {
                                         placeholder={t('translation:vaccine')}
                                         required
                                     >
+                                        <option disabled key={0} value={''} >{t('translation:vaccine')}</option>
                                         {vaccineOptions}
                                     </Form.Control>
                                 </Col>
@@ -437,6 +436,7 @@ const RecordVaccinationCertData = (props: any) => {
                                         placeholder="{t('translation:vaccine')}"
                                         required
                                     >
+                                        <option disabled key={0} value={''} >{t('translation:vac-medical-product')}</option>
                                         {medicalProductOptions}
                                     </Form.Control>
                                 </Col>
@@ -454,6 +454,7 @@ const RecordVaccinationCertData = (props: any) => {
                                         placeholder={t('translation:def-vac-marketing-holder')}
                                         required
                                     >
+                                        <option disabled key={0} value={''} >{t('translation:vac-marketing-holder')}</option>
                                         {marketingHolderOptions}
                                     </Form.Control>
                                 </Col>
@@ -499,7 +500,6 @@ const RecordVaccinationCertData = (props: any) => {
                                 </Col>
                             </Form.Group>
 
-                            {/* !TODO: change label to a clearer name then "Last Date" */}
                             {/* vacLastDate */}
                             <Form.Group as={Row} controlId='formLastDateInput' className='mb-1'>
                                 <Form.Label className='input-label txt-no-wrap' column xs='5' sm='3'>{t('translation:vac-last-date') + '*'}</Form.Label>
@@ -538,6 +538,7 @@ const RecordVaccinationCertData = (props: any) => {
                                         placeholder={t('translation:country')}
                                         required
                                     >
+                                        <option disabled key={0} value={''} >{t('translation:vac-country')}</option>
                                         {isoCountryOptions}
                                     </Form.Control>
                                 </Col>
