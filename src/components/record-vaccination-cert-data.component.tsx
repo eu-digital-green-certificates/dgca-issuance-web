@@ -87,6 +87,29 @@ const RecordVaccinationCertData = (props: any) => {
 
 
     React.useEffect(() => {
+        if(!props.eudgc) {
+            return;
+        }
+
+        const eudgc: EUDGC = props.eudgc;
+
+        setFamilyName(eudgc.nam!.fn!);
+        setStandardisedFamilyName(eudgc.nam!.fnt!);
+        setGivenName(eudgc.nam!.gn!);
+        setStandardisedGivenName(eudgc.nam!.gnt!);
+        setDateOfBirth(new Date(eudgc.dob!));
+        setDisease(eudgc.v![0].tg!);
+        setVaccine(eudgc.v![0]!.vp!);
+        setMedicalProduct(eudgc.v![0].mp!);
+        setMarketingHolder(eudgc.v![0].ma!);
+        setDoseNumber(eudgc.v![0].dn!);
+        setTotalDoseNumber(eudgc.v![0].sd!);
+        setVacLastDate(new Date(eudgc.v![0].dt!));
+        setIssuerCountryCode(eudgc.v![0].co!);
+        setCertificateIssuer(eudgc.v![0].is!);
+    }, [props.eudgc]);
+
+    React.useEffect(() => {
         setIso3311a2();
     }, []);
 
