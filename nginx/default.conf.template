@@ -1,4 +1,4 @@
-upstream dgci {
+upstream service {
     server ${DGCI_SERVICE_HOST}:${DGCI_SERVICE_PORT};
 }
 
@@ -15,9 +15,9 @@ server {
         expires 0;
         try_files /index.html =404;
     }
-    location /dgci/ {
+    location /service/ {
         #proxy_set_header X-Forwarded-For $remote_addr;
         #proxy_set_header Host $http_host;
-        proxy_pass http://dgci/dgci;
+        proxy_pass http://service/;
     }
 }

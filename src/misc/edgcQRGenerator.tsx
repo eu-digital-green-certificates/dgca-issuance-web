@@ -24,7 +24,10 @@ import axios from 'axios';
 import { EUDGC } from '../generated-files/dgc-combined-schema';
 
 const api = axios.create({
-    baseURL: ''
+    baseURL: '',
+    headers: {
+        "Content-Type": "application/json"
+    },
 });
 
 
@@ -52,11 +55,11 @@ interface SigResponse {
 
 
 const signerCall = (id: string, hash: string): Promise<SigResponse> => {
-    return api.put('/dgci/' + id, { hash: hash })
-        .then(res => {
-            const sigResponse: SigResponse = res.data;
-            return sigResponse;
-        });
+    return api.put('/service/dgci/' + id, { hash: hash })
+    .then(res => {
+        const sigResponse: SigResponse = res.data;
+        return sigResponse;
+    });
 }
 
 
@@ -68,26 +71,26 @@ const generateQRCode = (edgcPayload: EUDGC): Promise<CertResult> => {
 
     let tan: string = '';
 
-    return api.post('/dgci', certInit)
-        .then(response => {
-            const certMetaData: CertificateMetaData = response.data;
-            // TODO copy dgci to EUDGC
-            return createCertificateQRData(edgcPayload, certMetaData,
-                (hash) => {
-                    return signerCall(response.data.id.toString(), hash)
-                        .then((sigResponse) => {
-                            tan = sigResponse.tan;
-                            return sigResponse.signature;
-                        });
-                })
-                .then((qrCode: string) => {
-                    return {
-                        qrCode: qrCode,
-                        dgci: certMetaData.dgci,
-                        tan: tan
-                    }
+    return api.post('/service/dgci', certInit)
+    .then(response => {
+        const certMetaData: CertificateMetaData = response.data;
+        // TODO copy dgci to EUDGC
+        return createCertificateQRData(edgcPayload, certMetaData,
+        (hash) => {
+            return signerCall(response.data.id.toString(), hash)
+                .then((sigResponse) => {
+                    tan = sigResponse.tan;
+                    return sigResponse.signature;
                 });
+        })
+        .then((qrCode: string) => {
+            return {
+                qrCode: qrCode,
+                dgci: certMetaData.dgci,
+                tan: tan
+            }
         });
+    });
 }
 
 export default generateQRCode;
