@@ -11,7 +11,7 @@ services:
     environment:
     - DGCI_WEB_PORT=8080
     - DGCI_SERVICE_HOST=dgc-issuance-service
-    - DGCI_SERVICE_HOST=8081
+    - DGCI_SERVICE_PORT=8081
     networks:
       internal:
 

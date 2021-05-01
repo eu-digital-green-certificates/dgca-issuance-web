@@ -16,8 +16,8 @@ server {
         try_files /index.html =404;
     }
     location /dgci/ {
-        proxy_set_header X-Forwarded-For $remote_addr;
-        proxy_set_header Host $http_host;
-        proxy_pass http://dgci/;
+        #proxy_set_header X-Forwarded-For $remote_addr;
+        #proxy_set_header Host $http_host;
+        proxy_pass http://dgci/dgci;
     }
 }
