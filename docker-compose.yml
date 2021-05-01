@@ -1,0 +1,32 @@
+version: '3'
+
+services:
+  dgc-issuance-web:
+    build: .
+    image: dgca-issuance-web/dgca-issuance-web
+    container_name: dgc-issuance-web
+    hostname: dgc-issuance-web
+    ports:
+    - 8080:8080
+    environment:
+    - DGCI_WEB_PORT=8080
+    - DGCI_SERVICE_HOST=dgc-issuance-service
+    - DGCI_SERVICE_HOST=8081
+    networks:
+      internal:
+
+  dgc-issuance-service:
+    image: docker.pkg.github.com/eu-digital-green-certificates/dgca-issuance-service/dgca-issuance-service:0.0.5
+    container_name: dgc-issuance-service
+    hostname: dgc-issuance-service
+    ports:
+    - 8081:8081
+    environment:
+    - SERVER_PORT=8081
+    - SPRING_PROFILES_ACTIVE=dev
+    networks:
+      internal:
+    restart: unless-stopped
+
+networks:
+  internal:
