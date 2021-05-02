@@ -4,33 +4,43 @@ on:
     types:
     - created
 jobs:
-  release:
+  build:
     runs-on: ubuntu-20.04
+    env:
+      APP_VERSION: ${{ github.event.release.tag_name }}
     steps:
     - uses: actions/checkout@v2
       with:
         fetch-depth: 0
-    - name: version
-      run: >-
-        APP_SHA=$(git rev-parse --short ${GITHUB_SHA});
-        APP_TAG=${GITHUB_REF/refs\/tags\/}
-        APP_VERSION=${APP_TAG};
-        echo "APP_SHA=${APP_SHA}" >> ${GITHUB_ENV};
-        echo "APP_TAG=${APP_TAG}" >> ${GITHUB_ENV};
-        echo "APP_VERSION=${APP_VERSION}" >> ${GITHUB_ENV};
     - name: docker
-      run: >-
-        echo "${APP_PACKAGES_PASSWORD}" |
-        docker login "${APP_PACKAGES_URL}"
-        --username "${APP_PACKAGES_USERNAME}"
-        --password-stdin;
-        docker build .
-        --file ./Dockerfile
-        --tag "${APP_PACKAGES_URL}:latest"
-        --tag "${APP_PACKAGES_URL}:${APP_VERSION}";
-        docker push "${APP_PACKAGES_URL}:latest";
-        docker push "${APP_PACKAGES_URL}:${APP_VERSION}";
+      run: |-
+        echo "${APP_PACKAGES_PASSWORD}" | docker login "${APP_PACKAGES_URL}" \
+        --username "${APP_PACKAGES_USERNAME}" \
+        --password-stdin
+        docker build . \
+        --file ./Dockerfile \
+        --tag "${APP_PACKAGES_URL}:latest" \
+        --tag "${APP_PACKAGES_URL}:${APP_VERSION}"
+        docker push "${APP_PACKAGES_URL}:latest"
+        docker push "${APP_PACKAGES_URL}:${APP_VERSION}"
       env:
         APP_PACKAGES_URL: docker.pkg.github.com/${{ github.repository }}/dgca-issuance-web
         APP_PACKAGES_USERNAME: ${{ github.actor }}
         APP_PACKAGES_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
+  deploy:
+    runs-on: ubuntu-20.04
+    needs:
+    - build
+    env:
+      APP_VERSION: ${{ github.event.release.tag_name }}
+    steps:
+    - name: cf setup
+      run: |-
+        curl -L -o /tmp/cf.tgz "https://packages.cloudfoundry.org/stable?release=${CF_RELEASE}&version=${CF_VERSION}"
+        sudo tar -xf /tmp/cf.tgz -C /usr/local/bin && rm -f /tmp/cf.tgz
+      env:
+        CF_VERSION: 7.2.0
+        CF_RELEASE: linux64-binary
+    - name: cf push
+      run: |-
+        cf --version
