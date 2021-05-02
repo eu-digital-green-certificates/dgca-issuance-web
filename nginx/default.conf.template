@@ -1,9 +1,6 @@
-upstream service {
-    server ${DGCI_SERVICE_HOST}:${DGCI_SERVICE_PORT};
-}
-
 server {
-    listen ${DGCI_WEB_PORT};
+    listen ${SERVER_PORT};
+    server_tokens off;
     location / {
         root /usr/share/nginx/html;
         index unresolvable-file-html.html;
@@ -15,9 +12,7 @@ server {
         expires 0;
         try_files /index.html =404;
     }
-    location /service/ {
-        #proxy_set_header X-Forwarded-For $remote_addr;
-        #proxy_set_header Host $http_host;
-        proxy_pass http://service/;
+    location /dgca-issuance-service/ {
+        proxy_pass ${DGCA_ISSUANCE_SERVICE_URL}/;
     }
 }
