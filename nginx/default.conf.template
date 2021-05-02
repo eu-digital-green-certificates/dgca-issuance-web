@@ -13,6 +13,7 @@ server {
         try_files /index.html =404;
     }
     location /dgca-issuance-service/ {
+        proxy_ssl_server_name on;
         proxy_pass ${DGCA_ISSUANCE_SERVICE_URL}/;
     }
 }
