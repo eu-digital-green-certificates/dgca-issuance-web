@@ -55,7 +55,7 @@ interface SigResponse {
 
 
 const signerCall = (id: string, hash: string): Promise<SigResponse> => {
-    return api.put('/service/dgci/' + id, { hash: hash })
+    return api.put('/dgca-issuance-service/dgci/' + id, { hash: hash })
     .then(res => {
         const sigResponse: SigResponse = res.data;
         return sigResponse;
@@ -71,7 +71,7 @@ const generateQRCode = (edgcPayload: EUDGC): Promise<CertResult> => {
 
     let tan: string = '';
 
-    return api.post('/service/dgci', certInit)
+    return api.post('/dgca-issuance-service/dgci', certInit)
     .then(response => {
         const certMetaData: CertificateMetaData = response.data;
         // TODO copy dgci to EUDGC
