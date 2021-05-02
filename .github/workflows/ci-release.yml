@@ -36,8 +36,8 @@ jobs:
     steps:
     - name: cf setup
       run: |-
-        curl -L -o /tmp/cf.tgz "https://packages.cloudfoundry.org/stable?release=${CF_RELEASE}&version=${CF_VERSION}"
-        sudo tar -xf /tmp/cf.tgz -C /usr/local/bin && rm -f /tmp/cf.tgz
+        curl -sL "https://packages.cloudfoundry.org/stable?release=${CF_RELEASE}&version=${CF_VERSION}" | \
+        sudo tar -zx -C /usr/local/bin
       env:
         CF_VERSION: 7.2.0
         CF_RELEASE: linux64-binary
