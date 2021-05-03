@@ -122,6 +122,23 @@ const ShowCertificate = (props: any) => {
         return result;
     }
 
+    const handleBack = ()=>{
+        if (eudgc) {
+            if (eudgc.v) {
+                navigation!.toRecordVac();
+            }
+            if (eudgc.t) {
+                navigation!.toRecordTest();
+            }
+            if (eudgc.r) {
+                navigation!.toLanding();
+            }
+        }
+        else{
+            navigation!.toLanding();
+        }
+    }
+
     return (
         !(isInit && eudgc && qrCodeValue) ? <Spinner /> :
             <>
@@ -191,7 +208,7 @@ const ShowCertificate = (props: any) => {
                                 <Button
                                     className='my-1 my-md-0 p-0'
                                     block
-                                    onClick={navigation!.toRecordVac}
+                                    onClick={handleBack}
                                 >
                                     {t('translation:patient-data-correction')}
                                 </Button>
