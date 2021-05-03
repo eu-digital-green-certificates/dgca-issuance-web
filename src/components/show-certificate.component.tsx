@@ -62,6 +62,7 @@ const ShowCertificate = (props: any) => {
         if (eudgc) {
             // TODO catch errors and handle them du to possible server connection problems
             genEDGCQR(eudgc).then((certResult: CertResult) => {
+                console.log("qrcode: "+certResult.qrCode);
                 setQrCodeValue(certResult.qrCode);
                 setTAN(certResult.tan);
                 setDGCI(certResult.dgci);
