@@ -39,6 +39,7 @@ import NotificationPage from './components/notification-page.component';
 import RecordVaccinationCertData from './components/record-vaccination-cert-data.component';
 import ShowCertificate from './components/show-certificate.component';
 import { EUDGC } from './generated-files/dgc-combined-schema';
+import RecordTestCertData from './components/record-test-cert-data.component';
 
 const Routing = (props: any) => {
 
@@ -93,6 +94,13 @@ const Routing = (props: any) => {
                 >
                     <RecordVaccinationCertData setEudgc={setEudgc} eudgc={eudgc} setError={setError} />
                 </Route>
+                
+                <Route
+                    exact
+                    path={routes.recordTest}
+                >
+                    <RecordTestCertData setEudgc={setEudgc} eudgc={eudgc} setError={setError} />
+                </Route>
 
                 <Route
                     exact
@@ -100,57 +108,6 @@ const Routing = (props: any) => {
                 >
                     <ShowCertificate setEudgc={setEudgc} eudgc={eudgc} setError={setError} />
                 </Route>
-
-                {/* Record Patient Data */}
-                {/* <PrivateRoute
-                    exact
-
-                    roles={['c19_quick_test_counter']}
-                    path={routes.recordPatient}
-                    component={RecordPatientData}
-                    render={(props) => <RecordPatientData {...props} setPatient={setPatient} patient={patient} setError={setError} />}
-                /> */}
-
-                {/* Show Patient Data */}
-                {/* <PrivateRoute
-                    roles={['c19_quick_test_counter']}
-                    path={routes.showPatientRecord}
-                    component={ShowPatientData}
-                    render={(props) => <ShowPatientData {...props} setPatient={setPatient} patient={patient} setError={setError} setNotificationShow={setNotificationShow} />}
-                /> */}
-
-                {/* Record Test Result */}
-                {/* <PrivateRoute
-                    roles={['c19_quick_test_lab']}
-                    path={routes.recordTestResult}
-                    component={RecordTestResult}
-                    render={(props) => <RecordTestResult {...props} setError={setError} setNotificationShow={setNotificationShow} />}
-                /> */}
-
-                {/* QR Scan */}
-                {/* <PrivateRoute
-                    exact
-                    path={routes.qrScan}
-                    roles={['c19_quick_test_lab']}
-                    component={QrScan}
-                    render={(props) => <QrScan {...props} setPatient={setPatient} />}
-                />
-
-                <PrivateRoute
-                    exact
-                    path={routes.statistics}
-                    roles={['c19_quick_test_lab']}
-                    component={Statistics}
-                    render={(props) => <Statistics {...props} setError={setError} />}
-                />
-
-                <PrivateRoute
-                    exact
-                    path={routes.failedReport}
-                    roles={['c19_quick_test_lab']}
-                    component={FailedReport}
-                    render={(props) => <FailedReport {...props} setError={setError} />}
-                /> */}
 
             </Container>
 

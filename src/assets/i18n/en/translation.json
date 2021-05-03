@@ -69,6 +69,7 @@
   "positiveTestCount": "Positive test count",
   "successfull-transferred": "Data successfully transferred",
   "record-vaccination-cert-dat": "Record vaccination certification",
+  "record-test-cert-dat": "Record test certification",
   "vaccination-cert": "Record Vaccination Certification",
   "identifierType": "Identifier Type",
   "country": "Person Country",
