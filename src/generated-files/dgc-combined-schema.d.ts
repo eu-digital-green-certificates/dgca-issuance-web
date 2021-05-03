@@ -31,74 +31,8 @@ export type StandardisedGivenName = string;
 export type DateOfBirth = string;
 /**
  * EU eHealthNetwork: Value Sets for Digital Green Certificates. version 1.0, 2021-04-16, section 2.1
- *
- * This interface was referenced by `EUDGC`'s JSON-Schema
- * via the `definition` "disease-agent-targeted".
  */
 export type DiseaseAgentTargeted = string;
-/**
- * Dose Number / Total doses in Series: positive integer, range: [1,9]
- *
- * This interface was referenced by `EUDGC`'s JSON-Schema
- * via the `definition` "dose_posint".
- */
-export type DosePosint = number;
-/**
- * Country of Vaccination / Test, ISO 3166 where possible
- *
- * This interface was referenced by `EUDGC`'s JSON-Schema
- * via the `definition` "country_vt".
- */
-export type CountryVt = string;
-/**
- * Certificate Issuer
- *
- * This interface was referenced by `EUDGC`'s JSON-Schema
- * via the `definition` "issuer".
- */
-export type Issuer = string;
-/**
- * Certificate Identifier, UVCI
- *
- * This interface was referenced by `EUDGC`'s JSON-Schema
- * via the `definition` "certificate_id".
- */
-export type CertificateId = string;
-/**
- * EU eHealthNetwork: Value Sets for Digital Green Certificates. version 1.0, 2021-04-16, section 2.2
- *
- * This interface was referenced by `EUDGC`'s JSON-Schema
- * via the `definition` "vaccine-prophylaxis".
- */
-export type VaccineProphylaxis = string;
-/**
- * EU eHealthNetwork: Value Sets for Digital Green Certificates. version 1.0, 2021-04-16, section 2.3
- *
- * This interface was referenced by `EUDGC`'s JSON-Schema
- * via the `definition` "vaccine-medicinal-product".
- */
-export type VaccineMedicinalProduct = string;
-/**
- * EU eHealthNetwork: Value Sets for Digital Green Certificates. version 1.0, 2021-04-16, section 2.4
- *
- * This interface was referenced by `EUDGC`'s JSON-Schema
- * via the `definition` "vaccine-mah-manf".
- */
-export type VaccineMahManf = string;
-/**
- * EU eHealthNetwork: Value Sets for Digital Green Certificates. version 1.0, 2021-04-16, section 2.8
- *
- * This interface was referenced by `EUDGC`'s JSON-Schema
- * via the `definition` "test-manf".
- */
-export type TestManf = string;
-/**
- * EU eHealthNetwork: Value Sets for Digital Green Certificates. version 1.0, 2021-04-16, section 2.9
- *
- * This interface was referenced by `EUDGC`'s JSON-Schema
- * via the `definition` "test-result".
- */
-export type TestResult = string;
 
 /**
  * EU Digital Green Certificate
@@ -132,9 +66,6 @@ export interface EUDGC {
 }
 /**
  * Vaccination Entry
- *
- * This interface was referenced by `EUDGC`'s JSON-Schema
- * via the `definition` "vaccination_entry".
  */
 export interface VaccinationEntry {
   /**
@@ -181,9 +112,6 @@ export interface VaccinationEntry {
 }
 /**
  * Test Entry
- *
- * This interface was referenced by `EUDGC`'s JSON-Schema
- * via the `definition` "test_entry".
  */
 export interface TestEntry {
   tg: DiseaseAgentTargeted;
@@ -231,9 +159,6 @@ export interface TestEntry {
 }
 /**
  * Recovery Entry
- *
- * This interface was referenced by `EUDGC`'s JSON-Schema
- * via the `definition` "recovery_entry".
  */
 export interface RecoveryEntry {
   tg: DiseaseAgentTargeted;
@@ -261,18 +186,5 @@ export interface RecoveryEntry {
    * Unique Certificate Identifier, UVCI
    */
   ci: string;
-  [k: string]: unknown;
-}
-/**
- * Person name: Surname(s), given name(s) - in that order
- *
- * This interface was referenced by `EUDGC`'s JSON-Schema
- * via the `definition` "person_name".
- */
-export interface PersonName {
-  fn?: FamilyName;
-  fnt: StandardisedFamilyName;
-  gn?: GivenName;
-  gnt?: StandardisedGivenName;
   [k: string]: unknown;
 }
