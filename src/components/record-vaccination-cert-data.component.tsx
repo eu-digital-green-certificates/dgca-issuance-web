@@ -32,7 +32,7 @@ import { IdentifierType } from '../misc/enum';
 import DatePicker from "react-datepicker";
 import { registerLocale } from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import de from 'date-fns/locale/de';
+//import de from 'date-fns/locale/de';
 
 import { EUDGC, VaccinationEntry, DiseaseAgentTargeted } from '../generated-files/dgc-combined-schema';
 import { useGetDiseaseAgents, useGetVaccineManufacturers, useGetVaccines, useGetVaccinMedicalData, IValueSet } from '../api';
@@ -43,7 +43,7 @@ import utils from '../misc/utils';
 const validator = new Validator();
 const iso3311a2 = require('iso-3166-1-alpha-2');
 
-registerLocale('de', de)
+//registerLocale('de', de)
 
 
 const RecordVaccinationCertData = (props: any) => {
@@ -87,7 +87,7 @@ const RecordVaccinationCertData = (props: any) => {
 
 
     React.useEffect(() => {
-        if(!props.eudgc) {
+        if (!props.eudgc) {
             return;
         }
 
@@ -294,12 +294,11 @@ const RecordVaccinationCertData = (props: any) => {
                         */}
                         <Card.Header id='data-header' className='pb-0'>
                             <Row>
-
-                                <Col md='4' className='d-flex justify-content-left'>
-                                    <Card.Text id='id-query-text'>{t('translation:query-id-card')}</Card.Text>
+                                <Col md='6'>
+                                    <Card.Title className='m-md-0 tac-xs-tal-md jcc-xs-jcfs-md' as={'h2'} >{t('translation:vaccination-cert')}</Card.Title>
                                 </Col>
-                                <Col md='8'>
-                                    <Card.Title className='m-md-0 jcc-xs-jcfs-md' as={'h2'} >{t('translation:vaccination-cert')}</Card.Title>
+                                <Col md='6' className='d-flex justify-content-center'>
+                                    <Card.Text id='id-query-text'>{t('translation:query-id-card')}</Card.Text>
                                 </Col>
                             </Row>
                             <hr />
@@ -392,8 +391,7 @@ const RecordVaccinationCertData = (props: any) => {
                                     <DatePicker
                                         selected={dateOfBirth}
                                         onChange={handleDateOfBirthChange}
-                                        locale='de'
-                                        dateFormat='dd.MM.yyyy'
+                                        dateFormat='yyyy-MM-dd'
                                         isClearable
                                         placeholderText={t('translation:date-of-birth')}
                                         className='qt-input form-control'
@@ -531,8 +529,7 @@ const RecordVaccinationCertData = (props: any) => {
                                     <DatePicker
                                         selected={vacLastDate}
                                         onChange={handleVacLastDate}
-                                        locale='de'
-                                        dateFormat='dd.MM.yyyy'
+                                        dateFormat='yyyy-MM-dd'
                                         isClearable
                                         placeholderText={t('translation:vac-last-date')}
                                         className='qt-input form-control'

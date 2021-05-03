@@ -32,7 +32,9 @@ import { IdentifierType } from '../misc/enum';
 import DatePicker from "react-datepicker";
 import { registerLocale } from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import de from 'date-fns/locale/de';
+
+// e.G. german month names pt1
+//import de from 'date-fns/locale/de';
 
 import { EUDGC, VaccinationEntry, DiseaseAgentTargeted, TestEntry } from '../generated-files/dgc-combined-schema';
 import { useGetDiseaseAgents, useGetTestManufacturers, useGetTestResult, IValueSet } from '../api';
@@ -43,7 +45,8 @@ import utils from '../misc/utils';
 const validator = new Validator();
 const iso3311a2 = require('iso-3166-1-alpha-2');
 
-registerLocale('de', de)
+// e.G. german month names pt2
+// registerLocale('de', de)
 
 
 const RecordTestCertData = (props: any) => {
@@ -277,7 +280,7 @@ const RecordTestCertData = (props: any) => {
             var result = validator.validate(eudgc, schema);
 
             if (result.valid) {
-                //console.log(JSON.stringify(eudgc));
+                // console.log(JSON.stringify(eudgc));
 
                 props.setEudgc(eudgc);
                 setTimeout(navigation!.toShowCert, 200);
@@ -288,9 +291,6 @@ const RecordTestCertData = (props: any) => {
             }
         }
     }
-
-    const formatDate = (date: Date): string => `${date.toISOString().substr(0, 10)}`;
-
 
     return (
         !isInit ? <Spinner /> :
@@ -304,12 +304,11 @@ const RecordTestCertData = (props: any) => {
                         */}
                         <Card.Header id='data-header' className='pb-0'>
                             <Row>
-
-                                <Col md='4' className='d-flex justify-content-left'>
-                                    <Card.Text id='id-query-text'>{t('translation:query-id-card')}</Card.Text>
+                                <Col md='6'>
+                                    <Card.Title className='m-md-0 tac-xs-tal-md jcc-xs-jcfs-md' as={'h2'} >{t('translation:test-cert')}</Card.Title>
                                 </Col>
-                                <Col md='8'>
-                                    <Card.Title className='m-md-0 jcc-xs-jcfs-md' as={'h2'} >{t('translation:test-cert')}</Card.Title>
+                                <Col md='6' className='d-flex justify-content-center'>
+                                    <Card.Text id='id-query-text'>{t('translation:query-id-card')}</Card.Text>
                                 </Col>
                             </Row>
                             <hr />
@@ -402,8 +401,7 @@ const RecordTestCertData = (props: any) => {
                                     <DatePicker
                                         selected={dateOfBirth}
                                         onChange={handleDateOfBirthChange}
-                                        locale='de'
-                                        dateFormat='dd.MM.yyyy'
+                                        dateFormat='yyyy-MM-dd'
                                         isClearable
                                         placeholderText={t('translation:date-of-birth')}
                                         className='qt-input form-control'
@@ -455,7 +453,7 @@ const RecordTestCertData = (props: any) => {
                                     />
                                 </Col>
                             </Form.Group>
-                            
+
                             {/* testName input */}
                             <Form.Group as={Row} controlId='formTestNameInput' className='mb-1'>
                                 <Form.Label className='input-label' column xs='5' sm='3'>{t('translation:testName') + '*'}</Form.Label>
@@ -490,7 +488,9 @@ const RecordTestCertData = (props: any) => {
                                     </Form.Control>
                                 </Col>
                             </Form.Group>
-                            
+
+                            <hr />
+
                             {/* sampleDateTime */}
                             <Form.Group as={Row} controlId='formSampleDateTimeInput' className='mb-1'>
                                 <Form.Label className='input-label txt-no-wrap' column xs='5' sm='3'>{t('translation:sampleDateTime') + '*'}</Form.Label>
@@ -499,9 +499,7 @@ const RecordTestCertData = (props: any) => {
                                     <DatePicker
                                         selected={sampleDateTime}
                                         onChange={handleSampleDateTimeChange}
-                                        locale='de'
-                                        dateFormat='dd.MM.yyyy'
-                                        isClearable
+                                        dateFormat='yyyy-MM-dd / hh:mm a'
                                         placeholderText={t('translation:sampleDateTime')}
                                         className='qt-input form-control'
                                         wrapperClassName='align-self-center'
@@ -515,7 +513,7 @@ const RecordTestCertData = (props: any) => {
                                     />
                                 </Col>
                             </Form.Group>
-                            
+
                             {/* testDateTime */}
                             <Form.Group as={Row} controlId='formTestDateTimeInput' className='mb-1'>
                                 <Form.Label className='input-label txt-no-wrap' column xs='5' sm='3'>{t('translation:testDateTime') + '*'}</Form.Label>
@@ -524,9 +522,7 @@ const RecordTestCertData = (props: any) => {
                                     <DatePicker
                                         selected={testDateTime}
                                         onChange={handleTestDateTimeChange}
-                                        locale='de'
-                                        dateFormat='dd.MM.yyyy'
-                                        isClearable
+                                        dateFormat='yyyy-MM-dd / hh:mm a'
                                         placeholderText={t('translation:testDateTime')}
                                         className='qt-input form-control'
                                         wrapperClassName='align-self-center'
@@ -558,7 +554,7 @@ const RecordTestCertData = (props: any) => {
                                     </Form.Control>
                                 </Col>
                             </Form.Group>
-                            
+
                             {/* testCenter input */}
                             <Form.Group as={Row} controlId='formTestCenterInput' className='mb-1'>
                                 <Form.Label className='input-label' column xs='5' sm='3'>{t('translation:testCenter') + '*'}</Form.Label>

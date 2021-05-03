@@ -247,6 +247,13 @@ hr {
         justify-content: flex-start;
     }
 }
+.tac-xs-tal-md {
+    text-align: center;
+
+    @include media-breakpoint-up(md) {
+        text-align: left;
+    }
+}
 
 .position-inherit {
     position: inherit;
