@@ -326,3 +326,9 @@ hr {
     height: 40px;
     width: 40px;
   }
+
+  .form-flex{
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+  }

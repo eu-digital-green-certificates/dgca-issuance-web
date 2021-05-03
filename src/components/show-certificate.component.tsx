@@ -30,8 +30,9 @@ import useNavigation from '../misc/navigation';
 import QRCode from 'qrcode.react';
 
 import Spinner from './spinner/spinner.component';
-import { EUDGC } from '../generated-files/dgc-combined-schema';
+import { EUDGC, RecoveryEntry, TestEntry, VaccinationEntry } from '../generated-files/dgc-combined-schema';
 import genEDGCQR, { CertResult } from '../misc/edgcQRGenerator';
+import { useGetDiseaseAgents, useGetVaccineManufacturers, useGetVaccines, useGetVaccinMedicalData, IValueSet } from '../api';
 
 // import { usePostPatient } from '../api';
 
@@ -40,8 +41,16 @@ const ShowCertificate = (props: any) => {
     const navigation = useNavigation();
     const { t } = useTranslation();
 
+    const vacMedsData = useGetVaccinMedicalData();
+    const diseaseAgentsData = useGetDiseaseAgents();
+    const vaccineManufacturers = useGetVaccineManufacturers();
+    const vaccines = useGetVaccines();
+
     const [isInit, setIsInit] = React.useState(false)
     const [eudgc, setEudgc] = React.useState<EUDGC>();
+    const [vaccinationSet, setVaccinationSet] = React.useState<VaccinationEntry>();
+    const [testSet, setTestSet] = React.useState<TestEntry>();
+    const [recoverySet, setRecoverySet] = React.useState<RecoveryEntry>();
     const [qrCodeValue, setQrCodeValue] = React.useState('');
     const [dgci, setDGCI] = React.useState('');
     const [tan, setTAN] = React.useState('');
@@ -60,13 +69,21 @@ const ShowCertificate = (props: any) => {
 
     React.useEffect(() => {
         if (eudgc) {
+            setVaccinationSet(eudgc.v ? eudgc.v[0] : undefined);
+            setTestSet(eudgc.t ? eudgc.t[0] : undefined);
+            setRecoverySet(eudgc.r ? eudgc.r[0] : undefined);
+
             // TODO catch errors and handle them du to possible server connection problems
-            genEDGCQR(eudgc).then((certResult: CertResult) => {
-                console.log("qrcode: "+certResult.qrCode);
-                setQrCodeValue(certResult.qrCode);
-                setTAN(certResult.tan);
-                setDGCI(certResult.dgci);
-            });
+            genEDGCQR(eudgc)
+                .then((certResult: CertResult) => {
+                    //console.log("qrcode: " + certResult.qrCode);
+                    setQrCodeValue(certResult.qrCode);
+                    setTAN(certResult.tan);
+                    setDGCI(certResult.dgci);
+                })
+                .catch(error => {
+                    handleError(error);
+                });
         }
     }, [eudgc])
 
@@ -95,15 +112,20 @@ const ShowCertificate = (props: any) => {
         props.setError({ error: error, message: msg, onCancel: navigation!.toLanding });
     }
 
-    // const postPatient = usePostPatient(patientToPost, processId, finishProcess, handleError);
+    // returns display value for key 
+    const getValueSetDisplay = (key: string, valueSet: IValueSet | undefined): string => {
+        let result = key;
+
+        if (valueSet && valueSet[key]) {
+            result = valueSet[key].display;
+        }
+
+        return result;
+    }
 
     return (
-        !isInit ? <Spinner /> :
+        !(isInit && eudgc && qrCodeValue) ? <Spinner /> :
             <>
-                {/* <Row id='process-row'>
-                    <span className='font-weight-bold mr-2'>{t('translation:process')}</span>
-                    <span>{processId}</span>
-                </Row> */}
                 <Card id='data-card'>
 
                     {/*
@@ -116,28 +138,39 @@ const ShowCertificate = (props: any) => {
                                 <hr />
                                 <div className="personal-data">
                                     <Card.Text className='input-label jcc-xs-jcfs-sm mb-0 font-weight-bold' >{t('translation:personal-data')}</Card.Text>
-                                    <Card.Text className='input-label jcc-xs-jcfs-sm mb-0' >{`${t('translation:name')}: ${eudgc?.nam.gn}`}</Card.Text>
-                                    <Card.Text className='input-label jcc-xs-jcfs-sm mb-0' >{`${t('translation:first-name')}: ${eudgc?.nam.fn}`}</Card.Text>
-                                    <Card.Text className='input-label jcc-xs-jcfs-sm mb-0' >{`${t('translation:date-of-birth')}: ${eudgc?.dob}`}</Card.Text>
+                                    <Card.Text className='input-label jcc-xs-jcfs-sm mb-0' >{`${t('translation:name')}: ${eudgc.nam.gn}`}</Card.Text>
+                                    <Card.Text className='input-label jcc-xs-jcfs-sm mb-0' >{`${t('translation:first-name')}: ${eudgc.nam.fn}`}</Card.Text>
+                                    <Card.Text className='input-label jcc-xs-jcfs-sm mb-0' >{`${t('translation:date-of-birth')}: ${eudgc.dob}`}</Card.Text>
                                 </div>
-                                <div className="vaccine-data pt-3">
-                                    <Card.Text className='input-label jcc-xs-jcfs-sm mb-0 font-weight-bold' >{t('translation:vaccine-data')}</Card.Text>
-                                    <Card.Text className='input-label jcc-xs-jcfs-sm mb-0' >{`${t('translation:disease-agent')}: ${eudgc?.v?.[0].tg}`}</Card.Text>
-                                    <Card.Text className='input-label jcc-xs-jcfs-sm mb-0' >{`${t('translation:vaccine')}: ${eudgc?.v?.[0].vp}`}</Card.Text>
-                                    <Card.Text className='input-label jcc-xs-jcfs-sm mb-0' >{`${t('translation:vac-medical-product')}: ${eudgc?.v?.[0].mp}`}</Card.Text>
-                                    <Card.Text className='input-label jcc-xs-jcfs-sm mb-0' >{`${t('translation:vac-marketing-holder')}: ${eudgc?.v?.[0].ma}`}</Card.Text>
-                                </div>
-                                <div className="vaccination-data pt-3">
-                                    <Card.Text className='input-label jcc-xs-jcfs-sm mb-0 font-weight-bold' >{t('translation:vaccination-data')}</Card.Text>
-                                    <Card.Text className='input-label jcc-xs-jcfs-sm mb-0' >{`${t('translation:sequence')}: ${eudgc?.v?.[0].dn}`}</Card.Text>
-                                    <Card.Text className='input-label jcc-xs-jcfs-sm mb-0' >{`${t('translation:tot')}: ${eudgc?.v?.[0].sd}`}</Card.Text>
-                                    <Card.Text className='input-label jcc-xs-jcfs-sm mb-0' >{`${t('translation:vac-last-date')}: ${eudgc?.v?.[0].dt}`}</Card.Text>
-                                </div>
-                                <div className="vaccination-data pt-3">
-                                    <Card.Text className='input-label jcc-xs-jcfs-sm mb-0 font-weight-bold' >{t('translation:certificate-data')}</Card.Text>
-                                    <Card.Text className='input-label jcc-xs-jcfs-sm mb-0' >{`${t('translation:vac-country')}: ${eudgc?.v?.[0].co}`}</Card.Text>
-                                    <Card.Text className='input-label jcc-xs-jcfs-sm mb-0' >{`${t('translation:adm')}: ${eudgc?.v?.[0].is}`}</Card.Text>
-                                </div>
+                                {!vaccinationSet ? <></>
+                                    : <>
+                                        <div className="vaccine-data pt-3">
+                                            <Card.Text className='input-label jcc-xs-jcfs-sm mb-0 font-weight-bold' >{t('translation:vaccine-data')}</Card.Text>
+                                            <Card.Text className='input-label jcc-xs-jcfs-sm mb-0' >{`${t('translation:disease-agent')}: ${getValueSetDisplay(vaccinationSet.tg, diseaseAgentsData)}`}</Card.Text>
+                                            <Card.Text className='input-label jcc-xs-jcfs-sm mb-0' >{`${t('translation:vaccine')}: ${getValueSetDisplay(vaccinationSet.vp, vaccines)}`}</Card.Text>
+                                            <Card.Text className='input-label jcc-xs-jcfs-sm mb-0' >{`${t('translation:vac-medical-product')}: ${getValueSetDisplay(vaccinationSet.mp, vacMedsData)}`}</Card.Text>
+                                            <Card.Text className='input-label jcc-xs-jcfs-sm mb-0' >{`${t('translation:vac-marketing-holder')}: ${getValueSetDisplay(vaccinationSet.ma, vaccineManufacturers)}`}</Card.Text>
+                                        </div>
+                                        <div className="vaccination-data pt-3">
+                                            <Card.Text className='input-label jcc-xs-jcfs-sm mb-0 font-weight-bold' >{t('translation:vaccination-data')}</Card.Text>
+                                            <Card.Text className='input-label jcc-xs-jcfs-sm mb-0' >{`${t('translation:sequence')}: ${vaccinationSet.dn}`}</Card.Text>
+                                            <Card.Text className='input-label jcc-xs-jcfs-sm mb-0' >{`${t('translation:tot')}: ${vaccinationSet.sd}`}</Card.Text>
+                                            <Card.Text className='input-label jcc-xs-jcfs-sm mb-0' >{`${t('translation:vac-last-date')}: ${vaccinationSet.dt}`}</Card.Text>
+                                        </div>
+                                        <div className="vaccination-data pt-3">
+                                            <Card.Text className='input-label jcc-xs-jcfs-sm mb-0 font-weight-bold' >{t('translation:certificate-data')}</Card.Text>
+                                            <Card.Text className='input-label jcc-xs-jcfs-sm mb-0' >{`${t('translation:vac-country')}: ${vaccinationSet.co}`}</Card.Text>
+                                            <Card.Text className='input-label jcc-xs-jcfs-sm mb-0' >{`${t('translation:adm')}: ${vaccinationSet.is}`}</Card.Text>
+                                        </div>
+                                    </>}
+                                    {!testSet ? <></>
+                                    : <>
+
+                                    </>}
+                                    {!recoverySet ? <></>
+                                    : <>
+
+                                    </>}
                             </Col>
                             <Col sm='6' className='px-4'>
                                 <Container id='qr-code-container'>

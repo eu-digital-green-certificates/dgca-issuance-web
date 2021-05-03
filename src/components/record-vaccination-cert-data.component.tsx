@@ -267,7 +267,7 @@ const RecordVaccinationCertData = (props: any) => {
             var result = validator.validate(eudgc, schema);
 
             if (result.valid) {
-                console.log(JSON.stringify(eudgc));
+                //console.log(JSON.stringify(eudgc));
 
                 props.setEudgc(eudgc);
                 setTimeout(navigation!.toShowCert, 200);
@@ -287,7 +287,7 @@ const RecordVaccinationCertData = (props: any) => {
             <>
                 <Card id='data-card'>
 
-                    <Form onSubmit={handleSubmit} /*validated={validated}*/>
+                    <Form className='form-flex' onSubmit={handleSubmit} /*validated={validated}*/>
 
                         {/*
                             header with title and id card query
