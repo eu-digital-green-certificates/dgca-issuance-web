@@ -14,10 +14,8 @@ const divmod = (a: number, b: number): [number, number] => {
   var remainder = a;
   var quotient = 0;
 
-  if (a > b) {
-    remainder = a % b;
-    quotient = (a - remainder) / b;
-  }
+  remainder = a % b;
+  quotient = a / b | 0;
 
   return [quotient, remainder];
 }
