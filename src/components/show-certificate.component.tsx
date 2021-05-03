@@ -97,7 +97,6 @@ const ShowCertificate = (props: any) => {
 
     const finishProcess = () => {
         props.setEudgc(undefined);
-        props.setNotificationShow(true);
         navigation!.toLanding();
     }
 
