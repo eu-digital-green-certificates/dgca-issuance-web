@@ -86,7 +86,7 @@ const coseSign = (cborData: Buffer, signService: SignService, kid64: string, alg
     ];
 
     const hash = computeCOSEHash(cbor.encode(sigData));
-    console.log("hash to sign " + hash);
+    // console.log("hash to sign " + hash);
 
     return signService(hash).then(sigBase64 => {
         // console.log("signature "+sigBase64);
@@ -104,12 +104,7 @@ const compress = (cose: Buffer): Buffer => {
 }
 
 const base45encode = (data: Buffer): string => {
-
-    console.log("data" + data.toString('base64'));
-    const r = base45.encode(data);
-    console.log("base45" + r);
-
-    return r;
+    return base45.encode(data);
 }
 
 
