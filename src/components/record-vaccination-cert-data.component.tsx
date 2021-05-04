@@ -85,7 +85,7 @@ const RecordVaccinationCertData = (props: any) => {
     const [issuerCountryCode, setIssuerCountryCode] = React.useState<string>('');
 
     const [isoCountryOptions, setIsoCountryOptions] = React.useState<JSX.Element[]>();
-    const [defaultIssuerCountry, setDefaultIssuerCountry] = useLocalStorage('issuerCountry', '');
+    const [defaultIssuerCountryCode, setDefaultIssuerCountryCode] = useLocalStorage('defaultIssuerCountryCode', '');
 
 
     React.useEffect(() => {
@@ -116,21 +116,18 @@ const RecordVaccinationCertData = (props: any) => {
     }, []);
 
     React.useEffect(() => {
-        if(props.eudgc) {
-            return;
+        if(!issuerCountryCode) {
+            setIssuerCountryCode(defaultIssuerCountryCode);
         }
 
-        if(!issuerCountryCode || issuerCountryCode.length == 0) {
-            if(!defaultIssuerCountry || defaultIssuerCountry.length == 0) {
-                setDefaultLng();
-            } else {
-                setIssuerCountryCode(defaultIssuerCountry);
-            }
-        } else if (!(issuerCountryCode === defaultIssuerCountry)) {
-            setDefaultIssuerCountry(issuerCountryCode);
-        } 
+    }, [defaultIssuerCountryCode]);
 
-    }, [setIsoCountryOptions, props.eudgc, issuerCountryCode]);
+    React.useEffect(() => {
+        if (issuerCountryCode !== defaultIssuerCountryCode) {
+            setDefaultIssuerCountryCode(issuerCountryCode);
+        }
+
+    }, [issuerCountryCode]);
 
 
     React.useEffect(() => {
@@ -185,20 +182,13 @@ const RecordVaccinationCertData = (props: any) => {
         const options: JSX.Element[] = [];
         const codes: string[] = iso3311a2.getCodes().sort();
 
-        options.push(<option key={0} value={''} >{ }</option>);
+        // options.push(<option key={0} value={''} >{ }</option>);
 
         for (const code of codes) {
             options.push(<option key={code} value={code}>{code + " : " + iso3311a2.getCountry(code)}</option>)
         }
 
         setIsoCountryOptions(options);
-    }
-
-    const setDefaultLng = () => {
-        let userLng = navigator.languages[0];
-        const length = userLng.length;
-        userLng = userLng.substr(length-2, length);
-        setIssuerCountryCode(userLng.toUpperCase());
     }
 
     const handleError = (error: any) => {
