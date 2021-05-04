@@ -43,4 +43,18 @@ jobs:
         CF_RELEASE: linux64-binary
     - name: cf push
       run: |-
-        cf --version
+        cf api ${CF_API}
+        cf auth
+        cf target -o ${CF_ORG} -s ${CF_SPACE}
+        cf push ${APP_NAME} --docker-image ${APP_IMAGE}:${APP_VERSION} --docker-username ${CF_DOCKER_USERNAME}
+      env:
+        APP_NAME: dgca-issuance-web
+        APP_IMAGE: docker.pkg.github.com/${{ github.repository }}/dgca-issuance-web
+        CF_API: ${{ secrets.CF_API }}
+        CF_ORG: ${{ secrets.CF_ORG }}
+        CF_SPACE: ${{ secrets.CF_SPACE }}
+        CF_USERNAME: ${{ secrets.CF_USERNAME }}
+        CF_PASSWORD: ${{ secrets.CF_PASSWORD }}
+        CF_DOCKER_USERNAME: ${{ github.actor }}
+        CF_DOCKER_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
+
