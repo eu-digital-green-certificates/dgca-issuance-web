@@ -24,6 +24,7 @@ import { Button, Card, Col, Form, FormControlProps, Row } from 'react-bootstrap'
 
 import '../i18n';
 import { useTranslation } from 'react-i18next';
+import useLocalStorage from '../misc/local-storage';
 
 import useNavigation from '../misc/navigation';
 import Spinner from './spinner/spinner.component';
@@ -84,6 +85,7 @@ const RecordVaccinationCertData = (props: any) => {
     const [issuerCountryCode, setIssuerCountryCode] = React.useState<string>('');
 
     const [isoCountryOptions, setIsoCountryOptions] = React.useState<JSX.Element[]>();
+    const [defaultIssuerCountry, setDefaultIssuerCountry] = useLocalStorage('issuerCountry', '');
 
 
     React.useEffect(() => {
@@ -112,6 +114,23 @@ const RecordVaccinationCertData = (props: any) => {
     React.useEffect(() => {
         setIso3311a2();
     }, []);
+
+    React.useEffect(() => {
+        if(props.eudgc) {
+            return;
+        }
+
+        if(!issuerCountryCode || issuerCountryCode.length == 0) {
+            if(!defaultIssuerCountry || defaultIssuerCountry.length == 0) {
+                setDefaultLng();
+            } else {
+                setIssuerCountryCode(defaultIssuerCountry);
+            }
+        } else if (!(issuerCountryCode === defaultIssuerCountry)) {
+            setDefaultIssuerCountry(issuerCountryCode);
+        } 
+
+    }, [setIsoCountryOptions, props.eudgc, issuerCountryCode]);
 
 
     React.useEffect(() => {
@@ -173,6 +192,13 @@ const RecordVaccinationCertData = (props: any) => {
         }
 
         setIsoCountryOptions(options);
+    }
+
+    const setDefaultLng = () => {
+        let userLng = navigator.languages[0];
+        const length = userLng.length;
+        userLng = userLng.substr(length-2, length);
+        setIssuerCountryCode(userLng.toUpperCase());
     }
 
     const handleError = (error: any) => {
