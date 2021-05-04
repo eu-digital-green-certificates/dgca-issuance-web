@@ -130,6 +130,9 @@ const ShowCertificate = (props: any) => {
             if (eudgc.t) {
                 navigation!.toRecordTest();
             }
+            if (eudgc.t) {
+                navigation!.toRecordRecovery();
+            }
             if (eudgc.r) {
                 navigation!.toLanding();
             }

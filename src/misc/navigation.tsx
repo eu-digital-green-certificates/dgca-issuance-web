@@ -33,6 +33,7 @@ export interface INavigation {
     toLanding: () => void,
     toRecordVac: () => void,
     toRecordTest: () => void,
+    toRecordRecovery: () => void,
     toShowCert: () => void
 }
 
@@ -45,6 +46,7 @@ export const useRoutes = () => {
         landing: basePath,
         recordVac: basePath + '/record/vac',
         recordTest: basePath + '/record/test',
+        recordRecovery: basePath + '/record/recovery',
         showCert: basePath + '/record/show'
     }
 
@@ -68,6 +70,7 @@ export const useNavigation = () => {
             c.landing = routes.landing.replace(':mandant', mandant as string);
             c.recordVac = routes.recordVac.replace(':mandant', mandant as string);
             c.recordTest = routes.recordTest.replace(':mandant', mandant as string);
+            c.recordRecovery = routes.recordRecovery.replace(':mandant', mandant as string);
             c.showCert = routes.showCert.replace(':mandant', mandant as string);
 
             setCalculatedRoutes(c);
@@ -84,6 +87,7 @@ export const useNavigation = () => {
                 toLanding: () => { history.push(calculatedRoutes.landing); },
                 toRecordVac: () => { history.push(calculatedRoutes.recordVac); },
                 toRecordTest: () => { history.push(calculatedRoutes.recordTest); },
+                toRecordRecovery: () => { history.push(calculatedRoutes.recordRecovery); },
                 toShowCert: () => { history.push(calculatedRoutes.showCert); }
             }
 
