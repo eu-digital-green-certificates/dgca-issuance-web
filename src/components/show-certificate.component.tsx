@@ -32,7 +32,9 @@ import QRCode from 'qrcode.react';
 import Spinner from './spinner/spinner.component';
 import { EUDGC, RecoveryEntry, TestEntry, VaccinationEntry } from '../generated-files/dgc-combined-schema';
 import genEDGCQR, { CertResult } from '../misc/edgcQRGenerator';
-import { useGetDiseaseAgents, useGetVaccineManufacturers, useGetVaccines, useGetVaccinMedicalData, IValueSet } from '../api';
+import { useGetDiseaseAgents, useGetVaccineManufacturers, useGetVaccines, useGetVaccinMedicalData, useGetTestManufacturers, useGetTestResult, IValueSet } from '../api';
+import Moment from 'react-moment';
+import utils from '../misc/utils';
 
 // import { usePostPatient } from '../api';
 
@@ -45,6 +47,8 @@ const ShowCertificate = (props: any) => {
     const diseaseAgentsData = useGetDiseaseAgents();
     const vaccineManufacturers = useGetVaccineManufacturers();
     const vaccines = useGetVaccines();
+    const testManufacturersValueSet = useGetTestManufacturers();
+    const testResultValueSet = useGetTestResult();
 
     const [isInit, setIsInit] = React.useState(false)
     const [eudgc, setEudgc] = React.useState<EUDGC>();
@@ -112,17 +116,17 @@ const ShowCertificate = (props: any) => {
     }
 
     // returns display value for key 
-    const getValueSetDisplay = (key: string, valueSet: IValueSet | undefined): string => {
+    const getValueSetDisplay = (key: string | undefined, valueSet: IValueSet | undefined): string | undefined => {
         let result = key;
 
-        if (valueSet && valueSet[key]) {
+        if (valueSet && key && valueSet[key]) {
             result = valueSet[key].display;
         }
 
         return result;
     }
 
-    const handleBack = ()=>{
+    const handleBack = () => {
         if (eudgc) {
             if (eudgc.v) {
                 navigation!.toRecordVac();
@@ -134,7 +138,7 @@ const ShowCertificate = (props: any) => {
                 navigation!.toLanding();
             }
         }
-        else{
+        else {
             navigation!.toLanding();
         }
     }
@@ -179,11 +183,33 @@ const ShowCertificate = (props: any) => {
                                             <Card.Text className='input-label jcc-xs-jcfs-sm mb-0' >{`${t('translation:adm')}: ${vaccinationSet.is}`}</Card.Text>
                                         </div>
                                     </>}
-                                    {!testSet ? <></>
+                                {!testSet ? <></>
                                     : <>
+                                        <div className="pt-3">
+                                            <Card.Text className='input-label jcc-xs-jcfs-sm mb-0 font-weight-bold' >{t('translation:test-data')}</Card.Text>
+                                            <Card.Text className='input-label jcc-xs-jcfs-sm mb-0' >{`${t('translation:disease-agent')}: ${getValueSetDisplay(testSet.tg, diseaseAgentsData)}`}</Card.Text>
+                                            <Card.Text className='input-label jcc-xs-jcfs-sm mb-0' >{`${t('translation:testType')}: ${testSet.tt}`}</Card.Text>
+                                            <Card.Text className='input-label jcc-xs-jcfs-sm mb-0' >{`${t('translation:testName')}: ${testSet.nm}`}</Card.Text>
+                                            <Card.Text className='input-label jcc-xs-jcfs-sm mb-0' >{`${t('translation:testManufacturers')}: ${getValueSetDisplay(testSet.ma, testManufacturersValueSet)}`}</Card.Text>
+                                        </div>
 
+                                        <div className="pt-3">
+                                            <Card.Text className='input-label jcc-xs-jcfs-sm mb-0 font-weight-bold' >{t('translation:test-data')}</Card.Text>
+                                            <Card.Text className='input-label jcc-xs-jcfs-sm mb-0' >{t('translation:sampleDateTime') + ': '} </Card.Text>
+                                            <Moment className='input-label mb-3 jcc-xs-jcfs-sm' format={utils.momentDateTimeFormat}>{testSet.sc}</Moment>
+                                            <Card.Text className='input-label jcc-xs-jcfs-sm mb-0' >{t('translation:testDateTime') + ': '} </Card.Text>
+                                            <Moment className='input-label mb-3 jcc-xs-jcfs-sm' format={utils.momentDateTimeFormat}>{testSet.dr}</Moment>
+                                            <Card.Text className='input-label jcc-xs-jcfs-sm mb-0' >{`${t('translation:testResult')}: ${getValueSetDisplay(testSet.tr, testResultValueSet)}`}</Card.Text>
+                                            <Card.Text className='input-label jcc-xs-jcfs-sm mb-0' >{`${t('translation:testCenter')}: ${testSet.tc}`}</Card.Text>
+                                        </div>
+
+                                        <div className="vaccination-data pt-3">
+                                            <Card.Text className='input-label jcc-xs-jcfs-sm mb-0 font-weight-bold' >{t('translation:certificate-data')}</Card.Text>
+                                            <Card.Text className='input-label jcc-xs-jcfs-sm mb-0' >{`${t('translation:vac-country')}: ${testSet.co}`}</Card.Text>
+                                            <Card.Text className='input-label jcc-xs-jcfs-sm mb-0' >{`${t('translation:adm')}: ${testSet.is}`}</Card.Text>
+                                        </div>
                                     </>}
-                                    {!recoverySet ? <></>
+                                {!recoverySet ? <></>
                                     : <>
 
                                     </>}
