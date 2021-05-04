@@ -13,6 +13,6 @@ jobs:
       with:
         fetch-depth: 0
     - name: docker
-      run: >-
-        docker build .
-        --file ./Dockerfile;
+      run: |-
+        docker build . \
+        --file ./Dockerfile

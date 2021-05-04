@@ -28,6 +28,8 @@ import MedicalProducts from './assets/json-res/vaccine-medicinal-product.json';
 import DiseaseAgents from './assets/json-res/disease-agent-targeted.json';
 import VaccineManufacturers from './assets/json-res/vaccine-mah-manf.json';
 import Vaccines from './assets/json-res/vaccine-prophylaxis.json';
+import TestManufacturers from './assets/json-res/test-manf.json';
+import TestResult from './assets/json-res/test-result.json';
 
 interface IValue {
     active: boolean,
@@ -74,6 +76,7 @@ export const useGetDiseaseAgents = () => {
         const diseaseAgentsData = DiseaseAgents.valueSetValues;
         setDiseaseAgents(diseaseAgentsData);
     }, [])
+    
     return diseaseAgents;
 }
 
@@ -91,6 +94,7 @@ export const useGetVaccineManufacturers = () => {
         const vaccineManufacturersData = VaccineManufacturers.valueSetValues;
         setVaccineManufacturers(vaccineManufacturersData);
     }, [])
+
     return vaccineManufacturers;
 }
 
@@ -108,6 +112,40 @@ export const useGetVaccines = () => {
         const vaccinesData = Vaccines.valueSetValues;
         setVaccines(vaccinesData);
     }, [])
+    
     return vaccines;
 }
 
+// TestManufacturers
+export const useGetTestManufacturers = () => {
+
+    const [testManufacturers, setTestManufacturers] = React.useState<IValueSet>();
+
+    React.useEffect(() => {
+        // get object via api
+        // const testManufacturers = getApiData('/testManufacturers');
+
+        // get object via public
+        const testManufacturers = TestManufacturers.valueSetValues;
+        setTestManufacturers(testManufacturers);
+    }, [])
+
+    return testManufacturers;
+}
+
+// TestResult
+export const useGetTestResult = () => {
+
+    const [testResult, setTestResult] = React.useState<IValueSet>();
+
+    React.useEffect(() => {
+        // get object via api
+        // const testManufacturers = getApiData('/testManufacturers');
+
+        // get object via public
+        const testResult = TestResult.valueSetValues;
+        setTestResult(testResult);
+    }, [])
+
+    return testResult;
+}

@@ -69,7 +69,9 @@
   "positiveTestCount": "Positive test count",
   "successfull-transferred": "Data successfully transferred",
   "record-vaccination-cert-dat": "Record vaccination certification",
+  "record-test-cert-dat": "Record test certification",
   "vaccination-cert": "Record Vaccination Certification",
+  "test-cert": "Record Test Certification",
   "identifierType": "Identifier Type",
   "country": "Person Country",
   "identifierNumber": "Identifier Number",
@@ -99,5 +101,12 @@
   "HC": "Health Card number",
   "NI": "National Unique Individual Identifier",
   "MB": "Member Number",
-  "NH": "National Health Plan Identifier"
+  "NH": "National Health Plan Identifier",
+  "testManufacturers": "RAT Test name and manufacturer",
+  "testResult": "Test Result",
+  "testType": "Type of Test",
+  "testName": "NAA Test Name",
+  "sampleDateTime": "Date/Time of Sample Collection",
+  "testDateTime": "Date/Time of Test Result",
+  "testCenter": "Testing Centre"
 }
