@@ -1,39 +1,16 @@
-name: ci-release
+name: ci-deploy
 on:
-  release:
-    types:
-    - created
+  workflow_dispatch:
+    inputs:
+      version:
+        required: true
+        description: Version to deploy
 jobs:
-  build:
-    runs-on: ubuntu-20.04
-    env:
-      APP_VERSION: ${{ github.event.release.tag_name }}
-    steps:
-    - uses: actions/checkout@v2
-      with:
-        fetch-depth: 0
-    - name: docker
-      run: |-
-        echo "${APP_PACKAGES_PASSWORD}" | docker login "${APP_PACKAGES_URL}" \
-        --username "${APP_PACKAGES_USERNAME}" \
-        --password-stdin
-        docker build . \
-        --file ./Dockerfile \
-        --tag "${APP_PACKAGES_URL}:latest" \
-        --tag "${APP_PACKAGES_URL}:${APP_VERSION}"
-        docker push "${APP_PACKAGES_URL}:latest"
-        docker push "${APP_PACKAGES_URL}:${APP_VERSION}"
-      env:
-        APP_PACKAGES_URL: docker.pkg.github.com/${{ github.repository }}/dgca-issuance-web
-        APP_PACKAGES_USERNAME: ${{ github.actor }}
-        APP_PACKAGES_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
   deploy:
     runs-on: ubuntu-20.04
     environment: dev
-    needs:
-    - build
     env:
-      APP_VERSION: ${{ github.event.release.tag_name }}
+      APP_VERSION: ${{ github.event.inputs.version }}
     steps:
     - name: cf setup
       run: |-
