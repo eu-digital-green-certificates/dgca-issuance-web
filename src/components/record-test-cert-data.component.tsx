@@ -401,7 +401,7 @@ const RecordTestCertData = (props: any) => {
                                     <DatePicker
                                         selected={dateOfBirth}
                                         onChange={handleDateOfBirthChange}
-                                        dateFormat='yyyy-MM-dd'
+                                        dateFormat={utils.pickerDateFormat}
                                         isClearable
                                         placeholderText={t('translation:date-of-birth')}
                                         className='qt-input form-control'
@@ -499,7 +499,7 @@ const RecordTestCertData = (props: any) => {
                                     <DatePicker
                                         selected={sampleDateTime}
                                         onChange={handleSampleDateTimeChange}
-                                        dateFormat='yyyy-MM-dd / hh:mm a'
+                                        dateFormat={utils.pickerDateTimeFormat}
                                         placeholderText={t('translation:sampleDateTime')}
                                         className='qt-input form-control'
                                         wrapperClassName='align-self-center'
@@ -522,7 +522,7 @@ const RecordTestCertData = (props: any) => {
                                     <DatePicker
                                         selected={testDateTime}
                                         onChange={handleTestDateTimeChange}
-                                        dateFormat='yyyy-MM-dd / hh:mm a'
+                                        dateFormat={utils.pickerDateTimeFormat}
                                         placeholderText={t('translation:testDateTime')}
                                         className='qt-input form-control'
                                         wrapperClassName='align-self-center'
