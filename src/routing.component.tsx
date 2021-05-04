@@ -40,6 +40,7 @@ import RecordVaccinationCertData from './components/record-vaccination-cert-data
 import ShowCertificate from './components/show-certificate.component';
 import { EUDGC } from './generated-files/dgc-combined-schema';
 import RecordTestCertData from './components/record-test-cert-data.component';
+import RecordRecoveryCertData from './components/record-recovery-cert-data.component';
 
 const Routing = (props: any) => {
 
@@ -100,6 +101,13 @@ const Routing = (props: any) => {
                     path={routes.recordTest}
                 >
                     <RecordTestCertData setEudgc={setEudgc} eudgc={eudgc} setError={setError} />
+                </Route>
+
+                <Route
+                    exact
+                    path={routes.recordRecovery}
+                >
+                    <RecordRecoveryCertData setEudgc={setEudgc} eudgc={eudgc} setError={setError} />
                 </Route>
 
                 <Route

@@ -46,6 +46,7 @@ const LandingPage = (props: any) => {
 
             <Button block className='landing-btn' onClick={navigation!.toRecordVac}>{t('translation:record-vaccination-cert-dat')}</Button>
             <Button block className='landing-btn' onClick={navigation!.toRecordTest}>{t('translation:record-test-cert-dat')}</Button>
+            <Button block className='landing-btn' onClick={navigation!.toRecordRecovery}>{t('translation:record-recovery-cert-dat')}</Button>
 
         </Container>
     )

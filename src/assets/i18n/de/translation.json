@@ -67,7 +67,8 @@
   "totalTestCount": "Gesamtanzahl der Tests",
   "positiveTestCount": "Anzahl der positiven Tests",
   "successfull-transferred": "Die Daten wurden erfolgreich übermittelt",
-  "record-vaccination-cert-dat": "Impfpass erstellen",
+  "record-vaccination-cert-dat": "Impfzertifikat erstellen",
+  "record-recovery-cert-dat": "Genesungszertifikat erstellen",
   "vaccination-cert": "Impfpass erstellen",
   "identifierType": "Art des Ausweises",
   "country": "Land",
@@ -90,11 +91,6 @@
   "def-lot": "Eine unverwechselbare Kombination von Zahlen und / oder Buchstaben, die eine Charge spezifisch identifiziert",
   "adm": "Verwaltungzentrum",
   "def-adm": "Name oder Code des Verwaltungszentrums (z. B. Region Halland)",
-  "PPN": "Ausweisnummer",
-  "NN": "Nationale Personenkennung",
-  "CZ": "Staatsbürgerschaftskartennummer",
-  "HC": "Gesundheitskartennummer",
-  "NI": "Nationale eindeutige individuelle Kennung",
-  "MB": "Mitgliedsnummer",
-  "NH": "National Health Plan Identifier"
+  "recovery-first-date": "First Positive Test"
+  
 }
