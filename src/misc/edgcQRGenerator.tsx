@@ -62,26 +62,42 @@ const signerCall = (id: string, hash: string): Promise<SigResponse> => {
         });
 }
 
+const setDgci = (dgcPayload: EUDGC, dgci: string) => {
+    if (dgcPayload.v) {
+        for (let vac of dgcPayload.v) {
+            vac.ci = dgci;  
+        }
+    }
+    if (dgcPayload.r) {
+        for (let recovery of dgcPayload.r) {
+            recovery.ci = dgci;  
+        }
+    }
+    if (dgcPayload.t) {
+        for (let test of dgcPayload.t) {
+            test.ci = dgci;  
+        }
+    }
+}
 
-const generateQRCode = (edgcPayload: EUDGC): Promise<CertResult> => {
-    // TODO set right cert type from EUDGC
-
-    const _type = edgcPayload.r
-        ? CertType.Recovery
+const getEdgcType = (edgcPayload: EUDGC) : CertType => {
+    return edgcPayload.r ? CertType.Recovery
         : edgcPayload.t
             ? CertType.Test
             : CertType.Vaccination;
+}
 
+
+const generateQRCode = (edgcPayload: EUDGC): Promise<CertResult> => {
     const certInit: CertificateInit = {
-        type: _type
+        type: getEdgcType(edgcPayload)
     }
-
     let tan: string = '';
 
     return api.post('/dgca-issuance-service/dgci', certInit)
         .then(response => {
             const certMetaData: CertificateMetaData = response.data;
-            // TODO copy dgci to EUDGC
+            setDgci(edgcPayload, certMetaData.dgci);
             return createCertificateQRData(edgcPayload, certMetaData,
                 (hash) => {
                     return signerCall(response.data.id.toString(), hash)
@@ -91,6 +107,7 @@ const generateQRCode = (edgcPayload: EUDGC): Promise<CertResult> => {
                         });
                 })
                 .then((qrCode: string) => {
+                    //console.log("qr code: "+qrCode);
                     return {
                         qrCode: qrCode,
                         dgci: certMetaData.dgci,
