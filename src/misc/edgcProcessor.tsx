@@ -54,7 +54,9 @@ const encodeCBOR = (certData: any, certMetaData: CertificateMetaData): Buffer =>
     cborMap.set((6 as number), issuedAtSec);
     // issuer country code
     cborMap.set((1 as number), certMetaData.countryCode);
-    cborMap.set((-260 as number), certData);
+    const v1 = new cbor.Map();
+    v1.set((1 as number), certData)
+    cborMap.set((-260 as number), v1);
 
     return cbor.encode(cborMap);
 }

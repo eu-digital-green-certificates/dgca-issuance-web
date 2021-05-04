@@ -24,7 +24,6 @@ import { Button, Card, Col, Form, FormControlProps, Row } from 'react-bootstrap'
 
 import '../i18n';
 import { useTranslation } from 'react-i18next';
-import useLocalStorage from '../misc/local-storage';
 
 import useNavigation from '../misc/navigation';
 import Spinner from './spinner/spinner.component';
@@ -33,10 +32,12 @@ import { IdentifierType } from '../misc/enum';
 import DatePicker from "react-datepicker";
 import { registerLocale } from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+
+// e.G. german month names pt1
 //import de from 'date-fns/locale/de';
 
-import { EUDGC, VaccinationEntry, DiseaseAgentTargeted } from '../generated-files/dgc-combined-schema';
-import { useGetDiseaseAgents, useGetVaccineManufacturers, useGetVaccines, useGetVaccinMedicalData, IValueSet } from '../api';
+import { EUDGC, VaccinationEntry, DiseaseAgentTargeted, TestEntry } from '../generated-files/dgc-combined-schema';
+import { useGetDiseaseAgents, useGetTestManufacturers, useGetTestResult, IValueSet } from '../api';
 
 import schema from '../generated-files/DGC.combined-schema.json';
 import { Validator } from 'jsonschema';
@@ -44,19 +45,19 @@ import utils from '../misc/utils';
 const validator = new Validator();
 const iso3311a2 = require('iso-3166-1-alpha-2');
 
-//registerLocale('de', de)
+// e.G. german month names pt2
+// registerLocale('de', de)
 
 
-const RecordVaccinationCertData = (props: any) => {
+const RecordTestCertData = (props: any) => {
 
     const navigation = useNavigation();
     const { t } = useTranslation();
 
     // data read from the API
-    const vacMedsData = useGetVaccinMedicalData();
     const diseaseAgentsData = useGetDiseaseAgents();
-    const vaccineManufacturers = useGetVaccineManufacturers();
-    const vaccines = useGetVaccines();
+    const testManufacturersValueSet = useGetTestManufacturers();
+    const testResultValueSet = useGetTestResult();
 
     const [isInit, setIsInit] = React.useState(false)
 
@@ -69,23 +70,26 @@ const RecordVaccinationCertData = (props: any) => {
     const [dateOfBirth, setDateOfBirth] = React.useState<Date>();
 
     const [disease, setDisease] = React.useState<string>('');
-    const [vaccine, setVaccine] = React.useState<string>('');
-    const [medicalProduct, setMedicalProduct] = React.useState<string>('');
-    const [marketingHolder, setMarketingHolder] = React.useState<string>('');
+
+    const [testType, setTestType] = React.useState<string>('');
+    const [testName, setTestName] = React.useState<string>('');
+    const [testManufacturers, setTestManufacturers] = React.useState<string>('');
+
+    const [sampleDateTime, setSampleDateTime] = React.useState<Date>();
+    const [testDateTime, setTestDateTime] = React.useState<Date>();
+
+    const [testResult, setTestResult] = React.useState<string>('');
+    const [testCenter, setTestCenter] = React.useState<string>('');
 
     const [diseasOptions, setDiseasOptions] = React.useState<JSX.Element[]>();
-    const [vaccineOptions, setVaccineOptions] = React.useState<JSX.Element[]>();
-    const [medicalProductOptions, setMedicalProductOptions] = React.useState<JSX.Element[]>();
-    const [marketingHolderOptions, setMarketingHolderOptions] = React.useState<JSX.Element[]>();
+    const [testResultOptions, setTestResultOptions] = React.useState<JSX.Element[]>();
+    const [testManufacturersOptions, setTestManufacturersOptions] = React.useState<JSX.Element[]>();
 
-    const [doseNumber, setDoseNumber] = React.useState<number>(0);
-    const [totalDoseNumber, setTotalDoseNumber] = React.useState<number>(0);
     const [vacLastDate, setVacLastDate] = React.useState<Date>();
     const [certificateIssuer, setCertificateIssuer] = React.useState('');
     const [issuerCountryCode, setIssuerCountryCode] = React.useState<string>('');
 
     const [isoCountryOptions, setIsoCountryOptions] = React.useState<JSX.Element[]>();
-    const [defaultIssuerCountry, setDefaultIssuerCountry] = useLocalStorage('issuerCountry', '');
 
 
     React.useEffect(() => {
@@ -100,37 +104,26 @@ const RecordVaccinationCertData = (props: any) => {
         setGivenName(eudgc.nam!.gn!);
         setStandardisedGivenName(eudgc.nam!.gnt!);
         setDateOfBirth(new Date(eudgc.dob!));
-        setDisease(eudgc.v![0].tg!);
-        setVaccine(eudgc.v![0]!.vp!);
-        setMedicalProduct(eudgc.v![0].mp!);
-        setMarketingHolder(eudgc.v![0].ma!);
-        setDoseNumber(eudgc.v![0].dn!);
-        setTotalDoseNumber(eudgc.v![0].sd!);
-        setVacLastDate(new Date(eudgc.v![0].dt!));
-        setIssuerCountryCode(eudgc.v![0].co!);
-        setCertificateIssuer(eudgc.v![0].is!);
+
+        setDisease(eudgc.t![0].tg!);
+
+        setTestType(eudgc.t![0].tt!);
+        setTestName(eudgc.t![0].nm!);
+        setTestManufacturers(eudgc.t![0].ma!);
+
+        setSampleDateTime(new Date(eudgc.t![0].sc));
+        setTestDateTime(new Date(eudgc.t![0].dr!));
+
+        setTestResult(eudgc.t![0]!.tr!);
+        setTestCenter(eudgc.t![0]!.tc!);
+
+        setIssuerCountryCode(eudgc.t![0].co!);
+        setCertificateIssuer(eudgc.t![0].is!);
     }, [props.eudgc]);
 
     React.useEffect(() => {
         setIso3311a2();
     }, []);
-
-    React.useEffect(() => {
-        if(props.eudgc) {
-            return;
-        }
-
-        if(!issuerCountryCode || issuerCountryCode.length == 0) {
-            if(!defaultIssuerCountry || defaultIssuerCountry.length == 0) {
-                setDefaultLng();
-            } else {
-                setIssuerCountryCode(defaultIssuerCountry);
-            }
-        } else if (!(issuerCountryCode === defaultIssuerCountry)) {
-            setDefaultIssuerCountry(issuerCountryCode);
-        } 
-
-    }, [setIsoCountryOptions, props.eudgc, issuerCountryCode]);
 
 
     React.useEffect(() => {
@@ -149,27 +142,19 @@ const RecordVaccinationCertData = (props: any) => {
 
 
     React.useEffect(() => {
-        if (vaccines) {
-            const options = getOptionsForValueSet(vaccines)
-            setVaccineOptions(options);
+        if (testResultValueSet) {
+            const options = getOptionsForValueSet(testResultValueSet)
+            setTestResultOptions(options);
         }
-    }, [vaccines])
+    }, [testResultValueSet])
 
 
     React.useEffect(() => {
-        if (vacMedsData) {
-            const options = getOptionsForValueSet(vacMedsData)
-            setMedicalProductOptions(options);
+        if (testManufacturersValueSet) {
+            const options = getOptionsForValueSet(testManufacturersValueSet)
+            setTestManufacturersOptions(options);
         }
-    }, [vacMedsData])
-
-
-    React.useEffect(() => {
-        if (vaccineManufacturers) {
-            const options = getOptionsForValueSet(vaccineManufacturers)
-            setMarketingHolderOptions(options);
-        }
-    }, [vaccineManufacturers])
+    }, [testManufacturersValueSet])
 
 
     const getOptionsForValueSet = (valueSet: IValueSet): JSX.Element[] => {
@@ -194,13 +179,6 @@ const RecordVaccinationCertData = (props: any) => {
         setIsoCountryOptions(options);
     }
 
-    const setDefaultLng = () => {
-        let userLng = navigator.languages[0];
-        const length = userLng.length;
-        userLng = userLng.substr(length-2, length);
-        setIssuerCountryCode(userLng.toUpperCase());
-    }
-
     const handleError = (error: any) => {
         let msg = '';
 
@@ -223,9 +201,14 @@ const RecordVaccinationCertData = (props: any) => {
         setDateOfBirth(date);
     }
 
-    const handleVacLastDate = (evt: Date | [Date, Date] | null) => {
-        const date = handleDateChange(evt);
-        setVacLastDate(date);
+    const handleSampleDateTimeChange = (evt: Date | [Date, Date] | null) => {
+        const date = handleDateTimeChange(evt);
+        setSampleDateTime(date);
+    }
+
+    const handleTestDateTimeChange = (evt: Date | [Date, Date] | null) => {
+        const date = handleDateTimeChange(evt);
+        setTestDateTime(date);
     }
 
     const handleDateChange = (evt: Date | [Date, Date] | null) => {
@@ -243,12 +226,15 @@ const RecordVaccinationCertData = (props: any) => {
         return date;
     }
 
-    const handleNumber = (value: string, setNumber: (num: number) => void) => {
-        const num = parseInt(value);
+    const handleDateTimeChange = (evt: Date | [Date, Date] | null) => {
+        let date: Date;
 
-        if (!isNaN(num)) {
-            setNumber(num);
-        }
+        if (Array.isArray(evt))
+            date = evt[0];
+        else
+            date = evt as Date;
+
+        return date;
     }
 
     const handleCancel = () => {
@@ -265,14 +251,15 @@ const RecordVaccinationCertData = (props: any) => {
 
         if (form.checkValidity()) {
 
-            const vacc: VaccinationEntry = {
+            const test: TestEntry = {
                 tg: disease,
-                vp: vaccine,
-                mp: medicalProduct,
-                ma: marketingHolder,
-                dn: doseNumber!,
-                sd: totalDoseNumber!,
-                dt: vacLastDate!.toISOString().split('T')[0],
+                tt: testType,
+                nm: testName,
+                ma: testManufacturers,
+                sc: sampleDateTime!.toISOString(),
+                dr: testDateTime!.toISOString(),
+                tr: testResult,
+                tc: testCenter,
                 co: issuerCountryCode,
                 is: certificateIssuer,
                 ci: ''
@@ -287,13 +274,13 @@ const RecordVaccinationCertData = (props: any) => {
                     gnt: standardisedGivenName
                 },
                 dob: dateOfBirth!.toISOString().split('T')[0],
-                v: [vacc]
+                t: [test]
             }
 
             var result = validator.validate(eudgc, schema);
 
             if (result.valid) {
-                //console.log(JSON.stringify(eudgc));
+                // console.log(JSON.stringify(eudgc));
 
                 props.setEudgc(eudgc);
                 setTimeout(navigation!.toShowCert, 200);
@@ -304,9 +291,6 @@ const RecordVaccinationCertData = (props: any) => {
             }
         }
     }
-
-    const formatDate = (date: Date): string => `${date.toISOString().substr(0, 10)}`;
-
 
     return (
         !isInit ? <Spinner /> :
@@ -321,7 +305,7 @@ const RecordVaccinationCertData = (props: any) => {
                         <Card.Header id='data-header' className='pb-0'>
                             <Row>
                                 <Col md='6'>
-                                    <Card.Title className='m-md-0 tac-xs-tal-md jcc-xs-jcfs-md' as={'h2'} >{t('translation:vaccination-cert')}</Card.Title>
+                                    <Card.Title className='m-md-0 tac-xs-tal-md jcc-xs-jcfs-md' as={'h2'} >{t('translation:test-cert')}</Card.Title>
                                 </Col>
                                 <Col md='6' className='d-flex justify-content-center'>
                                     <Card.Text id='id-query-text'>{t('translation:query-id-card')}</Card.Text>
@@ -453,119 +437,137 @@ const RecordVaccinationCertData = (props: any) => {
                                 </Col>
                             </Form.Group>
 
-                            {/* combobox vaccine */}
-                            <Form.Group as={Row} controlId='formVaccineInput' className='mb-1 mt-1 sb-1 st-1'>
-                                <Form.Label className='input-label' column xs='5' sm='3'>{t('translation:vaccine') + '*'}</Form.Label>
+                            {/* testType input */}
+                            <Form.Group as={Row} controlId='formTestTypeInput' className='mb-1'>
+                                <Form.Label className='input-label' column xs='5' sm='3'>{t('translation:testType') + '*'}</Form.Label>
 
                                 <Col xs='7' sm='9' className='d-flex'>
-                                    <Form.Control as="select"
+                                    <Form.Control
                                         className='qt-input'
-                                        value={vaccine}
-                                        onChange={event => setVaccine(event.target.value)}
-                                        placeholder={t('translation:vaccine')}
+                                        value={testType}
+                                        onChange={event => setTestType(event.target.value)}
+                                        placeholder={t('translation:testType')}
+                                        type='text'
                                         required
-                                    >
-                                        <option disabled key={0} value={''} >{t('translation:vaccine')}</option>
-                                        {vaccineOptions}
-                                    </Form.Control>
+                                        maxLength={50}
+                                    />
                                 </Col>
                             </Form.Group>
 
-                            {/* combobox medicalProduct */}
-                            <Form.Group as={Row} controlId='formMedicalProductInput' className='mb-1 mt-1 sb-1 st-1'>
-                                <Form.Label className='input-label' column xs='5' sm='3'>{t('translation:vac-medical-product') + '*'}</Form.Label>
+                            {/* testName input */}
+                            <Form.Group as={Row} controlId='formTestNameInput' className='mb-1'>
+                                <Form.Label className='input-label' column xs='5' sm='3'>{t('translation:testName') + '*'}</Form.Label>
 
                                 <Col xs='7' sm='9' className='d-flex'>
-                                    <Form.Control as="select"
+                                    <Form.Control
                                         className='qt-input'
-                                        value={medicalProduct}
-                                        onChange={event => setMedicalProduct(event.target.value)}
-                                        placeholder="{t('translation:vaccine')}"
+                                        value={testName}
+                                        onChange={event => setTestName(event.target.value)}
+                                        placeholder={t('translation:testName')}
+                                        type='text'
                                         required
-                                    >
-                                        <option disabled key={0} value={''} >{t('translation:vac-medical-product')}</option>
-                                        {medicalProductOptions}
-                                    </Form.Control>
+                                        maxLength={50}
+                                    />
                                 </Col>
                             </Form.Group>
 
-                            {/* combobox marketingHolder */}
-                            <Form.Group as={Row} controlId='formMarketingHolderInput' className='mb-1 mt-1 sb-1 st-1'>
-                                <Form.Label className='input-label' column xs='5' sm='3'>{t('translation:vac-marketing-holder') + '*'}</Form.Label>
+                            {/* combobox testManufacturers */}
+                            <Form.Group as={Row} controlId='formTestManufactorersInput' className='mb-1 mt-1 sb-1 st-1'>
+                                <Form.Label className='input-label' column xs='5' sm='3'>{t('translation:testManufacturers') + '*'}</Form.Label>
 
                                 <Col xs='7' sm='9' className='d-flex'>
                                     <Form.Control as="select"
                                         className='qt-input'
-                                        value={marketingHolder}
-                                        onChange={event => setMarketingHolder(event.target.value)}
-                                        placeholder={t('translation:def-vac-marketing-holder')}
+                                        value={testManufacturers}
+                                        onChange={event => setTestManufacturers(event.target.value)}
+                                        placeholder={t('translation:testManufacturers')}
                                         required
                                     >
-                                        <option disabled key={0} value={''} >{t('translation:vac-marketing-holder')}</option>
-                                        {marketingHolderOptions}
+                                        <option disabled key={0} value={''} >{t('translation:testManufacturers')}</option>
+                                        {testManufacturersOptions}
                                     </Form.Control>
                                 </Col>
                             </Form.Group>
 
                             <hr />
 
-                            {/* sequence */}
-                            <Form.Group as={Row} controlId='formDoseNumberInput' className='mb-1'>
-                                <Form.Label className='input-label' column xs='5' sm='3'>{t('translation:sequence') + '*'}</Form.Label>
-
-                                <Col xs='7' sm='9' className='d-flex'>
-                                    <Form.Control
-                                        className='qt-input'
-                                        value={doseNumber}
-                                        onChange={event => handleNumber(event.target.value, setDoseNumber)}
-                                        placeholder={t('translation:def-sequence')}
-                                        type='number'
-                                        required
-                                        min={1}
-                                        max={9}
-                                        maxLength={1}
-                                    />
-                                </Col>
-                            </Form.Group>
-
-                            {/* tot */}
-                            <Form.Group as={Row} controlId='formTotInput' className='mb-1'>
-                                <Form.Label className='input-label' column xs='5' sm='3'>{t('translation:tot') + '*'}</Form.Label>
-
-                                <Col xs='7' sm='9' className='d-flex'>
-                                    <Form.Control
-                                        className='qt-input'
-                                        value={totalDoseNumber}
-                                        onChange={event => handleNumber(event.target.value, setTotalDoseNumber)}
-                                        placeholder={t('translation:def-tot')}
-                                        type='number'
-                                        required
-                                        min={1}
-                                        max={9}
-                                        maxLength={1}
-                                    />
-                                </Col>
-                            </Form.Group>
-
-                            {/* vacLastDate */}
-                            <Form.Group as={Row} controlId='formLastDateInput' className='mb-1'>
-                                <Form.Label className='input-label txt-no-wrap' column xs='5' sm='3'>{t('translation:vac-last-date') + '*'}</Form.Label>
+                            {/* sampleDateTime */}
+                            <Form.Group as={Row} controlId='formSampleDateTimeInput' className='mb-1'>
+                                <Form.Label className='input-label txt-no-wrap' column xs='5' sm='3'>{t('translation:sampleDateTime') + '*'}</Form.Label>
 
                                 <Col xs='7' sm='9' className='d-flex'>
                                     <DatePicker
-                                        selected={vacLastDate}
-                                        onChange={handleVacLastDate}
-                                        dateFormat='yyyy-MM-dd'
-                                        isClearable
-                                        placeholderText={t('translation:vac-last-date')}
+                                        selected={sampleDateTime}
+                                        onChange={handleSampleDateTimeChange}
+                                        dateFormat='yyyy-MM-dd / hh:mm a'
+                                        placeholderText={t('translation:sampleDateTime')}
                                         className='qt-input form-control'
                                         wrapperClassName='align-self-center'
                                         showMonthDropdown
                                         showYearDropdown
+                                        showTimeSelect
                                         dropdownMode="select"
                                         minDate={new Date(2020, 10)}
                                         openToDate={new Date()}
                                         required
+                                    />
+                                </Col>
+                            </Form.Group>
+
+                            {/* testDateTime */}
+                            <Form.Group as={Row} controlId='formTestDateTimeInput' className='mb-1'>
+                                <Form.Label className='input-label txt-no-wrap' column xs='5' sm='3'>{t('translation:testDateTime') + '*'}</Form.Label>
+
+                                <Col xs='7' sm='9' className='d-flex'>
+                                    <DatePicker
+                                        selected={testDateTime}
+                                        onChange={handleTestDateTimeChange}
+                                        dateFormat='yyyy-MM-dd / hh:mm a'
+                                        placeholderText={t('translation:testDateTime')}
+                                        className='qt-input form-control'
+                                        wrapperClassName='align-self-center'
+                                        showMonthDropdown
+                                        showYearDropdown
+                                        showTimeSelect
+                                        dropdownMode="select"
+                                        minDate={new Date(2020, 10)}
+                                        openToDate={new Date()}
+                                        required
+                                    />
+                                </Col>
+                            </Form.Group>
+
+                            {/* combobox testResult */}
+                            <Form.Group as={Row} controlId='formTestResultInput' className='mb-1 mt-1 sb-1 st-1'>
+                                <Form.Label className='input-label' column xs='5' sm='3'>{t('translation:testResult') + '*'}</Form.Label>
+
+                                <Col xs='7' sm='9' className='d-flex'>
+                                    <Form.Control as="select"
+                                        className='qt-input'
+                                        value={testResult}
+                                        onChange={event => setTestResult(event.target.value)}
+                                        placeholder="{t('translation:testResult')}"
+                                        required
+                                    >
+                                        <option disabled key={0} value={''} >{t('translation:testResult')}</option>
+                                        {testResultOptions}
+                                    </Form.Control>
+                                </Col>
+                            </Form.Group>
+
+                            {/* testCenter input */}
+                            <Form.Group as={Row} controlId='formTestCenterInput' className='mb-1'>
+                                <Form.Label className='input-label' column xs='5' sm='3'>{t('translation:testCenter') + '*'}</Form.Label>
+
+                                <Col xs='7' sm='9' className='d-flex'>
+                                    <Form.Control
+                                        className='qt-input'
+                                        value={testCenter}
+                                        onChange={event => setTestCenter(event.target.value)}
+                                        placeholder={t('translation:testCenter')}
+                                        type='text'
+                                        required
+                                        maxLength={50}
                                     />
                                 </Col>
                             </Form.Group>
@@ -641,4 +643,4 @@ const RecordVaccinationCertData = (props: any) => {
     )
 }
 
-export default RecordVaccinationCertData;
+export default RecordTestCertData;

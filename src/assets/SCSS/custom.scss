@@ -247,6 +247,13 @@ hr {
         justify-content: flex-start;
     }
 }
+.tac-xs-tal-md {
+    text-align: center;
+
+    @include media-breakpoint-up(md) {
+        text-align: left;
+    }
+}
 
 .position-inherit {
     position: inherit;
@@ -325,4 +332,10 @@ hr {
     background-image: url('../images/icon_success.svg') !important;
     height: 40px;
     width: 40px;
+  }
+
+  .form-flex{
+      display: flex;
+      flex-direction: column;
+      height: 100%;
   }

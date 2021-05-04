@@ -56,41 +56,48 @@ interface SigResponse {
 
 const signerCall = (id: string, hash: string): Promise<SigResponse> => {
     return api.put('/dgca-issuance-service/dgci/' + id, { hash: hash })
-    .then(res => {
-        const sigResponse: SigResponse = res.data;
-        return sigResponse;
-    });
+        .then(res => {
+            const sigResponse: SigResponse = res.data;
+            return sigResponse;
+        });
 }
 
 
 const generateQRCode = (edgcPayload: EUDGC): Promise<CertResult> => {
     // TODO set right cert type from EUDGC
+
+    const _type = edgcPayload.r
+        ? CertType.Recovery
+        : edgcPayload.t
+            ? CertType.Test
+            : CertType.Vaccination;
+
     const certInit: CertificateInit = {
-        type: CertType.Vaccination
+        type: _type
     }
 
     let tan: string = '';
 
     return api.post('/dgca-issuance-service/dgci', certInit)
-    .then(response => {
-        const certMetaData: CertificateMetaData = response.data;
-        // TODO copy dgci to EUDGC
-        return createCertificateQRData(edgcPayload, certMetaData,
-        (hash) => {
-            return signerCall(response.data.id.toString(), hash)
-                .then((sigResponse) => {
-                    tan = sigResponse.tan;
-                    return sigResponse.signature;
+        .then(response => {
+            const certMetaData: CertificateMetaData = response.data;
+            // TODO copy dgci to EUDGC
+            return createCertificateQRData(edgcPayload, certMetaData,
+                (hash) => {
+                    return signerCall(response.data.id.toString(), hash)
+                        .then((sigResponse) => {
+                            tan = sigResponse.tan;
+                            return sigResponse.signature;
+                        });
+                })
+                .then((qrCode: string) => {
+                    return {
+                        qrCode: qrCode,
+                        dgci: certMetaData.dgci,
+                        tan: tan
+                    }
                 });
-        })
-        .then((qrCode: string) => {
-            return {
-                qrCode: qrCode,
-                dgci: certMetaData.dgci,
-                tan: tan
-            }
         });
-    });
 }
 
 export default generateQRCode;

@@ -6,20 +6,14 @@ on:
 jobs:
   release-notes:
     runs-on: ubuntu-20.04
+    env:
+      APP_VERSION: ${{ github.event.release.tag_name }}
     steps:
     - uses: actions/checkout@v2
       with:
         fetch-depth: 0
-    - name: version
-      run: >-
-        APP_SHA=$(git rev-parse --short ${GITHUB_SHA});
-        APP_TAG=${GITHUB_REF/refs\/tags\/}
-        APP_VERSION=${APP_TAG};
-        echo "APP_SHA=${APP_SHA}" >> ${GITHUB_ENV};
-        echo "APP_TAG=${APP_TAG}" >> ${GITHUB_ENV};
-        echo "APP_VERSION=${APP_VERSION}" >> ${GITHUB_ENV};
     - name: release-notes
-      run: npx github-release-notes release --override --tags ${APP_TAG}
+      run: npx github-release-notes release --override --tags ${APP_VERSION}
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         GREN_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
