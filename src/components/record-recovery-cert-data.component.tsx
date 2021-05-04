@@ -24,6 +24,7 @@ import { Button, Card, Col, Form, FormControlProps, Row } from 'react-bootstrap'
 
 import '../i18n';
 import { useTranslation } from 'react-i18next';
+import useLocalStorage from '../misc/local-storage';
 
 import useNavigation from '../misc/navigation';
 import Spinner from './spinner/spinner.component';
@@ -32,12 +33,10 @@ import { IdentifierType } from '../misc/enum';
 import DatePicker from "react-datepicker";
 import { registerLocale } from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-
-// e.G. german month names pt1
 //import de from 'date-fns/locale/de';
 
-import { EUDGC, VaccinationEntry, DiseaseAgentTargeted, TestEntry } from '../generated-files/dgc-combined-schema';
-import { useGetDiseaseAgents, useGetTestManufacturers, useGetTestResult, IValueSet } from '../api';
+import { EUDGC, RecoveryEntry, DiseaseAgentTargeted } from '../generated-files/dgc-combined-schema';
+import { useGetDiseaseAgents, IValueSet } from '../api';
 
 import schema from '../generated-files/DGC.combined-schema.json';
 import { Validator } from 'jsonschema';
@@ -45,19 +44,16 @@ import utils from '../misc/utils';
 const validator = new Validator();
 const iso3311a2 = require('iso-3166-1-alpha-2');
 
-// e.G. german month names pt2
-// registerLocale('de', de)
+//registerLocale('de', de)
 
 
-const RecordTestCertData = (props: any) => {
+const RecordRecoveryCertData = (props: any) => {
 
     const navigation = useNavigation();
     const { t } = useTranslation();
 
     // data read from the API
     const diseaseAgentsData = useGetDiseaseAgents();
-    const testManufacturersValueSet = useGetTestManufacturers();
-    const testResultValueSet = useGetTestResult();
 
     const [isInit, setIsInit] = React.useState(false)
 
@@ -71,25 +67,16 @@ const RecordTestCertData = (props: any) => {
 
     const [disease, setDisease] = React.useState<string>('');
 
-    const [testType, setTestType] = React.useState<string>('');
-    const [testName, setTestName] = React.useState<string>('');
-    const [testManufacturers, setTestManufacturers] = React.useState<string>('');
-
-    const [sampleDateTime, setSampleDateTime] = React.useState<Date>();
-    const [testDateTime, setTestDateTime] = React.useState<Date>();
-
-    const [testResult, setTestResult] = React.useState<string>('');
-    const [testCenter, setTestCenter] = React.useState<string>('');
-
     const [diseasOptions, setDiseasOptions] = React.useState<JSX.Element[]>();
-    const [testResultOptions, setTestResultOptions] = React.useState<JSX.Element[]>();
-    const [testManufacturersOptions, setTestManufacturersOptions] = React.useState<JSX.Element[]>();
 
-    const [vacLastDate, setVacLastDate] = React.useState<Date>();
+    const [firstPositiveResultDate, setFirstPositiveResultDate] = React.useState<Date>();
     const [certificateIssuer, setCertificateIssuer] = React.useState('');
-    const [issuerCountryCode, setIssuerCountryCode] = React.useState<string>('');
+    const [testCountryCode, setTestCountryCode] = React.useState<string>('');
+    const [ dateValidFrom, setDateValidFrom] = React.useState<Date>();
+    const [ dateValidTo, setDateValidTo] = React.useState<Date>();
 
     const [isoCountryOptions, setIsoCountryOptions] = React.useState<JSX.Element[]>();
+    const [defaultTestCountryCode, setDefaultTestCountryCode] = useLocalStorage('defaultTestCountryCode', '');
 
 
     React.useEffect(() => {
@@ -104,26 +91,31 @@ const RecordTestCertData = (props: any) => {
         setGivenName(eudgc.nam!.gn!);
         setStandardisedGivenName(eudgc.nam!.gnt!);
         setDateOfBirth(new Date(eudgc.dob!));
-
-        setDisease(eudgc.t![0].tg!);
-
-        setTestType(eudgc.t![0].tt!);
-        setTestName(eudgc.t![0].nm!);
-        setTestManufacturers(eudgc.t![0].ma!);
-
-        setSampleDateTime(new Date(eudgc.t![0].sc));
-        setTestDateTime(new Date(eudgc.t![0].dr!));
-
-        setTestResult(eudgc.t![0]!.tr!);
-        setTestCenter(eudgc.t![0]!.tc!);
-
-        setIssuerCountryCode(eudgc.t![0].co!);
-        setCertificateIssuer(eudgc.t![0].is!);
+        setDisease(eudgc.r![0].tg!);
+        setFirstPositiveResultDate(new Date(eudgc.r![0].fr!));
+        setTestCountryCode(eudgc.r![0].co!);
+        setCertificateIssuer(eudgc.r![0].is!);
+        setDateValidFrom(new Date(eudgc.r![0].df!))
+        setDateValidTo(new Date(eudgc.r![0].du!))
     }, [props.eudgc]);
 
     React.useEffect(() => {
         setIso3311a2();
     }, []);
+
+    React.useEffect(() => {
+        if(!testCountryCode) {
+            setTestCountryCode(defaultTestCountryCode);
+        }
+
+    }, [defaultTestCountryCode]);
+
+    React.useEffect(() => {
+        if (testCountryCode !== defaultTestCountryCode) {
+            setDefaultTestCountryCode(testCountryCode);
+        }
+
+    }, [testCountryCode]);
 
 
     React.useEffect(() => {
@@ -140,23 +132,6 @@ const RecordTestCertData = (props: any) => {
         }
     }, [diseaseAgentsData])
 
-
-    React.useEffect(() => {
-        if (testResultValueSet) {
-            const options = getOptionsForValueSet(testResultValueSet)
-            setTestResultOptions(options);
-        }
-    }, [testResultValueSet])
-
-
-    React.useEffect(() => {
-        if (testManufacturersValueSet) {
-            const options = getOptionsForValueSet(testManufacturersValueSet)
-            setTestManufacturersOptions(options);
-        }
-    }, [testManufacturersValueSet])
-
-
     const getOptionsForValueSet = (valueSet: IValueSet): JSX.Element[] => {
         const result: JSX.Element[] = [];
         for (const key of Object.keys(valueSet)) {
@@ -170,7 +145,7 @@ const RecordTestCertData = (props: any) => {
         const options: JSX.Element[] = [];
         const codes: string[] = iso3311a2.getCodes().sort();
 
-        options.push(<option key={0} value={''} >{ }</option>);
+        // options.push(<option key={0} value={''} >{ }</option>);
 
         for (const code of codes) {
             options.push(<option key={code} value={code}>{code + " : " + iso3311a2.getCountry(code)}</option>)
@@ -201,14 +176,19 @@ const RecordTestCertData = (props: any) => {
         setDateOfBirth(date);
     }
 
-    const handleSampleDateTimeChange = (evt: Date | [Date, Date] | null) => {
-        const date = handleDateTimeChange(evt);
-        setSampleDateTime(date);
+    const handleFirstPositiveResultDate = (evt: Date | [Date, Date] | null) => {
+        const date = handleDateChange(evt);
+        setFirstPositiveResultDate(date);
     }
 
-    const handleTestDateTimeChange = (evt: Date | [Date, Date] | null) => {
-        const date = handleDateTimeChange(evt);
-        setTestDateTime(date);
+    const handleDateValidFrom = (evt: Date | [Date, Date] | null) => {
+        const date = handleDateChange(evt);
+        setDateValidFrom(date);
+    }
+
+    const handleDateValidTo = (evt: Date | [Date, Date] | null) => {
+        const date = handleDateChange(evt);
+        setDateValidTo(date);
     }
 
     const handleDateChange = (evt: Date | [Date, Date] | null) => {
@@ -222,17 +202,6 @@ const RecordTestCertData = (props: any) => {
         if (date) {
             date.setHours(12);
         }
-
-        return date;
-    }
-
-    const handleDateTimeChange = (evt: Date | [Date, Date] | null) => {
-        let date: Date;
-
-        if (Array.isArray(evt))
-            date = evt[0];
-        else
-            date = evt as Date;
 
         return date;
     }
@@ -251,17 +220,13 @@ const RecordTestCertData = (props: any) => {
 
         if (form.checkValidity()) {
 
-            const test: TestEntry = {
+            const r: RecoveryEntry = {
                 tg: disease,
-                tt: testType,
-                nm: testName,
-                ma: testManufacturers,
-                sc: sampleDateTime!.toISOString(),
-                dr: testDateTime!.toISOString(),
-                tr: testResult,
-                tc: testCenter,
-                co: issuerCountryCode,
+                fr: firstPositiveResultDate!.toISOString().split('T')[0],
+                co: testCountryCode,
                 is: certificateIssuer,
+                df: dateValidFrom!.toISOString().split('T')[0],
+                du: dateValidTo!.toISOString().split('T')[0],
                 ci: ''
             };
 
@@ -274,13 +239,13 @@ const RecordTestCertData = (props: any) => {
                     gnt: standardisedGivenName
                 },
                 dob: dateOfBirth!.toISOString().split('T')[0],
-                t: [test]
+                r: [r]
             }
 
             var result = validator.validate(eudgc, schema);
 
             if (result.valid) {
-                // console.log(JSON.stringify(eudgc));
+                //console.log(JSON.stringify(eudgc));
 
                 props.setEudgc(eudgc);
                 setTimeout(navigation!.toShowCert, 200);
@@ -291,6 +256,9 @@ const RecordTestCertData = (props: any) => {
             }
         }
     }
+
+    const formatDate = (date: Date): string => `${date.toISOString().substr(0, 10)}`;
+
 
     return (
         !isInit ? <Spinner /> :
@@ -305,7 +273,7 @@ const RecordTestCertData = (props: any) => {
                         <Card.Header id='data-header' className='pb-0'>
                             <Row>
                                 <Col md='6'>
-                                    <Card.Title className='m-md-0 tac-xs-tal-md jcc-xs-jcfs-md' as={'h2'} >{t('translation:test-cert')}</Card.Title>
+                                    <Card.Title className='m-md-0 tac-xs-tal-md jcc-xs-jcfs-md' as={'h2'} >{t('translation:record-recovery-cert-dat')}</Card.Title>
                                 </Col>
                                 <Col md='6' className='d-flex justify-content-center'>
                                     <Card.Text id='id-query-text'>{t('translation:query-id-card')}</Card.Text>
@@ -401,7 +369,7 @@ const RecordTestCertData = (props: any) => {
                                     <DatePicker
                                         selected={dateOfBirth}
                                         onChange={handleDateOfBirthChange}
-                                        dateFormat={utils.pickerDateFormat}
+                                        dateFormat='yyyy-MM-dd'
                                         isClearable
                                         placeholderText={t('translation:date-of-birth')}
                                         className='qt-input form-control'
@@ -437,160 +405,53 @@ const RecordTestCertData = (props: any) => {
                                 </Col>
                             </Form.Group>
 
-                            {/* testType input */}
-                            <Form.Group as={Row} controlId='formTestTypeInput' className='mb-1'>
-                                <Form.Label className='input-label' column xs='5' sm='3'>{t('translation:testType') + '*'}</Form.Label>
-
-                                <Col xs='7' sm='9' className='d-flex'>
-                                    <Form.Control
-                                        className='qt-input'
-                                        value={testType}
-                                        onChange={event => setTestType(event.target.value)}
-                                        placeholder={t('translation:testType')}
-                                        type='text'
-                                        required
-                                        maxLength={50}
-                                    />
-                                </Col>
-                            </Form.Group>
-
-                            {/* testName input */}
-                            <Form.Group as={Row} controlId='formTestNameInput' className='mb-1'>
-                                <Form.Label className='input-label' column xs='5' sm='3'>{t('translation:testName') + '*'}</Form.Label>
-
-                                <Col xs='7' sm='9' className='d-flex'>
-                                    <Form.Control
-                                        className='qt-input'
-                                        value={testName}
-                                        onChange={event => setTestName(event.target.value)}
-                                        placeholder={t('translation:testName')}
-                                        type='text'
-                                        required
-                                        maxLength={50}
-                                    />
-                                </Col>
-                            </Form.Group>
-
-                            {/* combobox testManufacturers */}
-                            <Form.Group as={Row} controlId='formTestManufactorersInput' className='mb-1 mt-1 sb-1 st-1'>
-                                <Form.Label className='input-label' column xs='5' sm='3'>{t('translation:testManufacturers') + '*'}</Form.Label>
-
-                                <Col xs='7' sm='9' className='d-flex'>
-                                    <Form.Control as="select"
-                                        className='qt-input'
-                                        value={testManufacturers}
-                                        onChange={event => setTestManufacturers(event.target.value)}
-                                        placeholder={t('translation:testManufacturers')}
-                                        required
-                                    >
-                                        <option disabled key={0} value={''} >{t('translation:testManufacturers')}</option>
-                                        {testManufacturersOptions}
-                                    </Form.Control>
-                                </Col>
-                            </Form.Group>
-
                             <hr />
 
-                            {/* sampleDateTime */}
-                            <Form.Group as={Row} controlId='formSampleDateTimeInput' className='mb-1'>
-                                <Form.Label className='input-label txt-no-wrap' column xs='5' sm='3'>{t('translation:sampleDateTime') + '*'}</Form.Label>
+                            {/* Date of First Positive Test Result  */}
+                            <Form.Group as={Row} controlId='formLastDateInput' className='mb-1'>
+                                <Form.Label className='input-label txt-no-wrap' column xs='5' sm='3'>{t('translation:recovery-first-date') + '*'}</Form.Label>
 
                                 <Col xs='7' sm='9' className='d-flex'>
                                     <DatePicker
-                                        selected={sampleDateTime}
-                                        onChange={handleSampleDateTimeChange}
-                                        dateFormat={utils.pickerDateTimeFormat}
-                                        placeholderText={t('translation:sampleDateTime')}
+                                        selected={firstPositiveResultDate}
+                                        onChange={handleFirstPositiveResultDate}
+                                        dateFormat='yyyy-MM-dd'
+                                        isClearable
+                                        placeholderText={t('translation:recovery-first-date')}
                                         className='qt-input form-control'
                                         wrapperClassName='align-self-center'
                                         showMonthDropdown
                                         showYearDropdown
-                                        showTimeSelect
                                         dropdownMode="select"
+                                        maxDate={new Date()}
                                         minDate={new Date(2020, 10)}
                                         openToDate={new Date()}
                                         required
                                     />
                                 </Col>
                             </Form.Group>
-
-                            {/* testDateTime */}
-                            <Form.Group as={Row} controlId='formTestDateTimeInput' className='mb-1'>
-                                <Form.Label className='input-label txt-no-wrap' column xs='5' sm='3'>{t('translation:testDateTime') + '*'}</Form.Label>
-
-                                <Col xs='7' sm='9' className='d-flex'>
-                                    <DatePicker
-                                        selected={testDateTime}
-                                        onChange={handleTestDateTimeChange}
-                                        dateFormat={utils.pickerDateTimeFormat}
-                                        placeholderText={t('translation:testDateTime')}
-                                        className='qt-input form-control'
-                                        wrapperClassName='align-self-center'
-                                        showMonthDropdown
-                                        showYearDropdown
-                                        showTimeSelect
-                                        dropdownMode="select"
-                                        minDate={new Date(2020, 10)}
-                                        openToDate={new Date()}
-                                        required
-                                    />
-                                </Col>
-                            </Form.Group>
-
-                            {/* combobox testResult */}
-                            <Form.Group as={Row} controlId='formTestResultInput' className='mb-1 mt-1 sb-1 st-1'>
-                                <Form.Label className='input-label' column xs='5' sm='3'>{t('translation:testResult') + '*'}</Form.Label>
-
-                                <Col xs='7' sm='9' className='d-flex'>
-                                    <Form.Control as="select"
-                                        className='qt-input'
-                                        value={testResult}
-                                        onChange={event => setTestResult(event.target.value)}
-                                        placeholder="{t('translation:testResult')}"
-                                        required
-                                    >
-                                        <option disabled key={0} value={''} >{t('translation:testResult')}</option>
-                                        {testResultOptions}
-                                    </Form.Control>
-                                </Col>
-                            </Form.Group>
-
-                            {/* testCenter input */}
-                            <Form.Group as={Row} controlId='formTestCenterInput' className='mb-1'>
-                                <Form.Label className='input-label' column xs='5' sm='3'>{t('translation:testCenter') + '*'}</Form.Label>
-
-                                <Col xs='7' sm='9' className='d-flex'>
-                                    <Form.Control
-                                        className='qt-input'
-                                        value={testCenter}
-                                        onChange={event => setTestCenter(event.target.value)}
-                                        placeholder={t('translation:testCenter')}
-                                        type='text'
-                                        required
-                                        maxLength={50}
-                                    />
-                                </Col>
-                            </Form.Group>
-
-                            <hr />
 
                             {/* Combobox for the vaccin countries in iso-3166-1-alpha-2 */}
                             <Form.Group as={Row} controlId='formVacCountryInput' className='mb-1 mt-1 sb-1 st-1'>
-                                <Form.Label className='input-label' column xs='5' sm='3'>{t('translation:vac-country') + '*'}</Form.Label>
+                                <Form.Label className='input-label' column xs='5' sm='3'>{t('translation:recovery-test-country') + '*'}</Form.Label>
 
                                 <Col xs='7' sm='9' className='d-flex'>
                                     <Form.Control as="select"
                                         className='qt-input'
-                                        value={issuerCountryCode}
-                                        onChange={event => setIssuerCountryCode(event.target.value)}
+                                        value={testCountryCode}
+                                        onChange={event => setTestCountryCode(event.target.value)}
                                         placeholder={t('translation:country')}
                                         required
                                     >
-                                        <option disabled key={0} value={''} >{t('translation:vac-country')}</option>
+                                        <option disabled key={0} value={''} >{t('translation:recovery-test-country')}</option>
                                         {isoCountryOptions}
                                     </Form.Control>
                                 </Col>
                             </Form.Group>
+
+                            <hr />
+
+
 
                             {/* certificateIssuer */}
                             <Form.Group as={Row} controlId='formcertificateIssuerInput' className='mb-1'>
@@ -608,6 +469,50 @@ const RecordTestCertData = (props: any) => {
                                     />
                                 </Col>
                             </Form.Group>
+
+                            {/* Date: Certificate Valid From - To */}
+                            <Form.Group as={Row} controlId='formDateOfBirthInput' className='mb-1'>
+                                <Form.Label className='input-label txt-no-wrap' column xs='5' sm='3'>{t('translation:cert-valid-from-go') + '*'}</Form.Label>
+
+                                <Col xs='7' sm='9' className='d-flex'>
+                                    <DatePicker
+                                        selected={dateValidFrom}
+                                        onChange={handleDateValidFrom}
+                                        dateFormat='yyyy-MM-dd'
+                                        isClearable
+                                        placeholderText={t('translation:valid-from')}
+                                        className='qt-input form-control'
+                                        wrapperClassName='align-self-center'
+                                        showMonthDropdown
+                                        showYearDropdown
+                                        dropdownMode="select"
+                                        //TODO: possibly calculate dat min and max
+                                        maxDate={new Date()}
+                                        minDate={new Date(2020, 10)}
+                                        openToDate={new Date()}
+                                        required
+                                    />
+                                    <span className='space-five'>{ '-'}</span>
+                                    <DatePicker
+                                        selected={dateValidTo}
+                                        onChange={handleDateValidTo}
+                                        dateFormat='yyyy-MM-dd'
+                                        isClearable
+                                        placeholderText={t('translation:valid-to')}
+                                        className='qt-input form-control'
+                                        wrapperClassName='align-self-center'
+                                        showMonthDropdown
+                                        showYearDropdown
+                                        dropdownMode="select"
+                                        //TODO: calculate date min and max
+                                        maxDate={new Date(2099, 12)}
+                                        minDate={new Date()}
+                                        openToDate={new Date()}
+                                        required
+                                    />
+                                </Col>
+                            </Form.Group>
+
                             <hr />
                         </Card.Body>
 
@@ -643,4 +548,4 @@ const RecordTestCertData = (props: any) => {
     )
 }
 
-export default RecordTestCertData;
+export default RecordRecoveryCertData;

@@ -24,6 +24,7 @@ import { Button, Card, Col, Form, FormControlProps, Row } from 'react-bootstrap'
 
 import '../i18n';
 import { useTranslation } from 'react-i18next';
+import useLocalStorage from '../misc/local-storage';
 
 import useNavigation from '../misc/navigation';
 import Spinner from './spinner/spinner.component';
@@ -84,6 +85,7 @@ const RecordVaccinationCertData = (props: any) => {
     const [issuerCountryCode, setIssuerCountryCode] = React.useState<string>('');
 
     const [isoCountryOptions, setIsoCountryOptions] = React.useState<JSX.Element[]>();
+    const [defaultIssuerCountryCode, setDefaultIssuerCountryCode] = useLocalStorage('defaultIssuerCountryCode', '');
 
 
     React.useEffect(() => {
@@ -112,6 +114,20 @@ const RecordVaccinationCertData = (props: any) => {
     React.useEffect(() => {
         setIso3311a2();
     }, []);
+
+    React.useEffect(() => {
+        if(!issuerCountryCode) {
+            setIssuerCountryCode(defaultIssuerCountryCode);
+        }
+
+    }, [defaultIssuerCountryCode]);
+
+    React.useEffect(() => {
+        if (issuerCountryCode !== defaultIssuerCountryCode) {
+            setDefaultIssuerCountryCode(issuerCountryCode);
+        }
+
+    }, [issuerCountryCode]);
 
 
     React.useEffect(() => {
@@ -166,7 +182,7 @@ const RecordVaccinationCertData = (props: any) => {
         const options: JSX.Element[] = [];
         const codes: string[] = iso3311a2.getCodes().sort();
 
-        options.push(<option key={0} value={''} >{ }</option>);
+        // options.push(<option key={0} value={''} >{ }</option>);
 
         for (const code of codes) {
             options.push(<option key={code} value={code}>{code + " : " + iso3311a2.getCountry(code)}</option>)
