@@ -29,6 +29,7 @@ jobs:
         APP_PACKAGES_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
   deploy:
     runs-on: ubuntu-20.04
+    environment: dev
     needs:
     - build
     env:
