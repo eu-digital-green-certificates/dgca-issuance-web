@@ -276,7 +276,7 @@ const RecordTestCertData = (props: any) => {
 
                                 <Col xs='7' sm='9' className='d-flex'>
                                     <Form.Control as="select"
-                                        className='qt-input'
+                                        className={!disease ? 'selection-placeholder qt-input' : 'qt-input'}
                                         value={disease}
                                         onChange={event => setDisease(event.target.value)}
                                         placeholder={t('translation:def-disease-agent')}
@@ -310,7 +310,7 @@ const RecordTestCertData = (props: any) => {
 
                                 <Col xs='7' sm='9' className='d-flex'>
                                     <Form.Control as="select"
-                                        className='qt-input'
+                                        className={!testManufacturers ? 'selection-placeholder qt-input' : 'qt-input'}
                                         value={testManufacturers}
                                         onChange={event => setTestManufacturers(event.target.value)}
                                         placeholder={t('translation:testManufacturers')}
@@ -376,7 +376,7 @@ const RecordTestCertData = (props: any) => {
 
                                 <Col xs='7' sm='9' className='d-flex'>
                                     <Form.Control as="select"
-                                        className='qt-input'
+                                        className={!testResult ? 'selection-placeholder qt-input' : 'qt-input'}
                                         value={testResult}
                                         onChange={event => setTestResult(event.target.value)}
                                         placeholder="{t('translation:testResult')}"
@@ -404,7 +404,7 @@ const RecordTestCertData = (props: any) => {
 
                                 <Col xs='7' sm='9' className='d-flex'>
                                     <Form.Control as="select"
-                                        className='qt-input'
+                                        className={!issuerCountryCode ? 'selection-placeholder qt-input' : 'qt-input'}
                                         value={issuerCountryCode}
                                         onChange={event => setIssuerCountryCode(event.target.value)}
                                         placeholder={t('translation:country')}

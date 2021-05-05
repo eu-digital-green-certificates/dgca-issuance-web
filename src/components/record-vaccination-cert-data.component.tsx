@@ -305,13 +305,13 @@ const RecordVaccinationCertData = (props: any) => {
 
                                 <Col xs='7' sm='9' className='d-flex'>
                                     <Form.Control as="select"
-                                        className='qt-input'
+                                        className={!vaccine ? 'selection-placeholder qt-input' : 'qt-input'}
                                         value={vaccine}
                                         onChange={event => setVaccine(event.target.value)}
                                         placeholder={t('translation:vaccine')}
                                         required
                                     >
-                                        <option disabled key={0} value={''} >{t('translation:vaccine')}</option>
+                                        <option disabled key={0} value={''}>{t('translation:vaccine')}</option>
                                         {vaccineOptions}
                                     </Form.Control>
                                 </Col>
@@ -323,13 +323,13 @@ const RecordVaccinationCertData = (props: any) => {
 
                                 <Col xs='7' sm='9' className='d-flex'>
                                     <Form.Control as="select"
-                                        className='qt-input'
+                                        className={!medicalProduct ? 'selection-placeholder qt-input' : 'qt-input'}
                                         value={medicalProduct}
                                         onChange={event => setMedicalProduct(event.target.value)}
                                         placeholder="{t('translation:vaccine')}"
                                         required
                                     >
-                                        <option disabled key={0} value={''} >{t('translation:vac-medical-product')}</option>
+                                        <option disabled key={0} value={''}>{t('translation:vac-medical-product')}</option>
                                         {medicalProductOptions}
                                     </Form.Control>
                                 </Col>
@@ -341,13 +341,13 @@ const RecordVaccinationCertData = (props: any) => {
 
                                 <Col xs='7' sm='9' className='d-flex'>
                                     <Form.Control as="select"
-                                        className='qt-input'
+                                        className={!marketingHolder ? 'selection-placeholder qt-input' : 'qt-input'}
                                         value={marketingHolder}
                                         onChange={event => setMarketingHolder(event.target.value)}
                                         placeholder={t('translation:def-vac-marketing-holder')}
                                         required
                                     >
-                                        <option disabled key={0} value={''} >{t('translation:vac-marketing-holder')}</option>
+                                        <option disabled key={0} value={''}>{t('translation:vac-marketing-holder')}</option>
                                         {marketingHolderOptions}
                                     </Form.Control>
                                 </Col>
@@ -402,13 +402,13 @@ const RecordVaccinationCertData = (props: any) => {
 
                                 <Col xs='7' sm='9' className='d-flex'>
                                     <Form.Control as="select"
-                                        className='qt-input'
+                                        className={!issuerCountryCode ? 'selection-placeholder qt-input' : 'qt-input'}
                                         value={issuerCountryCode}
                                         onChange={event => setIssuerCountryCode(event.target.value)}
                                         placeholder={t('translation:country')}
                                         required
                                     >
-                                        <option disabled key={0} value={''} >{t('translation:vac-country')}</option>
+                                        <option disabled key={0} value={''}>{t('translation:vac-country')}</option>
                                         {isoCountryOptions}
                                     </Form.Control>
                                 </Col>

@@ -91,6 +91,9 @@
   "def-lot": "Eine unverwechselbare Kombination von Zahlen und / oder Buchstaben, die eine Charge spezifisch identifiziert",
   "adm": "Verwaltungzentrum",
   "def-adm": "Name oder Code des Verwaltungszentrums (z. B. Region Halland)",
-  "recovery-first-date": "First Positive Test"
-  
+  "first-positive-test-date": "First Positive Test Result",
+  "recovery-country": "Country of Test",
+  "cert-valid-from-to": "Certificate Valid From - To",
+  "valid-from": "Certificate Valid From",
+  "valid-to": "Certificate Valid To"
 }
