@@ -258,7 +258,7 @@ const RecordRecoveryCertData = (props: any) => {
 
                                 <Col xs='7' sm='9' className='d-flex'>
                                     <Form.Control as="select"
-                                        className='qt-input'
+                                        className={!disease ? 'selection-placeholder qt-input' : 'qt-input'}
                                         value={disease}
                                         onChange={event => setDisease(event.target.value)}
                                         placeholder={t('translation:def-disease-agent')}
@@ -302,7 +302,7 @@ const RecordRecoveryCertData = (props: any) => {
 
                                 <Col xs='7' sm='9' className='d-flex'>
                                     <Form.Control as="select"
-                                        className='qt-input'
+                                        className={!testCountryCode ? 'selection-placeholder qt-input' : 'qt-input'}
                                         value={testCountryCode}
                                         onChange={event => setTestCountryCode(event.target.value)}
                                         placeholder={t('translation:country')}
