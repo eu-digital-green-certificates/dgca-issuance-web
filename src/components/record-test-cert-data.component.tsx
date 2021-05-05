@@ -20,33 +20,28 @@
  */
 
 import React from 'react';
-import { Button, Card, Col, Form, FormControlProps, Row } from 'react-bootstrap';
+import { Button, Card, Col, Form, Row } from 'react-bootstrap';
 
 import '../i18n';
 import { useTranslation } from 'react-i18next';
 
 import useNavigation from '../misc/navigation';
 import Spinner from './spinner/spinner.component';
-import { IdentifierType } from '../misc/enum';
 
 import DatePicker from "react-datepicker";
-import { registerLocale } from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
-// e.G. german month names pt1
-//import de from 'date-fns/locale/de';
-
-import { EUDGC, VaccinationEntry, DiseaseAgentTargeted, TestEntry } from '../generated-files/dgc-combined-schema';
+import { EUDGC, TestEntry } from '../generated-files/dgc-combined-schema';
 import { useGetDiseaseAgents, useGetTestManufacturers, useGetTestResult, IValueSet } from '../api';
 
 import schema from '../generated-files/DGC.combined-schema.json';
 import { Validator } from 'jsonschema';
 import utils from '../misc/utils';
+import CardHeader from './modules/card-header.component';
+import { IPersonData, PersonInputs } from './modules/form-group.component';
+
 const validator = new Validator();
 const iso3311a2 = require('iso-3166-1-alpha-2');
-
-// e.G. german month names pt2
-// registerLocale('de', de)
 
 
 const RecordTestCertData = (props: any) => {
@@ -61,13 +56,7 @@ const RecordTestCertData = (props: any) => {
 
     const [isInit, setIsInit] = React.useState(false)
 
-    const [givenName, setGivenName] = React.useState<string>('');
-    const [familyName, setFamilyName] = React.useState<string>('');
-
-    const [standardisedGivenName, setStandardisedGivenName] = React.useState<string>('');
-    const [standardisedFamilyName, setStandardisedFamilyName] = React.useState<string>('');
-
-    const [dateOfBirth, setDateOfBirth] = React.useState<Date>();
+    const [person, setPerson] = React.useState<IPersonData>();
 
     const [disease, setDisease] = React.useState<string>('');
 
@@ -98,12 +87,6 @@ const RecordTestCertData = (props: any) => {
         }
 
         const eudgc: EUDGC = props.eudgc;
-
-        setFamilyName(eudgc.nam!.fn!);
-        setStandardisedFamilyName(eudgc.nam!.fnt!);
-        setGivenName(eudgc.nam!.gn!);
-        setStandardisedGivenName(eudgc.nam!.gnt!);
-        setDateOfBirth(new Date(eudgc.dob!));
 
         setDisease(eudgc.t![0].tg!);
 
@@ -188,19 +171,6 @@ const RecordTestCertData = (props: any) => {
         props.setError({ error: error, message: msg, onCancel: navigation!.toLanding });
     }
 
-    const handleStandardisedNameChanged = (changedValue: string, setStandardisedName: (value: string) => void) => {
-        const upperCaseChangedValue = changedValue.toUpperCase();
-
-        if (utils.isStandardisedNameValid(upperCaseChangedValue)) {
-            setStandardisedName(upperCaseChangedValue);
-        }
-    }
-
-    const handleDateOfBirthChange = (evt: Date | [Date, Date] | null) => {
-        const date = handleDateChange(evt);
-        setDateOfBirth(date);
-    }
-
     const handleSampleDateTimeChange = (evt: Date | [Date, Date] | null) => {
         const date = handleDateTimeChange(evt);
         setSampleDateTime(date);
@@ -211,20 +181,6 @@ const RecordTestCertData = (props: any) => {
         setTestDateTime(date);
     }
 
-    const handleDateChange = (evt: Date | [Date, Date] | null) => {
-        let date: Date;
-
-        if (Array.isArray(evt))
-            date = evt[0];
-        else
-            date = evt as Date;
-
-        if (date) {
-            date.setHours(12);
-        }
-
-        return date;
-    }
 
     const handleDateTimeChange = (evt: Date | [Date, Date] | null) => {
         let date: Date;
@@ -268,12 +224,12 @@ const RecordTestCertData = (props: any) => {
             const eudgc: EUDGC = {
                 ver: '1.0.0',
                 nam: {
-                    fn: familyName,
-                    fnt: standardisedFamilyName!,
-                    gn: givenName,
-                    gnt: standardisedGivenName
+                    fn: person!.familyName,
+                    fnt: person!.standardisedFamilyName!,
+                    gn: person!.givenName,
+                    gnt: person!.standardisedGivenName
                 },
-                dob: dateOfBirth!.toISOString().split('T')[0],
+                dob: person!.dateOfBirth!.toISOString().split('T')[0],
                 t: [test]
             }
 
@@ -302,120 +258,14 @@ const RecordTestCertData = (props: any) => {
                         {/*
                             header with title and id card query
                         */}
-                        <Card.Header id='data-header' className='pb-0'>
-                            <Row>
-                                <Col md='6'>
-                                    <Card.Title className='m-md-0 tac-xs-tal-md jcc-xs-jcfs-md' as={'h2'} >{t('translation:test-cert')}</Card.Title>
-                                </Col>
-                                <Col md='6' className='d-flex justify-content-center'>
-                                    <Card.Text id='id-query-text'>{t('translation:query-id-card')}</Card.Text>
-                                </Col>
-                            </Row>
-                            <hr />
-                        </Card.Header>
+                        <CardHeader title={t('translation:test-cert')} />
 
                         {/*
                             content area with patient inputs and check box
                         */}
                         <Card.Body id='data-body' className='pt-0'>
 
-                            {/* first name input */}
-                            <Form.Group as={Row} controlId='formGivenNameInput' className='mb-1'>
-                                <Form.Label className='input-label' column xs='5' sm='3'>{t('translation:first-name') + '*'}</Form.Label>
-
-                                <Col xs='7' sm='9' className='d-flex'>
-                                    <Form.Control
-                                        className='qt-input'
-                                        value={givenName}
-                                        onChange={event => setGivenName(event.target.value)}
-                                        placeholder={t('translation:first-name')}
-                                        type='text'
-                                        required
-                                        maxLength={50}
-                                    />
-                                </Col>
-                            </Form.Group>
-
-                            {/* name input */}
-                            <Form.Group as={Row} controlId='formNameInput' className='mb-1'>
-                                <Form.Label className='input-label' column xs='5' sm='3'>{t('translation:name') + '*'}</Form.Label>
-
-                                <Col xs='7' sm='9' className='d-flex'>
-                                    <Form.Control
-                                        className='qt-input'
-                                        value={familyName}
-                                        onChange={event => setFamilyName(event.target.value)}
-                                        placeholder={t('translation:name')}
-                                        type='text'
-                                        required
-                                        maxLength={50}
-                                    />
-                                </Col>
-                            </Form.Group>
-
-                            <hr />
-
-                            {/* standardised first name input */}
-                            <Form.Group as={Row} controlId='formStandadisedGivenNameInput' className='mb-1'>
-                                <Form.Label className='input-label' column xs='5' sm='3'>{t('translation:standardised-first-name') + '*'}</Form.Label>
-
-                                <Col xs='7' sm='9' className='d-flex'>
-                                    <Form.Control
-                                        className='qt-input'
-                                        value={standardisedGivenName}
-                                        onChange={(evt) => handleStandardisedNameChanged(evt.target.value, setStandardisedGivenName)}
-                                        placeholder={t('translation:standardised-first-name')}
-                                        type='text'
-                                        required
-                                        pattern={utils.pattern.standardisedName}
-                                        maxLength={50}
-                                    />
-                                </Col>
-                            </Form.Group>
-
-                            {/*standardised name input */}
-                            <Form.Group as={Row} controlId='formStandadisedNameInput' className='mb-1'>
-                                <Form.Label className='input-label' column xs='5' sm='3'>{t('translation:standardised-name') + '*'}</Form.Label>
-
-                                <Col xs='7' sm='9' className='d-flex'>
-                                    <Form.Control
-                                        className='qt-input'
-                                        value={standardisedFamilyName}
-                                        onChange={(evt) => handleStandardisedNameChanged(evt.target.value, setStandardisedFamilyName)}
-                                        placeholder={t('translation:standardised-name')}
-                                        type='text'
-                                        required
-                                        pattern={utils.pattern.standardisedName}
-                                        maxLength={50}
-                                    />
-                                </Col>
-                            </Form.Group>
-
-                            <hr />
-
-                            {/* date of birth input */}
-                            <Form.Group as={Row} controlId='formDateOfBirthInput' className='mb-1'>
-                                <Form.Label className='input-label txt-no-wrap' column xs='5' sm='3'>{t('translation:date-of-birth') + '*'}</Form.Label>
-
-                                <Col xs='7' sm='9' className='d-flex'>
-                                    <DatePicker
-                                        selected={dateOfBirth}
-                                        onChange={handleDateOfBirthChange}
-                                        dateFormat={utils.pickerDateFormat}
-                                        isClearable
-                                        placeholderText={t('translation:date-of-birth')}
-                                        className='qt-input form-control'
-                                        wrapperClassName='align-self-center'
-                                        showMonthDropdown
-                                        showYearDropdown
-                                        dropdownMode="select"
-                                        maxDate={new Date()}
-                                        minDate={new Date(1900, 0, 1, 12)}
-                                        openToDate={new Date(1990, 0, 1)}
-                                        required
-                                    />
-                                </Col>
-                            </Form.Group>
+                            <PersonInputs eudgc={props.eudgc} onChange={setPerson} />
 
                             <hr />
 
