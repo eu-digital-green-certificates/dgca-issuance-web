@@ -29,6 +29,7 @@ import { useKeycloak } from '@react-keycloak/web';
 
 import useNavigation from '../misc/navigation';
 import C19Logo from '../assets/images/c-19_logo.png'
+import dgcaIwLogo from '../assets/images/dgca_issuance_web.png';
 import useLocalStorage from '../misc/local-storage';
 
 const Header = (props: any) => {
@@ -65,7 +66,7 @@ const Header = (props: any) => {
 
             {/* user icon and user name */}
             <Row id='qt-header'>
-                <Image src={C19Logo} onClick={navigation!.toLanding} />
+                <Image src={dgcaIwLogo} onClick={navigation!.toLanding} />
                 <span className='header-font my-auto mx-1'>{t('translation:title')}</span>
             </Row>
             <Navbar id='user-container' >
