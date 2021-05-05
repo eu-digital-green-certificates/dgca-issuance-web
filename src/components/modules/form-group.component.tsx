@@ -30,9 +30,11 @@ export const FormGroupInput = (props: any) => {
                     value={props.value}
                     onChange={props.onChange}
                     placeholder={props.placeholder ? props.placeholder : props.title}
-                    type='text'
+                    type={props.type ? props.type : 'text'}
                     required={props.required}
                     maxLength={props.maxLength}
+                    min={props.min}
+                    max={props.max}
                     pattern={props.pattern}
                 />
             </Col>

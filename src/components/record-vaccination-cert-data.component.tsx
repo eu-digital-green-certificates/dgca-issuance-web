@@ -366,42 +366,20 @@ const RecordVaccinationCertData = (props: any) => {
                             <hr />
 
                             {/* sequence */}
-                            <Form.Group as={Row} controlId='formDoseNumberInput' className='mb-1'>
-                                <Form.Label className='input-label' column xs='5' sm='3'>{t('translation:sequence') + '*'}</Form.Label>
-
-                                <Col xs='7' sm='9' className='d-flex'>
-                                    <Form.Control
-                                        className='qt-input'
-                                        value={doseNumber}
-                                        onChange={event => handleNumber(event.target.value, setDoseNumber)}
-                                        placeholder={t('translation:def-sequence')}
-                                        type='number'
-                                        required
-                                        min={1}
-                                        max={9}
-                                        maxLength={1}
-                                    />
-                                </Col>
-                            </Form.Group>
+                            <FormGroupInput controlId='formDoseNumberInput' title={t('translation:sequence')} placeholder={t('translation:def-sequence')}
+                                value={doseNumber}
+                                onChange={(evt: any) => handleNumber(evt.target.value, setDoseNumber)}
+                                required min={1} max={9} maxLength={1}
+                                type='number'
+                            />
 
                             {/* tot */}
-                            <Form.Group as={Row} controlId='formTotInput' className='mb-1'>
-                                <Form.Label className='input-label' column xs='5' sm='3'>{t('translation:tot') + '*'}</Form.Label>
-
-                                <Col xs='7' sm='9' className='d-flex'>
-                                    <Form.Control
-                                        className='qt-input'
-                                        value={totalDoseNumber}
-                                        onChange={event => handleNumber(event.target.value, setTotalDoseNumber)}
-                                        placeholder={t('translation:def-tot')}
-                                        type='number'
-                                        required
-                                        min={1}
-                                        max={9}
-                                        maxLength={1}
-                                    />
-                                </Col>
-                            </Form.Group>
+                            <FormGroupInput controlId='formTotInput' title={t('translation:tot')} placeholder={t('translation:def-tot')}
+                                value={totalDoseNumber}
+                                onChange={(evt: any) => handleNumber(evt.target.value, setTotalDoseNumber)}
+                                required min={1} max={9} maxLength={1}
+                                type='number'
+                            />
 
                             {/* vacLastDate */}
                             <Form.Group as={Row} controlId='formLastDateInput' className='mb-1'>
