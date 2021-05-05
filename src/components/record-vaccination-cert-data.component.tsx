@@ -38,7 +38,7 @@ import { useGetDiseaseAgents, useGetVaccineManufacturers, useGetVaccines, useGet
 import schema from '../generated-files/DGC.combined-schema.json';
 import { Validator } from 'jsonschema';
 import CardHeader from './modules/card-header.component';
-import { PersonInputs, IPersonData, FormGroupInput } from './modules/form-group.component';
+import { PersonInputs, IPersonData, FormGroupInput, FormGroupValueSetSelect } from './modules/form-group.component';
 import CardFooter from './modules/card-footer.component';
 
 const validator = new Validator();
@@ -292,22 +292,12 @@ const RecordVaccinationCertData = (props: any) => {
                             <hr />
 
                             {/* combobox disease */}
-                            <Form.Group as={Row} controlId='formDiseaseInput' className='mb-1 mt-1 sb-1 st-1'>
-                                <Form.Label className='input-label' column xs='5' sm='3'>{t('translation:disease-agent') + '*'}</Form.Label>
-
-                                <Col xs='7' sm='9' className='d-flex'>
-                                    <Form.Control as="select"
-                                        className='qt-input'
-                                        value={disease}
-                                        onChange={event => setDisease(event.target.value)}
-                                        placeholder={t('translation:def-disease-agent')}
-                                        required
-                                    >
-                                        <option disabled key={0} value={''} >{t('translation:def-disease-agent')}</option>
-                                        {diseasOptions}
-                                    </Form.Control>
-                                </Col>
-                            </Form.Group>
+                            <FormGroupValueSetSelect controlId='formDiseaseInput' title={t('translation:disease-agent')} placeholder={t('translation:def-disease-agent')}
+                                value={disease}
+                                onChange={(evt: any) => setDisease(evt.target.value)}
+                                required
+                                valueSet={useGetDiseaseAgents}
+                            />
 
                             {/* combobox vaccine */}
                             <Form.Group as={Row} controlId='formVaccineInput' className='mb-1 mt-1 sb-1 st-1'>

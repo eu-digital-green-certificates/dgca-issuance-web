@@ -8,6 +8,7 @@ import utils from "../../misc/utils";
 import DatePicker from "react-datepicker";
 // import { registerLocale } from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import { IValueSet } from "../../api";
 
 
 export interface IPersonData {
@@ -41,6 +42,48 @@ export const FormGroupInput = (props: any) => {
         </Form.Group>
     )
 
+}
+
+export const FormGroupValueSetSelect = (props: any) => {
+
+    const valueSet = props.valueSet();
+    const [options, setOptions] = React.useState<JSX.Element[]>();
+
+    React.useEffect(() => {
+        if (valueSet) {
+            const options = getOptionsForValueSet(valueSet)
+            setOptions(options);
+        }
+    }, [valueSet])
+
+
+    const getOptionsForValueSet = (valueSet: IValueSet): JSX.Element[] => {
+        const result: JSX.Element[] = [];
+        for (const key of Object.keys(valueSet)) {
+            result.push(<option key={key} value={key}>{valueSet[key].display}</option>)
+        }
+
+        return result;
+    }
+
+    return (!(props && options) ? <></> :
+        <Form.Group as={Row} controlId={props.controlId} className='mb-1'>
+            <Form.Label className='input-label' column xs='5' sm='3'>{props.title + (props.required ? '*' : '')}</Form.Label>
+
+            <Col xs='7' sm='9' className='d-flex'>
+                <Form.Control as="select"
+                    className='qt-input'
+                    value={props.value}
+                    onChange={props.onChange}
+                    placeholder={props.placeholder ? props.placeholder : props.title}
+                    required={props.required}
+                    >
+                    <option disabled key={0} value={''} >{props.placeholder ? props.placeholder : props.title}</option>
+                    {options}
+                </Form.Control>
+            </Col>
+        </Form.Group>
+    )
 }
 
 
