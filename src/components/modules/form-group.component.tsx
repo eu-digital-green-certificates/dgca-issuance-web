@@ -72,7 +72,7 @@ export const FormGroupValueSetSelect = (props: any) => {
 
             <Col xs='7' sm='9' className='d-flex'>
                 <Form.Control as="select"
-                    className='qt-input'
+                    className={!props.value ? 'selection-placeholder qt-input' : 'qt-input'}
                     value={props.value}
                     onChange={props.onChange}
                     placeholder={props.placeholder ? props.placeholder : props.title}

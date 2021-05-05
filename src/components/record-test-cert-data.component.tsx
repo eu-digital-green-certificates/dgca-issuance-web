@@ -20,7 +20,7 @@
  */
 
 import React from 'react';
-import { Button, Card, Col, Form, Row } from 'react-bootstrap';
+import { Card, Col, Form, Row } from 'react-bootstrap';
 
 import '../i18n';
 import { useTranslation } from 'react-i18next';
@@ -38,7 +38,7 @@ import schema from '../generated-files/DGC.combined-schema.json';
 import { Validator } from 'jsonschema';
 import utils from '../misc/utils';
 import CardHeader from './modules/card-header.component';
-import { FormGroupInput, IPersonData, PersonInputs } from './modules/form-group.component';
+import { FormGroupInput, FormGroupValueSetSelect, IPersonData, PersonInputs } from './modules/form-group.component';
 import CardFooter from './modules/card-footer.component';
 
 const validator = new Validator();
@@ -49,11 +49,6 @@ const RecordTestCertData = (props: any) => {
 
     const navigation = useNavigation();
     const { t } = useTranslation();
-
-    // data read from the API
-    const diseaseAgentsData = useGetDiseaseAgents();
-    const testManufacturersValueSet = useGetTestManufacturers();
-    const testResultValueSet = useGetTestResult();
 
     const [isInit, setIsInit] = React.useState(false)
 
@@ -71,11 +66,6 @@ const RecordTestCertData = (props: any) => {
     const [testResult, setTestResult] = React.useState<string>('');
     const [testCenter, setTestCenter] = React.useState<string>('');
 
-    const [diseasOptions, setDiseasOptions] = React.useState<JSX.Element[]>();
-    const [testResultOptions, setTestResultOptions] = React.useState<JSX.Element[]>();
-    const [testManufacturersOptions, setTestManufacturersOptions] = React.useState<JSX.Element[]>();
-
-    const [vacLastDate, setVacLastDate] = React.useState<Date>();
     const [certificateIssuer, setCertificateIssuer] = React.useState('');
     const [issuerCountryCode, setIssuerCountryCode] = React.useState<string>('');
 
@@ -116,39 +106,6 @@ const RecordTestCertData = (props: any) => {
         }
     }, [navigation]);
 
-
-    React.useEffect(() => {
-        if (diseaseAgentsData) {
-            const options = getOptionsForValueSet(diseaseAgentsData)
-            setDiseasOptions(options);
-        }
-    }, [diseaseAgentsData])
-
-
-    React.useEffect(() => {
-        if (testResultValueSet) {
-            const options = getOptionsForValueSet(testResultValueSet)
-            setTestResultOptions(options);
-        }
-    }, [testResultValueSet])
-
-
-    React.useEffect(() => {
-        if (testManufacturersValueSet) {
-            const options = getOptionsForValueSet(testManufacturersValueSet)
-            setTestManufacturersOptions(options);
-        }
-    }, [testManufacturersValueSet])
-
-
-    const getOptionsForValueSet = (valueSet: IValueSet): JSX.Element[] => {
-        const result: JSX.Element[] = [];
-        for (const key of Object.keys(valueSet)) {
-            result.push(<option key={key} value={key}>{valueSet[key].display}</option>)
-        }
-
-        return result;
-    }
 
     const setIso3311a2 = () => {
         const options: JSX.Element[] = [];
@@ -271,22 +228,12 @@ const RecordTestCertData = (props: any) => {
                             <hr />
 
                             {/* combobox disease */}
-                            <Form.Group as={Row} controlId='formDiseaseInput' className='mb-1 mt-1 sb-1 st-1'>
-                                <Form.Label className='input-label' column xs='5' sm='3'>{t('translation:disease-agent') + '*'}</Form.Label>
-
-                                <Col xs='7' sm='9' className='d-flex'>
-                                    <Form.Control as="select"
-                                        className={!disease ? 'selection-placeholder qt-input' : 'qt-input'}
-                                        value={disease}
-                                        onChange={event => setDisease(event.target.value)}
-                                        placeholder={t('translation:def-disease-agent')}
-                                        required
-                                    >
-                                        <option disabled key={0} value={''} >{t('translation:def-disease-agent')}</option>
-                                        {diseasOptions}
-                                    </Form.Control>
-                                </Col>
-                            </Form.Group>
+                            <FormGroupValueSetSelect controlId='formDiseaseInput' title={t('translation:disease-agent')} placeholder={t('translation:def-disease-agent')}
+                                value={disease}
+                                onChange={(evt: any) => setDisease(evt.target.value)}
+                                required
+                                valueSet={useGetDiseaseAgents}
+                            />
 
                             {/* testType input */}
                             <FormGroupInput controlId='formTestTypeInput' title={t('translation:testType')}
@@ -305,22 +252,12 @@ const RecordTestCertData = (props: any) => {
                             />
 
                             {/* combobox testManufacturers */}
-                            <Form.Group as={Row} controlId='formTestManufactorersInput' className='mb-1 mt-1 sb-1 st-1'>
-                                <Form.Label className='input-label' column xs='5' sm='3'>{t('translation:testManufacturers') + '*'}</Form.Label>
-
-                                <Col xs='7' sm='9' className='d-flex'>
-                                    <Form.Control as="select"
-                                        className={!testManufacturers ? 'selection-placeholder qt-input' : 'qt-input'}
-                                        value={testManufacturers}
-                                        onChange={event => setTestManufacturers(event.target.value)}
-                                        placeholder={t('translation:testManufacturers')}
-                                        required
-                                    >
-                                        <option disabled key={0} value={''} >{t('translation:testManufacturers')}</option>
-                                        {testManufacturersOptions}
-                                    </Form.Control>
-                                </Col>
-                            </Form.Group>
+                            <FormGroupValueSetSelect controlId='formTestManufactorersInput' title={t('translation:testManufacturers')}
+                                value={testManufacturers}
+                                onChange={(evt: any) => setTestManufacturers(evt.target.value)}
+                                required
+                                valueSet={useGetTestManufacturers}
+                            />
 
                             <hr />
 
@@ -371,22 +308,12 @@ const RecordTestCertData = (props: any) => {
                             </Form.Group>
 
                             {/* combobox testResult */}
-                            <Form.Group as={Row} controlId='formTestResultInput' className='mb-1 mt-1 sb-1 st-1'>
-                                <Form.Label className='input-label' column xs='5' sm='3'>{t('translation:testResult') + '*'}</Form.Label>
-
-                                <Col xs='7' sm='9' className='d-flex'>
-                                    <Form.Control as="select"
-                                        className={!testResult ? 'selection-placeholder qt-input' : 'qt-input'}
-                                        value={testResult}
-                                        onChange={event => setTestResult(event.target.value)}
-                                        placeholder="{t('translation:testResult')}"
-                                        required
-                                    >
-                                        <option disabled key={0} value={''} >{t('translation:testResult')}</option>
-                                        {testResultOptions}
-                                    </Form.Control>
-                                </Col>
-                            </Form.Group>
+                            <FormGroupValueSetSelect controlId='formTestResultInput' title={t('translation:testResult')}
+                                value={testResult}
+                                onChange={(evt: any) => setTestResult(evt.target.value)}
+                                required
+                                valueSet={useGetTestResult}
+                            />
 
                             {/* testCenter input */}
                             <FormGroupInput controlId='formTestCenterInput' title={t('translation:testCenter')}

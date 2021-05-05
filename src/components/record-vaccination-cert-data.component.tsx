@@ -20,7 +20,7 @@
  */
 
 import React from 'react';
-import { Button, Card, Col, Form, Row } from 'react-bootstrap';
+import { Card, Col, Form, Row } from 'react-bootstrap';
 
 import '../i18n';
 import { useTranslation } from 'react-i18next';
@@ -50,12 +50,6 @@ const RecordVaccinationCertData = (props: any) => {
     const navigation = useNavigation();
     const { t } = useTranslation();
 
-    // data read from the API
-    const vacMedsData = useGetVaccinMedicalData();
-    const diseaseAgentsData = useGetDiseaseAgents();
-    const vaccineManufacturers = useGetVaccineManufacturers();
-    const vaccines = useGetVaccines();
-
     const [isInit, setIsInit] = React.useState(false)
 
     const [person, setPerson] = React.useState<IPersonData>();
@@ -64,11 +58,6 @@ const RecordVaccinationCertData = (props: any) => {
     const [vaccine, setVaccine] = React.useState<string>('');
     const [medicalProduct, setMedicalProduct] = React.useState<string>('');
     const [marketingHolder, setMarketingHolder] = React.useState<string>('');
-
-    const [diseasOptions, setDiseasOptions] = React.useState<JSX.Element[]>();
-    const [vaccineOptions, setVaccineOptions] = React.useState<JSX.Element[]>();
-    const [medicalProductOptions, setMedicalProductOptions] = React.useState<JSX.Element[]>();
-    const [marketingHolderOptions, setMarketingHolderOptions] = React.useState<JSX.Element[]>();
 
     const [doseNumber, setDoseNumber] = React.useState<number>(0);
     const [totalDoseNumber, setTotalDoseNumber] = React.useState<number>(0);
@@ -123,47 +112,6 @@ const RecordVaccinationCertData = (props: any) => {
         }
     }, [navigation]);
 
-
-    React.useEffect(() => {
-        if (diseaseAgentsData) {
-            const options = getOptionsForValueSet(diseaseAgentsData)
-            setDiseasOptions(options);
-        }
-    }, [diseaseAgentsData])
-
-
-    React.useEffect(() => {
-        if (vaccines) {
-            const options = getOptionsForValueSet(vaccines)
-            setVaccineOptions(options);
-        }
-    }, [vaccines])
-
-
-    React.useEffect(() => {
-        if (vacMedsData) {
-            const options = getOptionsForValueSet(vacMedsData)
-            setMedicalProductOptions(options);
-        }
-    }, [vacMedsData])
-
-
-    React.useEffect(() => {
-        if (vaccineManufacturers) {
-            const options = getOptionsForValueSet(vaccineManufacturers)
-            setMarketingHolderOptions(options);
-        }
-    }, [vaccineManufacturers])
-
-
-    const getOptionsForValueSet = (valueSet: IValueSet): JSX.Element[] => {
-        const result: JSX.Element[] = [];
-        for (const key of Object.keys(valueSet)) {
-            result.push(<option key={key} value={key}>{valueSet[key].display}</option>)
-        }
-
-        return result;
-    }
 
     const setIso3311a2 = () => {
         const options: JSX.Element[] = [];
@@ -300,58 +248,28 @@ const RecordVaccinationCertData = (props: any) => {
                             />
 
                             {/* combobox vaccine */}
-                            <Form.Group as={Row} controlId='formVaccineInput' className='mb-1 mt-1 sb-1 st-1'>
-                                <Form.Label className='input-label' column xs='5' sm='3'>{t('translation:vaccine') + '*'}</Form.Label>
-
-                                <Col xs='7' sm='9' className='d-flex'>
-                                    <Form.Control as="select"
-                                        className={!vaccine ? 'selection-placeholder qt-input' : 'qt-input'}
-                                        value={vaccine}
-                                        onChange={event => setVaccine(event.target.value)}
-                                        placeholder={t('translation:vaccine')}
-                                        required
-                                    >
-                                        <option disabled key={0} value={''}>{t('translation:vaccine')}</option>
-                                        {vaccineOptions}
-                                    </Form.Control>
-                                </Col>
-                            </Form.Group>
+                            <FormGroupValueSetSelect controlId='formVaccineInput' title={t('translation:vaccine')}
+                                value={vaccine}
+                                onChange={(evt: any) => setVaccine(evt.target.value)}
+                                required
+                                valueSet={useGetVaccines}
+                            />
 
                             {/* combobox medicalProduct */}
-                            <Form.Group as={Row} controlId='formMedicalProductInput' className='mb-1 mt-1 sb-1 st-1'>
-                                <Form.Label className='input-label' column xs='5' sm='3'>{t('translation:vac-medical-product') + '*'}</Form.Label>
-
-                                <Col xs='7' sm='9' className='d-flex'>
-                                    <Form.Control as="select"
-                                        className={!medicalProduct ? 'selection-placeholder qt-input' : 'qt-input'}
-                                        value={medicalProduct}
-                                        onChange={event => setMedicalProduct(event.target.value)}
-                                        placeholder="{t('translation:vaccine')}"
-                                        required
-                                    >
-                                        <option disabled key={0} value={''}>{t('translation:vac-medical-product')}</option>
-                                        {medicalProductOptions}
-                                    </Form.Control>
-                                </Col>
-                            </Form.Group>
+                            <FormGroupValueSetSelect controlId='formMedicalProductInput' title={t('translation:vac-medical-product')}
+                                value={medicalProduct}
+                                onChange={(evt: any) => setMedicalProduct(evt.target.value)}
+                                required
+                                valueSet={useGetVaccinMedicalData}
+                            />
 
                             {/* combobox marketingHolder */}
-                            <Form.Group as={Row} controlId='formMarketingHolderInput' className='mb-1 mt-1 sb-1 st-1'>
-                                <Form.Label className='input-label' column xs='5' sm='3'>{t('translation:vac-marketing-holder') + '*'}</Form.Label>
-
-                                <Col xs='7' sm='9' className='d-flex'>
-                                    <Form.Control as="select"
-                                        className={!marketingHolder ? 'selection-placeholder qt-input' : 'qt-input'}
-                                        value={marketingHolder}
-                                        onChange={event => setMarketingHolder(event.target.value)}
-                                        placeholder={t('translation:def-vac-marketing-holder')}
-                                        required
-                                    >
-                                        <option disabled key={0} value={''}>{t('translation:vac-marketing-holder')}</option>
-                                        {marketingHolderOptions}
-                                    </Form.Control>
-                                </Col>
-                            </Form.Group>
+                            <FormGroupValueSetSelect controlId='formMarketingHolderInput' title={t('translation:vac-marketing-holder')}
+                                value={marketingHolder}
+                                onChange={(evt: any) => setMarketingHolder(evt.target.value)}
+                                required
+                                valueSet={useGetVaccineManufacturers}
+                            />
 
                             <hr />
 

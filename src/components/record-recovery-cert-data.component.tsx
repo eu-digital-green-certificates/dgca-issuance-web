@@ -20,7 +20,7 @@
  */
 
 import React from 'react';
-import { Button, Card, Col, Form, Row } from 'react-bootstrap';
+import { Card, Col, Form, Row } from 'react-bootstrap';
 
 import '../i18n';
 import { useTranslation } from 'react-i18next';
@@ -38,7 +38,7 @@ import { useGetDiseaseAgents, IValueSet } from '../api';
 import schema from '../generated-files/DGC.combined-schema.json';
 import { Validator } from 'jsonschema';
 import CardHeader from './modules/card-header.component';
-import { PersonInputs, IPersonData, FormGroupInput } from './modules/form-group.component';
+import { PersonInputs, IPersonData, FormGroupInput, FormGroupValueSetSelect } from './modules/form-group.component';
 import CardFooter from './modules/card-footer.component';
 
 const validator = new Validator();
@@ -50,16 +50,11 @@ const RecordRecoveryCertData = (props: any) => {
     const navigation = useNavigation();
     const { t } = useTranslation();
 
-    // data read from the API
-    const diseaseAgentsData = useGetDiseaseAgents();
-
     const [isInit, setIsInit] = React.useState(false)
 
     const [person, setPerson] = React.useState<IPersonData>();
 
     const [disease, setDisease] = React.useState<string>('');
-
-    const [diseasOptions, setDiseasOptions] = React.useState<JSX.Element[]>();
 
     const [firstPositiveResultDate, setFirstPositiveResultDate] = React.useState<Date>();
     const [certificateIssuer, setCertificateIssuer] = React.useState('');
@@ -110,23 +105,6 @@ const RecordRecoveryCertData = (props: any) => {
             setTimeout(setIsInit, 200, true);
         }
     }, [navigation]);
-
-
-    React.useEffect(() => {
-        if (diseaseAgentsData) {
-            const options = getOptionsForValueSet(diseaseAgentsData)
-            setDiseasOptions(options);
-        }
-    }, [diseaseAgentsData])
-
-    const getOptionsForValueSet = (valueSet: IValueSet): JSX.Element[] => {
-        const result: JSX.Element[] = [];
-        for (const key of Object.keys(valueSet)) {
-            result.push(<option key={key} value={key}>{valueSet[key].display}</option>)
-        }
-
-        return result;
-    }
 
     const setIso3311a2 = () => {
         const options: JSX.Element[] = [];
@@ -254,22 +232,12 @@ const RecordRecoveryCertData = (props: any) => {
                             <hr />
 
                             {/* combobox disease */}
-                            <Form.Group as={Row} controlId='formDiseaseInput' className='mb-1 mt-1 sb-1 st-1'>
-                                <Form.Label className='input-label' column xs='5' sm='3'>{t('translation:disease-agent') + '*'}</Form.Label>
-
-                                <Col xs='7' sm='9' className='d-flex'>
-                                    <Form.Control as="select"
-                                        className={!disease ? 'selection-placeholder qt-input' : 'qt-input'}
-                                        value={disease}
-                                        onChange={event => setDisease(event.target.value)}
-                                        placeholder={t('translation:def-disease-agent')}
-                                        required
-                                    >
-                                        <option disabled key={0} value={''} >{t('translation:def-disease-agent')}</option>
-                                        {diseasOptions}
-                                    </Form.Control>
-                                </Col>
-                            </Form.Group>
+                            <FormGroupValueSetSelect controlId='formDiseaseInput' title={t('translation:disease-agent')} placeholder={t('translation:def-disease-agent')}
+                                value={disease}
+                                onChange={(evt: any) => setDisease(evt.target.value)}
+                                required
+                                valueSet={useGetDiseaseAgents}
+                            />
 
                             <hr />
 
