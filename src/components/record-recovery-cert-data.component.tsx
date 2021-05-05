@@ -274,7 +274,7 @@ const RecordRecoveryCertData = (props: any) => {
 
                             {/* Date of First Positive Test Result  */}
                             <Form.Group as={Row} controlId='formLastDateInput' className='mb-1'>
-                                <Form.Label className='input-label txt-no-wrap' column xs='5' sm='3'>{t('translation:recovery-first-date') + '*'}</Form.Label>
+                                <Form.Label className='input-label txt-no-wrap' column xs='5' sm='3'>{t('translation:first-positive-test-date') + '*'}</Form.Label>
 
                                 <Col xs='7' sm='9' className='d-flex'>
                                     <DatePicker
@@ -282,7 +282,7 @@ const RecordRecoveryCertData = (props: any) => {
                                         onChange={handleFirstPositiveResultDate}
                                         dateFormat='yyyy-MM-dd'
                                         isClearable
-                                        placeholderText={t('translation:recovery-first-date')}
+                                        placeholderText={t('translation:first-positive-test-date')}
                                         className='qt-input form-control'
                                         wrapperClassName='align-self-center'
                                         showMonthDropdown
@@ -298,7 +298,7 @@ const RecordRecoveryCertData = (props: any) => {
 
                             {/* Combobox for the vaccin countries in iso-3166-1-alpha-2 */}
                             <Form.Group as={Row} controlId='formVacCountryInput' className='mb-1 mt-1 sb-1 st-1'>
-                                <Form.Label className='input-label' column xs='5' sm='3'>{t('translation:recovery-test-country') + '*'}</Form.Label>
+                                <Form.Label className='input-label' column xs='5' sm='3'>{t('translation:recovery-country') + '*'}</Form.Label>
 
                                 <Col xs='7' sm='9' className='d-flex'>
                                     <Form.Control as="select"
@@ -308,7 +308,7 @@ const RecordRecoveryCertData = (props: any) => {
                                         placeholder={t('translation:country')}
                                         required
                                     >
-                                        <option disabled key={0} value={''} >{t('translation:recovery-test-country')}</option>
+                                        <option disabled key={0} value={''} >{t('translation:recovery-country')}</option>
                                         {isoCountryOptions}
                                     </Form.Control>
                                 </Col>
@@ -337,7 +337,7 @@ const RecordRecoveryCertData = (props: any) => {
 
                             {/* Date: Certificate Valid From - To */}
                             <Form.Group as={Row} controlId='formDateOfBirthInput' className='mb-1'>
-                                <Form.Label className='input-label txt-no-wrap' column xs='5' sm='3'>{t('translation:cert-valid-from-go') + '*'}</Form.Label>
+                                <Form.Label className='input-label txt-no-wrap' column xs='5' sm='3'>{t('translation:cert-valid-from-to') + '*'}</Form.Label>
 
                                 <Col xs='7' sm='9' className='d-flex'>
                                     <DatePicker

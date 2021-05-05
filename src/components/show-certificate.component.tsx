@@ -211,7 +211,20 @@ const ShowCertificate = (props: any) => {
                                     </>}
                                 {!recoverySet ? <></>
                                     : <>
+                                        <div className="pt-3">
+                                            <Card.Text className='input-label jcc-xs-jcfs-sm mb-0 font-weight-bold' >{t('translation:recovery-data')}</Card.Text>
+                                            <Card.Text className='input-label jcc-xs-jcfs-sm mb-0' >{`${t('translation:disease-agent')}: ${getValueSetDisplay(recoverySet.tg, diseaseAgentsData)}`}</Card.Text>
+                                            <Card.Text className='input-label jcc-xs-jcfs-sm mb-0' >{`${t('translation:first-positive-test-date')}: ${recoverySet.fr}`}</Card.Text>
+                                            <Card.Text className='input-label jcc-xs-jcfs-sm mb-0' >{`${t('translation:recovery-country')}: ${recoverySet.co}`}</Card.Text>
+                                            
+                                        </div>
 
+                                        <div className="pt-3">
+                                            <Card.Text className='input-label jcc-xs-jcfs-sm mb-0 font-weight-bold' >{t('translation:certificate-data')}</Card.Text>
+                                            <Card.Text className='input-label jcc-xs-jcfs-sm mb-0' >{`${t('translation:adm')}: ${recoverySet.is}`}</Card.Text>
+                                            <Card.Text className='input-label jcc-xs-jcfs-sm mb-0' >{`${t('translation:valid-from')}: ${recoverySet.df}`}</Card.Text>
+                                            <Card.Text className='input-label jcc-xs-jcfs-sm mb-0' >{`${t('translation:valid-to')}: ${recoverySet.du}`}</Card.Text>
+                                        </div>
                                     </>}
                             </Col>
                             <Col sm='6' className='px-4'>
