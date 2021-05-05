@@ -10,6 +10,8 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { IValueSet } from "../../api";
 
+const iso3311a2 = require('iso-3166-1-alpha-2');
+
 
 export interface IPersonData {
     givenName: string;
@@ -65,6 +67,42 @@ export const FormGroupValueSetSelect = (props: any) => {
 
         return result;
     }
+
+    return (!(props && options) ? <></> :
+        <Form.Group as={Row} controlId={props.controlId} className='mb-1'>
+            <Form.Label className='input-label' column xs='5' sm='3'>{props.title + (props.required ? '*' : '')}</Form.Label>
+
+            <Col xs='7' sm='9' className='d-flex'>
+                <Form.Control as="select"
+                    className={!props.value ? 'selection-placeholder qt-input' : 'qt-input'}
+                    value={props.value}
+                    onChange={props.onChange}
+                    placeholder={props.placeholder ? props.placeholder : props.title}
+                    required={props.required}
+                    >
+                    <option disabled key={0} value={''} >{props.placeholder ? props.placeholder : props.title}</option>
+                    {options}
+                </Form.Control>
+            </Col>
+        </Form.Group>
+    )
+}
+
+export const FormGroupISOCountrySelect = (props: any) => {
+
+    const [options, setOptions] = React.useState<JSX.Element[]>();
+
+    React.useEffect(() => {
+        const options: JSX.Element[] = [];
+        const codes: string[] = iso3311a2.getCodes().sort();
+
+        for (const code of codes) {
+            options.push(<option key={code} value={code}>{code + " : " + iso3311a2.getCountry(code)}</option>)
+        }
+
+        setOptions(options);
+    }, [])
+
 
     return (!(props && options) ? <></> :
         <Form.Group as={Row} controlId={props.controlId} className='mb-1'>

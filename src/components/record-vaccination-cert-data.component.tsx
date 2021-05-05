@@ -38,12 +38,10 @@ import { useGetDiseaseAgents, useGetVaccineManufacturers, useGetVaccines, useGet
 import schema from '../generated-files/DGC.combined-schema.json';
 import { Validator } from 'jsonschema';
 import CardHeader from './modules/card-header.component';
-import { PersonInputs, IPersonData, FormGroupInput, FormGroupValueSetSelect } from './modules/form-group.component';
+import { PersonInputs, IPersonData, FormGroupInput, FormGroupValueSetSelect, FormGroupISOCountrySelect } from './modules/form-group.component';
 import CardFooter from './modules/card-footer.component';
 
 const validator = new Validator();
-const iso3311a2 = require('iso-3166-1-alpha-2');
-
 
 const RecordVaccinationCertData = (props: any) => {
 
@@ -65,7 +63,6 @@ const RecordVaccinationCertData = (props: any) => {
     const [certificateIssuer, setCertificateIssuer] = React.useState('');
     const [issuerCountryCode, setIssuerCountryCode] = React.useState<string>('');
 
-    const [isoCountryOptions, setIsoCountryOptions] = React.useState<JSX.Element[]>();
     const [defaultIssuerCountryCode, setDefaultIssuerCountryCode] = useLocalStorage('defaultIssuerCountryCode', '');
 
 
@@ -88,10 +85,6 @@ const RecordVaccinationCertData = (props: any) => {
     }, [props.eudgc]);
 
     React.useEffect(() => {
-        setIso3311a2();
-    }, []);
-
-    React.useEffect(() => {
         if (!issuerCountryCode) {
             setIssuerCountryCode(defaultIssuerCountryCode);
         }
@@ -111,20 +104,6 @@ const RecordVaccinationCertData = (props: any) => {
             setTimeout(setIsInit, 200, true);
         }
     }, [navigation]);
-
-
-    const setIso3311a2 = () => {
-        const options: JSX.Element[] = [];
-        const codes: string[] = iso3311a2.getCodes().sort();
-
-        // options.push(<option key={0} value={''} >{ }</option>);
-
-        for (const code of codes) {
-            options.push(<option key={code} value={code}>{code + " : " + iso3311a2.getCountry(code)}</option>)
-        }
-
-        setIsoCountryOptions(options);
-    }
 
     const handleError = (error: any) => {
         let msg = '';
@@ -315,22 +294,11 @@ const RecordVaccinationCertData = (props: any) => {
                             <hr />
 
                             {/* Combobox for the vaccin countries in iso-3166-1-alpha-2 */}
-                            <Form.Group as={Row} controlId='formVacCountryInput' className='mb-1 mt-1 sb-1 st-1'>
-                                <Form.Label className='input-label' column xs='5' sm='3'>{t('translation:vac-country') + '*'}</Form.Label>
-
-                                <Col xs='7' sm='9' className='d-flex'>
-                                    <Form.Control as="select"
-                                        className={!issuerCountryCode ? 'selection-placeholder qt-input' : 'qt-input'}
-                                        value={issuerCountryCode}
-                                        onChange={event => setIssuerCountryCode(event.target.value)}
-                                        placeholder={t('translation:country')}
-                                        required
-                                    >
-                                        <option disabled key={0} value={''}>{t('translation:vac-country')}</option>
-                                        {isoCountryOptions}
-                                    </Form.Control>
-                                </Col>
-                            </Form.Group>
+                            <FormGroupISOCountrySelect controlId='formVacCountryInput' title={t('translation:vac-country')}
+                                value={issuerCountryCode}
+                                onChange={(evt: any) => setIssuerCountryCode(evt.target.value)}
+                                required
+                            />
 
                             {/* certificateIssuer */}
                             <FormGroupInput controlId='formcertificateIssuerInput' title={t('translation:certificateIssuer')}
