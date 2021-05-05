@@ -29,7 +29,7 @@ export const FormGroupInput = (props: any) => {
                     className='qt-input'
                     value={props.value}
                     onChange={props.onChange}
-                    placeholder={props.placeholder}
+                    placeholder={props.placeholder ? props.placeholder : props.title}
                     type='text'
                     required={props.required}
                     maxLength={props.maxLength}
@@ -89,7 +89,7 @@ export const PersonInputs = (props: any) => {
             setStandardisedName(upperCaseChangedValue);
         }
     }
-    
+
     const handleDateOfBirthChange = (evt: Date | [Date, Date] | null) => {
         const date = handleDateChange(evt);
         setDateOfBirth(date);
@@ -113,7 +113,7 @@ export const PersonInputs = (props: any) => {
     return (
         <>
             {/* first name input */}
-            <FormGroupInput controlId='formGivenNameInput' title={t('translation:first-name')} placeholder={t('translation:first-name')}
+            <FormGroupInput controlId='formGivenNameInput' title={t('translation:first-name')}
                 value={givenName}
                 onChange={(evt: any) => setGivenName(evt.target.value)}
                 required
@@ -121,7 +121,7 @@ export const PersonInputs = (props: any) => {
             />
 
             {/* name input */}
-            <FormGroupInput controlId='formNameInput' title={t('translation:name')} placeholder={t('translation:name')}
+            <FormGroupInput controlId='formNameInput' title={t('translation:name')}
                 value={familyName}
                 onChange={(evt: any) => setFamilyName(evt.target.value)}
                 required
@@ -131,7 +131,7 @@ export const PersonInputs = (props: any) => {
             <hr />
 
             {/* standardised first name input */}
-            <FormGroupInput controlId='formStandadisedGivenNameInput' title={t('translation:standardised-first-name')} placeholder={t('translation:standardised-first-name')}
+            <FormGroupInput controlId='formStandadisedGivenNameInput' title={t('translation:standardised-first-name')}
                 value={standardisedGivenName}
                 onChange={(evt: any) => handleStandardisedNameChanged(evt.target.value, setStandardisedGivenName)}
                 required
@@ -140,7 +140,7 @@ export const PersonInputs = (props: any) => {
             />
 
             {/*standardised name input */}
-            <FormGroupInput controlId='formStandadisedNameInput' title={t('translation:standardised-name')} placeholder={t('translation:standardised-name')}
+            <FormGroupInput controlId='formStandadisedNameInput' title={t('translation:standardised-name')}
                 value={standardisedFamilyName}
                 onChange={(evt: any) => handleStandardisedNameChanged(evt.target.value, setStandardisedFamilyName)}
                 required

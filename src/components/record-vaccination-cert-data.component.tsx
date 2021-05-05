@@ -38,7 +38,8 @@ import { useGetDiseaseAgents, useGetVaccineManufacturers, useGetVaccines, useGet
 import schema from '../generated-files/DGC.combined-schema.json';
 import { Validator } from 'jsonschema';
 import CardHeader from './modules/card-header.component';
-import { PersonInputs, IPersonData } from './modules/form-group.component';
+import { PersonInputs, IPersonData, FormGroupInput } from './modules/form-group.component';
+import CardFooter from './modules/card-footer.component';
 
 const validator = new Validator();
 const iso3311a2 = require('iso-3166-1-alpha-2');
@@ -446,49 +447,19 @@ const RecordVaccinationCertData = (props: any) => {
                             </Form.Group>
 
                             {/* certificateIssuer */}
-                            <Form.Group as={Row} controlId='formcertificateIssuerInput' className='mb-1'>
-                                <Form.Label className='input-label' column xs='5' sm='3'>{t('translation:certificateIssuer') + '*'}</Form.Label>
-
-                                <Col xs='7' sm='9' className='d-flex'>
-                                    <Form.Control
-                                        className='qt-input'
-                                        value={certificateIssuer}
-                                        onChange={event => setCertificateIssuer(event.target.value)}
-                                        placeholder={t('translation:certificateIssuer')}
-                                        type='text'
-                                        required
-                                        maxLength={50}
-                                    />
-                                </Col>
-                            </Form.Group>
+                            <FormGroupInput controlId='formcertificateIssuerInput' title={t('translation:certificateIssuer')}
+                                value={certificateIssuer}
+                                onChange={(evt: any) => setCertificateIssuer(evt.target.value)}
+                                required
+                                maxLength={50}
+                            />
                             <hr />
                         </Card.Body>
 
                         {/*
                             footer with clear and nex button
                         */}
-                        <Card.Footer id='data-footer'>
-                            <Row>
-                                <Col xs='6' md='3'>
-                                    <Button
-                                        className='my-1 my-md-0 p-0'
-                                        block
-                                        onClick={handleCancel}
-                                    >
-                                        {t('translation:cancel')}
-                                    </Button>
-                                </Col>
-                                <Col xs='6' md='3' className='pr-md-0'>
-                                    <Button
-                                        className='my-1 my-md-0 p-0'
-                                        block
-                                        type='submit'
-                                    >
-                                        {t('translation:next')}
-                                    </Button>
-                                </Col>
-                            </Row>
-                        </Card.Footer>
+                        <CardFooter handleCancel={handleCancel} />
 
                     </Form>
                 </Card>

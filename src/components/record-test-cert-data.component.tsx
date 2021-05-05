@@ -38,7 +38,8 @@ import schema from '../generated-files/DGC.combined-schema.json';
 import { Validator } from 'jsonschema';
 import utils from '../misc/utils';
 import CardHeader from './modules/card-header.component';
-import { IPersonData, PersonInputs } from './modules/form-group.component';
+import { FormGroupInput, IPersonData, PersonInputs } from './modules/form-group.component';
+import CardFooter from './modules/card-footer.component';
 
 const validator = new Validator();
 const iso3311a2 = require('iso-3166-1-alpha-2');
@@ -288,38 +289,20 @@ const RecordTestCertData = (props: any) => {
                             </Form.Group>
 
                             {/* testType input */}
-                            <Form.Group as={Row} controlId='formTestTypeInput' className='mb-1'>
-                                <Form.Label className='input-label' column xs='5' sm='3'>{t('translation:testType') + '*'}</Form.Label>
-
-                                <Col xs='7' sm='9' className='d-flex'>
-                                    <Form.Control
-                                        className='qt-input'
-                                        value={testType}
-                                        onChange={event => setTestType(event.target.value)}
-                                        placeholder={t('translation:testType')}
-                                        type='text'
-                                        required
-                                        maxLength={50}
-                                    />
-                                </Col>
-                            </Form.Group>
+                            <FormGroupInput controlId='formTestTypeInput' title={t('translation:testType')}
+                                value={testType}
+                                onChange={(evt: any) => setTestType(evt.target.value)}
+                                required
+                                maxLength={50}
+                            />
 
                             {/* testName input */}
-                            <Form.Group as={Row} controlId='formTestNameInput' className='mb-1'>
-                                <Form.Label className='input-label' column xs='5' sm='3'>{t('translation:testName') + '*'}</Form.Label>
-
-                                <Col xs='7' sm='9' className='d-flex'>
-                                    <Form.Control
-                                        className='qt-input'
-                                        value={testName}
-                                        onChange={event => setTestName(event.target.value)}
-                                        placeholder={t('translation:testName')}
-                                        type='text'
-                                        required
-                                        maxLength={50}
-                                    />
-                                </Col>
-                            </Form.Group>
+                            <FormGroupInput controlId='formTestNameInput' title={t('translation:testName')}
+                                value={testName}
+                                onChange={(evt: any) => setTestName(evt.target.value)}
+                                required
+                                maxLength={50}
+                            />
 
                             {/* combobox testManufacturers */}
                             <Form.Group as={Row} controlId='formTestManufactorersInput' className='mb-1 mt-1 sb-1 st-1'>
@@ -406,21 +389,12 @@ const RecordTestCertData = (props: any) => {
                             </Form.Group>
 
                             {/* testCenter input */}
-                            <Form.Group as={Row} controlId='formTestCenterInput' className='mb-1'>
-                                <Form.Label className='input-label' column xs='5' sm='3'>{t('translation:testCenter') + '*'}</Form.Label>
-
-                                <Col xs='7' sm='9' className='d-flex'>
-                                    <Form.Control
-                                        className='qt-input'
-                                        value={testCenter}
-                                        onChange={event => setTestCenter(event.target.value)}
-                                        placeholder={t('translation:testCenter')}
-                                        type='text'
-                                        required
-                                        maxLength={50}
-                                    />
-                                </Col>
-                            </Form.Group>
+                            <FormGroupInput controlId='formTestCenterInput' title={t('translation:testCenter')}
+                                value={testCenter}
+                                onChange={(evt: any) => setTestCenter(evt.target.value)}
+                                required
+                                maxLength={50}
+                            />
 
                             <hr />
 
@@ -443,49 +417,19 @@ const RecordTestCertData = (props: any) => {
                             </Form.Group>
 
                             {/* certificateIssuer */}
-                            <Form.Group as={Row} controlId='formcertificateIssuerInput' className='mb-1'>
-                                <Form.Label className='input-label' column xs='5' sm='3'>{t('translation:certificateIssuer') + '*'}</Form.Label>
-
-                                <Col xs='7' sm='9' className='d-flex'>
-                                    <Form.Control
-                                        className='qt-input'
-                                        value={certificateIssuer}
-                                        onChange={event => setCertificateIssuer(event.target.value)}
-                                        placeholder={t('translation:certificateIssuer')}
-                                        type='text'
-                                        required
-                                        maxLength={50}
-                                    />
-                                </Col>
-                            </Form.Group>
+                            <FormGroupInput controlId='formcertificateIssuerInput' title={t('translation:certificateIssuer')} placeholder={t('translation:certificateIssuer')}
+                                value={certificateIssuer}
+                                onChange={(evt: any) => setCertificateIssuer(evt.target.value)}
+                                required
+                                maxLength={50}
+                            />
                             <hr />
                         </Card.Body>
 
                         {/*
                             footer with clear and nex button
                         */}
-                        <Card.Footer id='data-footer'>
-                            <Row>
-                                <Col xs='6' md='3'>
-                                    <Button
-                                        className='my-1 my-md-0 p-0'
-                                        block
-                                        onClick={handleCancel}
-                                    >
-                                        {t('translation:cancel')}
-                                    </Button>
-                                </Col>
-                                <Col xs='6' md='3' className='pr-md-0'>
-                                    <Button
-                                        className='my-1 my-md-0 p-0'
-                                        block
-                                        type='submit'
-                                    >
-                                        {t('translation:next')}
-                                    </Button>
-                                </Col>
-                            </Row>
-                        </Card.Footer>
+                        <CardFooter handleCancel={handleCancel} />
 
                     </Form>
                 </Card>
