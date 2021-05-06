@@ -55,11 +55,11 @@ const RecordTestCertData = (props: any) => {
     const [disease, setDisease] = React.useState<string>('');
 
     const [testType, setTestType] = React.useState<string>('');
-    const [testName, setTestName] = React.useState<string>('');
-    const [testManufacturers, setTestManufacturers] = React.useState<string>('');
+    const [testName, setTestName] = React.useState<string | undefined>();
+    const [testManufacturers, setTestManufacturers] = React.useState<string | undefined>();
 
     const [sampleDateTime, setSampleDateTime] = React.useState<Date>();
-    const [testDateTime, setTestDateTime] = React.useState<Date>();
+    const [testDateTime, setTestDateTime] = React.useState<Date | undefined>();
 
     const [testResult, setTestResult] = React.useState<string>('');
     const [testCenter, setTestCenter] = React.useState<string>('');
@@ -68,26 +68,30 @@ const RecordTestCertData = (props: any) => {
     const [issuerCountryCode, setIssuerCountryCode] = React.useState<string>('');
 
     React.useEffect(() => {
-        if (!props.eudgc) {
+        if (!props.eudgc || !props.eudgc.t || !props.eudgc.t[0]) {
             return;
         }
 
-        const eudgc: EUDGC = props.eudgc;
+        const test: TestEntry = props.eudgc.t[0];
 
-        setDisease(eudgc.t![0].tg!);
+        setDisease(test.tg);
 
-        setTestType(eudgc.t![0].tt!);
-        setTestName(eudgc.t![0].nm!);
-        setTestManufacturers(eudgc.t![0].ma!);
+        setTestType(test.tt);
+        setTestName(test.nm);
+        setTestManufacturers(test.ma);
 
-        setSampleDateTime(new Date(eudgc.t![0].sc));
-        setTestDateTime(new Date(eudgc.t![0].dr!));
+        setSampleDateTime(new Date(test.sc));
 
-        setTestResult(eudgc.t![0]!.tr!);
-        setTestCenter(eudgc.t![0]!.tc!);
+        if (test.dr) {
+            setTestDateTime(new Date(test.dr));
+        }
 
-        setIssuerCountryCode(eudgc.t![0].co!);
-        setCertificateIssuer(eudgc.t![0].is!);
+        setTestResult(test.tr);
+        setTestCenter(test.tc);
+
+        setIssuerCountryCode(test.co);
+        setCertificateIssuer(test.is);
+
     }, [props.eudgc]);
 
     React.useEffect(() => {
@@ -147,7 +151,7 @@ const RecordTestCertData = (props: any) => {
                 nm: testName,
                 ma: testManufacturers,
                 sc: sampleDateTime!.toISOString(),
-                dr: testDateTime!.toISOString(),
+                dr: testDateTime ? testDateTime.toISOString() : undefined,
                 tr: testResult,
                 tc: testCenter,
                 co: issuerCountryCode,
@@ -223,7 +227,6 @@ const RecordTestCertData = (props: any) => {
                             <FormGroupInput controlId='formTestNameInput' title={t('translation:testName')}
                                 value={testName}
                                 onChange={(evt: any) => setTestName(evt.target.value)}
-                                required
                                 maxLength={50}
                             />
 
@@ -231,7 +234,6 @@ const RecordTestCertData = (props: any) => {
                             <FormGroupValueSetSelect controlId='formTestManufactorersInput' title={t('translation:testManufacturers')}
                                 value={testManufacturers}
                                 onChange={(evt: any) => setTestManufacturers(evt.target.value)}
-                                required
                                 valueSet={useGetTestManufacturers}
                             />
 
@@ -262,7 +264,7 @@ const RecordTestCertData = (props: any) => {
 
                             {/* testDateTime */}
                             <Form.Group as={Row} controlId='formTestDateTimeInput' className='mb-1'>
-                                <Form.Label className='input-label txt-no-wrap' column xs='5' sm='3'>{t('translation:testDateTime') + '*'}</Form.Label>
+                                <Form.Label className='input-label txt-no-wrap' column xs='5' sm='3'>{t('translation:testDateTime')}</Form.Label>
 
                                 <Col xs='7' sm='9' className='d-flex'>
                                     <DatePicker
@@ -278,7 +280,6 @@ const RecordTestCertData = (props: any) => {
                                         dropdownMode="select"
                                         minDate={new Date(2020, 10)}
                                         openToDate={new Date()}
-                                        required
                                     />
                                 </Col>
                             </Form.Group>

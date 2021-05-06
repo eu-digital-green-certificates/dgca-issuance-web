@@ -67,21 +67,22 @@ const RecordVaccinationCertData = (props: any) => {
 
 
     React.useEffect(() => {
-        if (!props.eudgc) {
+        if (!props.eudgc || !props.eudgc.v || !props.eudgc.v[0]) {
             return;
         }
 
-        const eudgc: EUDGC = props.eudgc;
+        const vac: VaccinationEntry = props.eudgc.v[0];
 
-        setDisease(eudgc.v![0].tg!);
-        setVaccine(eudgc.v![0]!.vp!);
-        setMedicalProduct(eudgc.v![0].mp!);
-        setMarketingHolder(eudgc.v![0].ma!);
-        setDoseNumber(eudgc.v![0].dn!);
-        setTotalDoseNumber(eudgc.v![0].sd!);
-        setVacLastDate(new Date(eudgc.v![0].dt!));
-        setIssuerCountryCode(eudgc.v![0].co!);
-        setCertificateIssuer(eudgc.v![0].is!);
+        setDisease(vac.tg);
+        setVaccine(vac.vp);
+        setMedicalProduct(vac.mp);
+        setMarketingHolder(vac.ma);
+        setDoseNumber(vac.dn);
+        setTotalDoseNumber(vac.sd);
+        setVacLastDate(new Date(vac.dt));
+        setIssuerCountryCode(vac.co);
+        setCertificateIssuer(vac.is);
+
     }, [props.eudgc]);
 
     React.useEffect(() => {
@@ -161,8 +162,8 @@ const RecordVaccinationCertData = (props: any) => {
                 vp: vaccine,
                 mp: medicalProduct,
                 ma: marketingHolder,
-                dn: doseNumber!,
-                sd: totalDoseNumber!,
+                dn: doseNumber,
+                sd: totalDoseNumber,
                 dt: vacLastDate!.toISOString().split('T')[0],
                 co: issuerCountryCode,
                 is: certificateIssuer,
@@ -184,7 +185,7 @@ const RecordVaccinationCertData = (props: any) => {
             var result = validator.validate(eudgc, schema);
 
             if (result.valid) {
-                //console.log(JSON.stringify(eudgc));
+                // console.log(JSON.stringify(eudgc));
 
                 props.setEudgc(eudgc);
                 setTimeout(navigation!.toShowCert, 200);
