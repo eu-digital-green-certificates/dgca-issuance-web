@@ -143,6 +143,103 @@ const ShowCertificate = (props: any) => {
         }
     }
 
+    interface IDataEntry {
+        title: string,
+        entries: IEntry[]
+    }
+
+    interface IEntry {
+        label: string,
+        data: string
+    }
+
+    const defaultString = ''
+
+    const personalData: IDataEntry[] = [
+        {
+            title: t('translation:personal-data'),
+            entries: [
+                {
+                    label: t('translation:name'),
+                    data: eudgc?.nam.gn || defaultString
+                },
+                {
+                    label: t('translation:first-name'),
+                    data: eudgc?.nam.fn || defaultString
+                },
+                {
+                    label: t('translation:date-of-birth'),
+                    data: eudgc?.dob || defaultString
+                },
+            ]
+        }
+    ]
+
+    const vaccinationData: IDataEntry[] = [
+        {
+            title: t('translation:vaccine-data'),
+            entries: [
+                {
+                    label: t('translation:disease-agent'),
+                    data: getValueSetDisplay(vaccinationSet?.tg, diseaseAgentsData) || defaultString
+                },
+                {
+                    label: t('translation:vaccine'),
+                    data: getValueSetDisplay(vaccinationSet?.vp, vaccines) || defaultString
+                },
+                {
+                    label: t('translation:vac-medical-product'),
+                    data: getValueSetDisplay(vaccinationSet?.mp, vacMedsData) || defaultString
+                },
+                {
+                    label: t('translation:vac-marketing-holder'),
+                    data: getValueSetDisplay(vaccinationSet?.ma, vaccineManufacturers) || defaultString
+                },
+            ]
+        },
+        {
+            title: t('translation:vaccination-data'),
+            entries: [
+                {
+                    label: t('translation:sequence'),
+                    data: String(vaccinationSet?.dn) || defaultString
+                },
+                {
+                    label: t('translation:tot'),
+                    data: String(vaccinationSet?.sd) || defaultString
+                },
+                {
+                    label: t('translation:vac-last-date'),
+                    data: vaccinationSet?.dt || defaultString
+                },
+            ]
+        },
+        {
+            title: t('translation:certificate-data'),
+            entries: [
+                {
+                    label: t('translation:vac-country'),
+                    data: vaccinationSet?.co || defaultString
+                },
+                {
+                    label: t('translation:adm'),
+                    data: vaccinationSet?.is || defaultString
+                },
+            ]
+        }
+    ]
+
+    const getDataOutputElement = (dataSet: IDataEntry) => {
+        return (
+            <div className='pt-3'>
+                <Card.Text className='input-label jcc-xs-jcfs-sm mb-0 font-weight-bold' >{dataSet.title}</Card.Text>
+                {dataSet.entries.map((entry) => (
+                    <Card.Text className='input-label jcc-xs-jcfs-sm mb-0' >{`${entry.label}: ${entry.data}`}</Card.Text>
+                ))}
+            </div>
+        )
+    }
+
     return (
         !(isInit && eudgc && qrCodeValue) ? <Spinner /> :
             <>
@@ -156,33 +253,8 @@ const ShowCertificate = (props: any) => {
                             <Col sm='6'>
                                 <Card.Title className='m-sm-0 jcc-xs-jcfs-sm' as={'h2'}>{t('translation:your-certificate')}</Card.Title>
                                 <hr />
-                                <div className="personal-data">
-                                    <Card.Text className='input-label jcc-xs-jcfs-sm mb-0 font-weight-bold' >{t('translation:personal-data')}</Card.Text>
-                                    <Card.Text className='input-label jcc-xs-jcfs-sm mb-0' >{`${t('translation:name')}: ${eudgc.nam.gn}`}</Card.Text>
-                                    <Card.Text className='input-label jcc-xs-jcfs-sm mb-0' >{`${t('translation:first-name')}: ${eudgc.nam.fn}`}</Card.Text>
-                                    <Card.Text className='input-label jcc-xs-jcfs-sm mb-0' >{`${t('translation:date-of-birth')}: ${eudgc.dob}`}</Card.Text>
-                                </div>
-                                {!vaccinationSet ? <></>
-                                    : <>
-                                        <div className="vaccine-data pt-3">
-                                            <Card.Text className='input-label jcc-xs-jcfs-sm mb-0 font-weight-bold' >{t('translation:vaccine-data')}</Card.Text>
-                                            <Card.Text className='input-label jcc-xs-jcfs-sm mb-0' >{`${t('translation:disease-agent')}: ${getValueSetDisplay(vaccinationSet.tg, diseaseAgentsData)}`}</Card.Text>
-                                            <Card.Text className='input-label jcc-xs-jcfs-sm mb-0' >{`${t('translation:vaccine')}: ${getValueSetDisplay(vaccinationSet.vp, vaccines)}`}</Card.Text>
-                                            <Card.Text className='input-label jcc-xs-jcfs-sm mb-0' >{`${t('translation:vac-medical-product')}: ${getValueSetDisplay(vaccinationSet.mp, vacMedsData)}`}</Card.Text>
-                                            <Card.Text className='input-label jcc-xs-jcfs-sm mb-0' >{`${t('translation:vac-marketing-holder')}: ${getValueSetDisplay(vaccinationSet.ma, vaccineManufacturers)}`}</Card.Text>
-                                        </div>
-                                        <div className="vaccination-data pt-3">
-                                            <Card.Text className='input-label jcc-xs-jcfs-sm mb-0 font-weight-bold' >{t('translation:vaccination-data')}</Card.Text>
-                                            <Card.Text className='input-label jcc-xs-jcfs-sm mb-0' >{`${t('translation:sequence')}: ${vaccinationSet.dn}`}</Card.Text>
-                                            <Card.Text className='input-label jcc-xs-jcfs-sm mb-0' >{`${t('translation:tot')}: ${vaccinationSet.sd}`}</Card.Text>
-                                            <Card.Text className='input-label jcc-xs-jcfs-sm mb-0' >{`${t('translation:vac-last-date')}: ${vaccinationSet.dt}`}</Card.Text>
-                                        </div>
-                                        <div className="vaccination-data pt-3">
-                                            <Card.Text className='input-label jcc-xs-jcfs-sm mb-0 font-weight-bold' >{t('translation:certificate-data')}</Card.Text>
-                                            <Card.Text className='input-label jcc-xs-jcfs-sm mb-0' >{`${t('translation:vac-country')}: ${vaccinationSet.co}`}</Card.Text>
-                                            <Card.Text className='input-label jcc-xs-jcfs-sm mb-0' >{`${t('translation:adm')}: ${vaccinationSet.is}`}</Card.Text>
-                                        </div>
-                                    </>}
+                                {personalData.map(dataset => getDataOutputElement(dataset))}
+                                {vaccinationSet && vaccinationData.map(dataset => getDataOutputElement(dataset))}
                                 {!testSet ? <></>
                                     : <>
                                         <div className="pt-3">
@@ -216,7 +288,7 @@ const ShowCertificate = (props: any) => {
                                             <Card.Text className='input-label jcc-xs-jcfs-sm mb-0' >{`${t('translation:disease-agent')}: ${getValueSetDisplay(recoverySet.tg, diseaseAgentsData)}`}</Card.Text>
                                             <Card.Text className='input-label jcc-xs-jcfs-sm mb-0' >{`${t('translation:first-positive-test-date')}: ${recoverySet.fr}`}</Card.Text>
                                             <Card.Text className='input-label jcc-xs-jcfs-sm mb-0' >{`${t('translation:recovery-country')}: ${recoverySet.co}`}</Card.Text>
-                                            
+
                                         </div>
 
                                         <div className="pt-3">
