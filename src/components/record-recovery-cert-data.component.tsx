@@ -64,18 +64,19 @@ const RecordRecoveryCertData = (props: any) => {
 
 
     React.useEffect(() => {
-        if (!props.eudgc) {
+        if (!props.eudgc || !props.eudgc.r || !props.eudgc.r[0]) {
             return;
         }
 
-        const eudgc: EUDGC = props.eudgc;
+        const rec: RecoveryEntry = props.eudgc.r[0];
 
-        setDisease(eudgc.r![0].tg!);
-        setFirstPositiveResultDate(new Date(eudgc.r![0].fr!));
-        setTestCountryCode(eudgc.r![0].co!);
-        setCertificateIssuer(eudgc.r![0].is!);
-        setDateValidFrom(new Date(eudgc.r![0].df!))
-        setDateValidTo(new Date(eudgc.r![0].du!))
+        setDisease(rec.tg);
+        setFirstPositiveResultDate(new Date(rec.fr));
+        setTestCountryCode(rec.co);
+        setCertificateIssuer(rec.is);
+        setDateValidFrom(new Date(rec.df))
+        setDateValidTo(new Date(rec.du))
+        
     }, [props.eudgc]);
 
     React.useEffect(() => {
