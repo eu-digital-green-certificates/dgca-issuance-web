@@ -27,11 +27,13 @@ const pattern = {
 
 const standardisedNameRegExp = new RegExp(pattern.standardisedName);
 
-export default {
+const utils = {
     pattern: pattern,
     isStandardisedNameValid: (value: string) => standardisedNameRegExp.test(value),
-    pickerDateFormat:'yyyy-MM-dd',
-    pickerDateTimeFormat:'yyyy-MM-dd / hh:mm a',
-    momentDateFormat:'yyyy-MM-DD',
-    momentDateTimeFormat:'yyyy-MM-DD / hh:mm A'
+    pickerDateFormat: 'yyyy-MM-dd',
+    pickerDateTimeFormat: 'yyyy-MM-dd / hh:mm a',
+    momentDateFormat: 'yyyy-MM-DD',
+    momentDateTimeFormat: 'yyyy-MM-DD / hh:mm A'
 }
+
+export default utils;

@@ -33,7 +33,7 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
 import { EUDGC, RecoveryEntry } from '../generated-files/dgc-combined-schema';
-import { useGetDiseaseAgents, IValueSet } from '../api';
+import { useGetDiseaseAgents } from '../api';
 
 import schema from '../generated-files/DGC.combined-schema.json';
 import { Validator } from 'jsonschema';
@@ -84,6 +84,7 @@ const RecordRecoveryCertData = (props: any) => {
             setTestCountryCode(defaultTestCountryCode);
         }
 
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [defaultTestCountryCode]);
 
     React.useEffect(() => {
@@ -91,6 +92,7 @@ const RecordRecoveryCertData = (props: any) => {
             setDefaultTestCountryCode(testCountryCode);
         }
 
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [testCountryCode]);
 
 
@@ -100,14 +102,14 @@ const RecordRecoveryCertData = (props: any) => {
         }
     }, [navigation]);
 
-    const handleError = (error: any) => {
-        let msg = '';
+    // const handleError = (error: any) => {
+    //     let msg = '';
 
-        if (error) {
-            msg = error.message
-        }
-        props.setError({ error: error, message: msg, onCancel: navigation!.toLanding });
-    }
+    //     if (error) {
+    //         msg = error.message
+    //     }
+    //     props.setError({ error: error, message: msg, onCancel: navigation!.toLanding });
+    // }
 
     const handleFirstPositiveResultDate = (evt: Date | [Date, Date] | null) => {
         const date = handleDateChange(evt);

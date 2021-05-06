@@ -21,7 +21,7 @@
 
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { BrowserRouter, HashRouter, Route } from 'react-router-dom'
+import { BrowserRouter } from 'react-router-dom'
 
 import './assets/SCSS/index.scss';
 import './assets/SCSS/custom.scss';
@@ -34,9 +34,7 @@ import Root from './root.component';
 ReactDOM.render(
   <React.StrictMode>
     <BrowserRouter >
-    <Route path="/:mandant">
       <Root />
-      </Route>
     </BrowserRouter>
     
   </React.StrictMode>,

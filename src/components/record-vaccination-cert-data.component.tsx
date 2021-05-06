@@ -33,7 +33,7 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
 import { EUDGC, VaccinationEntry } from '../generated-files/dgc-combined-schema';
-import { useGetDiseaseAgents, useGetVaccineManufacturers, useGetVaccines, useGetVaccinMedicalData, IValueSet } from '../api';
+import { useGetDiseaseAgents, useGetVaccineManufacturers, useGetVaccines, useGetVaccinMedicalData } from '../api';
 
 import schema from '../generated-files/DGC.combined-schema.json';
 import { Validator } from 'jsonschema';
@@ -90,6 +90,7 @@ const RecordVaccinationCertData = (props: any) => {
             setIssuerCountryCode(defaultIssuerCountryCode);
         }
 
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [defaultIssuerCountryCode]);
 
     React.useEffect(() => {
@@ -97,6 +98,7 @@ const RecordVaccinationCertData = (props: any) => {
             setDefaultIssuerCountryCode(issuerCountryCode);
         }
 
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [issuerCountryCode]);
 
 
@@ -106,14 +108,14 @@ const RecordVaccinationCertData = (props: any) => {
         }
     }, [navigation]);
 
-    const handleError = (error: any) => {
-        let msg = '';
+    // const handleError = (error: any) => {
+    //     let msg = '';
 
-        if (error) {
-            msg = error.message
-        }
-        props.setError({ error: error, message: msg, onCancel: navigation!.toLanding });
-    }
+    //     if (error) {
+    //         msg = error.message
+    //     }
+    //     props.setError({ error: error, message: msg, onCancel: navigation!.toLanding });
+    // }
 
     const handleVacLastDate = (evt: Date | [Date, Date] | null) => {
         const date = handleDateChange(evt);

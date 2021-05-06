@@ -32,7 +32,7 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
 import { EUDGC, TestEntry } from '../generated-files/dgc-combined-schema';
-import { useGetDiseaseAgents, useGetTestManufacturers, useGetTestResult, IValueSet } from '../api';
+import { useGetDiseaseAgents, useGetTestManufacturers, useGetTestResult } from '../api';
 
 import schema from '../generated-files/DGC.combined-schema.json';
 import { Validator } from 'jsonschema';
@@ -55,8 +55,8 @@ const RecordTestCertData = (props: any) => {
     const [disease, setDisease] = React.useState<string>('');
 
     const [testType, setTestType] = React.useState<string>('');
-    const [testName, setTestName] = React.useState<string | undefined>();
-    const [testManufacturers, setTestManufacturers] = React.useState<string | undefined>();
+    const [testName, setTestName] = React.useState<string>('');
+    const [testManufacturers, setTestManufacturers] = React.useState<string>('');
 
     const [sampleDateTime, setSampleDateTime] = React.useState<Date>();
     const [testDateTime, setTestDateTime] = React.useState<Date | undefined>();
@@ -77,8 +77,14 @@ const RecordTestCertData = (props: any) => {
         setDisease(test.tg);
 
         setTestType(test.tt);
-        setTestName(test.nm);
-        setTestManufacturers(test.ma);
+
+        if (test.nm) {
+            setTestName(test.nm);
+        }
+
+        if (test.ma) {
+            setTestManufacturers(test.ma);
+        }
 
         setSampleDateTime(new Date(test.sc));
 
@@ -100,14 +106,14 @@ const RecordTestCertData = (props: any) => {
         }
     }, [navigation]);
 
-    const handleError = (error: any) => {
-        let msg = '';
+    // const handleError = (error: any) => {
+    //     let msg = '';
 
-        if (error) {
-            msg = error.message
-        }
-        props.setError({ error: error, message: msg, onCancel: navigation!.toLanding });
-    }
+    //     if (error) {
+    //         msg = error.message
+    //     }
+    //     props.setError({ error: error, message: msg, onCancel: navigation!.toLanding });
+    // }
 
     const handleSampleDateTimeChange = (evt: Date | [Date, Date] | null) => {
         const date = handleDateTimeChange(evt);
