@@ -1,5 +1,5 @@
 {
-  "title": "Quick Test Portal",
+  "title": "DGC Issuance Web",
   "imprint": "Imprint",
   "data-privacy": "Dataprivacy",
   "record-patient-data": "Record Patient Data",
@@ -43,6 +43,7 @@
   "personal-data": "Personal Details",
   "vaccine-data": "Vaccine Data",
   "test-data": "Test Data",
+  "recovery-data": "Recovery Data",
   "vaccination-data": "Vaccination Data",
   "certificate-data": "Certificate Data",
   "patient-data": "Patient data",
@@ -104,9 +105,9 @@
   "sampleDateTime": "Date/Time of Sample Collection",
   "testDateTime": "Date/Time of Test Result",
   "testCenter": "Testing Centre",
-  "recovery-first-date": "First Positive Test Result",
-  "recovery-test-country": "Country of Test",
-  "cert-valid-from-go": "Certificate Valid From - To",
   "valid-from": "Certificate Valid From",
-  "valid-to": "Certificate Valid To"
+  "valid-to": "Certificate Valid To",
+  "first-positive-test-date": "First Positive Test Result",
+  "recovery-country": "Country of Test",
+  "cert-valid-from-to": "Certificate Valid From - To"
 }

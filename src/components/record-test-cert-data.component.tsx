@@ -20,54 +20,37 @@
  */
 
 import React from 'react';
-import { Button, Card, Col, Form, FormControlProps, Row } from 'react-bootstrap';
+import { Card, Col, Form, Row } from 'react-bootstrap';
 
 import '../i18n';
 import { useTranslation } from 'react-i18next';
 
 import useNavigation from '../misc/navigation';
 import Spinner from './spinner/spinner.component';
-import { IdentifierType } from '../misc/enum';
 
 import DatePicker from "react-datepicker";
-import { registerLocale } from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
-// e.G. german month names pt1
-//import de from 'date-fns/locale/de';
-
-import { EUDGC, VaccinationEntry, DiseaseAgentTargeted, TestEntry } from '../generated-files/dgc-combined-schema';
+import { EUDGC, TestEntry } from '../generated-files/dgc-combined-schema';
 import { useGetDiseaseAgents, useGetTestManufacturers, useGetTestResult, IValueSet } from '../api';
 
 import schema from '../generated-files/DGC.combined-schema.json';
 import { Validator } from 'jsonschema';
 import utils from '../misc/utils';
+import CardHeader from './modules/card-header.component';
+import { FormGroupInput, FormGroupISOCountrySelect, FormGroupValueSetSelect, IPersonData, PersonInputs } from './modules/form-group.component';
+import CardFooter from './modules/card-footer.component';
+
 const validator = new Validator();
-const iso3311a2 = require('iso-3166-1-alpha-2');
-
-// e.G. german month names pt2
-// registerLocale('de', de)
-
 
 const RecordTestCertData = (props: any) => {
 
     const navigation = useNavigation();
     const { t } = useTranslation();
 
-    // data read from the API
-    const diseaseAgentsData = useGetDiseaseAgents();
-    const testManufacturersValueSet = useGetTestManufacturers();
-    const testResultValueSet = useGetTestResult();
-
     const [isInit, setIsInit] = React.useState(false)
 
-    const [givenName, setGivenName] = React.useState<string>('');
-    const [familyName, setFamilyName] = React.useState<string>('');
-
-    const [standardisedGivenName, setStandardisedGivenName] = React.useState<string>('');
-    const [standardisedFamilyName, setStandardisedFamilyName] = React.useState<string>('');
-
-    const [dateOfBirth, setDateOfBirth] = React.useState<Date>();
+    const [person, setPerson] = React.useState<IPersonData>();
 
     const [disease, setDisease] = React.useState<string>('');
 
@@ -81,16 +64,8 @@ const RecordTestCertData = (props: any) => {
     const [testResult, setTestResult] = React.useState<string>('');
     const [testCenter, setTestCenter] = React.useState<string>('');
 
-    const [diseasOptions, setDiseasOptions] = React.useState<JSX.Element[]>();
-    const [testResultOptions, setTestResultOptions] = React.useState<JSX.Element[]>();
-    const [testManufacturersOptions, setTestManufacturersOptions] = React.useState<JSX.Element[]>();
-
-    const [vacLastDate, setVacLastDate] = React.useState<Date>();
     const [certificateIssuer, setCertificateIssuer] = React.useState('');
     const [issuerCountryCode, setIssuerCountryCode] = React.useState<string>('');
-
-    const [isoCountryOptions, setIsoCountryOptions] = React.useState<JSX.Element[]>();
-
 
     React.useEffect(() => {
         if (!props.eudgc) {
@@ -98,12 +73,6 @@ const RecordTestCertData = (props: any) => {
         }
 
         const eudgc: EUDGC = props.eudgc;
-
-        setFamilyName(eudgc.nam!.fn!);
-        setStandardisedFamilyName(eudgc.nam!.fnt!);
-        setGivenName(eudgc.nam!.gn!);
-        setStandardisedGivenName(eudgc.nam!.gnt!);
-        setDateOfBirth(new Date(eudgc.dob!));
 
         setDisease(eudgc.t![0].tg!);
 
@@ -122,62 +91,10 @@ const RecordTestCertData = (props: any) => {
     }, [props.eudgc]);
 
     React.useEffect(() => {
-        setIso3311a2();
-    }, []);
-
-
-    React.useEffect(() => {
         if (navigation) {
             setTimeout(setIsInit, 200, true);
         }
     }, [navigation]);
-
-
-    React.useEffect(() => {
-        if (diseaseAgentsData) {
-            const options = getOptionsForValueSet(diseaseAgentsData)
-            setDiseasOptions(options);
-        }
-    }, [diseaseAgentsData])
-
-
-    React.useEffect(() => {
-        if (testResultValueSet) {
-            const options = getOptionsForValueSet(testResultValueSet)
-            setTestResultOptions(options);
-        }
-    }, [testResultValueSet])
-
-
-    React.useEffect(() => {
-        if (testManufacturersValueSet) {
-            const options = getOptionsForValueSet(testManufacturersValueSet)
-            setTestManufacturersOptions(options);
-        }
-    }, [testManufacturersValueSet])
-
-
-    const getOptionsForValueSet = (valueSet: IValueSet): JSX.Element[] => {
-        const result: JSX.Element[] = [];
-        for (const key of Object.keys(valueSet)) {
-            result.push(<option key={key} value={key}>{valueSet[key].display}</option>)
-        }
-
-        return result;
-    }
-
-    const setIso3311a2 = () => {
-        const options: JSX.Element[] = [];
-        const codes: string[] = iso3311a2.getCodes().sort();
-
-        options.push(<option key={0} value={''} >{ }</option>);
-
-        for (const code of codes) {
-            options.push(<option key={code} value={code}>{code + " : " + iso3311a2.getCountry(code)}</option>)
-        }
-
-        setIsoCountryOptions(options);
-    }
 
     const handleError = (error: any) => {
         let msg = '';
@@ -186,19 +103,6 @@ const RecordTestCertData = (props: any) => {
             msg = error.message
         }
         props.setError({ error: error, message: msg, onCancel: navigation!.toLanding });
-    }
-
-    const handleStandardisedNameChanged = (changedValue: string, setStandardisedName: (value: string) => void) => {
-        const upperCaseChangedValue = changedValue.toUpperCase();
-
-        if (utils.isStandardisedNameValid(upperCaseChangedValue)) {
-            setStandardisedName(upperCaseChangedValue);
-        }
-    }
-
-    const handleDateOfBirthChange = (evt: Date | [Date, Date] | null) => {
-        const date = handleDateChange(evt);
-        setDateOfBirth(date);
     }
 
     const handleSampleDateTimeChange = (evt: Date | [Date, Date] | null) => {
@@ -211,20 +115,6 @@ const RecordTestCertData = (props: any) => {
         setTestDateTime(date);
     }
 
-    const handleDateChange = (evt: Date | [Date, Date] | null) => {
-        let date: Date;
-
-        if (Array.isArray(evt))
-            date = evt[0];
-        else
-            date = evt as Date;
-
-        if (date) {
-            date.setHours(12);
-        }
-
-        return date;
-    }
 
     const handleDateTimeChange = (evt: Date | [Date, Date] | null) => {
         let date: Date;
@@ -268,12 +158,12 @@ const RecordTestCertData = (props: any) => {
             const eudgc: EUDGC = {
                 ver: '1.0.0',
                 nam: {
-                    fn: familyName,
-                    fnt: standardisedFamilyName!,
-                    gn: givenName,
-                    gnt: standardisedGivenName
+                    fn: person!.familyName,
+                    fnt: person!.standardisedFamilyName!,
+                    gn: person!.givenName,
+                    gnt: person!.standardisedGivenName
                 },
-                dob: dateOfBirth!.toISOString().split('T')[0],
+                dob: person!.dateOfBirth!.toISOString().split('T')[0],
                 t: [test]
             }
 
@@ -302,192 +192,48 @@ const RecordTestCertData = (props: any) => {
                         {/*
                             header with title and id card query
                         */}
-                        <Card.Header id='data-header' className='pb-0'>
-                            <Row>
-                                <Col md='6'>
-                                    <Card.Title className='m-md-0 tac-xs-tal-md jcc-xs-jcfs-md' as={'h2'} >{t('translation:test-cert')}</Card.Title>
-                                </Col>
-                                <Col md='6' className='d-flex justify-content-center'>
-                                    <Card.Text id='id-query-text'>{t('translation:query-id-card')}</Card.Text>
-                                </Col>
-                            </Row>
-                            <hr />
-                        </Card.Header>
+                        <CardHeader title={t('translation:test-cert')} />
 
                         {/*
                             content area with patient inputs and check box
                         */}
                         <Card.Body id='data-body' className='pt-0'>
 
-                            {/* first name input */}
-                            <Form.Group as={Row} controlId='formGivenNameInput' className='mb-1'>
-                                <Form.Label className='input-label' column xs='5' sm='3'>{t('translation:first-name') + '*'}</Form.Label>
-
-                                <Col xs='7' sm='9' className='d-flex'>
-                                    <Form.Control
-                                        className='qt-input'
-                                        value={givenName}
-                                        onChange={event => setGivenName(event.target.value)}
-                                        placeholder={t('translation:first-name')}
-                                        type='text'
-                                        required
-                                        maxLength={50}
-                                    />
-                                </Col>
-                            </Form.Group>
-
-                            {/* name input */}
-                            <Form.Group as={Row} controlId='formNameInput' className='mb-1'>
-                                <Form.Label className='input-label' column xs='5' sm='3'>{t('translation:name') + '*'}</Form.Label>
-
-                                <Col xs='7' sm='9' className='d-flex'>
-                                    <Form.Control
-                                        className='qt-input'
-                                        value={familyName}
-                                        onChange={event => setFamilyName(event.target.value)}
-                                        placeholder={t('translation:name')}
-                                        type='text'
-                                        required
-                                        maxLength={50}
-                                    />
-                                </Col>
-                            </Form.Group>
-
-                            <hr />
-
-                            {/* standardised first name input */}
-                            <Form.Group as={Row} controlId='formStandadisedGivenNameInput' className='mb-1'>
-                                <Form.Label className='input-label' column xs='5' sm='3'>{t('translation:standardised-first-name') + '*'}</Form.Label>
-
-                                <Col xs='7' sm='9' className='d-flex'>
-                                    <Form.Control
-                                        className='qt-input'
-                                        value={standardisedGivenName}
-                                        onChange={(evt) => handleStandardisedNameChanged(evt.target.value, setStandardisedGivenName)}
-                                        placeholder={t('translation:standardised-first-name')}
-                                        type='text'
-                                        required
-                                        pattern={utils.pattern.standardisedName}
-                                        maxLength={50}
-                                    />
-                                </Col>
-                            </Form.Group>
-
-                            {/*standardised name input */}
-                            <Form.Group as={Row} controlId='formStandadisedNameInput' className='mb-1'>
-                                <Form.Label className='input-label' column xs='5' sm='3'>{t('translation:standardised-name') + '*'}</Form.Label>
-
-                                <Col xs='7' sm='9' className='d-flex'>
-                                    <Form.Control
-                                        className='qt-input'
-                                        value={standardisedFamilyName}
-                                        onChange={(evt) => handleStandardisedNameChanged(evt.target.value, setStandardisedFamilyName)}
-                                        placeholder={t('translation:standardised-name')}
-                                        type='text'
-                                        required
-                                        pattern={utils.pattern.standardisedName}
-                                        maxLength={50}
-                                    />
-                                </Col>
-                            </Form.Group>
-
-                            <hr />
-
-                            {/* date of birth input */}
-                            <Form.Group as={Row} controlId='formDateOfBirthInput' className='mb-1'>
-                                <Form.Label className='input-label txt-no-wrap' column xs='5' sm='3'>{t('translation:date-of-birth') + '*'}</Form.Label>
-
-                                <Col xs='7' sm='9' className='d-flex'>
-                                    <DatePicker
-                                        selected={dateOfBirth}
-                                        onChange={handleDateOfBirthChange}
-                                        dateFormat={utils.pickerDateFormat}
-                                        isClearable
-                                        placeholderText={t('translation:date-of-birth')}
-                                        className='qt-input form-control'
-                                        wrapperClassName='align-self-center'
-                                        showMonthDropdown
-                                        showYearDropdown
-                                        dropdownMode="select"
-                                        maxDate={new Date()}
-                                        minDate={new Date(1900, 0, 1, 12)}
-                                        openToDate={new Date(1990, 0, 1)}
-                                        required
-                                    />
-                                </Col>
-                            </Form.Group>
+                            <PersonInputs eudgc={props.eudgc} onChange={setPerson} />
 
                             <hr />
 
                             {/* combobox disease */}
-                            <Form.Group as={Row} controlId='formDiseaseInput' className='mb-1 mt-1 sb-1 st-1'>
-                                <Form.Label className='input-label' column xs='5' sm='3'>{t('translation:disease-agent') + '*'}</Form.Label>
-
-                                <Col xs='7' sm='9' className='d-flex'>
-                                    <Form.Control as="select"
-                                        className='qt-input'
-                                        value={disease}
-                                        onChange={event => setDisease(event.target.value)}
-                                        placeholder={t('translation:def-disease-agent')}
-                                        required
-                                    >
-                                        <option disabled key={0} value={''} >{t('translation:def-disease-agent')}</option>
-                                        {diseasOptions}
-                                    </Form.Control>
-                                </Col>
-                            </Form.Group>
+                            <FormGroupValueSetSelect controlId='formDiseaseInput' title={t('translation:disease-agent')} placeholder={t('translation:def-disease-agent')}
+                                value={disease}
+                                onChange={(evt: any) => setDisease(evt.target.value)}
+                                required
+                                valueSet={useGetDiseaseAgents}
+                            />
 
                             {/* testType input */}
-                            <Form.Group as={Row} controlId='formTestTypeInput' className='mb-1'>
-                                <Form.Label className='input-label' column xs='5' sm='3'>{t('translation:testType') + '*'}</Form.Label>
-
-                                <Col xs='7' sm='9' className='d-flex'>
-                                    <Form.Control
-                                        className='qt-input'
-                                        value={testType}
-                                        onChange={event => setTestType(event.target.value)}
-                                        placeholder={t('translation:testType')}
-                                        type='text'
-                                        required
-                                        maxLength={50}
-                                    />
-                                </Col>
-                            </Form.Group>
+                            <FormGroupInput controlId='formTestTypeInput' title={t('translation:testType')}
+                                value={testType}
+                                onChange={(evt: any) => setTestType(evt.target.value)}
+                                required
+                                maxLength={50}
+                            />
 
                             {/* testName input */}
-                            <Form.Group as={Row} controlId='formTestNameInput' className='mb-1'>
-                                <Form.Label className='input-label' column xs='5' sm='3'>{t('translation:testName') + '*'}</Form.Label>
-
-                                <Col xs='7' sm='9' className='d-flex'>
-                                    <Form.Control
-                                        className='qt-input'
-                                        value={testName}
-                                        onChange={event => setTestName(event.target.value)}
-                                        placeholder={t('translation:testName')}
-                                        type='text'
-                                        required
-                                        maxLength={50}
-                                    />
-                                </Col>
-                            </Form.Group>
+                            <FormGroupInput controlId='formTestNameInput' title={t('translation:testName')}
+                                value={testName}
+                                onChange={(evt: any) => setTestName(evt.target.value)}
+                                required
+                                maxLength={50}
+                            />
 
                             {/* combobox testManufacturers */}
-                            <Form.Group as={Row} controlId='formTestManufactorersInput' className='mb-1 mt-1 sb-1 st-1'>
-                                <Form.Label className='input-label' column xs='5' sm='3'>{t('translation:testManufacturers') + '*'}</Form.Label>
-
-                                <Col xs='7' sm='9' className='d-flex'>
-                                    <Form.Control as="select"
-                                        className='qt-input'
-                                        value={testManufacturers}
-                                        onChange={event => setTestManufacturers(event.target.value)}
-                                        placeholder={t('translation:testManufacturers')}
-                                        required
-                                    >
-                                        <option disabled key={0} value={''} >{t('translation:testManufacturers')}</option>
-                                        {testManufacturersOptions}
-                                    </Form.Control>
-                                </Col>
-                            </Form.Group>
+                            <FormGroupValueSetSelect controlId='formTestManufactorersInput' title={t('translation:testManufacturers')}
+                                value={testManufacturers}
+                                onChange={(evt: any) => setTestManufacturers(evt.target.value)}
+                                required
+                                valueSet={useGetTestManufacturers}
+                            />
 
                             <hr />
 
@@ -538,104 +284,44 @@ const RecordTestCertData = (props: any) => {
                             </Form.Group>
 
                             {/* combobox testResult */}
-                            <Form.Group as={Row} controlId='formTestResultInput' className='mb-1 mt-1 sb-1 st-1'>
-                                <Form.Label className='input-label' column xs='5' sm='3'>{t('translation:testResult') + '*'}</Form.Label>
-
-                                <Col xs='7' sm='9' className='d-flex'>
-                                    <Form.Control as="select"
-                                        className='qt-input'
-                                        value={testResult}
-                                        onChange={event => setTestResult(event.target.value)}
-                                        placeholder="{t('translation:testResult')}"
-                                        required
-                                    >
-                                        <option disabled key={0} value={''} >{t('translation:testResult')}</option>
-                                        {testResultOptions}
-                                    </Form.Control>
-                                </Col>
-                            </Form.Group>
+                            <FormGroupValueSetSelect controlId='formTestResultInput' title={t('translation:testResult')}
+                                value={testResult}
+                                onChange={(evt: any) => setTestResult(evt.target.value)}
+                                required
+                                valueSet={useGetTestResult}
+                            />
 
                             {/* testCenter input */}
-                            <Form.Group as={Row} controlId='formTestCenterInput' className='mb-1'>
-                                <Form.Label className='input-label' column xs='5' sm='3'>{t('translation:testCenter') + '*'}</Form.Label>
-
-                                <Col xs='7' sm='9' className='d-flex'>
-                                    <Form.Control
-                                        className='qt-input'
-                                        value={testCenter}
-                                        onChange={event => setTestCenter(event.target.value)}
-                                        placeholder={t('translation:testCenter')}
-                                        type='text'
-                                        required
-                                        maxLength={50}
-                                    />
-                                </Col>
-                            </Form.Group>
+                            <FormGroupInput controlId='formTestCenterInput' title={t('translation:testCenter')}
+                                value={testCenter}
+                                onChange={(evt: any) => setTestCenter(evt.target.value)}
+                                required
+                                maxLength={50}
+                            />
 
                             <hr />
 
                             {/* Combobox for the vaccin countries in iso-3166-1-alpha-2 */}
-                            <Form.Group as={Row} controlId='formVacCountryInput' className='mb-1 mt-1 sb-1 st-1'>
-                                <Form.Label className='input-label' column xs='5' sm='3'>{t('translation:vac-country') + '*'}</Form.Label>
-
-                                <Col xs='7' sm='9' className='d-flex'>
-                                    <Form.Control as="select"
-                                        className='qt-input'
-                                        value={issuerCountryCode}
-                                        onChange={event => setIssuerCountryCode(event.target.value)}
-                                        placeholder={t('translation:country')}
-                                        required
-                                    >
-                                        <option disabled key={0} value={''} >{t('translation:vac-country')}</option>
-                                        {isoCountryOptions}
-                                    </Form.Control>
-                                </Col>
-                            </Form.Group>
+                            <FormGroupISOCountrySelect controlId='formVacCountryInput' title={t('translation:vac-country')}
+                                value={issuerCountryCode}
+                                onChange={(evt: any) => setIssuerCountryCode(evt.target.value)}
+                                required
+                            />
 
                             {/* certificateIssuer */}
-                            <Form.Group as={Row} controlId='formcertificateIssuerInput' className='mb-1'>
-                                <Form.Label className='input-label' column xs='5' sm='3'>{t('translation:certificateIssuer') + '*'}</Form.Label>
-
-                                <Col xs='7' sm='9' className='d-flex'>
-                                    <Form.Control
-                                        className='qt-input'
-                                        value={certificateIssuer}
-                                        onChange={event => setCertificateIssuer(event.target.value)}
-                                        placeholder={t('translation:certificateIssuer')}
-                                        type='text'
-                                        required
-                                        maxLength={50}
-                                    />
-                                </Col>
-                            </Form.Group>
+                            <FormGroupInput controlId='formcertificateIssuerInput' title={t('translation:certificateIssuer')} placeholder={t('translation:certificateIssuer')}
+                                value={certificateIssuer}
+                                onChange={(evt: any) => setCertificateIssuer(evt.target.value)}
+                                required
+                                maxLength={50}
+                            />
                             <hr />
                         </Card.Body>
 
                         {/*
                             footer with clear and nex button
                         */}
-                        <Card.Footer id='data-footer'>
-                            <Row>
-                                <Col xs='6' md='3'>
-                                    <Button
-                                        className='my-1 my-md-0 p-0'
-                                        block
-                                        onClick={handleCancel}
-                                    >
-                                        {t('translation:cancel')}
-                                    </Button>
-                                </Col>
-                                <Col xs='6' md='3' className='pr-md-0'>
-                                    <Button
-                                        className='my-1 my-md-0 p-0'
-                                        block
-                                        type='submit'
-                                    >
-                                        {t('translation:next')}
-                                    </Button>
-                                </Col>
-                            </Row>
-                        </Card.Footer>
+                        <CardFooter handleCancel={handleCancel} />
 
                     </Form>
                 </Card>

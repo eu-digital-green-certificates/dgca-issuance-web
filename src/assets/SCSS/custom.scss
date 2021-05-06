@@ -343,3 +343,10 @@ hr {
   .space-five {
       padding: 5px;
   }
+  
+.selection-placeholder {
+    color: $secondary;
+    option:not(:first-child) {
+        color: $dark;
+    }
+}
