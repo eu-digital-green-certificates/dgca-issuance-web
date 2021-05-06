@@ -33,7 +33,7 @@ import Spinner from './spinner/spinner.component';
 import { EUDGC, RecoveryEntry, TestEntry, VaccinationEntry } from '../generated-files/dgc-combined-schema';
 import genEDGCQR, { CertResult } from '../misc/edgcQRGenerator';
 import { useGetDiseaseAgents, useGetVaccineManufacturers, useGetVaccines, useGetVaccinMedicalData, useGetTestManufacturers, useGetTestResult, IValueSet } from '../api';
-import Moment from 'react-moment';
+import moment from 'moment';
 import utils from '../misc/utils';
 
 // import { usePostPatient } from '../api';
@@ -141,6 +141,17 @@ const ShowCertificate = (props: any) => {
         }
     }
 
+    const getDataOutputElement = (dataSet: IDataEntry) => {
+        return (
+            <div className='pt-3'>
+                <Card.Text className='input-label jcc-xs-jcfs-sm mb-0 font-weight-bold' >{dataSet.title}</Card.Text>
+                {dataSet.entries.map((entry) => (<Card.Text className='input-label jcc-xs-jcfs-sm mb-0' >{`${entry.label}: ${entry.data}`}</Card.Text>))}
+            </div>
+        )
+    }
+
+    const convertDateToOutputFormat = (dateString: string): string => dateString ? moment(dateString, 'YYYY-MM-DDTHH:mm:ss.sssZ').format(utils.momentDateTimeFormat).toString() : '';
+
     interface IDataEntry {
         title: string,
         entries: IEntry[]
@@ -204,14 +215,8 @@ const ShowCertificate = (props: any) => {
         {
             title: t('translation:test-data'),
             entries: [
-                {
-                    label: t('translation:sampleDateTime'),
-                    data: testSet?.sc || defaultString // !TODO: Formatierung der Date String machen
-                },
-                {
-                    label: t('translation:testDateTime'),
-                    data: testSet?.dr || defaultString // !TODO: Format the date string
-                },
+                { label: t('translation:sampleDateTime'), data: convertDateToOutputFormat(testSet?.sc || '') },
+                { label: t('translation:testDateTime'), data: convertDateToOutputFormat(testSet?.dr || defaultString) },
                 { label: t('translation:testResult'), data: getValueSetDisplay(testSet?.tr, testResultValueSet) || defaultString },
                 { label: t('translation:testCenter'), data: testSet?.tc || defaultString }
             ]
@@ -244,14 +249,7 @@ const ShowCertificate = (props: any) => {
         }
     ]
 
-    const getDataOutputElement = (dataSet: IDataEntry) => {
-        return (
-            <div className='pt-3'>
-                <Card.Text className='input-label jcc-xs-jcfs-sm mb-0 font-weight-bold' >{dataSet.title}</Card.Text>
-                {dataSet.entries.map((entry) => (<Card.Text className='input-label jcc-xs-jcfs-sm mb-0' >{`${entry.label}: ${entry.data}`}</Card.Text>))}
-            </div>
-        )
-    }
+
 
     return (
         !(isInit && eudgc && qrCodeValue) ? <Spinner /> :
