@@ -14,9 +14,9 @@ const iso3311a2 = require('iso-3166-1-alpha-2');
 
 
 export interface IPersonData {
-    givenName: string;
-    familyName: string;
-    standardisedGivenName: string;
+    givenName?: string;
+    familyName?: string;
+    standardisedGivenName?: string;
     standardisedFamilyName: string;
     dateOfBirth: Date | undefined;
 }
@@ -79,8 +79,8 @@ export const FormGroupValueSetSelect = (props: any) => {
                     onChange={props.onChange}
                     placeholder={props.placeholder ? props.placeholder : props.title}
                     required={props.required}
-                    >
-                    <option disabled key={0} value={''} >{props.placeholder ? props.placeholder : props.title}</option>
+                >
+                    <option disabled={props.required} key={0} value={props.required ? '' : undefined} >{props.placeholder ? props.placeholder : props.title}</option>
                     {options}
                 </Form.Control>
             </Col>
@@ -115,7 +115,7 @@ export const FormGroupISOCountrySelect = (props: any) => {
                     onChange={props.onChange}
                     placeholder={props.placeholder ? props.placeholder : props.title}
                     required={props.required}
-                    >
+                >
                     <option disabled key={0} value={''} >{props.placeholder ? props.placeholder : props.title}</option>
                     {options}
                 </Form.Control>
@@ -129,10 +129,10 @@ export const PersonInputs = (props: any) => {
 
     const { t } = useTranslation();
 
-    const [givenName, setGivenName] = React.useState<string>('');
-    const [familyName, setFamilyName] = React.useState<string>('');
+    const [givenName, setGivenName] = React.useState<string | undefined>();
+    const [familyName, setFamilyName] = React.useState<string | undefined>();
 
-    const [standardisedGivenName, setStandardisedGivenName] = React.useState<string>('');
+    const [standardisedGivenName, setStandardisedGivenName] = React.useState<string | undefined>();
     const [standardisedFamilyName, setStandardisedFamilyName] = React.useState<string>('');
 
     const [dateOfBirth, setDateOfBirth] = React.useState<Date>();
@@ -142,12 +142,14 @@ export const PersonInputs = (props: any) => {
         if (props && props.eudgc && props.eudgc.nam) {
             const names = props.eudgc.nam
 
-            setFamilyName(names.fn!);
-            setStandardisedFamilyName(names.fnt!);
-            setGivenName(names.gn!);
-            setStandardisedGivenName(names.gnt!);
+            setFamilyName(names.fn);
+            setStandardisedFamilyName(names.fnt);
+            setGivenName(names.gn);
+            setStandardisedGivenName(names.gnt);
 
-            setDateOfBirth(new Date(props.eudgc.dob!));
+            if (props.eudgc.dob) {
+                setDateOfBirth(new Date(props.eudgc.dob));
+            }
         }
     }, [])
 
@@ -159,7 +161,7 @@ export const PersonInputs = (props: any) => {
             standardisedFamilyName: standardisedFamilyName,
             dateOfBirth: dateOfBirth
         }
-
+        
         props.onChange(result);
 
     }, [givenName, familyName, standardisedGivenName, standardisedFamilyName, dateOfBirth])
@@ -199,7 +201,6 @@ export const PersonInputs = (props: any) => {
             <FormGroupInput controlId='formGivenNameInput' title={t('translation:first-name')}
                 value={givenName}
                 onChange={(evt: any) => setGivenName(evt.target.value)}
-                required
                 maxLength={50}
             />
 
@@ -207,7 +208,6 @@ export const PersonInputs = (props: any) => {
             <FormGroupInput controlId='formNameInput' title={t('translation:name')}
                 value={familyName}
                 onChange={(evt: any) => setFamilyName(evt.target.value)}
-                required
                 maxLength={50}
             />
 
@@ -217,7 +217,6 @@ export const PersonInputs = (props: any) => {
             <FormGroupInput controlId='formStandadisedGivenNameInput' title={t('translation:standardised-first-name')}
                 value={standardisedGivenName}
                 onChange={(evt: any) => handleStandardisedNameChanged(evt.target.value, setStandardisedGivenName)}
-                required
                 pattern={utils.pattern.standardisedName}
                 maxLength={50}
             />
