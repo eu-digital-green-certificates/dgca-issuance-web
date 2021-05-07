@@ -56,7 +56,7 @@ const ShowCertificate = (props: any) => {
     const [testSet, setTestSet] = React.useState<TestEntry>();
     const [recoverySet, setRecoverySet] = React.useState<RecoveryEntry>();
     const [qrCodeValue, setQrCodeValue] = React.useState('');
-    
+
     const [tan, setTAN] = React.useState('');
 
     // set patient data on mount and set hash from uuid
@@ -145,7 +145,11 @@ const ShowCertificate = (props: any) => {
         return (
             <div className='pt-3'>
                 <Card.Text className='input-label jcc-xs-jcfs-sm mb-0 font-weight-bold' >{dataSet.title}</Card.Text>
-                {dataSet.entries.map((entry) => (<Card.Text className='input-label jcc-xs-jcfs-sm mb-0' >{`${entry.label}: ${entry.data}`}</Card.Text>))}
+                {dataSet.entries.map((entry) => {
+                    return entry.data ?
+                        <Card.Text className='input-label jcc-xs-jcfs-sm mb-0' >{`${entry.label}: ${entry.data}`}</Card.Text>
+                        : <> </>
+                })}
             </div>
         )
     }
@@ -262,7 +266,7 @@ const ShowCertificate = (props: any) => {
                             <Col sm='6'>
                                 <Card.Title className='m-sm-0 jcc-xs-jcfs-sm' as={'h2'}>{t('translation:your-certificate')}</Card.Title>
                                 <hr />
-                                {personalData.map(dataset => getDataOutputElement(dataset))}
+                                {personalData && personalData.map(dataset => getDataOutputElement(dataset))}
                                 {vaccinationSet && vaccinationData.map(dataset => getDataOutputElement(dataset))}
                                 {testSet && testData.map(dataset => getDataOutputElement(dataset))}
                                 {recoverySet && recoveryData.map(dataset => getDataOutputElement(dataset))}
