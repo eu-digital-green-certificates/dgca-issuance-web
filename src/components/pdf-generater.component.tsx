@@ -27,62 +27,37 @@ import { useTranslation } from 'react-i18next';
 import { jsPDF } from "jspdf";
 
 import logo from '../assets/images/c-19_logo.png';
-import successIcon from '../assets/images/icon_success.svg';
 
+const PdfGenerator = (qrCodeCanvasElement: any) => {
 
-const PdfGenerator = (props: any) => {
+    //A4 210 x 297 mm or 2480 x 3508 pixels
+    //A6 105 x 74 mm or 1240 x 1748 pixels
 
-    const [pdf, setPdf] = React.useState<jsPDF>();
-    const [qrImage, setQrImage] = React.useState<HTMLCanvasElement>();
-    //A4 210 x 297 mm
-    //A7 105 x 74 mm
-
-    const a7width = 105;
-    const a7height = 148;
+    const a6width = 105;
+    const a6height = 148;
 
     React.useEffect(() => {
-        const tmpPdf = new jsPDF("p", "mm", "a4", true);
-        setPdf(tmpPdf);
-        
-        //setQrImage(props.svg);
-        console.log(props.svg);
-    
-        //setPdf(tmpPdf);
-    }, [props])
-
-    React.useEffect(() => {
-        if(!pdf || qrImage) {
+        if (!qrCodeCanvasElement) {
             return;
         }
 
-        pdf!.text("vierte Seite", a7width, a7height + 12);
-        pdf!.text("erste Seite", 0 , 0 + 12);
-        pdf!.text("zweite Seite", a7width, 0 + 12);
-        pdf!.text("dritte Seite", 0, a7height + 12);
+        const pdf = new jsPDF("p", "mm", "a4", true);
 
-        // pdf.addSvgAsImage(successIcon, 0, 0, 32, 32);
-        // Adding as svg throws an error
-        //pdf!.addSvgAsImage(qrImage, 0, 0, 68, 68);
-        var canvas: HTMLCanvasElement = props.svg;
-        var img = canvas!.toDataURL("image/jpeg,1.0");
-        pdf.addImage(img, 'jpeg', a7width, 0, 68, 68)
-        
-        
-        pdf!.addImage(logo, 'png', 0, 0, 16, 16);
-        // pdf!.addImage(logo, 'png', a7width, 0, 16, 16, undefined, 'FAST');
-    
-        pdf!.save('edgcPdfTest');
-    }, [pdf])
+        pdf.text("vierte Seite", a6width, a6height + 12);
+        pdf!.text("erste Seite", 0, 0 + 12);
+        pdf.text("zweite Seite", a6width, 0 + 12);
+        pdf.text("dritte Seite", 0, a6height + 12);
 
- 
+        var canvas: HTMLCanvasElement = qrCodeCanvasElement;
+        // var img = canvas!.toDataURL("image/jpeg,1.0");
+        var img = canvas!.toDataURL("image/png,base64");
+        pdf.addImage(img, 'jpeg', a6width, 0, 68, 68)
 
-    const { t } = useTranslation();
+        pdf.addImage(logo, 'png', 0, 0, 16, 16);
 
-    return (
-        <>
-           
-        </>
-    )
+        pdf.save('edgcPdfTest');
+    }, [qrCodeCanvasElement]);
+
 }
 
 export default PdfGenerator;

@@ -35,6 +35,9 @@ import genEDGCQR, { CertResult } from '../misc/edgcQRGenerator';
 import { useGetDiseaseAgents, useGetVaccineManufacturers, useGetVaccines, useGetVaccinMedicalData, useGetTestManufacturers, useGetTestResult, IValueSet } from '../api';
 import moment from 'moment';
 import utils from '../misc/utils';
+import usePdfGenerator from './pdf-generater.component';
+import QrReader from 'react-qr-reader';
+import PdfGenerator from './pdf-generater.component';
 
 // import { usePostPatient } from '../api';
 
@@ -58,6 +61,9 @@ const ShowCertificate = (props: any) => {
     const [qrCodeValue, setQrCodeValue] = React.useState('');
     const [dgci, setDGCI] = React.useState('');
     const [tan, setTAN] = React.useState('');
+
+    const [qrCodeForPDF, setQrCodeForPDF] = React.useState<any>();
+    const pdfGenerator = usePdfGenerator(qrCodeForPDF);
 
     // set patient data on mount and set hash from uuid
     React.useEffect(() => {
@@ -249,7 +255,9 @@ const ShowCertificate = (props: any) => {
         }
     ]
 
-
+    const handleGeneratePdf = () => {
+        setQrCodeForPDF(document.getElementById('qr-code-pdf'));
+    }
 
     return (
         !(isInit && eudgc && qrCodeValue) ? <Spinner /> :
@@ -269,13 +277,19 @@ const ShowCertificate = (props: any) => {
                             </Col>
                             <Col sm='6' className='px-4'>
                                 <Container id='qr-code-container'>
-                                    {qrCodeValue ? <><QRCode id='qr-code' size={256} renderAs='svg' value={qrCodeValue} />
+                                    {qrCodeValue ? <> <QRCode id='qr-code' size={256} renderAs='svg' value={qrCodeValue} />
+                                        {/* <Card.Text className='input-label' >{qrCodeValue}</Card.Text> */}
+                                    </> : <></>}
+                                </Container>
+                                <Container id='qr-code-container' className='hidden'>
+                                    {qrCodeValue ? <> <QRCode id='qr-code-pdf' size={256} renderAs='canvas' value={qrCodeValue} />
                                         {/* <Card.Text className='input-label' >{qrCodeValue}</Card.Text> */}
                                     </> : <></>}
                                 </Container>
                                 <Card.Text className='input-label jcc-xs-sm m-2 font-weight-bold text-center' >TAN: {tan}</Card.Text>
                             </Col>
                         </Row>
+                        {/* <PdfGenerator svg={document.getElementById('qr-code-pdf')}/> */}
                     </Card.Body>
 
                     {/*    footer with correction and finish button    */}
@@ -288,6 +302,15 @@ const ShowCertificate = (props: any) => {
                                     onClick={handleBack}
                                 >
                                     {t('translation:patient-data-correction')}
+                                </Button>
+                            </Col>
+                            <Col sm='6' md='3' className='pr-md-0'>
+                                <Button
+                                    className='my-1 my-md-0 p-0'
+                                    block
+                                    onClick={handleGeneratePdf}
+                                >
+                                    {t('translation:generate-pdf')}
                                 </Button>
                             </Col>
                             <Col sm='6' md='3' className='pr-md-0'>
