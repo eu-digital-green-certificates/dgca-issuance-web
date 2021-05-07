@@ -40,6 +40,7 @@ import utils from '../misc/utils';
 import CardHeader from './modules/card-header.component';
 import { FormGroupInput, FormGroupISOCountrySelect, FormGroupValueSetSelect, IPersonData, PersonInputs } from './modules/form-group.component';
 import CardFooter from './modules/card-footer.component';
+import useLocalStorage from '../misc/local-storage';
 
 const validator = new Validator();
 
@@ -52,20 +53,20 @@ const RecordTestCertData = (props: any) => {
 
     const [person, setPerson] = React.useState<IPersonData>();
 
-    const [disease, setDisease] = React.useState<string>('');
+    const [disease, setDisease] = useLocalStorage('disease', '');
 
-    const [testType, setTestType] = React.useState<string>('');
-    const [testName, setTestName] = React.useState<string>('');
-    const [testManufacturers, setTestManufacturers] = React.useState<string>('');
+    const [testType, setTestType] = useLocalStorage('testType', '');
+    const [testName, setTestName] = useLocalStorage('testName', '');
+    const [testManufacturers, setTestManufacturers] = useLocalStorage('testManufacturers', '');
 
     const [sampleDateTime, setSampleDateTime] = React.useState<Date>();
     const [testDateTime, setTestDateTime] = React.useState<Date | undefined>();
 
     const [testResult, setTestResult] = React.useState<string>('');
-    const [testCenter, setTestCenter] = React.useState<string>('');
+    const [testCenter, setTestCenter] = useLocalStorage('testCenter', '');
 
-    const [certificateIssuer, setCertificateIssuer] = React.useState('');
-    const [issuerCountryCode, setIssuerCountryCode] = React.useState<string>('');
+    const [certificateIssuer, setCertificateIssuer] = useLocalStorage('certificateIssuer', '');
+    const [issuerCountryCode, setIssuerCountryCode] = useLocalStorage('issuerCountryCode', '');
 
     React.useEffect(() => {
         if (!props.eudgc || !props.eudgc.t || !props.eudgc.t[0]) {
