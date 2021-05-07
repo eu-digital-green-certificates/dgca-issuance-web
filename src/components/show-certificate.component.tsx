@@ -32,7 +32,7 @@ import QRCode from 'qrcode.react';
 import Spinner from './spinner/spinner.component';
 import { EUDGC, RecoveryEntry, TestEntry, VaccinationEntry } from '../generated-files/dgc-combined-schema';
 import genEDGCQR, { CertResult } from '../misc/edgcQRGenerator';
-import { useGetDiseaseAgents, useGetVaccineManufacturers, useGetVaccines, useGetVaccinMedicalData, useGetTestManufacturers, useGetTestResult, IValueSet } from '../api';
+import { useGetDiseaseAgents, useGetVaccineManufacturers, useGetVaccines, useGetVaccinMedicalData, useGetTestManufacturers, useGetTestResult } from '../api';
 
 import ShowCertificateData from '../misc/ShowCertificateData';
 
@@ -167,7 +167,6 @@ const ShowCertificate = (props: any) => {
         !(isInit && eudgc && qrCodeValue) ? <Spinner /> :
             <>
                 <Card id='data-card'>
-
                     {/*    content area with patient inputs and check box    */}
                     <Card.Body id='data-header'>
                         <Row>
