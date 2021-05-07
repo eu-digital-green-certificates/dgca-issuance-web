@@ -155,11 +155,13 @@ const ShowCertificate = (props: any) => {
 
     const certificateTest = new ShowCertificateData({ vacMedsData, diseaseAgentsData, vaccineManufacturers, vaccines, testManufacturersValueSet, testResultValueSet });
     const personalData: IDataEntry[] = certificateTest.getPersonalData(eudgc);
-    const vaccinationData: IDataEntry[] = certificateTest.getVaccineData(vaccinationSet);
-    const testData: IDataEntry[] = certificateTest.getTestData(testSet);
-    const recoveryData: IDataEntry[] = certificateTest.getRecoveryData(recoverySet);
-
-
+    const certificationData = vaccinationSet
+        ? certificateTest.getVaccineData(vaccinationSet)
+        : testSet
+            ? certificateTest.getTestData(testSet)
+            : recoverySet
+                ? certificateTest.getRecoveryData(recoverySet)
+                : null;
 
     return (
         !(isInit && eudgc && qrCodeValue) ? <Spinner /> :
@@ -173,9 +175,7 @@ const ShowCertificate = (props: any) => {
                                 <Card.Title className='m-sm-0 jcc-xs-jcfs-sm' as={'h2'}>{t('translation:your-certificate')}</Card.Title>
                                 <hr />
                                 {personalData && personalData.map(dataset => getDataOutputElement(dataset))}
-                                {vaccinationSet && vaccinationData.map(dataset => getDataOutputElement(dataset))}
-                                {testSet && testData.map(dataset => getDataOutputElement(dataset))}
-                                {recoverySet && recoveryData.map(dataset => getDataOutputElement(dataset))}
+                                {certificationData && certificationData.map(dataset => getDataOutputElement(dataset))}
                             </Col>
                             <Col sm='6' className='px-4'>
                                 <Container id='qr-code-container'>

@@ -5,12 +5,12 @@ import { IValueSet } from '../api';
 import moment from 'moment';
 import utils from './utils';
 
-export interface IDataEntry {
+interface IDataEntry {
     title: string,
     entries: IEntry[]
 }
 
-export interface IEntry {
+interface IEntry {
     label: string,
     data: string
 }
