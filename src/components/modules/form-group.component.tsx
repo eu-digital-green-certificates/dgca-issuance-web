@@ -8,12 +8,15 @@ import utils from "../../misc/utils";
 import DatePicker from "react-datepicker";
 // import { registerLocale } from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import { IValueSet } from "../../api";
+
+const iso3311a2 = require('iso-3166-1-alpha-2');
 
 
 export interface IPersonData {
-    givenName: string;
-    familyName: string;
-    standardisedGivenName: string;
+    givenName?: string;
+    familyName?: string;
+    standardisedGivenName?: string;
     standardisedFamilyName: string;
     dateOfBirth: Date | undefined;
 }
@@ -29,10 +32,12 @@ export const FormGroupInput = (props: any) => {
                     className='qt-input'
                     value={props.value}
                     onChange={props.onChange}
-                    placeholder={props.placeholder}
-                    type='text'
+                    placeholder={props.placeholder ? props.placeholder : props.title}
+                    type={props.type ? props.type : 'text'}
                     required={props.required}
                     maxLength={props.maxLength}
+                    min={props.min}
+                    max={props.max}
                     pattern={props.pattern}
                 />
             </Col>
@@ -41,15 +46,93 @@ export const FormGroupInput = (props: any) => {
 
 }
 
+export const FormGroupValueSetSelect = (props: any) => {
+
+    const valueSet = props.valueSet();
+    const [options, setOptions] = React.useState<JSX.Element[]>();
+
+    React.useEffect(() => {
+        if (valueSet) {
+            const options = getOptionsForValueSet(valueSet)
+            setOptions(options);
+        }
+    }, [valueSet])
+
+
+    const getOptionsForValueSet = (valueSet: IValueSet): JSX.Element[] => {
+        const result: JSX.Element[] = [];
+        for (const key of Object.keys(valueSet)) {
+            result.push(<option key={key} value={key}>{valueSet[key].display}</option>)
+        }
+
+        return result;
+    }
+
+    return (!(props && options) ? <></> :
+        <Form.Group as={Row} controlId={props.controlId} className='mb-1'>
+            <Form.Label className='input-label' column xs='5' sm='3'>{props.title + (props.required ? '*' : '')}</Form.Label>
+
+            <Col xs='7' sm='9' className='d-flex'>
+                <Form.Control as="select"
+                    className={!props.value ? 'selection-placeholder qt-input' : 'qt-input'}
+                    value={props.value}
+                    onChange={props.onChange}
+                    placeholder={props.placeholder ? props.placeholder : props.title}
+                    required={props.required}
+                >
+                    <option disabled={props.required} key={0} value={props.required ? '' : undefined} >{props.placeholder ? props.placeholder : props.title}</option>
+                    {options}
+                </Form.Control>
+            </Col>
+        </Form.Group>
+    )
+}
+
+export const FormGroupISOCountrySelect = (props: any) => {
+
+    const [options, setOptions] = React.useState<JSX.Element[]>();
+
+    React.useEffect(() => {
+        const options: JSX.Element[] = [];
+        const codes: string[] = iso3311a2.getCodes().sort();
+
+        for (const code of codes) {
+            options.push(<option key={code} value={code}>{code + " : " + iso3311a2.getCountry(code)}</option>)
+        }
+
+        setOptions(options);
+    }, [])
+
+
+    return (!(props && options) ? <></> :
+        <Form.Group as={Row} controlId={props.controlId} className='mb-1'>
+            <Form.Label className='input-label' column xs='5' sm='3'>{props.title + (props.required ? '*' : '')}</Form.Label>
+
+            <Col xs='7' sm='9' className='d-flex'>
+                <Form.Control as="select"
+                    className={!props.value ? 'selection-placeholder qt-input' : 'qt-input'}
+                    value={props.value}
+                    onChange={props.onChange}
+                    placeholder={props.placeholder ? props.placeholder : props.title}
+                    required={props.required}
+                >
+                    <option disabled key={0} value={''} >{props.placeholder ? props.placeholder : props.title}</option>
+                    {options}
+                </Form.Control>
+            </Col>
+        </Form.Group>
+    )
+}
+
 
 export const PersonInputs = (props: any) => {
 
     const { t } = useTranslation();
 
-    const [givenName, setGivenName] = React.useState<string>('');
-    const [familyName, setFamilyName] = React.useState<string>('');
+    const [givenName, setGivenName] = React.useState<string | undefined>();
+    const [familyName, setFamilyName] = React.useState<string | undefined>();
 
-    const [standardisedGivenName, setStandardisedGivenName] = React.useState<string>('');
+    const [standardisedGivenName, setStandardisedGivenName] = React.useState<string | undefined>();
     const [standardisedFamilyName, setStandardisedFamilyName] = React.useState<string>('');
 
     const [dateOfBirth, setDateOfBirth] = React.useState<Date>();
@@ -59,12 +142,14 @@ export const PersonInputs = (props: any) => {
         if (props && props.eudgc && props.eudgc.nam) {
             const names = props.eudgc.nam
 
-            setFamilyName(names.fn!);
-            setStandardisedFamilyName(names.fnt!);
-            setGivenName(names.gn!);
-            setStandardisedGivenName(names.gnt!);
+            setFamilyName(names.fn);
+            setStandardisedFamilyName(names.fnt);
+            setGivenName(names.gn);
+            setStandardisedGivenName(names.gnt);
 
-            setDateOfBirth(new Date(props.eudgc.dob!));
+            if (props.eudgc.dob) {
+                setDateOfBirth(new Date(props.eudgc.dob));
+            }
         }
     }, [])
 
@@ -76,7 +161,7 @@ export const PersonInputs = (props: any) => {
             standardisedFamilyName: standardisedFamilyName,
             dateOfBirth: dateOfBirth
         }
-
+        
         props.onChange(result);
 
     }, [givenName, familyName, standardisedGivenName, standardisedFamilyName, dateOfBirth])
@@ -89,7 +174,7 @@ export const PersonInputs = (props: any) => {
             setStandardisedName(upperCaseChangedValue);
         }
     }
-    
+
     const handleDateOfBirthChange = (evt: Date | [Date, Date] | null) => {
         const date = handleDateChange(evt);
         setDateOfBirth(date);
@@ -113,34 +198,31 @@ export const PersonInputs = (props: any) => {
     return (
         <>
             {/* first name input */}
-            <FormGroupInput controlId='formGivenNameInput' title={t('translation:first-name')} placeholder={t('translation:first-name')}
+            <FormGroupInput controlId='formGivenNameInput' title={t('translation:first-name')}
                 value={givenName}
                 onChange={(evt: any) => setGivenName(evt.target.value)}
-                required
                 maxLength={50}
             />
 
             {/* name input */}
-            <FormGroupInput controlId='formNameInput' title={t('translation:name')} placeholder={t('translation:name')}
+            <FormGroupInput controlId='formNameInput' title={t('translation:name')}
                 value={familyName}
                 onChange={(evt: any) => setFamilyName(evt.target.value)}
-                required
                 maxLength={50}
             />
 
             <hr />
 
             {/* standardised first name input */}
-            <FormGroupInput controlId='formStandadisedGivenNameInput' title={t('translation:standardised-first-name')} placeholder={t('translation:standardised-first-name')}
+            <FormGroupInput controlId='formStandadisedGivenNameInput' title={t('translation:standardised-first-name')}
                 value={standardisedGivenName}
                 onChange={(evt: any) => handleStandardisedNameChanged(evt.target.value, setStandardisedGivenName)}
-                required
                 pattern={utils.pattern.standardisedName}
                 maxLength={50}
             />
 
             {/*standardised name input */}
-            <FormGroupInput controlId='formStandadisedNameInput' title={t('translation:standardised-name')} placeholder={t('translation:standardised-name')}
+            <FormGroupInput controlId='formStandadisedNameInput' title={t('translation:standardised-name')}
                 value={standardisedFamilyName}
                 onChange={(evt: any) => handleStandardisedNameChanged(evt.target.value, setStandardisedFamilyName)}
                 required

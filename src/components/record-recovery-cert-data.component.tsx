@@ -20,7 +20,7 @@
  */
 
 import React from 'react';
-import { Button, Card, Col, Form, Row } from 'react-bootstrap';
+import { Card, Col, Form, Row } from 'react-bootstrap';
 
 import '../i18n';
 import { useTranslation } from 'react-i18next';
@@ -38,19 +38,15 @@ import { useGetDiseaseAgents, IValueSet } from '../api';
 import schema from '../generated-files/DGC.combined-schema.json';
 import { Validator } from 'jsonschema';
 import CardHeader from './modules/card-header.component';
-import { PersonInputs, IPersonData } from './modules/form-group.component';
+import { PersonInputs, IPersonData, FormGroupInput, FormGroupValueSetSelect, FormGroupISOCountrySelect } from './modules/form-group.component';
+import CardFooter from './modules/card-footer.component';
 
 const validator = new Validator();
-const iso3311a2 = require('iso-3166-1-alpha-2');
-
 
 const RecordRecoveryCertData = (props: any) => {
 
     const navigation = useNavigation();
     const { t } = useTranslation();
-
-    // data read from the API
-    const diseaseAgentsData = useGetDiseaseAgents();
 
     const [isInit, setIsInit] = React.useState(false)
 
@@ -58,36 +54,30 @@ const RecordRecoveryCertData = (props: any) => {
 
     const [disease, setDisease] = React.useState<string>('');
 
-    const [diseasOptions, setDiseasOptions] = React.useState<JSX.Element[]>();
-
     const [firstPositiveResultDate, setFirstPositiveResultDate] = React.useState<Date>();
     const [certificateIssuer, setCertificateIssuer] = React.useState('');
     const [testCountryCode, setTestCountryCode] = React.useState<string>('');
     const [dateValidFrom, setDateValidFrom] = React.useState<Date>();
     const [dateValidTo, setDateValidTo] = React.useState<Date>();
 
-    const [isoCountryOptions, setIsoCountryOptions] = React.useState<JSX.Element[]>();
     const [defaultTestCountryCode, setDefaultTestCountryCode] = useLocalStorage('defaultTestCountryCode', '');
 
 
     React.useEffect(() => {
-        if (!props.eudgc) {
+        if (!props.eudgc || !props.eudgc.r || !props.eudgc.r[0]) {
             return;
         }
 
-        const eudgc: EUDGC = props.eudgc;
+        const rec: RecoveryEntry = props.eudgc.r[0];
 
-        setDisease(eudgc.r![0].tg!);
-        setFirstPositiveResultDate(new Date(eudgc.r![0].fr!));
-        setTestCountryCode(eudgc.r![0].co!);
-        setCertificateIssuer(eudgc.r![0].is!);
-        setDateValidFrom(new Date(eudgc.r![0].df!))
-        setDateValidTo(new Date(eudgc.r![0].du!))
+        setDisease(rec.tg);
+        setFirstPositiveResultDate(new Date(rec.fr));
+        setTestCountryCode(rec.co);
+        setCertificateIssuer(rec.is);
+        setDateValidFrom(new Date(rec.df))
+        setDateValidTo(new Date(rec.du))
+        
     }, [props.eudgc]);
-
-    React.useEffect(() => {
-        setIso3311a2();
-    }, []);
 
     React.useEffect(() => {
         if (!testCountryCode) {
@@ -109,36 +99,6 @@ const RecordRecoveryCertData = (props: any) => {
             setTimeout(setIsInit, 200, true);
         }
     }, [navigation]);
-
-
-    React.useEffect(() => {
-        if (diseaseAgentsData) {
-            const options = getOptionsForValueSet(diseaseAgentsData)
-            setDiseasOptions(options);
-        }
-    }, [diseaseAgentsData])
-
-    const getOptionsForValueSet = (valueSet: IValueSet): JSX.Element[] => {
-        const result: JSX.Element[] = [];
-        for (const key of Object.keys(valueSet)) {
-            result.push(<option key={key} value={key}>{valueSet[key].display}</option>)
-        }
-
-        return result;
-    }
-
-    const setIso3311a2 = () => {
-        const options: JSX.Element[] = [];
-        const codes: string[] = iso3311a2.getCodes().sort();
-
-        // options.push(<option key={0} value={''} >{ }</option>);
-
-        for (const code of codes) {
-            options.push(<option key={code} value={code}>{code + " : " + iso3311a2.getCountry(code)}</option>)
-        }
-
-        setIsoCountryOptions(options);
-    }
 
     const handleError = (error: any) => {
         let msg = '';
@@ -253,22 +213,12 @@ const RecordRecoveryCertData = (props: any) => {
                             <hr />
 
                             {/* combobox disease */}
-                            <Form.Group as={Row} controlId='formDiseaseInput' className='mb-1 mt-1 sb-1 st-1'>
-                                <Form.Label className='input-label' column xs='5' sm='3'>{t('translation:disease-agent') + '*'}</Form.Label>
-
-                                <Col xs='7' sm='9' className='d-flex'>
-                                    <Form.Control as="select"
-                                        className={!disease ? 'selection-placeholder qt-input' : 'qt-input'}
-                                        value={disease}
-                                        onChange={event => setDisease(event.target.value)}
-                                        placeholder={t('translation:def-disease-agent')}
-                                        required
-                                    >
-                                        <option disabled key={0} value={''} >{t('translation:def-disease-agent')}</option>
-                                        {diseasOptions}
-                                    </Form.Control>
-                                </Col>
-                            </Form.Group>
+                            <FormGroupValueSetSelect controlId='formDiseaseInput' title={t('translation:disease-agent')} placeholder={t('translation:def-disease-agent')}
+                                value={disease}
+                                onChange={(evt: any) => setDisease(evt.target.value)}
+                                required
+                                valueSet={useGetDiseaseAgents}
+                            />
 
                             <hr />
 
@@ -297,43 +247,21 @@ const RecordRecoveryCertData = (props: any) => {
                             </Form.Group>
 
                             {/* Combobox for the vaccin countries in iso-3166-1-alpha-2 */}
-                            <Form.Group as={Row} controlId='formVacCountryInput' className='mb-1 mt-1 sb-1 st-1'>
-                                <Form.Label className='input-label' column xs='5' sm='3'>{t('translation:recovery-country') + '*'}</Form.Label>
-
-                                <Col xs='7' sm='9' className='d-flex'>
-                                    <Form.Control as="select"
-                                        className={!testCountryCode ? 'selection-placeholder qt-input' : 'qt-input'}
-                                        value={testCountryCode}
-                                        onChange={event => setTestCountryCode(event.target.value)}
-                                        placeholder={t('translation:country')}
-                                        required
-                                    >
-                                        <option disabled key={0} value={''} >{t('translation:recovery-country')}</option>
-                                        {isoCountryOptions}
-                                    </Form.Control>
-                                </Col>
-                            </Form.Group>
+                            <FormGroupISOCountrySelect controlId='formVacCountryInput' title={t('translation:recovery-country')}
+                                value={testCountryCode}
+                                onChange={(evt: any) => setTestCountryCode(evt.target.value)}
+                                required
+                            />
 
                             <hr />
 
-
-
                             {/* certificateIssuer */}
-                            <Form.Group as={Row} controlId='formcertificateIssuerInput' className='mb-1'>
-                                <Form.Label className='input-label' column xs='5' sm='3'>{t('translation:certificateIssuer') + '*'}</Form.Label>
-
-                                <Col xs='7' sm='9' className='d-flex'>
-                                    <Form.Control
-                                        className='qt-input'
-                                        value={certificateIssuer}
-                                        onChange={event => setCertificateIssuer(event.target.value)}
-                                        placeholder={t('translation:certificateIssuer')}
-                                        type='text'
-                                        required
-                                        maxLength={50}
-                                    />
-                                </Col>
-                            </Form.Group>
+                            <FormGroupInput controlId='formcertificateIssuerInput' title={t('translation:certificateIssuer')} placeholder={t('translation:certificateIssuer')}
+                                value={certificateIssuer}
+                                onChange={(evt: any) => setCertificateIssuer(evt.target.value)}
+                                required
+                                maxLength={50}
+                            />
 
                             {/* Date: Certificate Valid From - To */}
                             <Form.Group as={Row} controlId='formDateOfBirthInput' className='mb-1'>
@@ -384,28 +312,7 @@ const RecordRecoveryCertData = (props: any) => {
                         {/*
                             footer with clear and nex button
                         */}
-                        <Card.Footer id='data-footer'>
-                            <Row>
-                                <Col xs='6' md='3'>
-                                    <Button
-                                        className='my-1 my-md-0 p-0'
-                                        block
-                                        onClick={handleCancel}
-                                    >
-                                        {t('translation:cancel')}
-                                    </Button>
-                                </Col>
-                                <Col xs='6' md='3' className='pr-md-0'>
-                                    <Button
-                                        className='my-1 my-md-0 p-0'
-                                        block
-                                        type='submit'
-                                    >
-                                        {t('translation:next')}
-                                    </Button>
-                                </Col>
-                            </Row>
-                        </Card.Footer>
+                        <CardFooter handleCancel={handleCancel} />
 
                     </Form>
                 </Card>
