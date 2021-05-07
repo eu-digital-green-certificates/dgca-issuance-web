@@ -24,19 +24,20 @@ const divmod = (a: number, b: number): [number, number] => {
 const _encode = (uint8array: Buffer): string => {
 
   let output = [];
+  let x, y, e, d, c;
 
   for (let i = 0, length = uint8array.length; i < length; i += 2) {
 
     if (uint8array.length - i > 1) {
-      let x = (uint8array[i] << 8) + uint8array[i + 1];
-      let [e] = divmod(x, 45 * 45);
-      let [d, c] = divmod(x, 45);
+      x = (uint8array[i] << 8) + uint8array[i + 1];
+      [e, y] = divmod(x, 45 * 45);
+      [d, c] = divmod(y, 45);
 
       output.push(fromCharCode(c) + fromCharCode(d) + fromCharCode(e));
     }
     else {
-      let x = uint8array[i];
-      let [d, c] = divmod(x, 45);
+      x = uint8array[i];
+      [d, c] = divmod(x, 45);
       output.push(fromCharCode(c) + fromCharCode(d));
     }
   }
@@ -81,8 +82,8 @@ const _decode = (str: string): Buffer => {
 };
 
 const base45 = {
-    encode: _encode,
-    decode: _decode
+  encode: _encode,
+  decode: _decode
 }
 
 export default base45;

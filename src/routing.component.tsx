@@ -53,7 +53,6 @@ const Routing = (props: any) => {
 
     React.useEffect(() => {
         if (error) {
-            console.log('möp');
             setErrorShow(true);
         }
     }, [error])
