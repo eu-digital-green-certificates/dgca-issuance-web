@@ -52,18 +52,16 @@ const RecordVaccinationCertData = (props: any) => {
 
     const [person, setPerson] = React.useState<IPersonData>();
 
-    const [disease, setDisease] = React.useState<string>('');
-    const [vaccine, setVaccine] = React.useState<string>('');
-    const [medicalProduct, setMedicalProduct] = React.useState<string>('');
-    const [marketingHolder, setMarketingHolder] = React.useState<string>('');
+    const [disease, setDisease] = useLocalStorage('disease', '');
+    const [vaccine, setVaccine] = useLocalStorage('vaccine', '');
+    const [medicalProduct, setMedicalProduct] = useLocalStorage('medicalProduct', '');
+    const [marketingHolder, setMarketingHolder] = useLocalStorage('marketingHolder', '');
 
     const [doseNumber, setDoseNumber] = React.useState<number>(0);
-    const [totalDoseNumber, setTotalDoseNumber] = React.useState<number>(0);
-    const [vacLastDate, setVacLastDate] = React.useState<Date>();
-    const [certificateIssuer, setCertificateIssuer] = React.useState('');
-    const [issuerCountryCode, setIssuerCountryCode] = React.useState<string>('');
-
-    const [defaultIssuerCountryCode, setDefaultIssuerCountryCode] = useLocalStorage('defaultIssuerCountryCode', '');
+    const [totalDoseNumber, setTotalDoseNumber] = useLocalStorage('totalDoseNumber', 0);
+    const [vacLastDate, setVacLastDate] = React.useState<Date>(new Date());
+    const [certificateIssuer, setCertificateIssuer] = useLocalStorage('certificateIssuer', '');
+    const [issuerCountryCode, setIssuerCountryCode] = useLocalStorage('issuerCountryCode', '');
 
 
     React.useEffect(() => {
@@ -84,22 +82,6 @@ const RecordVaccinationCertData = (props: any) => {
         setCertificateIssuer(vac.is);
 
     }, [props.eudgc]);
-
-    React.useEffect(() => {
-        if (!issuerCountryCode) {
-            setIssuerCountryCode(defaultIssuerCountryCode);
-        }
-
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [defaultIssuerCountryCode]);
-
-    React.useEffect(() => {
-        if (issuerCountryCode !== defaultIssuerCountryCode) {
-            setDefaultIssuerCountryCode(issuerCountryCode);
-        }
-
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [issuerCountryCode]);
 
 
     React.useEffect(() => {
