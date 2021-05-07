@@ -30,11 +30,10 @@ import useNavigation from '../misc/navigation';
 import QRCode from 'qrcode.react';
 
 import Spinner from './spinner/spinner.component';
-import { EUDGC, RecoveryEntry, TestEntry, VaccinationEntry } from '../generated-files/dgc-combined-schema';
+import { EUDGC } from '../generated-files/dgc-combined-schema';
 import genEDGCQR, { CertResult } from '../misc/edgcQRGenerator';
-import { useGetDiseaseAgents, useGetVaccineManufacturers, useGetVaccines, useGetVaccinMedicalData, useGetTestManufacturers, useGetTestResult, IValueSet } from '../api';
-import moment from 'moment';
-import utils from '../misc/utils';
+
+import ShowCertificateData from '../misc/ShowCertificateData';
 
 // import { usePostPatient } from '../api';
 
@@ -43,20 +42,10 @@ const ShowCertificate = (props: any) => {
     const navigation = useNavigation();
     const { t } = useTranslation();
 
-    const vacMedsData = useGetVaccinMedicalData();
-    const diseaseAgentsData = useGetDiseaseAgents();
-    const vaccineManufacturers = useGetVaccineManufacturers();
-    const vaccines = useGetVaccines();
-    const testManufacturersValueSet = useGetTestManufacturers();
-    const testResultValueSet = useGetTestResult();
-
     const [isInit, setIsInit] = React.useState(false)
     const [eudgc, setEudgc] = React.useState<EUDGC>();
-    const [vaccinationSet, setVaccinationSet] = React.useState<VaccinationEntry>();
-    const [testSet, setTestSet] = React.useState<TestEntry>();
-    const [recoverySet, setRecoverySet] = React.useState<RecoveryEntry>();
     const [qrCodeValue, setQrCodeValue] = React.useState('');
-    
+
     const [tan, setTAN] = React.useState('');
 
     // set patient data on mount and set hash from uuid
@@ -73,9 +62,6 @@ const ShowCertificate = (props: any) => {
 
     React.useEffect(() => {
         if (eudgc) {
-            setVaccinationSet(eudgc.v ? eudgc.v[0] : undefined);
-            setTestSet(eudgc.t ? eudgc.t[0] : undefined);
-            setRecoverySet(eudgc.r ? eudgc.r[0] : undefined);
 
             // TODO catch errors and handle them du to possible server connection problems
             genEDGCQR(eudgc)
@@ -113,17 +99,6 @@ const ShowCertificate = (props: any) => {
         props.setError({ error: error, message: msg, onCancel: navigation!.toLanding });
     }
 
-    // returns display value for key 
-    const getValueSetDisplay = (key: string | undefined, valueSet: IValueSet | undefined): string | undefined => {
-        let result = key;
-
-        if (valueSet && key && valueSet[key]) {
-            result = valueSet[key].display;
-        }
-
-        return result;
-    }
-
     const handleBack = () => {
         if (eudgc) {
             if (eudgc.v) {
@@ -141,131 +116,18 @@ const ShowCertificate = (props: any) => {
         }
     }
 
-    const getDataOutputElement = (dataSet: IDataEntry) => {
-        return (
-            <div className='pt-3'>
-                <Card.Text className='input-label jcc-xs-jcfs-sm mb-0 font-weight-bold' >{dataSet.title}</Card.Text>
-                {dataSet.entries.map((entry) => (<Card.Text className='input-label jcc-xs-jcfs-sm mb-0' >{`${entry.label}: ${entry.data}`}</Card.Text>))}
-            </div>
-        )
-    }
-
-    const convertDateToOutputFormat = (dateString: string): string => dateString ? moment(dateString, 'YYYY-MM-DDTHH:mm:ss.sssZ').format(utils.momentDateTimeFormat).toString() : '';
-
-    interface IDataEntry {
-        title: string,
-        entries: IEntry[]
-    }
-
-    interface IEntry {
-        label: string,
-        data: string
-    }
-
-    const defaultString = ''
-
-    const personalData: IDataEntry[] = [
-        {
-            title: t('translation:personal-data'),
-            entries: [
-                { label: t('translation:name'), data: eudgc?.nam.gn || defaultString },
-                { label: t('translation:first-name'), data: eudgc?.nam.fn || defaultString },
-                { label: t('translation:date-of-birth'), data: eudgc?.dob || defaultString },
-            ]
-        }
-    ]
-
-    const vaccinationData: IDataEntry[] = [
-        {
-            title: t('translation:vaccine-data'),
-            entries: [
-                { label: t('translation:disease-agent'), data: getValueSetDisplay(vaccinationSet?.tg, diseaseAgentsData) || defaultString },
-                { label: t('translation:vaccine'), data: getValueSetDisplay(vaccinationSet?.vp, vaccines) || defaultString },
-                { label: t('translation:vac-medical-product'), data: getValueSetDisplay(vaccinationSet?.mp, vacMedsData) || defaultString },
-                { label: t('translation:vac-marketing-holder'), data: getValueSetDisplay(vaccinationSet?.ma, vaccineManufacturers) || defaultString },
-            ]
-        },
-        {
-            title: t('translation:vaccination-data'),
-            entries: [
-                { label: t('translation:sequence'), data: String(vaccinationSet?.dn) || defaultString },
-                { label: t('translation:tot'), data: String(vaccinationSet?.sd) || defaultString },
-                { label: t('translation:vac-last-date'), data: vaccinationSet?.dt || defaultString },
-            ]
-        },
-        {
-            title: t('translation:certificate-data'),
-            entries: [
-                { label: t('translation:vac-country'), data: vaccinationSet?.co || defaultString },
-                { label: t('translation:adm'), data: vaccinationSet?.is || defaultString }
-            ]
-        }
-    ]
-
-    const testData: IDataEntry[] = [
-        {
-            title: t('translation:test-data'),
-            entries: [
-                { label: t('translation:diseaseAgent'), data: getValueSetDisplay(testSet?.tg, diseaseAgentsData) || defaultString },
-                { label: t('translation:testType'), data: testSet?.tt || defaultString },
-                { label: t('translation:testName'), data: testSet?.nm || defaultString },
-                { label: t('translation:testManufacturers'), data: getValueSetDisplay(testSet?.ma, testManufacturersValueSet) || defaultString }
-            ]
-        },
-        {
-            title: t('translation:test-data'),
-            entries: [
-                { label: t('translation:sampleDateTime'), data: convertDateToOutputFormat(testSet?.sc || '') },
-                { label: t('translation:testDateTime'), data: convertDateToOutputFormat(testSet?.dr || defaultString) },
-                { label: t('translation:testResult'), data: getValueSetDisplay(testSet?.tr, testResultValueSet) || defaultString },
-                { label: t('translation:testCenter'), data: testSet?.tc || defaultString }
-            ]
-        },
-        {
-            title: t('translation:certificate-data'),
-            entries: [
-                { label: t('translation:vac-country'), data: testSet?.co || defaultString },
-                { label: t('translation:adm'), data: testSet?.is || defaultString }
-            ]
-        }
-    ]
-
-    const recoveryData: IDataEntry[] = [
-        {
-            title: t('translation:recovery-data'),
-            entries: [
-                { label: t('translation:dieaseAgent'), data: getValueSetDisplay(recoverySet?.tg, diseaseAgentsData) || defaultString },
-                { label: t('translation:first-positive-test-date'), data: recoverySet?.fr || defaultString },
-                { label: t('translation:recovery-country'), data: recoverySet?.co || defaultString },
-            ]
-        },
-        {
-            title: t('translation:certificate-data'),
-            entries: [
-                { label: t('translation:adm'), data: recoverySet?.is || defaultString },
-                { label: t('translation:valid-from'), data: recoverySet?.df || defaultString },
-                { label: t('translation:valid-to'), data: recoverySet?.du || defaultString },
-            ]
-        }
-    ]
-
-
-
     return (
         !(isInit && eudgc && qrCodeValue) ? <Spinner /> :
             <>
                 <Card id='data-card'>
-
                     {/*    content area with patient inputs and check box    */}
                     <Card.Body id='data-header'>
                         <Row>
                             <Col sm='6'>
                                 <Card.Title className='m-sm-0 jcc-xs-jcfs-sm' as={'h2'}>{t('translation:your-certificate')}</Card.Title>
                                 <hr />
-                                {personalData.map(dataset => getDataOutputElement(dataset))}
-                                {vaccinationSet && vaccinationData.map(dataset => getDataOutputElement(dataset))}
-                                {testSet && testData.map(dataset => getDataOutputElement(dataset))}
-                                {recoverySet && recoveryData.map(dataset => getDataOutputElement(dataset))}
+                                <ShowCertificateData eudgc={eudgc} />
+
                             </Col>
                             <Col sm='6' className='px-4'>
                                 <Container id='qr-code-container'>
