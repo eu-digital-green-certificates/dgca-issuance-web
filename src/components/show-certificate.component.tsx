@@ -30,9 +30,8 @@ import useNavigation from '../misc/navigation';
 import QRCode from 'qrcode.react';
 
 import Spinner from './spinner/spinner.component';
-import { EUDGC, RecoveryEntry, TestEntry, VaccinationEntry } from '../generated-files/dgc-combined-schema';
+import { EUDGC } from '../generated-files/dgc-combined-schema';
 import genEDGCQR, { CertResult } from '../misc/edgcQRGenerator';
-import { useGetDiseaseAgents, useGetVaccineManufacturers, useGetVaccines, useGetVaccinMedicalData, useGetTestManufacturers, useGetTestResult } from '../api';
 
 import ShowCertificateData from '../misc/ShowCertificateData';
 
@@ -43,18 +42,8 @@ const ShowCertificate = (props: any) => {
     const navigation = useNavigation();
     const { t } = useTranslation();
 
-    const vacMedsData = useGetVaccinMedicalData();
-    const diseaseAgentsData = useGetDiseaseAgents();
-    const vaccineManufacturers = useGetVaccineManufacturers();
-    const vaccines = useGetVaccines();
-    const testManufacturersValueSet = useGetTestManufacturers();
-    const testResultValueSet = useGetTestResult();
-
     const [isInit, setIsInit] = React.useState(false)
     const [eudgc, setEudgc] = React.useState<EUDGC>();
-    const [vaccinationSet, setVaccinationSet] = React.useState<VaccinationEntry>();
-    const [testSet, setTestSet] = React.useState<TestEntry>();
-    const [recoverySet, setRecoverySet] = React.useState<RecoveryEntry>();
     const [qrCodeValue, setQrCodeValue] = React.useState('');
 
     const [tan, setTAN] = React.useState('');
@@ -73,9 +62,6 @@ const ShowCertificate = (props: any) => {
 
     React.useEffect(() => {
         if (eudgc) {
-            setVaccinationSet(eudgc.v ? eudgc.v[0] : undefined);
-            setTestSet(eudgc.t ? eudgc.t[0] : undefined);
-            setRecoverySet(eudgc.r ? eudgc.r[0] : undefined);
 
             // TODO catch errors and handle them du to possible server connection problems
             genEDGCQR(eudgc)
@@ -130,39 +116,6 @@ const ShowCertificate = (props: any) => {
         }
     }
 
-    const getDataOutputElement = (dataSet: IDataEntry) => {
-        return (
-            <div className='pt-3'>
-                <Card.Text className='input-label jcc-xs-jcfs-sm mb-0 font-weight-bold' >{dataSet.title}</Card.Text>
-                {dataSet.entries.map((entry) => {
-                    return entry.data ?
-                        <Card.Text className='input-label jcc-xs-jcfs-sm mb-0' >{`${entry.label}: ${entry.data}`}</Card.Text>
-                        : <> </>
-                })}
-            </div>
-        )
-    }
-
-    interface IDataEntry {
-        title: string,
-        entries: IEntry[]
-    }
-
-    interface IEntry {
-        label: string,
-        data: string
-    }
-
-    const certificateTest = new ShowCertificateData({ vacMedsData, diseaseAgentsData, vaccineManufacturers, vaccines, testManufacturersValueSet, testResultValueSet });
-    const personalData: IDataEntry[] = certificateTest.getPersonalData(eudgc);
-    const certificationData = vaccinationSet
-        ? certificateTest.getVaccineData(vaccinationSet)
-        : testSet
-            ? certificateTest.getTestData(testSet)
-            : recoverySet
-                ? certificateTest.getRecoveryData(recoverySet)
-                : null;
-
     return (
         !(isInit && eudgc && qrCodeValue) ? <Spinner /> :
             <>
@@ -173,8 +126,8 @@ const ShowCertificate = (props: any) => {
                             <Col sm='6'>
                                 <Card.Title className='m-sm-0 jcc-xs-jcfs-sm' as={'h2'}>{t('translation:your-certificate')}</Card.Title>
                                 <hr />
-                                {personalData && personalData.map(dataset => getDataOutputElement(dataset))}
-                                {certificationData && certificationData.map(dataset => getDataOutputElement(dataset))}
+                                <ShowCertificateData eudgc={eudgc} />
+
                             </Col>
                             <Col sm='6' className='px-4'>
                                 <Container id='qr-code-container'>
