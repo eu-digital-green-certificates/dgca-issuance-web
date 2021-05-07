@@ -21,7 +21,6 @@
 
 import React from 'react';
 import { useHistory } from 'react-router-dom'
-import useLocalStorage from './local-storage';
 
 export interface IRoute {
     [key: string]: string;
@@ -29,7 +28,6 @@ export interface IRoute {
 
 export interface INavigation {
     routes: IRoute,
-    calculatedRoutes: IRoute,
     toLanding: () => void,
     toRecordVac: () => void,
     toRecordTest: () => void,
@@ -39,16 +37,19 @@ export interface INavigation {
 
 export const useRoutes = () => {
 
-    const basePath = '/:mandant'
+    const basePath = '/';
+    const [result, setResult] = React.useState<IRoute>();
 
-    const result: IRoute = {
-        root: basePath,
-        landing: basePath,
-        recordVac: basePath + '/record/vac',
-        recordTest: basePath + '/record/test',
-        recordRecovery: basePath + '/record/recovery',
-        showCert: basePath + '/record/show'
-    }
+    React.useEffect(() => {
+        setResult({
+            root: basePath,
+            landing: basePath,
+            recordVac: basePath + 'record/vac',
+            recordTest: basePath + 'record/test',
+            recordRecovery: basePath + 'record/recovery',
+            showCert: basePath + 'record/show'
+        })
+    }, [])
 
     return result;
 }
@@ -56,44 +57,35 @@ export const useRoutes = () => {
 export const useNavigation = () => {
 
     const history = useHistory();
-    const routes = useRoutes();
-    const [mandant, setMandant] = useLocalStorage('mandant', '');
-    const [calculatedRoutes, setCalculatedRoutes] = React.useState(routes);
+    const _routes = useRoutes();
     const [result, setResult] = React.useState<INavigation>();
 
-    React.useEffect(() => {
-        if (routes) {
+    // React.useEffect(() => {
+    //     if (routes) {
 
-            const c = calculatedRoutes;
-
-            c.root = routes.root.replace(':mandant', mandant as string);
-            c.landing = routes.landing.replace(':mandant', mandant as string);
-            c.recordVac = routes.recordVac.replace(':mandant', mandant as string);
-            c.recordTest = routes.recordTest.replace(':mandant', mandant as string);
-            c.recordRecovery = routes.recordRecovery.replace(':mandant', mandant as string);
-            c.showCert = routes.showCert.replace(':mandant', mandant as string);
-
-            setCalculatedRoutes(c);
-        }
-    }, [routes])
+    //         const c = routes;
+    //         setCalculatedRoutes(c);
+    //     }
+    // }, [routes])
 
     React.useEffect(() => {
-        if (calculatedRoutes) {
+
+        if (_routes) {
 
             const n: INavigation = {
-                routes: routes,
-                calculatedRoutes: calculatedRoutes,
+                routes: _routes,
 
-                toLanding: () => { history.push(calculatedRoutes.landing); },
-                toRecordVac: () => { history.push(calculatedRoutes.recordVac); },
-                toRecordTest: () => { history.push(calculatedRoutes.recordTest); },
-                toRecordRecovery: () => { history.push(calculatedRoutes.recordRecovery); },
-                toShowCert: () => { history.push(calculatedRoutes.showCert); }
+                toLanding: () => { history.push(_routes.landing); },
+                toRecordVac: () => { history.push(_routes.recordVac); },
+                toRecordTest: () => { history.push(_routes.recordTest); },
+                toRecordRecovery: () => { history.push(_routes.recordRecovery); },
+                toShowCert: () => { history.push(_routes.showCert); }
             }
 
             setResult(n);
         }
-    }, [calculatedRoutes])
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [_routes])
 
     return result;
 

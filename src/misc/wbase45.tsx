@@ -11,8 +11,8 @@ const fromCharCode = (c: number): string => {
 
 const divmod = (a: number, b: number): [number, number] => {
 
-  var remainder = a;
-  var quotient = 0;
+  let remainder = a;
+  let quotient = 0;
 
   remainder = a % b;
   quotient = a / b | 0;
@@ -21,22 +21,22 @@ const divmod = (a: number, b: number): [number, number] => {
 }
 
 
-const encode = (uint8array: Buffer): string => {
+const _encode = (uint8array: Buffer): string => {
 
-  var output = [];
+  let output = [];
 
-  for (var i = 0, length = uint8array.length; i < length; i += 2) {
+  for (let i = 0, length = uint8array.length; i < length; i += 2) {
 
     if (uint8array.length - i > 1) {
-      var x = (uint8array[i] << 8) + uint8array[i + 1];
-      var [e, x] = divmod(x, 45 * 45);
-      var [d, c] = divmod(x, 45);
+      let x = (uint8array[i] << 8) + uint8array[i + 1];
+      let [e] = divmod(x, 45 * 45);
+      let [d, c] = divmod(x, 45);
 
       output.push(fromCharCode(c) + fromCharCode(d) + fromCharCode(e));
     }
     else {
-      var x = uint8array[i];
-      var [d, c] = divmod(x, 45);
+      let x = uint8array[i];
+      let [d, c] = divmod(x, 45);
       output.push(fromCharCode(c) + fromCharCode(d));
     }
   }
@@ -45,14 +45,14 @@ const encode = (uint8array: Buffer): string => {
 };
 
 
-const decode = (str: string): Buffer => {
+const _decode = (str: string): Buffer => {
 
-  var output = [];
-  var buf = [];
+  let output = [];
+  let buf = [];
 
-  for (var i = 0, length = str.length; i < length; i++) {
+  for (let i = 0, length = str.length; i < length; i++) {
 
-    var j = BASE45_CHARSET.indexOf(str[i]);
+    let j = BASE45_CHARSET.indexOf(str[i]);
 
     if (j < 0) {
       throw new Error('Base45 decode: unknown character');
@@ -61,12 +61,12 @@ const decode = (str: string): Buffer => {
     buf.push(j);
   }
 
-  for (var i = 0, length = buf.length; i < length; i += 3) {
+  for (let i = 0, length = buf.length; i < length; i += 3) {
 
-    var x = buf[i] + buf[i + 1] * 45;
+    let x = buf[i] + buf[i + 1] * 45;
 
     if (length - i >= 3) {
-      var [d, c] = divmod(x + buf[i + 2] * 45 * 45, 256);
+      let [d, c] = divmod(x + buf[i + 2] * 45 * 45, 256);
 
       output.push(d);
       output.push(c);
@@ -80,10 +80,12 @@ const decode = (str: string): Buffer => {
   return Buffer.from(output);
 };
 
-
-export default {
-  encode, decode
+const base45 = {
+    encode: _encode,
+    decode: _decode
 }
+
+export default base45;
 
 
 

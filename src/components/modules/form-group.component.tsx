@@ -129,10 +129,10 @@ export const PersonInputs = (props: any) => {
 
     const { t } = useTranslation();
 
-    const [givenName, setGivenName] = React.useState<string | undefined>();
-    const [familyName, setFamilyName] = React.useState<string | undefined>();
+    const [givenName, setGivenName] = React.useState<string>('');
+    const [familyName, setFamilyName] = React.useState<string>('');
 
-    const [standardisedGivenName, setStandardisedGivenName] = React.useState<string | undefined>();
+    const [standardisedGivenName, setStandardisedGivenName] = React.useState<string>('');
     const [standardisedFamilyName, setStandardisedFamilyName] = React.useState<string>('');
 
     const [dateOfBirth, setDateOfBirth] = React.useState<Date>();
@@ -142,28 +142,36 @@ export const PersonInputs = (props: any) => {
         if (props && props.eudgc && props.eudgc.nam) {
             const names = props.eudgc.nam
 
-            setFamilyName(names.fn);
+            if (names.gn) {
+                setGivenName(names.gn);
+            }
+            if (names.gnt) {
+                setStandardisedGivenName(names.gnt);
+            }
+            if (names.fn) {
+                setFamilyName(names.fn);
+            }
             setStandardisedFamilyName(names.fnt);
-            setGivenName(names.gn);
-            setStandardisedGivenName(names.gnt);
 
             if (props.eudgc.dob) {
                 setDateOfBirth(new Date(props.eudgc.dob));
             }
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
     React.useEffect(() => {
         const result: IPersonData = {
-            givenName: givenName,
-            familyName: familyName,
-            standardisedGivenName: standardisedGivenName,
+            givenName: givenName ? givenName : undefined,
+            familyName: familyName ? familyName : undefined,
+            standardisedGivenName: standardisedGivenName ? standardisedGivenName : undefined,
             standardisedFamilyName: standardisedFamilyName,
             dateOfBirth: dateOfBirth
         }
-        
+
         props.onChange(result);
 
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [givenName, familyName, standardisedGivenName, standardisedFamilyName, dateOfBirth])
 
 

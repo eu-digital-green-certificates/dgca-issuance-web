@@ -56,7 +56,7 @@ const ShowCertificate = (props: any) => {
     const [testSet, setTestSet] = React.useState<TestEntry>();
     const [recoverySet, setRecoverySet] = React.useState<RecoveryEntry>();
     const [qrCodeValue, setQrCodeValue] = React.useState('');
-    const [dgci, setDGCI] = React.useState('');
+    
     const [tan, setTAN] = React.useState('');
 
     // set patient data on mount and set hash from uuid
@@ -83,12 +83,12 @@ const ShowCertificate = (props: any) => {
                     //console.log("qrcode: " + certResult.qrCode);
                     setQrCodeValue(certResult.qrCode);
                     setTAN(certResult.tan);
-                    setDGCI(certResult.dgci);
                 })
                 .catch(error => {
                     handleError(error);
                 });
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [eudgc])
 
 

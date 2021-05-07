@@ -25,8 +25,6 @@ import { Button, Card, Col, Modal, Row } from 'react-bootstrap'
 import '../i18n';
 import { useTranslation } from 'react-i18next';
 
-import useNavigation from '../misc/navigation';
-
 const ErrorPage = (props: any) => {
 
     const { t } = useTranslation();
@@ -35,7 +33,13 @@ const ErrorPage = (props: any) => {
     React.useEffect(() => {
         if (props)
             setShow(props.show);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [props.show])
+
+    const handleClick = () => {
+        props.onCancel();
+        props.onHide();
+    }
 
     return (
         <>
@@ -73,7 +77,7 @@ const ErrorPage = (props: any) => {
                 <Modal.Footer id='data-footer'>
                     <Button
                         className='py-0'
-                        onClick={()=>{props.onCancel(); props.onHide();}}
+                        onClick={handleClick}
                     >
                         {t('translation:cancel')}
                     </Button>
