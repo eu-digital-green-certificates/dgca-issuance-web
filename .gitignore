@@ -57,3 +57,4 @@ yarn-debug.log*
 yarn-error.log*
 yarn.lock
 src/setupProxy.js
+package-lock.json
