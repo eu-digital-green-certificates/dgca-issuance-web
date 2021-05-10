@@ -40,6 +40,7 @@ import ShowCertificate from './components/show-certificate.component';
 import { EUDGC } from './generated-files/dgc-combined-schema';
 import RecordTestCertData from './components/record-test-cert-data.component';
 import RecordRecoveryCertData from './components/record-recovery-cert-data.component';
+import Header from './components/header.component';
 
 const Routing = (props: any) => {
 
@@ -69,7 +70,7 @@ const Routing = (props: any) => {
     header, every time shown. fit its children
     */}
             <Route path={navigation.routes.root}>
-                {/* <Header /> */}
+                <Header />
                 <ErrorPage error={error} show={errorShow} onCancel={error?.onCancel} onHide={() => setErrorShow(false)} />
             </Route>
 

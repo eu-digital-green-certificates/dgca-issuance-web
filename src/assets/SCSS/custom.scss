@@ -24,10 +24,11 @@
 }
 
 // Override default variables before the import
-$body-bg: white;
-$font-family-base: TeleNeo;
-$primary: #7e7e7e;
-$light: #eeeeee;
+$body-bg: #cfcfcf;
+$font-family-base: Arial, sans-serif;
+$primary: #004494;
+$dark: #404040;
+$body-color:$dark;
 
 // Import Bootstrap and its default variables
 @import '~bootstrap/scss/bootstrap.scss';
@@ -54,6 +55,7 @@ hr {
 }
 
 #qt-body {
+    background-color: #ffffff;
     display: flex;
     flex-flow: column;
     flex: 1;
@@ -143,7 +145,6 @@ hr {
 }
 
 #id-query-text {
-    font-family: 'TeleNeo';
     font-weight: bold;
     font-size: 20px;
     align-self: center;
@@ -174,7 +175,6 @@ hr {
 }
 
 .header-font {
-    font-family: 'TeleNeo';
     font-weight: bold;
     font-size: 26px;
     color: black;
@@ -191,15 +191,19 @@ hr {
 // }
 
 .btn {
-    font-size: 18px;
+    font-size: 16px;
+    border-radius: 0px;
 }
-
+.landing-title{
+    font-size: 18px;
+    max-width: 480px;
+    width: 100%;
+}
 .landing-btn {
-    font-family: 'TeleNeo';
     font-weight: bold;
     color: white;
-    max-width: 500px;
-    margin-bottom: 0.5rem;
+    max-width: 480px;
+    height: 48px;
     margin-left: auto;
     margin-right: auto;
 }
@@ -208,10 +212,6 @@ hr {
     flex-flow: column;
     flex: 1;
     padding: 1rem;
-
-    @include media-breakpoint-up(md) {
-        margin-top: 10vh;
-    }
 }
 
 .input-label {
@@ -349,4 +349,7 @@ hr {
     option:not(:first-child) {
         color: $dark;
     }
+}
+.eu-logo{
+    margin-left: 1rem;
 }
