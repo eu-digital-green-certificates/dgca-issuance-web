@@ -151,7 +151,7 @@ hr {
 }
 
 #qr-code-container {
-    background-color: $body-bg;
+    background-color: white;
     padding-top: 100%;
     position: relative;
 }
@@ -165,8 +165,55 @@ hr {
 }
 .qt-input{
     align-self: center;
-    border-radius: $input-border-radius;
-    border: 1px solid $primary;
+    border-radius: 0px;
+    border: 1px solid #7e7e7e;
+    
+}
+.qt-input:focus{
+    border: none;
+    box-shadow:none !important;
+    // box-shadow: 3px 3px px $info;
+    outline: 3px solid $info;
+}
+.qt-input:hover:not(:focus){
+    border: 1px solid $info;
+}
+.btn-primary:focus{
+    border: 1px solid $info;
+    box-shadow:none !important;
+    // box-shadow: 3px 3px px $info;
+    outline: 4px solid $info!important;
+}
+.btn-primary:hover:not(:focus){
+    border: 1px solid $info;
+    outline: 3px solid $info;
+}
+.btn-info{
+    border: 1px solid $info;
+}
+.btn-info:focus{
+    border: 1px solid $dark;
+    box-shadow:none !important;
+    // box-shadow: 3px 3px px $info;
+    outline: 3px solid $dark!important;
+}
+.btn-info:hover:not(:focus){
+    border: 1px solid $dark;
+    outline: 3px solid $dark;
+}
+.btn-info::after{
+    position: absolute;
+  content: "";
+  top:13px;
+  right:8%;
+  width: 0;
+  height: 0;
+  border: solid $dark;
+  border-width: 0 3px 3px 0;
+  display: inline-block;
+  padding: 4px;
+  transform: rotate(-45deg);
+  -webkit-transform: rotate(-45deg);
 }
 .footer-font {
     font-size: 11px;
@@ -232,7 +279,13 @@ hr {
     flex: 1;
     padding: 1rem;
 }
-
+.data-header-title {
+    color: #002f67;
+    font-size: 22px;
+}
+.data-label {
+    font-size: 18px;
+}
 .input-label {
     font-size: 20px;
 }

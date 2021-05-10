@@ -121,21 +121,27 @@ const ShowCertificate = (props: any) => {
             <>
                 <Card id='data-card'>
                     {/*    content area with patient inputs and check box    */}
-                    <Card.Body id='data-header'>
+                    <Card.Header id='data-header' className='p-3'>
                         <Row>
-                            <Col sm='6'>
-                                <Card.Title className='m-sm-0 jcc-xs-jcfs-sm' as={'h2'}>{t('translation:your-certificate')}</Card.Title>
-                                <hr />
+                            <Col md='6' className='pl-0'>
+                                <Card.Title className='m-md-0 tac-xs-tal-md jcc-xs-jcfs-md' as={'h3'} >{t('translation:your-certificate')}</Card.Title>
+                            </Col>
+                        </Row>
+                    </Card.Header>
+                    <Card.Body id='data-body' className='p-3'>
+                        <Row>
+                            <Col sm='6' className='p-3'>
+                                
                                 <ShowCertificateData eudgc={eudgc} />
 
                             </Col>
-                            <Col sm='6' className='px-4'>
+                            <Col sm='6' className='p-3'>
                                 <Container id='qr-code-container'>
                                     {qrCodeValue ? <><QRCode id='qr-code' size={256} renderAs='svg' value={qrCodeValue} />
                                         {/* <Card.Text className='input-label' >{qrCodeValue}</Card.Text> */}
                                     </> : <></>}
                                 </Container>
-                                <Card.Text className='input-label jcc-xs-sm m-2 font-weight-bold text-center' >TAN: {tan}</Card.Text>
+                                <Card.Text className='input-label jcc-xs-sm m-3 text-center' >TAN: {tan}</Card.Text>
                             </Col>
                         </Row>
                     </Card.Body>
