@@ -9,16 +9,15 @@ const CardHeader = (props: any) => {
     const { t } = useTranslation();
 
     return (!props ? <></> :
-        <Card.Header id='data-header' className='pb-0'>
+        <Card.Header id='data-header' className='pb-3'>
             <Row>
-                <Col md='6'>
-                    <Card.Title className='m-md-0 tac-xs-tal-md jcc-xs-jcfs-md' as={'h2'} >{props.title}</Card.Title>
+                <Col md='6' className='pl-0'>
+                    <Card.Title className='m-md-0 tac-xs-tal-md jcc-xs-jcfs-md' as={'h3'} >{props.title}</Card.Title>
                 </Col>
-                <Col md='6' className='d-flex justify-content-center'>
+                <Col md='6' className='d-flex pr-0 justify-content-end'>
                     <Card.Text id='id-query-text'>{t('translation:query-id-card')}</Card.Text>
                 </Col>
             </Row>
-            <hr />
         </Card.Header>
     )
 

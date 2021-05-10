@@ -214,7 +214,7 @@ const RecordVaccinationCertData = (props: any) => {
                         {/*
                             content area with patient inputs and check box
                         */}
-                        <Card.Body id='data-body' className='pt-0'>
+                        <Card.Body id='data-body' className='p-3'>
 
                             {/* name inputs */}
                             <PersonInputs eudgc={props.eudgc} onChange={setPerson} />
@@ -272,7 +272,7 @@ const RecordVaccinationCertData = (props: any) => {
                             />
 
                             {/* vacLastDate */}
-                            <Form.Group as={Row} controlId='formLastDateInput' className='mb-1'>
+                            <Form.Group as={Row} controlId='formLastDateInput'className='pb-3 mb-0'>
                                 <Form.Label className='input-label txt-no-wrap' column xs='5' sm='3'>{t('translation:vac-last-date') + '*'}</Form.Label>
 
                                 <Col xs='7' sm='9' className='d-flex'>

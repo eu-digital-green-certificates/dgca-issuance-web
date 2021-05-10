@@ -19,7 +19,7 @@
  * under the License.
  */
 
-import { Image, Row } from 'react-bootstrap'
+import { Col, Container, Image, Row } from 'react-bootstrap'
 
 import '../i18n';
 import { useTranslation } from 'react-i18next';
@@ -31,12 +31,17 @@ const Footer = (props: any) => {
 
     return (
         // simple footer with imprint and data privacy --> links tbd
-        <Row id='qt-footer'>
-            <span className="my-0 mx-5 footer-font">{t('translation:imprint')}</span>
-            <Image className="my-auto" src={DataProtectLogo} />
-            <span className="my-0 mx-2 footer-font">{t('translation:data-privacy')}</span>
-        </Row>
-
+        <Container className='d-flex px-0 bg-primary'>
+            <Row id='qt-footer'>
+                <Col xs='6' className='pr-3'>
+                    <span className='footer-font' >{t('translation:title')}</span>
+                </Col>
+                <Col xs='6' className='pr-3 d-flex justify-content-end'>
+                <span className="footer-font pr-3">{t('translation:data-privacy')}</span>
+                <span className="footer-font pl-3">{t('translation:imprint')}</span>
+                </Col>
+            </Row>
+        </Container>
     )
 }
 

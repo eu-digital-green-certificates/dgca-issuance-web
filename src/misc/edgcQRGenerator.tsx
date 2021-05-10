@@ -45,7 +45,7 @@ enum CertType {
 
 
 interface CertificateInit {
-    type: CertType,
+    greenCertificateType: CertType,
 }
 
 interface SigResponse {
@@ -90,7 +90,7 @@ const getEdgcType = (edgcPayload: EUDGC) : CertType => {
 
 const generateQRCode = (edgcPayload: EUDGC): Promise<CertResult> => {
     const certInit: CertificateInit = {
-        type: getEdgcType(edgcPayload)
+        greenCertificateType: getEdgcType(edgcPayload)
     }
     let tan: string = '';
 

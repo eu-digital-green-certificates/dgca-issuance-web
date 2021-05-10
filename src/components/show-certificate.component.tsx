@@ -143,18 +143,19 @@ const ShowCertificate = (props: any) => {
                     {/*    footer with correction and finish button    */}
                     <Card.Footer id='data-footer'>
                         <Row>
-                            <Col sm='6' md='4'>
+                            <Col xs='6' md='4' className='pl-0 pr-2'>
                                 <Button
-                                    className='my-1 my-md-0 p-0'
+                                    className='my-1 my-md-0'
                                     block
                                     onClick={handleBack}
                                 >
                                     {t('translation:patient-data-correction')}
                                 </Button>
                             </Col>
-                            <Col sm='6' md='3' className='pr-md-0'>
+                            <Col xs='6' md='3' className='pr-0 pl-2'>
                                 <Button
-                                    className='my-1 my-md-0 p-0'
+                                    className='my-1 my-md-0 text-dark'
+                                    variant='info'
                                     block
                                     onClick={finishProcess}
                                 >

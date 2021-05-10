@@ -45,7 +45,8 @@ const Header = (props: any) => {
     }, [navigation])
 
     return (!isInit?<></>:
-        <Container className='px-0 position-relative'>
+        <>
+        <Container className='bg-white px-0 position-relative'>
             {/* simple header with logo */}
             <Image src={EULogo} className='eu-logo' />
             {/* user icon and user name */}
@@ -68,6 +69,10 @@ const Header = (props: any) => {
                 </NavDropdown>
             </Navbar> */}
         </Container>
+        <Container className='d-flex bg-gray-1 px-0 position-relative'>
+            <span className='header-title'>{t('translation:title')}</span>
+        </Container>
+        </>
     )
 }
 
