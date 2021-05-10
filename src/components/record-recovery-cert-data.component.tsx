@@ -52,15 +52,13 @@ const RecordRecoveryCertData = (props: any) => {
 
     const [person, setPerson] = React.useState<IPersonData>();
 
-    const [disease, setDisease] = React.useState<string>('');
+    const [disease, setDisease] = useLocalStorage('disease', '');
 
     const [firstPositiveResultDate, setFirstPositiveResultDate] = React.useState<Date>();
-    const [certificateIssuer, setCertificateIssuer] = React.useState('');
-    const [testCountryCode, setTestCountryCode] = React.useState<string>('');
+    const [certificateIssuer, setCertificateIssuer] = useLocalStorage('certificateIssuer', '');
+    const [testCountryCode, setTestCountryCode] = useLocalStorage('testCountryCode', '');
     const [dateValidFrom, setDateValidFrom] = React.useState<Date>();
     const [dateValidTo, setDateValidTo] = React.useState<Date>();
-
-    const [defaultTestCountryCode, setDefaultTestCountryCode] = useLocalStorage('defaultTestCountryCode', '');
 
 
     React.useEffect(() => {
@@ -76,25 +74,8 @@ const RecordRecoveryCertData = (props: any) => {
         setCertificateIssuer(rec.is);
         setDateValidFrom(new Date(rec.df))
         setDateValidTo(new Date(rec.du))
-        
+
     }, [props.eudgc]);
-
-    React.useEffect(() => {
-        if (!testCountryCode) {
-            setTestCountryCode(defaultTestCountryCode);
-        }
-
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [defaultTestCountryCode]);
-
-    React.useEffect(() => {
-        if (testCountryCode !== defaultTestCountryCode) {
-            setDefaultTestCountryCode(testCountryCode);
-        }
-
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [testCountryCode]);
-
 
     React.useEffect(() => {
         if (navigation) {
