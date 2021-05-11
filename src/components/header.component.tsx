@@ -28,7 +28,7 @@ import { useTranslation } from 'react-i18next';
 import { useKeycloak } from '@react-keycloak/web';
 
 import useNavigation from '../misc/navigation';
-import C19Logo from '../assets/images/c-19_logo.png'
+import EULogo from '../assets/images/EU_logo@3x.png'
 import dgcaIwLogo from '../assets/images/dgca_issuance_web.png';
 import useLocalStorage from '../misc/local-storage';
 
@@ -36,10 +36,7 @@ const Header = (props: any) => {
 
     const navigation = useNavigation();
     const { t } = useTranslation();
-    const { keycloak } = useKeycloak();
 
-    const [userName, setUserName] = React.useState('');
-    const [mandant, setMandant] = useLocalStorage('mandant', '');
     const [isInit, setIsInit] = React.useState(false)
 
     React.useEffect(() => {
@@ -47,25 +44,13 @@ const Header = (props: any) => {
             setIsInit(true);
     }, [navigation])
 
-    // set user name from keycloak
-    React.useEffect(() => {
-
-        if (keycloak.idTokenParsed) {
-            setUserName((keycloak.idTokenParsed as any).name);
-        }
-
-    }, [keycloak])
-
-    const handleLogout = () => {
-        // keycloak.logout({ redirectUri: window.location.origin + navigation!.calculatedRoutes.landing});
-    }
-
     return (!isInit?<></>:
-        <Container className='position-relative'>
+        <>
+        <Container className='bg-white px-0 position-relative'>
             {/* simple header with logo */}
-
+            <Image src={EULogo} className='eu-logo' />
             {/* user icon and user name */}
-            <Row id='qt-header'>
+            {/* <Row id='qt-header'>
                 <Image src={dgcaIwLogo} onClick={navigation!.toLanding} />
                 <span className='header-font my-auto mx-1'>{t('translation:title')}</span>
             </Row>
@@ -82,8 +67,12 @@ const Header = (props: any) => {
                         {t('translation:logout')}
                     </Navbar.Brand>
                 </NavDropdown>
-            </Navbar>
+            </Navbar> */}
         </Container>
+        <Container className='d-flex bg-gray-1 px-0 position-relative'>
+            <span className='header-title'>{t('translation:title')}</span>
+        </Container>
+        </>
     )
 }
 

@@ -187,11 +187,11 @@ export const ShowCertificateData = (props: any) => {
     const getDataOutputElement = (dataSet: IDataEntry) => {
         return (
             <React.Fragment key={JSON.stringify(dataSet)}>
-                <div className='pt-3'>
-                    <Card.Text className='input-label jcc-xs-jcfs-sm mb-0 font-weight-bold' >{dataSet.title}</Card.Text>
+                <div className='pb-3'>
+                    <Card.Text className='data-header-title jcc-xs-jcfs-sm' >{dataSet.title}</Card.Text>
                     {dataSet.entries.map((entry) => {
                         return entry.data
-                            ? <Card.Text key={JSON.stringify(entry)} className='input-label jcc-xs-jcfs-sm mb-0' >{`${entry.label}: ${entry.data}`}</Card.Text>
+                            ? <Card.Text key={JSON.stringify(entry)} className='data-label jcc-xs-jcfs-sm mb-1' >{`${entry.label}: ${entry.data}`}</Card.Text>
                             : <React.Fragment key={JSON.stringify(entry)} />
                     })}
                 </div>
