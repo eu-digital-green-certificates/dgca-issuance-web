@@ -243,7 +243,7 @@ export const PersonInputs = (props: any) => {
 
                 {/* date of birth input */}
                 <Form.Group as={Row} controlId='formDateOfBirthInput' className='pb-3 mb-0'>
-                    <Form.Label className='input-label txt-no-wrap' column xs='5' sm='3'>{t('translation:date-of-birth') + '*'}</Form.Label>
+                    <Form.Label className='input-label ' column xs='5' sm='3'>{t('translation:date-of-birth') + '*'}</Form.Label>
 
                     <Col xs='7' sm='9' className='d-flex'>
                         <DatePicker

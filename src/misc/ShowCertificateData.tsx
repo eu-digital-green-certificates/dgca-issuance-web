@@ -191,7 +191,7 @@ export const ShowCertificateData = (props: any) => {
                     <Card.Text className='data-header-title jcc-xs-jcfs-sm' >{dataSet.title}</Card.Text>
                     {dataSet.entries.map((entry) => {
                         return entry.data
-                            ? <Card.Text key={JSON.stringify(entry)} className='data-label jcc-xs-jcfs-sm mb-1' >{`${entry.label}: ${entry.data}`}</Card.Text>
+                            ? <Card.Text key={JSON.stringify(entry)} className='data-label jcc-xs-jcfs-sm mb-2' >{`${entry.label}: ${entry.data}`}</Card.Text>
                             : <React.Fragment key={JSON.stringify(entry)} />
                     })}
                 </div>
