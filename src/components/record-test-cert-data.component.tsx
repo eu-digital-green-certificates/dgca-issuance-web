@@ -248,7 +248,7 @@ const RecordTestCertData = (props: any) => {
 
                             {/* sampleDateTime */}
                             <Form.Group as={Row} controlId='formSampleDateTimeInput'className='pb-3 mb-0'>
-                                <Form.Label className='input-label txt-no-wrap' column xs='5' sm='3'>{t('translation:sampleDateTime') + '*'}</Form.Label>
+                                <Form.Label className='input-label ' column xs='5' sm='3'>{t('translation:sampleDateTime') + '*'}</Form.Label>
 
                                 <Col xs='7' sm='9' className='d-flex'>
                                     <DatePicker
@@ -271,7 +271,7 @@ const RecordTestCertData = (props: any) => {
 
                             {/* testDateTime */}
                             <Form.Group as={Row} controlId='formTestDateTimeInput'className='pb-3 mb-0'>
-                                <Form.Label className='input-label txt-no-wrap' column xs='5' sm='3'>{t('translation:testDateTime')}</Form.Label>
+                                <Form.Label className='input-label ' column xs='5' sm='3'>{t('translation:testDateTime')}</Form.Label>
 
                                 <Col xs='7' sm='9' className='d-flex'>
                                     <DatePicker

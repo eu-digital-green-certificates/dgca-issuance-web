@@ -11,10 +11,10 @@ const CardHeader = (props: any) => {
     return (!props ? <></> :
         <Card.Header id='data-header' className='p-3'>
             <Row>
-                <Col md='6' className='pl-0'>
+                <Col md='6' className='px-0'>
                     <Card.Title className='m-md-0 tac-xs-tal-md jcc-xs-jcfs-md' as={'h3'} >{props.title}</Card.Title>
                 </Col>
-                <Col md='6' className='d-flex pr-0 justify-content-end'>
+                <Col md='6' className='d-flex px-0 jcc-xs-jcfe-md'>
                     <Card.Text id='id-query-text'>{t('translation:query-id-card')}</Card.Text>
                 </Col>
             </Row>

@@ -1,10 +1,12 @@
+$primary: #004494;
+
 .loader,
 .loader:before,
 .loader:after {
   border-radius: 50%;
 }
 .loader {
-  color: #e91dca;
+  color: $primary;
   font-size: 11px;
   text-indent: -99999em;
   margin: 55px auto;
