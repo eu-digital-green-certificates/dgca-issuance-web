@@ -24,10 +24,14 @@
 }
 
 // Override default variables before the import
-$body-bg: white;
-$font-family-base: TeleNeo;
-$primary: #7e7e7e;
-$light: #eeeeee;
+$body-bg: #cfcfcf;
+$font-family-base: Arial, sans-serif;
+$primary: #004494;
+$info:#FFD617;
+$dark: #404040;
+$gray-100: #F2F5F9;
+$body-color:$dark;
+$light: #ebebeb;
 
 // Import Bootstrap and its default variables
 @import '~bootstrap/scss/bootstrap.scss';
@@ -35,13 +39,15 @@ $light: #eeeeee;
 $header-height: 120px;
 $menu-width: 120px;
 $menu-padding: 1rem;
-$data-card-border-radius: 10px;
+$data-card-border-radius: 0px;
 $input-border-radius: 4px;
 $user-image-width:39px;
 
 hr {
     margin-left: 0;
     margin-right: 0;
+    margin-top: 0px;
+    border-top: 1px solid #d9d9d9
   }
 
 #qt-header {
@@ -54,6 +60,7 @@ hr {
 }
 
 #qt-body {
+    background-color: #ffffff;
     display: flex;
     flex-flow: column;
     flex: 1;
@@ -61,14 +68,10 @@ hr {
 }
 
 #qt-footer {
-    margin: 0;
-    padding: 1rem;
-    justify-content: flex-end;
-    height: 50px;
+    margin:0px;
+    height: 32px;
     width: 100%;
-    border-top-style: solid;
-    border-width: 1px;
-    border-color: #757575;
+    align-items: center;
 }
 
 #root {
@@ -108,16 +111,15 @@ hr {
     height: 100%;
     background-color: $light;
     border-radius: $data-card-border-radius;
-    box-shadow: 4px 2px 8px rgba(0, 0, 0, 0.15);
+    border: none;
 }
 .data-modal{
     background-color: $light;
     border-radius: $data-card-border-radius;
-    box-shadow: 4px 2px 8px rgba(0, 0, 0, 0.15);
 }
 
 #data-header {
-    background-color: $light;
+    background-color: white;
     border-top-left-radius: $data-card-border-radius;
     border-top-right-radius: $data-card-border-radius;
     border: 0;
@@ -143,15 +145,13 @@ hr {
 }
 
 #id-query-text {
-    font-family: 'TeleNeo';
-    font-weight: bold;
     font-size: 20px;
     align-self: center;
     text-align: center;
 }
 
 #qr-code-container {
-    background-color: $body-bg;
+    background-color: white;
     padding-top: 100%;
     position: relative;
 }
@@ -165,16 +165,62 @@ hr {
 }
 .qt-input{
     align-self: center;
-    border-radius: $input-border-radius;
-    border: 1px solid $primary;
+    border-radius: 0px;
+    border: 1px solid #7e7e7e;
+    
+}
+.qt-input:focus{
+    border: none;
+    box-shadow:none !important;
+    // box-shadow: 3px 3px px $info;
+    outline: 3px solid $info;
+}
+.qt-input:hover:not(:focus){
+    border: 1px solid $info;
+}
+.btn-primary:focus{
+    border: 1px solid $info;
+    box-shadow:none !important;
+    // box-shadow: 3px 3px px $info;
+    outline: 4px solid $info!important;
+}
+.btn-primary:hover:not(:focus){
+    border: 1px solid $info;
+    outline: 3px solid $info;
+}
+.btn-info{
+    border: 1px solid $info;
+}
+.btn-info:focus{
+    border: 1px solid $dark;
+    box-shadow:none !important;
+    // box-shadow: 3px 3px px $info;
+    outline: 3px solid $dark!important;
+}
+.btn-info:hover:not(:focus){
+    border: 1px solid $dark;
+    outline: 3px solid $dark;
+}
+.btn-info::after{
+    position: absolute;
+  content: "";
+  top:13px;
+  right:8%;
+  width: 0;
+  height: 0;
+  border: solid $dark;
+  border-width: 0 3px 3px 0;
+  display: inline-block;
+  padding: 4px;
+  transform: rotate(-45deg);
+  -webkit-transform: rotate(-45deg);
 }
 .footer-font {
-    font-size: 14px;
-    color: #757575;
+    font-size: 11px;
+    color: white;
 }
 
 .header-font {
-    font-family: 'TeleNeo';
     font-weight: bold;
     font-size: 26px;
     color: black;
@@ -191,29 +237,55 @@ hr {
 // }
 
 .btn {
-    font-size: 18px;
+    font-size: 16px;
+    border-radius: 0px;
 }
-
+.landing-title{
+    font-size: 18px;
+    max-width: 480px;
+    width: 100%;
+}
 .landing-btn {
-    font-family: 'TeleNeo';
+    position: relative;
     font-weight: bold;
     color: white;
-    max-width: 500px;
-    margin-bottom: 0.5rem;
+    max-width: 480px;
+    height: 48px;
     margin-left: auto;
     margin-right: auto;
+    padding: 0px;
+    @include media-breakpoint-down(xs) {
+        padding-right: 15%;
+    }
+    
+}
+.landing-btn::after{
+    position: absolute;
+  content: "";
+  top:13px;
+  right:10%;
+  width: 0;
+  height: 0;
+  border: solid white;
+  border-width: 0 4px 4px 0;
+  display: inline-block;
+  padding: 7px;
+  transform: rotate(-45deg);
+  -webkit-transform: rotate(-45deg);
 }
 .center-content {
     display: flex;
     flex-flow: column;
     flex: 1;
     padding: 1rem;
-
-    @include media-breakpoint-up(md) {
-        margin-top: 10vh;
-    }
 }
-
+.data-header-title {
+    color: #002f67;
+    font-size: 22px;
+}
+.data-label {
+    font-size: 18px;
+}
 .input-label {
     font-size: 20px;
 }
@@ -353,4 +425,19 @@ hr {
 
 .hidden {
     display: none;
+}
+
+.eu-logo{
+    margin-left: 1rem;
+    margin: 13px 0px 13px 16px;
+}
+.header-title{
+    font-size: 18px;
+    margin-left: 16px;
+    display: flex;
+    align-self: center;
+}
+.bg-gray-1{
+    height:32px;
+    background-color: $gray-100;
 }

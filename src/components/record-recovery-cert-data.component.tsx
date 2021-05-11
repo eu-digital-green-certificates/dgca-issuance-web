@@ -33,7 +33,7 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
 import { EUDGC, RecoveryEntry } from '../generated-files/dgc-combined-schema';
-import { useGetDiseaseAgents, IValueSet } from '../api';
+import { useGetDiseaseAgents } from '../api';
 
 import schema from '../generated-files/DGC.combined-schema.json';
 import { Validator } from 'jsonschema';
@@ -52,15 +52,13 @@ const RecordRecoveryCertData = (props: any) => {
 
     const [person, setPerson] = React.useState<IPersonData>();
 
-    const [disease, setDisease] = React.useState<string>('');
+    const [disease, setDisease] = useLocalStorage('disease', '');
 
     const [firstPositiveResultDate, setFirstPositiveResultDate] = React.useState<Date>();
-    const [certificateIssuer, setCertificateIssuer] = React.useState('');
-    const [testCountryCode, setTestCountryCode] = React.useState<string>('');
+    const [certificateIssuer, setCertificateIssuer] = useLocalStorage('certificateIssuer', '');
+    const [testCountryCode, setTestCountryCode] = useLocalStorage('testCountryCode', '');
     const [dateValidFrom, setDateValidFrom] = React.useState<Date>();
     const [dateValidTo, setDateValidTo] = React.useState<Date>();
-
-    const [defaultTestCountryCode, setDefaultTestCountryCode] = useLocalStorage('defaultTestCountryCode', '');
 
 
     React.useEffect(() => {
@@ -76,23 +74,8 @@ const RecordRecoveryCertData = (props: any) => {
         setCertificateIssuer(rec.is);
         setDateValidFrom(new Date(rec.df))
         setDateValidTo(new Date(rec.du))
-        
+
     }, [props.eudgc]);
-
-    React.useEffect(() => {
-        if (!testCountryCode) {
-            setTestCountryCode(defaultTestCountryCode);
-        }
-
-    }, [defaultTestCountryCode]);
-
-    React.useEffect(() => {
-        if (testCountryCode !== defaultTestCountryCode) {
-            setDefaultTestCountryCode(testCountryCode);
-        }
-
-    }, [testCountryCode]);
-
 
     React.useEffect(() => {
         if (navigation) {
@@ -100,14 +83,14 @@ const RecordRecoveryCertData = (props: any) => {
         }
     }, [navigation]);
 
-    const handleError = (error: any) => {
-        let msg = '';
+    // const handleError = (error: any) => {
+    //     let msg = '';
 
-        if (error) {
-            msg = error.message
-        }
-        props.setError({ error: error, message: msg, onCancel: navigation!.toLanding });
-    }
+    //     if (error) {
+    //         msg = error.message
+    //     }
+    //     props.setError({ error: error, message: msg, onCancel: navigation!.toLanding });
+    // }
 
     const handleFirstPositiveResultDate = (evt: Date | [Date, Date] | null) => {
         const date = handleDateChange(evt);
@@ -205,7 +188,7 @@ const RecordRecoveryCertData = (props: any) => {
                         {/*
                             content area with patient inputs and check box
                         */}
-                        <Card.Body id='data-body' className='pt-0'>
+                        <Card.Body id='data-body' className='p-3'>
 
                             {/* name inputs */}
                             <PersonInputs eudgc={props.eudgc} onChange={setPerson} />
@@ -223,7 +206,7 @@ const RecordRecoveryCertData = (props: any) => {
                             <hr />
 
                             {/* Date of First Positive Test Result  */}
-                            <Form.Group as={Row} controlId='formLastDateInput' className='mb-1'>
+                            <Form.Group as={Row} controlId='formLastDateInput'className='pb-3 mb-0'>
                                 <Form.Label className='input-label txt-no-wrap' column xs='5' sm='3'>{t('translation:first-positive-test-date') + '*'}</Form.Label>
 
                                 <Col xs='7' sm='9' className='d-flex'>
@@ -264,7 +247,7 @@ const RecordRecoveryCertData = (props: any) => {
                             />
 
                             {/* Date: Certificate Valid From - To */}
-                            <Form.Group as={Row} controlId='formDateOfBirthInput' className='mb-1'>
+                            <Form.Group as={Row} controlId='formDateOfBirthInput'className='pb-3 mb-0'>
                                 <Form.Label className='input-label txt-no-wrap' column xs='5' sm='3'>{t('translation:cert-valid-from-to') + '*'}</Form.Label>
 
                                 <Col xs='7' sm='9' className='d-flex'>

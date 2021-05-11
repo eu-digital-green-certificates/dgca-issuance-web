@@ -24,7 +24,7 @@ export interface IPersonData {
 export const FormGroupInput = (props: any) => {
 
     return (!props ? <></> :
-        <Form.Group as={Row} controlId={props.controlId} className='mb-1'>
+        <Form.Group as={Row} controlId={props.controlId} className='pb-3 mb-0'>
             <Form.Label className='input-label' column xs='5' sm='3'>{props.title + (props.required ? '*' : '')}</Form.Label>
 
             <Col xs='7' sm='9' className='d-flex'>
@@ -69,7 +69,7 @@ export const FormGroupValueSetSelect = (props: any) => {
     }
 
     return (!(props && options) ? <></> :
-        <Form.Group as={Row} controlId={props.controlId} className='mb-1'>
+        <Form.Group as={Row} controlId={props.controlId} className='pb-3 mb-0'>
             <Form.Label className='input-label' column xs='5' sm='3'>{props.title + (props.required ? '*' : '')}</Form.Label>
 
             <Col xs='7' sm='9' className='d-flex'>
@@ -105,7 +105,7 @@ export const FormGroupISOCountrySelect = (props: any) => {
 
 
     return (!(props && options) ? <></> :
-        <Form.Group as={Row} controlId={props.controlId} className='mb-1'>
+        <Form.Group as={Row} controlId={props.controlId} className='pb-3 mb-0'>
             <Form.Label className='input-label' column xs='5' sm='3'>{props.title + (props.required ? '*' : '')}</Form.Label>
 
             <Col xs='7' sm='9' className='d-flex'>
@@ -129,10 +129,10 @@ export const PersonInputs = (props: any) => {
 
     const { t } = useTranslation();
 
-    const [givenName, setGivenName] = React.useState<string | undefined>();
-    const [familyName, setFamilyName] = React.useState<string | undefined>();
+    const [givenName, setGivenName] = React.useState<string>('');
+    const [familyName, setFamilyName] = React.useState<string>('');
 
-    const [standardisedGivenName, setStandardisedGivenName] = React.useState<string | undefined>();
+    const [standardisedGivenName, setStandardisedGivenName] = React.useState<string>('');
     const [standardisedFamilyName, setStandardisedFamilyName] = React.useState<string>('');
 
     const [dateOfBirth, setDateOfBirth] = React.useState<Date>();
@@ -142,28 +142,36 @@ export const PersonInputs = (props: any) => {
         if (props && props.eudgc && props.eudgc.nam) {
             const names = props.eudgc.nam
 
-            setFamilyName(names.fn);
+            if (names.gn) {
+                setGivenName(names.gn);
+            }
+            if (names.gnt) {
+                setStandardisedGivenName(names.gnt);
+            }
+            if (names.fn) {
+                setFamilyName(names.fn);
+            }
             setStandardisedFamilyName(names.fnt);
-            setGivenName(names.gn);
-            setStandardisedGivenName(names.gnt);
 
             if (props.eudgc.dob) {
                 setDateOfBirth(new Date(props.eudgc.dob));
             }
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
     React.useEffect(() => {
         const result: IPersonData = {
-            givenName: givenName,
-            familyName: familyName,
-            standardisedGivenName: standardisedGivenName,
+            givenName: givenName ? givenName : undefined,
+            familyName: familyName ? familyName : undefined,
+            standardisedGivenName: standardisedGivenName ? standardisedGivenName : undefined,
             standardisedFamilyName: standardisedFamilyName,
             dateOfBirth: dateOfBirth
         }
-        
+
         props.onChange(result);
 
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [givenName, familyName, standardisedGivenName, standardisedFamilyName, dateOfBirth])
 
 
@@ -197,64 +205,66 @@ export const PersonInputs = (props: any) => {
 
     return (
         <>
-            {/* first name input */}
-            <FormGroupInput controlId='formGivenNameInput' title={t('translation:first-name')}
-                value={givenName}
-                onChange={(evt: any) => setGivenName(evt.target.value)}
-                maxLength={50}
-            />
+            <div className='pt-3'>
+                {/* first name input */}
+                <FormGroupInput controlId='formGivenNameInput' title={t('translation:first-name')}
+                    value={givenName}
+                    onChange={(evt: any) => setGivenName(evt.target.value)}
+                    maxLength={50}
+                />
 
-            {/* name input */}
-            <FormGroupInput controlId='formNameInput' title={t('translation:name')}
-                value={familyName}
-                onChange={(evt: any) => setFamilyName(evt.target.value)}
-                maxLength={50}
-            />
+                {/* name input */}
+                <FormGroupInput controlId='formNameInput' title={t('translation:name')}
+                    value={familyName}
+                    onChange={(evt: any) => setFamilyName(evt.target.value)}
+                    maxLength={50}
+                />
 
-            <hr />
+                <hr />
 
-            {/* standardised first name input */}
-            <FormGroupInput controlId='formStandadisedGivenNameInput' title={t('translation:standardised-first-name')}
-                value={standardisedGivenName}
-                onChange={(evt: any) => handleStandardisedNameChanged(evt.target.value, setStandardisedGivenName)}
-                pattern={utils.pattern.standardisedName}
-                maxLength={50}
-            />
+                {/* standardised first name input */}
+                <FormGroupInput controlId='formStandadisedGivenNameInput' title={t('translation:standardised-first-name')}
+                    value={standardisedGivenName}
+                    onChange={(evt: any) => handleStandardisedNameChanged(evt.target.value, setStandardisedGivenName)}
+                    pattern={utils.pattern.standardisedName}
+                    maxLength={50}
+                />
 
-            {/*standardised name input */}
-            <FormGroupInput controlId='formStandadisedNameInput' title={t('translation:standardised-name')}
-                value={standardisedFamilyName}
-                onChange={(evt: any) => handleStandardisedNameChanged(evt.target.value, setStandardisedFamilyName)}
-                required
-                pattern={utils.pattern.standardisedName}
-                maxLength={50}
-            />
+                {/*standardised name input */}
+                <FormGroupInput controlId='formStandadisedNameInput' title={t('translation:standardised-name')}
+                    value={standardisedFamilyName}
+                    onChange={(evt: any) => handleStandardisedNameChanged(evt.target.value, setStandardisedFamilyName)}
+                    required
+                    pattern={utils.pattern.standardisedName}
+                    maxLength={50}
+                />
 
-            <hr />
+                <hr />
 
-            {/* date of birth input */}
-            <Form.Group as={Row} controlId='formDateOfBirthInput' className='mb-1'>
-                <Form.Label className='input-label txt-no-wrap' column xs='5' sm='3'>{t('translation:date-of-birth') + '*'}</Form.Label>
+                {/* date of birth input */}
+                <Form.Group as={Row} controlId='formDateOfBirthInput' className='pb-3 mb-0'>
+                    <Form.Label className='input-label txt-no-wrap' column xs='5' sm='3'>{t('translation:date-of-birth') + '*'}</Form.Label>
 
-                <Col xs='7' sm='9' className='d-flex'>
-                    <DatePicker
-                        selected={dateOfBirth}
-                        onChange={handleDateOfBirthChange}
-                        dateFormat={utils.pickerDateFormat}
-                        isClearable
-                        placeholderText={t('translation:date-of-birth')}
-                        className='qt-input form-control'
-                        wrapperClassName='align-self-center'
-                        showMonthDropdown
-                        showYearDropdown
-                        dropdownMode="select"
-                        maxDate={new Date()}
-                        minDate={new Date(1900, 0, 1, 12)}
-                        openToDate={new Date(1990, 0, 1)}
-                        required
-                    />
-                </Col>
-            </Form.Group>
+                    <Col xs='7' sm='9' className='d-flex'>
+                        <DatePicker
+                            selected={dateOfBirth}
+                            onChange={handleDateOfBirthChange}
+                            dateFormat={utils.pickerDateFormat}
+                            isClearable
+                            placeholderText={t('translation:date-of-birth')}
+                            className='qt-input form-control'
+                            wrapperClassName='align-self-center'
+                            showMonthDropdown
+                            showYearDropdown
+                            dropdownMode="select"
+                            maxDate={new Date()}
+                            minDate={new Date(1900, 0, 1, 12)}
+                            openToDate={new Date(1990, 0, 1)}
+                            required
+                        />
+                    </Col>
+                </Form.Group>
+            </div>
         </>
     )
 }

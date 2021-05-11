@@ -32,7 +32,7 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
 import { EUDGC, TestEntry } from '../generated-files/dgc-combined-schema';
-import { useGetDiseaseAgents, useGetTestManufacturers, useGetTestResult, IValueSet } from '../api';
+import { useGetDiseaseAgents, useGetTestManufacturers, useGetTestResult } from '../api';
 
 import schema from '../generated-files/DGC.combined-schema.json';
 import { Validator } from 'jsonschema';
@@ -40,6 +40,7 @@ import utils from '../misc/utils';
 import CardHeader from './modules/card-header.component';
 import { FormGroupInput, FormGroupISOCountrySelect, FormGroupValueSetSelect, IPersonData, PersonInputs } from './modules/form-group.component';
 import CardFooter from './modules/card-footer.component';
+import useLocalStorage from '../misc/local-storage';
 
 const validator = new Validator();
 
@@ -52,20 +53,20 @@ const RecordTestCertData = (props: any) => {
 
     const [person, setPerson] = React.useState<IPersonData>();
 
-    const [disease, setDisease] = React.useState<string>('');
+    const [disease, setDisease] = useLocalStorage('disease', '');
 
-    const [testType, setTestType] = React.useState<string>('');
-    const [testName, setTestName] = React.useState<string | undefined>();
-    const [testManufacturers, setTestManufacturers] = React.useState<string | undefined>();
+    const [testType, setTestType] = useLocalStorage('testType', '');
+    const [testName, setTestName] = useLocalStorage('testName', '');
+    const [testManufacturers, setTestManufacturers] = useLocalStorage('testManufacturers', '');
 
     const [sampleDateTime, setSampleDateTime] = React.useState<Date>();
     const [testDateTime, setTestDateTime] = React.useState<Date | undefined>();
 
     const [testResult, setTestResult] = React.useState<string>('');
-    const [testCenter, setTestCenter] = React.useState<string>('');
+    const [testCenter, setTestCenter] = useLocalStorage('testCenter', '');
 
-    const [certificateIssuer, setCertificateIssuer] = React.useState('');
-    const [issuerCountryCode, setIssuerCountryCode] = React.useState<string>('');
+    const [certificateIssuer, setCertificateIssuer] = useLocalStorage('certificateIssuer', '');
+    const [issuerCountryCode, setIssuerCountryCode] = useLocalStorage('issuerCountryCode', '');
 
     React.useEffect(() => {
         if (!props.eudgc || !props.eudgc.t || !props.eudgc.t[0]) {
@@ -77,8 +78,14 @@ const RecordTestCertData = (props: any) => {
         setDisease(test.tg);
 
         setTestType(test.tt);
-        setTestName(test.nm);
-        setTestManufacturers(test.ma);
+
+        if (test.nm) {
+            setTestName(test.nm);
+        }
+
+        if (test.ma) {
+            setTestManufacturers(test.ma);
+        }
 
         setSampleDateTime(new Date(test.sc));
 
@@ -100,14 +107,14 @@ const RecordTestCertData = (props: any) => {
         }
     }, [navigation]);
 
-    const handleError = (error: any) => {
-        let msg = '';
+    // const handleError = (error: any) => {
+    //     let msg = '';
 
-        if (error) {
-            msg = error.message
-        }
-        props.setError({ error: error, message: msg, onCancel: navigation!.toLanding });
-    }
+    //     if (error) {
+    //         msg = error.message
+    //     }
+    //     props.setError({ error: error, message: msg, onCancel: navigation!.toLanding });
+    // }
 
     const handleSampleDateTimeChange = (evt: Date | [Date, Date] | null) => {
         const date = handleDateTimeChange(evt);
@@ -201,7 +208,7 @@ const RecordTestCertData = (props: any) => {
                         {/*
                             content area with patient inputs and check box
                         */}
-                        <Card.Body id='data-body' className='pt-0'>
+                        <Card.Body id='data-body' className='p-3'>
 
                             <PersonInputs eudgc={props.eudgc} onChange={setPerson} />
 
@@ -240,7 +247,7 @@ const RecordTestCertData = (props: any) => {
                             <hr />
 
                             {/* sampleDateTime */}
-                            <Form.Group as={Row} controlId='formSampleDateTimeInput' className='mb-1'>
+                            <Form.Group as={Row} controlId='formSampleDateTimeInput'className='pb-3 mb-0'>
                                 <Form.Label className='input-label txt-no-wrap' column xs='5' sm='3'>{t('translation:sampleDateTime') + '*'}</Form.Label>
 
                                 <Col xs='7' sm='9' className='d-flex'>
@@ -263,7 +270,7 @@ const RecordTestCertData = (props: any) => {
                             </Form.Group>
 
                             {/* testDateTime */}
-                            <Form.Group as={Row} controlId='formTestDateTimeInput' className='mb-1'>
+                            <Form.Group as={Row} controlId='formTestDateTimeInput'className='pb-3 mb-0'>
                                 <Form.Label className='input-label txt-no-wrap' column xs='5' sm='3'>{t('translation:testDateTime')}</Form.Label>
 
                                 <Col xs='7' sm='9' className='d-flex'>

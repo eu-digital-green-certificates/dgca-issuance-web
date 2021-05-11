@@ -33,7 +33,7 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
 import { EUDGC, VaccinationEntry } from '../generated-files/dgc-combined-schema';
-import { useGetDiseaseAgents, useGetVaccineManufacturers, useGetVaccines, useGetVaccinMedicalData, IValueSet } from '../api';
+import { useGetDiseaseAgents, useGetVaccineManufacturers, useGetVaccines, useGetVaccinMedicalData } from '../api';
 
 import schema from '../generated-files/DGC.combined-schema.json';
 import { Validator } from 'jsonschema';
@@ -52,18 +52,16 @@ const RecordVaccinationCertData = (props: any) => {
 
     const [person, setPerson] = React.useState<IPersonData>();
 
-    const [disease, setDisease] = React.useState<string>('');
-    const [vaccine, setVaccine] = React.useState<string>('');
-    const [medicalProduct, setMedicalProduct] = React.useState<string>('');
-    const [marketingHolder, setMarketingHolder] = React.useState<string>('');
+    const [disease, setDisease] = useLocalStorage('disease', '');
+    const [vaccine, setVaccine] = useLocalStorage('vaccine', '');
+    const [medicalProduct, setMedicalProduct] = useLocalStorage('medicalProduct', '');
+    const [marketingHolder, setMarketingHolder] = useLocalStorage('marketingHolder', '');
 
     const [doseNumber, setDoseNumber] = React.useState<number>(0);
-    const [totalDoseNumber, setTotalDoseNumber] = React.useState<number>(0);
-    const [vacLastDate, setVacLastDate] = React.useState<Date>();
-    const [certificateIssuer, setCertificateIssuer] = React.useState('');
-    const [issuerCountryCode, setIssuerCountryCode] = React.useState<string>('');
-
-    const [defaultIssuerCountryCode, setDefaultIssuerCountryCode] = useLocalStorage('defaultIssuerCountryCode', '');
+    const [totalDoseNumber, setTotalDoseNumber] = useLocalStorage('totalDoseNumber', 0);
+    const [vacLastDate, setVacLastDate] = React.useState<Date>(new Date());
+    const [certificateIssuer, setCertificateIssuer] = useLocalStorage('certificateIssuer', '');
+    const [issuerCountryCode, setIssuerCountryCode] = useLocalStorage('issuerCountryCode', '');
 
 
     React.useEffect(() => {
@@ -85,20 +83,6 @@ const RecordVaccinationCertData = (props: any) => {
 
     }, [props.eudgc]);
 
-    React.useEffect(() => {
-        if (!issuerCountryCode) {
-            setIssuerCountryCode(defaultIssuerCountryCode);
-        }
-
-    }, [defaultIssuerCountryCode]);
-
-    React.useEffect(() => {
-        if (issuerCountryCode !== defaultIssuerCountryCode) {
-            setDefaultIssuerCountryCode(issuerCountryCode);
-        }
-
-    }, [issuerCountryCode]);
-
 
     React.useEffect(() => {
         if (navigation) {
@@ -106,14 +90,14 @@ const RecordVaccinationCertData = (props: any) => {
         }
     }, [navigation]);
 
-    const handleError = (error: any) => {
-        let msg = '';
+    // const handleError = (error: any) => {
+    //     let msg = '';
 
-        if (error) {
-            msg = error.message
-        }
-        props.setError({ error: error, message: msg, onCancel: navigation!.toLanding });
-    }
+    //     if (error) {
+    //         msg = error.message
+    //     }
+    //     props.setError({ error: error, message: msg, onCancel: navigation!.toLanding });
+    // }
 
     const handleVacLastDate = (evt: Date | [Date, Date] | null) => {
         const date = handleDateChange(evt);
@@ -212,7 +196,7 @@ const RecordVaccinationCertData = (props: any) => {
                         {/*
                             content area with patient inputs and check box
                         */}
-                        <Card.Body id='data-body' className='pt-0'>
+                        <Card.Body id='data-body' className='p-3'>
 
                             {/* name inputs */}
                             <PersonInputs eudgc={props.eudgc} onChange={setPerson} />
@@ -270,7 +254,7 @@ const RecordVaccinationCertData = (props: any) => {
                             />
 
                             {/* vacLastDate */}
-                            <Form.Group as={Row} controlId='formLastDateInput' className='mb-1'>
+                            <Form.Group as={Row} controlId='formLastDateInput'className='pb-3 mb-0'>
                                 <Form.Label className='input-label txt-no-wrap' column xs='5' sm='3'>{t('translation:vac-last-date') + '*'}</Form.Label>
 
                                 <Col xs='7' sm='9' className='d-flex'>

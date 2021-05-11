@@ -75,7 +75,7 @@ export function PrivateRoute({
         !isInit ? <></>
           : isAuthorized ? render ? render(props)
             : <Component {...props} />
-            : <Redirect to={navigation!.calculatedRoutes.landing} />
+            : <Redirect to={navigation!.routes.landing} />
       }
     />
   )

@@ -45,7 +45,7 @@ enum CertType {
 
 
 interface CertificateInit {
-    type: CertType,
+    greenCertificateType: CertType,
 }
 
 interface SigResponse {
@@ -55,7 +55,7 @@ interface SigResponse {
 
 
 const signerCall = (id: string, hash: string): Promise<SigResponse> => {
-    return api.put('/dgca-issuance-service/dgci/' + id, { hash: hash })
+    return api.put('/dgca-issuance-service/dgci/issue/' + id, { hash: hash })
         .then(res => {
             const sigResponse: SigResponse = res.data;
             return sigResponse;
@@ -90,11 +90,11 @@ const getEdgcType = (edgcPayload: EUDGC) : CertType => {
 
 const generateQRCode = (edgcPayload: EUDGC): Promise<CertResult> => {
     const certInit: CertificateInit = {
-        type: getEdgcType(edgcPayload)
+        greenCertificateType: getEdgcType(edgcPayload)
     }
     let tan: string = '';
 
-    return api.post('/dgca-issuance-service/dgci', certInit)
+    return api.post('/dgca-issuance-service/dgci/issue', certInit)
         .then(response => {
             const certMetaData: CertificateMetaData = response.data;
             setDgci(edgcPayload, certMetaData.dgci);

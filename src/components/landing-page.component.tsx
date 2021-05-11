@@ -42,11 +42,11 @@ const LandingPage = (props: any) => {
     return (!isInit ? <Spinner /> :
         <Container className='center-content'>
 
-            <h1 className='mx-auto mb-5'>{t('translation:welcome')}</h1>
+            <span className='landing-title mx-auto mb-4'>{t('translation:welcome')}</span>
 
-            <Button block className='landing-btn' onClick={navigation!.toRecordVac}>{t('translation:record-vaccination-cert-dat')}</Button>
-            <Button block className='landing-btn' onClick={navigation!.toRecordTest}>{t('translation:record-test-cert-dat')}</Button>
-            <Button block className='landing-btn' onClick={navigation!.toRecordRecovery}>{t('translation:record-recovery-cert-dat')}</Button>
+            <Button block className='landing-btn my-2' onClick={navigation!.toRecordVac}>{t('translation:record-vaccination-cert-dat')}</Button>
+            <Button block className='landing-btn my-2' onClick={navigation!.toRecordTest}>{t('translation:record-test-cert-dat')}</Button>
+            <Button block className='landing-btn my-2' onClick={navigation!.toRecordRecovery}>{t('translation:record-recovery-cert-dat')}</Button>
 
         </Container>
     )

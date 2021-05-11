@@ -26,30 +26,29 @@ import { Container } from 'react-bootstrap'
 import './i18n';
 import { useTranslation } from 'react-i18next';
 
-import {useRoutes} from './misc/navigation';
+import useNavigation from './misc/navigation';
 
 import Footer from './components/footer.component';
-import Header from './components/header.component';
+// import Header from './components/header.component';
 import LandingPage from './components/landing-page.component';
 
-import PrivateRoute from './components/private-route.component';
+// import PrivateRoute from './components/private-route.component';
 import IError from './misc/error';
 import ErrorPage from './components/error-page.component';
-import NotificationPage from './components/notification-page.component';
 import RecordVaccinationCertData from './components/record-vaccination-cert-data.component';
 import ShowCertificate from './components/show-certificate.component';
 import { EUDGC } from './generated-files/dgc-combined-schema';
 import RecordTestCertData from './components/record-test-cert-data.component';
 import RecordRecoveryCertData from './components/record-recovery-cert-data.component';
+import Header from './components/header.component';
 
 const Routing = (props: any) => {
 
-    const routes = useRoutes();
+    const navigation = useNavigation();
     const { t } = useTranslation();
     const [eudgc, setEudgc] = React.useState<EUDGC>();
     const [error, setError] = React.useState<IError>();
     const [errorShow, setErrorShow] = React.useState(false);
-    const [notificationShow, setNotificationShow] = React.useState(false);
 
     document.title = t('translation:title');
 
@@ -65,15 +64,14 @@ const Routing = (props: any) => {
         }
     }, [errorShow])
 
-    return (
+    return (!navigation ? <></> :
         <>
             {/*
     header, every time shown. fit its children
     */}
-            <Route path={routes.root}>
-                {/* <Header /> */}
+            <Route path={navigation.routes.root}>
+                <Header />
                 <ErrorPage error={error} show={errorShow} onCancel={error?.onCancel} onHide={() => setErrorShow(false)} />
-                <NotificationPage show={notificationShow} setNotificationShow={setNotificationShow} />
             </Route>
 
             {/*
@@ -84,35 +82,35 @@ const Routing = (props: any) => {
                 {/* Landing */}
                 <Route
                     exact
-                    path={routes.landing}
+                    path={navigation.routes.landing}
                 >
-                    <LandingPage setNotificationShow={setNotificationShow} />
+                    <LandingPage />
                 </Route>
 
                 <Route
                     exact
-                    path={routes.recordVac}
+                    path={navigation.routes.recordVac}
                 >
                     <RecordVaccinationCertData setEudgc={setEudgc} eudgc={eudgc} setError={setError} />
                 </Route>
-                
+
                 <Route
                     exact
-                    path={routes.recordTest}
+                    path={navigation.routes.recordTest}
                 >
                     <RecordTestCertData setEudgc={setEudgc} eudgc={eudgc} setError={setError} />
                 </Route>
 
                 <Route
                     exact
-                    path={routes.recordRecovery}
+                    path={navigation.routes.recordRecovery}
                 >
                     <RecordRecoveryCertData setEudgc={setEudgc} eudgc={eudgc} setError={setError} />
                 </Route>
 
                 <Route
                     exact
-                    path={routes.showCert}
+                    path={navigation.routes.showCert}
                 >
                     <ShowCertificate setEudgc={setEudgc} eudgc={eudgc} setError={setError} />
                 </Route>
@@ -122,7 +120,7 @@ const Routing = (props: any) => {
             {/*
     footer, every time shown. fit its children
     */}
-            <Route path={routes.root}>
+            <Route path={navigation.routes.root}>
                 <Footer />
             </Route>
 
