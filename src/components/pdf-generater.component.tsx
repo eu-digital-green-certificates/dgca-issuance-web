@@ -26,9 +26,9 @@ import { useTranslation } from 'react-i18next';
 
 import { jsPDF } from "jspdf";
 
-import logo from '../assets/images/c-19_logo.png';
+import logo from '../assets/images/dgca_issuance_web.png';
 
-const PdfGenerator = (qrCodeCanvasElement: any) => {
+const usePdfGenerator = (qrCodeCanvasElement: any) => {
 
     //A4 210 x 297 mm or 2480 x 3508 pixels
     //A6 105 x 74 mm or 1240 x 1748 pixels
@@ -51,7 +51,7 @@ const PdfGenerator = (qrCodeCanvasElement: any) => {
         var canvas: HTMLCanvasElement = qrCodeCanvasElement;
         // var img = canvas!.toDataURL("image/jpeg,1.0");
         var img = canvas!.toDataURL("image/png,base64");
-        pdf.addImage(img, 'jpeg', a6width, 0, 68, 68)
+        pdf.addImage(img, 'png', a6width, 0, 68, 68)
 
         pdf.addImage(logo, 'png', 0, 0, 16, 16);
 
@@ -60,4 +60,4 @@ const PdfGenerator = (qrCodeCanvasElement: any) => {
 
 }
 
-export default PdfGenerator;
+export default usePdfGenerator;
