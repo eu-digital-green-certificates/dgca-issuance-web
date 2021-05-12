@@ -125,6 +125,12 @@ hr {
     border: 0;
 }
 
+#modal-header {
+    background-color: $light;
+    border-top-left-radius: $data-card-border-radius;
+    border-top-right-radius: $data-card-border-radius;
+    border: 0;
+}
 #data-footer {
     background-color: $light;
     border: 0;
@@ -224,7 +230,7 @@ hr {
   -webkit-transform: rotate(-45deg);
 }
 .footer-font {
-    font-size: 11px;
+    font-size: 11px !important;
     color: white;
 }
 
@@ -449,4 +455,9 @@ hr {
 .bg-gray-1{
     height:32px;
     background-color: $gray-100;
+}
+.modal-content{
+    background-color: $light;
+    border: 0px;
+    border-radius: $data-card-border-radius;
 }

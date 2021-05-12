@@ -99,6 +99,7 @@ const RecordTestCertData = (props: any) => {
         setIssuerCountryCode(test.co);
         setCertificateIssuer(test.is);
 
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [props.eudgc]);
 
     React.useEffect(() => {
@@ -106,15 +107,6 @@ const RecordTestCertData = (props: any) => {
             setTimeout(setIsInit, 200, true);
         }
     }, [navigation]);
-
-    // const handleError = (error: any) => {
-    //     let msg = '';
-
-    //     if (error) {
-    //         msg = error.message
-    //     }
-    //     props.setError({ error: error, message: msg, onCancel: navigation!.toLanding });
-    // }
 
     const handleSampleDateTimeChange = (evt: Date | [Date, Date] | null) => {
         const date = handleDateTimeChange(evt);
