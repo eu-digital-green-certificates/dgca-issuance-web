@@ -109,12 +109,12 @@ hr {
 
 #data-card{
     height: 100%;
-    background-color: $light;
+    background-color: white;
     border-radius: $data-card-border-radius;
     border: none;
 }
 .data-modal{
-    background-color: $light;
+    background-color: white;
     border-radius: $data-card-border-radius;
 }
 
@@ -126,13 +126,13 @@ hr {
 }
 
 #modal-header {
-    background-color: $light;
+    background-color: white;
     border-top-left-radius: $data-card-border-radius;
     border-top-right-radius: $data-card-border-radius;
     border: 0;
 }
 #data-footer {
-    background-color: $light;
+    background-color: white;
     border: 0;
     text-align: right;
     padding: 1rem;
@@ -457,7 +457,7 @@ hr {
     background-color: $gray-100;
 }
 .modal-content{
-    background-color: $light;
+    background-color: white;
     border: 0px;
     border-radius: $data-card-border-radius;
 }

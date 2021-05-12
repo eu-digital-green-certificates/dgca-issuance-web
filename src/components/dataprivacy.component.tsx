@@ -56,12 +56,12 @@ const DataprivacyPage = (props: any) => {
                 <Modal.Header id='modal-header' closeButton className='pb-0' >
                     <Row>
                         <Col >
-                            <Card.Title className='m-0 jcc-xs-jcfs-md' as={'h2'} >{t('translation:data-privacy')}</Card.Title>
+                            <Card.Title className='m-0 jcc-xs-jcfs-md' as={'h3'} >{t('translation:data-privacy')}</Card.Title>
                         </Col>
                     </Row>
                 </Modal.Header>
                     <hr className='mx-3 mb-0' />
-                <Modal.Body className='px-3 bg-light'>
+                <Modal.Body className='px-3'>
                     <Container className='px-1 px-sm-2 px-md-3'>
                         <h5 className='text-justify'>
                         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam ornare rhoncus enim, sed tincidunt erat lobortis nec. Etiam ac erat vel sem mattis consequat. Pellentesque aliquam consequat tellus, eu sagittis neque laoreet vitae. 
