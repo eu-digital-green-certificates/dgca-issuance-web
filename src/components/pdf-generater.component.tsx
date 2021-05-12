@@ -28,7 +28,6 @@ import { jsPDF, TextOptionsLight } from "jspdf";
 
 import logo from '../assets/images/EU_logo_big.png';
 
-import { propTypes } from 'qrcode.react';
 import { EUDGC, RecoveryEntry } from '../generated-files/dgc-combined-schema';
 
 const usePdfGenerator = (qrCodeCanvasElement: any, eudgc: EUDGC | undefined) => {
@@ -44,14 +43,17 @@ const usePdfGenerator = (qrCodeCanvasElement: any, eudgc: EUDGC | undefined) => 
     const marginLeft = mm2point(15);
     const marginRight = mm2point(15);
 
-    const paddingLeft = mm2point(2);
-    const paddingRight = mm2point(2);
+    const paddingLeft = mm2point(1);
+    const paddingRight = mm2point(1);
+    const paddingTop = mm2point(1);
     // let lblLength = canvasWidth/2 - 3;
 
     const lineHeight = 14;
     const fontSize = 11;
     const headerLineHeight = 22;
     const headerFontSize = 18;
+    const smallHeaderLineHeight = 15;
+    const smallHeaderFontSize = 12;
     const lblLength = a6width / 2 - paddingLeft - paddingRight;
     const pageMiddle = a6width / 2;
     const space = 2;
@@ -61,16 +63,21 @@ const usePdfGenerator = (qrCodeCanvasElement: any, eudgc: EUDGC | undefined) => 
             return;
         }
 
+        const pdf = new jsPDF("p", "pt", "a4", true);
+
         let _ci: string = '';
         if (eudgc!.r) {
             _ci = eudgc!.r![0].ci;
+            prepareFourthPageRecovery(eudgc, a6width, a6height, paddingTop, smallHeaderLineHeight,
+                pdf, smallHeaderFontSize, headerLineHeight, paddingLeft, lineHeight, pageMiddle,
+                fontSize, lblLength, space);
         } else if (eudgc!.t) {
             _ci = eudgc!.t![0].ci;
         } else if (eudgc!.v) {
             _ci = eudgc!.v![0].ci;
         }
 
-        const pdf = new jsPDF("p", "pt", "a4", true);
+
 
         // const calibri: string = pdf.loadFile('../assets/SCSS/fonts/calibri.ttf');
         // console.log("Font: " + calibri);
@@ -85,18 +92,15 @@ const usePdfGenerator = (qrCodeCanvasElement: any, eudgc: EUDGC | undefined) => 
         // pdf.text('Hello World', 15, 30);
         // console.log(pdf.getFont());
 
-        pdf.text("vierte Seite", a6width, a6height + 12);
+        //pdf.text("vierte Seite", a6width, a6height + 12);
         //pdf.text("erste Seite", 0, 0 + 12);
         //pdf.text("zweite Seite", a6width, 0 + 12);
         pdf.text("dritte Seite", 0, a6height + 12);
 
-        // First page
         prepareFirstPage(marginTop, headerLineHeight, pdf, headerFontSize, a6width, marginBottom);
-        // End of first page
 
-        // Second page
-        prepareSecondPage(qrCodeCanvasElement, a6width, pdf, marginTop, lineHeight, pageMiddle, lblLength, eudgc, space, _ci);
-        // End of second page
+        prepareSecondPage(qrCodeCanvasElement, a6width, pdf, marginTop, lineHeight, pageMiddle,
+            lblLength, fontSize, paddingLeft, eudgc, space, _ci);
 
         pdf.save('edgcPdfTest');
     }, [qrCodeCanvasElement]);
@@ -118,7 +122,7 @@ const pixel2point = (pixel: number): number => {
 export default usePdfGenerator;
 
 const prepareSecondPage = (qrCodeCanvasElement: any, a6width: number, pdf: jsPDF, marginTop: number,
-    lineHeight: number, pageMiddle: number, lblLength: number,
+    lineHeight: number, pageMiddle: number, lblLength: number, fontSize: number, paddingLeft: number,
     eudgc: EUDGC | undefined, space: number, _ci: string) => {
 
     var canvas: HTMLCanvasElement = qrCodeCanvasElement;
@@ -128,18 +132,18 @@ const prepareSecondPage = (qrCodeCanvasElement: any, a6width: number, pdf: jsPDF
     pdf.addImage(img, 'png', a6width + centerLeft, marginTop, canvasWidth, canvasWidth);
 
     //For the labels on the left side
-    let xLeft = a6width;
+    let xLeft = a6width + paddingLeft;
     let yLeft = marginTop + canvasWidth + lineHeight * 2;
     //For the variables on the right side
     let xRight = a6width + pageMiddle;
     let yRight = marginTop + canvasWidth + lineHeight * 2;
 
-    pdf.setFontSize(11);
+    pdf.setFontSize(fontSize);
 
     let lblSurname: string = 'Surname(s) and forename(s)';
     lblSurname = pdf.splitTextToSize(lblSurname, lblLength);
     pdf.text(lblSurname, xLeft, yLeft);
-    yLeft += lineHeight * 2;
+    yLeft += lineHeight;
     lblSurname = 'Nom(s) de famille et prénom(s)';
     lblSurname = pdf.splitTextToSize(lblSurname, lblLength);
     pdf.text(lblSurname, xLeft, yLeft);
@@ -153,7 +157,7 @@ const prepareSecondPage = (qrCodeCanvasElement: any, a6width: number, pdf: jsPDF
     yLeft += lineHeight;
     pdf.text('Date de naissance', xLeft, yLeft);
 
-    yRight += lineHeight * 4 + space;
+    yRight += lineHeight * 3 + space;
     pdf.text(eudgc!.dob, xRight, yRight);
 
     yLeft += lineHeight + space;
@@ -189,5 +193,97 @@ const prepareFirstPage = (marginTop: number, headerLineHeight: number, pdf: jsPD
     let logoHeight = 88.5;
     x = (a6width - logoWidth) / 2;
     pdf.addImage(logo, 'png', x, a6width - marginBottom, logoWidth, logoHeight);
+}
+
+function prepareFourthPageRecovery(eudgc: EUDGC | undefined, a6width: number, a6height: number, paddingTop: number, smallHeaderLineHeight: number, pdf: jsPDF, smallHeaderFontSize: number, headerLineHeight: number, paddingLeft: number, lineHeight: number, pageMiddle: number, fontSize: number, lblLength: number, space: number) {
+    let recovery: RecoveryEntry = eudgc!.r![0];
+
+    let x = a6width;
+    let y = a6height + paddingTop + smallHeaderLineHeight;
+    pdf.setFontSize(smallHeaderFontSize);
+    let header = 'Certificate of recovery';
+    let width = pdf.getTextWidth(header);
+    x = a6width + (a6width - width) / 2;
+    pdf.text(header, x, y);
+
+    header = 'Certificat de rétablissement';
+    width = pdf.getTextWidth(header);
+    x = a6width + (a6width - width) / 2;
+    y += headerLineHeight;
+    pdf.text(header, x, y);
+
+    //For the labels on the left side
+    let xLeft = a6width + paddingLeft;
+    let yLeft = y + lineHeight * 2;
+    //For the text on the right side
+    let xRight = a6width + pageMiddle;
+    let yRight = y + lineHeight * 2;
+
+    pdf.setFontSize(fontSize);
+
+    let lblDisease: string = 'Disease or agent the citizen has recovered from';
+    lblDisease = pdf.splitTextToSize(lblDisease, lblLength);
+    pdf.text(lblDisease, xLeft, yLeft);
+    yLeft += lineHeight * 2;
+    lblDisease = "Maladie ou agent dont le citoyen s'est rétabli";
+    lblDisease = pdf.splitTextToSize(lblDisease, lblLength);
+    pdf.text(lblDisease, xLeft, yLeft);
+
+    let disease = recovery.tg;
+    disease = pdf.splitTextToSize(disease, lblLength);
+    pdf.text(disease, xRight, yRight);
+
+    yLeft += lineHeight * 2 + space;
+    yRight += lineHeight * 4 + space;
+
+    let lblDate: string = 'Date of first positive test result';
+    lblDate = pdf.splitTextToSize(lblDate, lblLength);
+    pdf.text(lblDate, xLeft, yLeft);
+    yLeft += lineHeight * 2;
+    lblDate = "Date du premier résultat de test posifif";
+    lblDate = pdf.splitTextToSize(lblDate, lblLength);
+    pdf.text(lblDate, xLeft, yLeft);
+
+    pdf.text(recovery.fr!, xRight, yRight);
+
+    yLeft += lineHeight * 2 + space;
+    yRight += lineHeight * 4 + space;
+
+    pdf.text('Member State of test', xLeft, yLeft);
+    yLeft += lineHeight;
+    pdf.text('État membre du test', xLeft, yLeft);
+
+    pdf.text(recovery.co!, xRight, yRight);
+
+    yLeft += lineHeight + space;
+    yRight += lineHeight * 2 + space;
+
+    pdf.text('Certificate issuer', xLeft, yLeft);
+    yLeft += lineHeight;
+    pdf.text('Émetteur du certificat', xLeft, yLeft);
+
+    pdf.text(recovery.is!, xRight, yRight);
+
+    yLeft += lineHeight + space;
+    yRight += lineHeight * 2 + space;
+
+    pdf.text('Certificate valid from', xLeft, yLeft);
+    yLeft += lineHeight;
+    pdf.text('Certificat valable à partir du', xLeft, yLeft);
+
+    pdf.text(recovery.df!, xRight, yRight);
+
+    yLeft += lineHeight + space;
+    yRight += lineHeight * 2 + space;
+
+    let lblValidTo: string = 'Certificate valid until (not more than 180 days after the date of first positive test result)';
+    lblValidTo = pdf.splitTextToSize(lblValidTo, lblLength);
+    pdf.text(lblValidTo, xLeft, yLeft);
+    yLeft += lineHeight * 4;
+    lblValidTo = "Certificat valable jusqu’au (180 jours au maximum après la date du premier résultat positif)";
+    lblValidTo = pdf.splitTextToSize(lblValidTo, lblLength);
+    pdf.text(lblValidTo, xLeft, yLeft);
+
+    pdf.text(recovery.du!, xRight, yRight);
 }
 
