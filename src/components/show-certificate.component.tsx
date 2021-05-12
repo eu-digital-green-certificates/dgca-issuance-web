@@ -50,7 +50,7 @@ const ShowCertificate = (props: any) => {
     const [tan, setTAN] = React.useState('');
 
     const [qrCodeForPDF, setQrCodeForPDF] = React.useState<any>();
-    const pdfGenerator = usePdfGenerator(qrCodeForPDF);
+    const pdfGenerator = usePdfGenerator(qrCodeForPDF, eudgc);
 
     // set patient data on mount and set hash from uuid
     React.useEffect(() => {

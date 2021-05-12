@@ -29,8 +29,9 @@ import { jsPDF } from "jspdf";
 import logo from '../assets/images/dgca_issuance_web.png';
 
 import { propTypes } from 'qrcode.react';
+import { EUDGC, RecoveryEntry } from '../generated-files/dgc-combined-schema';
 
-const usePdfGenerator = (qrCodeCanvasElement: any) => {
+    const usePdfGenerator = (qrCodeCanvasElement: any, eudgc:EUDGC | undefined) => {
 
     //A4 210 x 297 mm or 2480 x 3508 pixels or 595 × 842 points
     //A6 105 x 74 mm or 1240 x 1748 pixels or 298 × 420 points
@@ -45,24 +46,37 @@ const usePdfGenerator = (qrCodeCanvasElement: any) => {
 
     const paddingLeft = mm2point(2);
     const paddingRight = mm2point(2);
+    // let lblLength = canvasWidth/2 - 3;
 
-    const lineHeight = 11;
+    const lineHeight = 14;
+    const lblLength = a6width / 2 - paddingLeft - paddingRight;
+    const pageMiddle = a6width / 2;
+    const space = 2;
 
     React.useEffect(() => {
-        if (!qrCodeCanvasElement) {
+        if (!qrCodeCanvasElement && !eudgc) {
             return;
+        }
+
+        let _ci: string = '';
+        if(eudgc!.r) {
+            _ci = eudgc!.r![0].ci;
+        } else if(eudgc!.t) {
+            _ci = eudgc!.t![0].ci;
+        } else if(eudgc!.v) {
+            _ci = eudgc!.v![0].ci;
         }
 
         const pdf = new jsPDF("p", "pt", "a4", true);
 
-        const calibri: string = pdf.loadFile('../assets/SCSS/fonts/calibri.ttf');
-        console.log("Font: " + calibri);
-        const calibrib: string = pdf.loadFile('../assets/SCSS/fonts/calibrib.ttf');
-        pdf.addFileToVFS('calibri.ttf', calibri);
-        pdf.addFileToVFS('calibrib.ttf', calibrib);
-        pdf.addFont('calibrib.ttf', 'calibrib', 'normal');
-        pdf.addFont('calibri.ttf', 'calibri', 'normal');
-        pdf.setFont('calibrib');
+        // const calibri: string = pdf.loadFile('../assets/SCSS/fonts/calibri.ttf');
+        // console.log("Font: " + calibri);
+        // const calibrib: string = pdf.loadFile('../assets/SCSS/fonts/calibrib.ttf');
+        // pdf.addFileToVFS('calibri.ttf', calibri);
+        // pdf.addFileToVFS('calibrib.ttf', calibrib);
+        // pdf.addFont('calibrib.ttf', 'calibrib', 'normal');
+        // pdf.addFont('calibri.ttf', 'calibri', 'normal');
+        // pdf.setFont('calibrib');
         // pdf.text('Hello World', 15, 15);
         // pdf.setFont('calibri');
         // pdf.text('Hello World', 15, 30);
@@ -80,23 +94,47 @@ const usePdfGenerator = (qrCodeCanvasElement: any) => {
         let centerLeft = (a6width - canvasWidth) / 2;
         pdf.addImage(img, 'png', a6width + centerLeft, marginTop, canvasWidth, canvasWidth);
 
-        let x = a6width;
-        let y = marginTop + canvasWidth + lineHeight*2;
-        console.log("Fontsize: " + pdf.getFontSize);
-        pdf.setFontSize(11);
-        var surname: string = 'Surname(s) and forename(s)';
-        pdf.text(surname, x, y);
-        y += lineHeight;
-        pdf.text('Nom(s) de famille et prénom(s)', x, y);
-        y += lineHeight;
-        pdf.text('Date of birth', x, y);
-        y+= lineHeight;
-        pdf.text('Date de naissance', x, y);
-        y += lineHeight;
-        pdf.text('Unique certificate identifier', x, y);
-        y += lineHeight;
-        pdf.text('Identifiant unique du certificat', x, y);
+        //For the labels on the left side
+        let xLeft = a6width;
+        let yLeft = marginTop + canvasWidth + lineHeight*2;
+        //For the variables on the right side
+        let xRight = a6width + pageMiddle;
+        let yRight = marginTop + canvasWidth + lineHeight*2;
 
+        pdf.setFontSize(11);
+
+        let lblSurname: string = 'Surname(s) and forename(s)';
+        lblSurname = pdf.splitTextToSize(lblSurname, lblLength);
+        pdf.text(lblSurname, xLeft, yLeft);
+        yLeft += lineHeight*2;
+        lblSurname = 'Nom(s) de famille et prénom(s)';
+        lblSurname = pdf.splitTextToSize(lblSurname, lblLength);
+        pdf.text(lblSurname, xLeft, yLeft);
+
+        let name = eudgc!.nam!.fnt + ' ' + eudgc!.nam!.gnt;
+        name = pdf.splitTextToSize(name, lblLength);
+        pdf.text(name, xRight, yRight);
+
+        yLeft += lineHeight*2 + space;
+        pdf.text('Date of birth', xLeft, yLeft);
+        yLeft+= lineHeight;
+        pdf.text('Date de naissance', xLeft, yLeft);
+
+        yRight += lineHeight*4 + space;
+        pdf.text(eudgc!.dob, xRight, yRight);
+
+        yLeft += lineHeight + space;
+        let lblci = 'Unique certificate identifier';
+        lblci = pdf.splitTextToSize(lblci, lblLength);
+        pdf.text(lblci, xLeft, yLeft);
+        yLeft += lineHeight;
+        lblci = 'Identifiant unique du certificat';
+        lblci = pdf.splitTextToSize(lblci, lblLength);
+        pdf.text(lblci, xLeft, yLeft);
+
+        yRight += lineHeight*2 + space;
+        _ci = pdf.splitTextToSize(_ci, lblLength);
+        pdf.text(_ci, xRight, yRight);
         // End of second page
 
         pdf.addImage(logo, 'png', 0, 0, 16, 16);
