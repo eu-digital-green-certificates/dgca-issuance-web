@@ -163,7 +163,7 @@ const ShowCertificate = (props: any) => {
                         <Row>
                             <Col xs='6' md='4' className='pl-0 pr-2'>
                                 <Button
-                                    className='my-1 my-md-0'
+                                    className=''
                                     block
                                     onClick={handleBack}
                                 >
@@ -181,7 +181,7 @@ const ShowCertificate = (props: any) => {
                             </Col>
                             <Col xs='6' md='3' className='pr-0 pl-2'>
                                 <Button
-                                    className='my-1 my-md-0 text-dark'
+                                    className=''
                                     variant='info'
                                     block
                                     onClick={finishProcess}

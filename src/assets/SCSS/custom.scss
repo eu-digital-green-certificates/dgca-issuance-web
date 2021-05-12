@@ -148,6 +148,9 @@ hr {
     font-size: 20px;
     align-self: center;
     text-align: center;
+    @include media-breakpoint-up(sm) {
+        justify-content: flex-end;
+    }
 }
 
 #qr-code-container {
@@ -176,7 +179,7 @@ hr {
     outline: 3px solid $info;
 }
 .qt-input:hover:not(:focus){
-    border: 1px solid $info;
+    border: 1px solid $primary;
 }
 .btn-primary:focus{
     border: 1px solid $info;
@@ -184,22 +187,27 @@ hr {
     // box-shadow: 3px 3px px $info;
     outline: 4px solid $info!important;
 }
-.btn-primary:hover:not(:focus){
-    border: 1px solid $info;
-    outline: 3px solid $info;
-}
+// .btn-primary:hover:not(:focus){
+//     border: 1px solid $info;
+//     outline: 3px solid $info;
+// }
 .btn-info{
     border: 1px solid $info;
+    color: black;
+    
+    @include media-breakpoint-down(xs) {
+        padding-right: 15%;
+    }
 }
 .btn-info:focus{
-    border: 1px solid $dark;
+    border: 1px solid black;
     box-shadow:none !important;
     // box-shadow: 3px 3px px $info;
     outline: 3px solid $dark!important;
 }
 .btn-info:hover:not(:focus){
-    border: 1px solid $dark;
-    outline: 3px solid $dark;
+    border: 1px solid black;
+    outline: 3px solid black;
 }
 .btn-info::after{
     position: absolute;
@@ -208,7 +216,7 @@ hr {
   right:8%;
   width: 0;
   height: 0;
-  border: solid $dark;
+  border: solid black;
   border-width: 0 3px 3px 0;
   display: inline-block;
   padding: 4px;
@@ -284,18 +292,16 @@ hr {
     font-size: 22px;
 }
 .data-label {
-    font-size: 18px;
+    font-size: 16px;
+    line-height: 22px;
 }
 .input-label {
-    font-size: 20px;
+    font-size: 16px;
+    @include media-breakpoint-up(md) {
+        font-size: 20px;
+    }
 }
 
-.txt-no-wrap{
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    overflow: hidden;
-
-}
 .first-col-item {
     @include media-breakpoint-up(sm) {
         padding-left: 15px;
@@ -317,6 +323,14 @@ hr {
 
     @include media-breakpoint-up(md) {
         justify-content: flex-start;
+    }
+}
+.jcc-xs-jcfe-md {
+    display: flex;
+    justify-content: center;
+
+    @include media-breakpoint-up(md) {
+        justify-content: flex-end;
     }
 }
 .tac-xs-tal-md {
