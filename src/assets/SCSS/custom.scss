@@ -27,6 +27,7 @@
 $body-bg: #cfcfcf;
 $font-family-base: Arial, sans-serif;
 $primary: #004494;
+$primary-dark: #002F67;
 $info:#FFD617;
 $dark: #404040;
 $gray-100: #F2F5F9;
@@ -193,10 +194,36 @@ hr {
     // box-shadow: 3px 3px px $info;
     outline: 4px solid $info!important;
 }
-// .btn-primary:hover:not(:focus){
-//     border: 1px solid $info;
-//     outline: 3px solid $info;
-// }
+
+.btn-outline-primary:focus{
+    border: 1px solid $info;
+    background-color: white !important;
+    color:$primary-dark !important;
+    font-weight: bold;
+    box-shadow:none !important;
+    // box-shadow: 3px 3px px $info;
+    outline: 4px solid $info!important;
+}
+.btn-outline-primary:active{
+    border: 1px solid white !important;
+    background-color: white !important;
+    color:$primary-dark !important;
+}
+.btn-outline-primary{
+    outline: 1px solid $primary;
+    color:$primary;
+    font-weight: bold;
+}
+.btn-outline-primary:hover:not(:focus){
+    border: 1px solid $primary-dark;
+    outline: 1px solid $primary-dark;
+    box-shadow:none !important;
+    background-color: white;
+    color:$primary-dark;
+    font-weight: bold;
+    // box-shadow: 3px 3px px $info;
+    // outline: 4px solid $info!important;
+}
 .btn-info{
     border: 1px solid $info;
     color: black;

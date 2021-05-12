@@ -13,7 +13,7 @@ const CardFooter = (props: any) => {
             <Row>
                 <Col xs='6' md='3' className='pl-0 pr-2'>
                     <Button
-                        variant='light'
+                        variant='outline-primary'
                         block
                         onClick={props.handleCancel}
                     >
