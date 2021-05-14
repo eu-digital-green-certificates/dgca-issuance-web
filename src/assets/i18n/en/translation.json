@@ -38,6 +38,7 @@
   "patientdata-exclude": "Include patient data in QR-Code",
   "patient-data-correction": "Correct patient data",
   "process-finish": "Finish process",
+  "generate-pdf": "Generate PDF", 
   "qr-code": "QR Code",
   "your-certificate": "Your Certificate",
   "personal-data": "Personal Details",

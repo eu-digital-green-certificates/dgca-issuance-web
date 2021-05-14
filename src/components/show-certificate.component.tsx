@@ -34,6 +34,7 @@ import { EUDGC } from '../generated-files/dgc-combined-schema';
 import genEDGCQR, { CertResult } from '../misc/edgcQRGenerator';
 
 import ShowCertificateData from '../misc/ShowCertificateData';
+import usePdfGenerator from './pdf-generater.component';
 
 // import { usePostPatient } from '../api';
 
@@ -47,6 +48,9 @@ const ShowCertificate = (props: any) => {
     const [qrCodeValue, setQrCodeValue] = React.useState('');
 
     const [tan, setTAN] = React.useState('');
+
+    const [qrCodeForPDF, setQrCodeForPDF] = React.useState<any>();
+    const pdfGenerator = usePdfGenerator(qrCodeForPDF, eudgc);
 
     // set patient data on mount and set hash from uuid
     React.useEffect(() => {
@@ -116,6 +120,10 @@ const ShowCertificate = (props: any) => {
         }
     }
 
+    const handleGeneratePdf = () => {
+        setQrCodeForPDF(document.getElementById('qr-code-pdf'));
+    }
+
     return (
         !(isInit && eudgc && qrCodeValue) ? <Spinner /> :
             <>
@@ -141,6 +149,10 @@ const ShowCertificate = (props: any) => {
                                         {/* <Card.Text className='input-label' >{qrCodeValue}</Card.Text> */}
                                     </> : <></>}
                                 </Container>
+                                <Container id='qr-code-container' className='hidden'>
+                                    {qrCodeValue ? <> <QRCode id='qr-code-pdf' size={256} renderAs='canvas' value={qrCodeValue} />
+                                    </> : <></>}
+                                </Container>
                                 <Card.Text className='input-label jcc-xs-sm m-3 text-center' >TAN: {tan}</Card.Text>
                             </Col>
                         </Row>
@@ -157,6 +169,15 @@ const ShowCertificate = (props: any) => {
                                     onClick={handleBack}
                                 >
                                     {t('translation:patient-data-correction')}
+                                </Button>
+                            </Col>
+                            <Col xs='6' md='4' className='pl-0 pr-2'>
+                                <Button
+                                    className='my-1 my-md-0'
+                                    block
+                                    onClick={handleGeneratePdf}
+                                >
+                                    {t('translation:generate-pdf')}
                                 </Button>
                             </Col>
                             <Col xs='6' md='3' className='pr-0 pl-2'>
