@@ -43,8 +43,8 @@ const usePdfGenerator = (qrCodeCanvasElement: any, eudgc: EUDGC | undefined) => 
     const marginLeft = mm2point(15);
     const marginRight = mm2point(15);
 
-    const paddingLeft = mm2point(1);
-    const paddingRight = mm2point(1);
+    const paddingLeft = mm2point(2);
+    const paddingRight = mm2point(2);
     const paddingTop = mm2point(1);
     // let lblLength = canvasWidth/2 - 3;
 
@@ -95,12 +95,14 @@ const usePdfGenerator = (qrCodeCanvasElement: any, eudgc: EUDGC | undefined) => 
         //pdf.text("vierte Seite", a6width, a6height + 12);
         //pdf.text("erste Seite", 0, 0 + 12);
         //pdf.text("zweite Seite", a6width, 0 + 12);
-        pdf.text("dritte Seite", 0, a6height + 12);
+        //pdf.text("dritte Seite", 0, a6height + 12);
 
         prepareFirstPage(marginTop, headerLineHeight, pdf, headerFontSize, a6width, marginBottom);
 
         prepareSecondPage(qrCodeCanvasElement, a6width, pdf, marginTop, lineHeight, pageMiddle,
             lblLength, fontSize, paddingLeft, eudgc, space, _ci);
+
+        prepareThirdPage(a6width, marginLeft, paddingRight, paddingLeft, a6height, marginTop, pdf, lineHeight, space);
 
         pdf.save('edgcPdfTest');
     }, [qrCodeCanvasElement]);
@@ -143,7 +145,7 @@ const prepareSecondPage = (qrCodeCanvasElement: any, a6width: number, pdf: jsPDF
     let lblSurname: string = 'Surname(s) and forename(s)';
     lblSurname = pdf.splitTextToSize(lblSurname, lblLength);
     pdf.text(lblSurname, xLeft, yLeft);
-    yLeft += lineHeight;
+    yLeft += lineHeight*2;
     lblSurname = 'Nom(s) de famille et prénom(s)';
     lblSurname = pdf.splitTextToSize(lblSurname, lblLength);
     pdf.text(lblSurname, xLeft, yLeft);
@@ -157,7 +159,7 @@ const prepareSecondPage = (qrCodeCanvasElement: any, a6width: number, pdf: jsPDF
     yLeft += lineHeight;
     pdf.text('Date de naissance', xLeft, yLeft);
 
-    yRight += lineHeight * 3 + space;
+    yRight += lineHeight * 4 + space;
     pdf.text(eudgc!.dob, xRight, yRight);
 
     yLeft += lineHeight + space;
@@ -193,6 +195,44 @@ const prepareFirstPage = (marginTop: number, headerLineHeight: number, pdf: jsPD
     let logoHeight = 88.5;
     x = (a6width - logoWidth) / 2;
     pdf.addImage(logo, 'png', x, a6width - marginBottom, logoWidth, logoHeight);
+}
+
+function prepareThirdPage(a6width: number, marginLeft: number, paddingRight: number, paddingLeft: number, 
+    a6height: number, marginTop: number, pdf: jsPDF, lineHeight: number, space: number) {
+    let rectWidth = a6width - marginLeft - paddingRight;
+    let rectHeight = rectWidth * 0.75;
+    let x = (a6width - rectWidth) / 2;
+    let y = a6height + marginTop;
+    pdf.rect(x, y, rectWidth, rectHeight);
+
+    y += lineHeight + space;
+    let lblInfoText = "Member state placeholder";
+    let widthTxt = pdf.getTextWidth(lblInfoText);
+    x = x + (rectWidth - widthTxt) / 2;
+    pdf.text(lblInfoText, x, y);
+
+    y += lineHeight * 2;
+    lblInfoText = "(information on issuing entity, national COVID-19 information etc. – no additional personal data).";
+    lblInfoText = pdf.splitTextToSize(lblInfoText, rectWidth - paddingLeft - paddingRight);
+    x = (a6width - rectWidth) / 2 + paddingRight;
+    pdf.text(lblInfoText, x, y);
+
+    x = (a6width - rectWidth) / 2
+    y = a6height + marginTop + rectHeight + lineHeight * 2;
+
+    lblInfoText = "This certificate is not a travel document. The scientific evidence on COVID-19 vaccination, testing and recovery continues to evolve, also in view of new variants of concern of the virus. Before traveling, please check the applicable public health measures and related restrictions applied at the point of destination.";
+    lblInfoText = pdf.splitTextToSize(lblInfoText, rectWidth);
+    pdf.text(lblInfoText, x, y);
+
+    y += lineHeight * 8;
+
+    lblInfoText = "Relevant information can be found here:";
+    pdf.text(lblInfoText, x, y);
+
+    y += lineHeight;
+
+    lblInfoText = "https://reopen.europa.eu/en";
+    pdf.text(lblInfoText, x, y);
 }
 
 function prepareFourthPageRecovery(eudgc: EUDGC | undefined, a6width: number, a6height: number, paddingTop: number, smallHeaderLineHeight: number, pdf: jsPDF, smallHeaderFontSize: number, headerLineHeight: number, paddingLeft: number, lineHeight: number, pageMiddle: number, fontSize: number, lblLength: number, space: number) {
