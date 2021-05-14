@@ -41,6 +41,8 @@ import { EUDGC } from './generated-files/dgc-combined-schema';
 import RecordTestCertData from './components/record-test-cert-data.component';
 import RecordRecoveryCertData from './components/record-recovery-cert-data.component';
 import Header from './components/header.component';
+import DataprivacyPage from './components/dataprivacy.component';
+import ImprintPage from './components/imprint.component';
 
 const Routing = (props: any) => {
 
@@ -49,6 +51,8 @@ const Routing = (props: any) => {
     const [eudgc, setEudgc] = React.useState<EUDGC>();
     const [error, setError] = React.useState<IError>();
     const [errorShow, setErrorShow] = React.useState(false);
+    const [dataPrivacyShow, setDataPrivacyShow] = React.useState(false);
+    const [imprintShow, setImprintShow] = React.useState(false);
 
     document.title = t('translation:title');
 
@@ -72,6 +76,8 @@ const Routing = (props: any) => {
             <Route path={navigation.routes.root}>
                 <Header />
                 <ErrorPage error={error} show={errorShow} onCancel={error?.onCancel} onHide={() => setErrorShow(false)} />
+                <DataprivacyPage show={dataPrivacyShow} setShow={setDataPrivacyShow} />
+                <ImprintPage show={imprintShow} setShow={setImprintShow} />
             </Route>
 
             {/*
@@ -121,7 +127,7 @@ const Routing = (props: any) => {
     footer, every time shown. fit its children
     */}
             <Route path={navigation.routes.root}>
-                <Footer />
+                <Footer setDataPrivacyShow={setDataPrivacyShow} setImprintShow={setImprintShow} />
             </Route>
 
         </>

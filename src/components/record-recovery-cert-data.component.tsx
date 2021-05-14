@@ -75,6 +75,7 @@ const RecordRecoveryCertData = (props: any) => {
         setDateValidFrom(new Date(rec.df))
         setDateValidTo(new Date(rec.du))
 
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [props.eudgc]);
 
     React.useEffect(() => {

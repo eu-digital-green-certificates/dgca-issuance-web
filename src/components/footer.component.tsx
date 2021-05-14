@@ -19,15 +19,22 @@
  * under the License.
  */
 
-import { Col, Container, Image, Row } from 'react-bootstrap'
+import { Button, Col, Container, Row } from 'react-bootstrap'
 
 import '../i18n';
 import { useTranslation } from 'react-i18next';
 
-import DataProtectLogo from '../assets/images/data_protect.png'
-
 const Footer = (props: any) => {
     const { t } = useTranslation();
+
+
+    const handleDataPrivacyClick = () => {
+        props.setDataPrivacyShow(true)
+    }
+
+    const handleImprintClick = () => {
+        props.setImprintShow(true)
+    }
 
     return (
         // simple footer with imprint and data privacy --> links tbd
@@ -37,8 +44,19 @@ const Footer = (props: any) => {
                     <span className='footer-font' >{t('translation:title')}</span>
                 </Col>
                 <Col xs='6' className='pr-3 d-flex justify-content-end'>
-                <span className="footer-font pr-3">{t('translation:data-privacy')}</span>
-                <span className="footer-font pl-3">{t('translation:imprint')}</span>
+
+                    <Button
+                        variant='link'
+                        className="footer-font pr-3"
+                        onClick={handleDataPrivacyClick}>
+                        {t('translation:data-privacy')}
+                    </Button>
+                    <Button
+                        variant='link'
+                        className="footer-font pl-3"
+                        onClick={handleImprintClick}>
+                        {t('translation:imprint')}
+                    </Button>
                 </Col>
             </Row>
         </Container>

@@ -20,17 +20,13 @@
  */
 
 import React from 'react';
-import { Row, Image, Container, Navbar, NavDropdown } from 'react-bootstrap'
+import { Image, Container } from 'react-bootstrap'
 
 import '../i18n';
 import { useTranslation } from 'react-i18next';
 
-import { useKeycloak } from '@react-keycloak/web';
-
 import useNavigation from '../misc/navigation';
 import EULogo from '../assets/images/EU_logo@3x.png'
-import dgcaIwLogo from '../assets/images/dgca_issuance_web.png';
-import useLocalStorage from '../misc/local-storage';
 
 const Header = (props: any) => {
 
