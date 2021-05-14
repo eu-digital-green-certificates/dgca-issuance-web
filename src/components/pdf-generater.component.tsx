@@ -28,7 +28,7 @@ import { jsPDF, TextOptionsLight } from "jspdf";
 
 import logo from '../assets/images/EU_logo_big.png';
 
-import { EUDGC, RecoveryEntry } from '../generated-files/dgc-combined-schema';
+import { EUDGC, RecoveryEntry, VaccinationEntry } from '../generated-files/dgc-combined-schema';
 
 const usePdfGenerator = (qrCodeCanvasElement: any, eudgc: EUDGC | undefined) => {
 
@@ -75,6 +75,9 @@ const usePdfGenerator = (qrCodeCanvasElement: any, eudgc: EUDGC | undefined) => 
             _ci = eudgc!.t![0].ci;
         } else if (eudgc!.v) {
             _ci = eudgc!.v![0].ci;
+            prepareFourthPageVaccination(eudgc, a6width, a6height, paddingTop, smallHeaderLineHeight,
+                pdf, smallHeaderFontSize, headerLineHeight, paddingLeft, lineHeight, pageMiddle,
+                fontSize, space, lblLength);
         }
 
 
@@ -145,7 +148,7 @@ const prepareSecondPage = (qrCodeCanvasElement: any, a6width: number, pdf: jsPDF
     let lblSurname: string = 'Surname(s) and forename(s)';
     lblSurname = pdf.splitTextToSize(lblSurname, lblLength);
     pdf.text(lblSurname, xLeft, yLeft);
-    yLeft += lineHeight*2;
+    yLeft += lineHeight * 2;
     lblSurname = 'Nom(s) de famille et prénom(s)';
     lblSurname = pdf.splitTextToSize(lblSurname, lblLength);
     pdf.text(lblSurname, xLeft, yLeft);
@@ -197,7 +200,114 @@ const prepareFirstPage = (marginTop: number, headerLineHeight: number, pdf: jsPD
     pdf.addImage(logo, 'png', x, a6width - marginBottom, logoWidth, logoHeight);
 }
 
-function prepareThirdPage(a6width: number, marginLeft: number, paddingRight: number, paddingLeft: number, 
+function prepareFourthPageVaccination(eudgc: EUDGC | undefined, a6width: number, a6height: number, paddingTop: number, smallHeaderLineHeight: number, pdf: jsPDF, smallHeaderFontSize: number, headerLineHeight: number, paddingLeft: number, lineHeight: number, pageMiddle: number, fontSize: number, space: number, lblLength: number) {
+    let vaccination: VaccinationEntry;
+    if (eudgc!.v![0]) {
+        vaccination = eudgc!.v![0];
+    }
+
+    let x = a6width;
+    let y = a6height + paddingTop + smallHeaderLineHeight;
+    pdf.setFontSize(smallHeaderFontSize);
+    let header = 'Vaccination certificate';
+    let width = pdf.getTextWidth(header);
+    x = a6width + (a6width - width) / 2;
+    pdf.text(header, x, y);
+
+    header = 'Certificat de vaccination';
+    width = pdf.getTextWidth(header);
+    x = a6width + (a6width - width) / 2;
+    y += headerLineHeight;
+    pdf.text(header, x, y);
+
+    //For the labels on the left side
+    let xLeft = a6width + paddingLeft;
+    let yLeft = y + lineHeight * 2;
+    //For the text on the right side
+    let xRight = a6width + pageMiddle;
+    let yRight = y + lineHeight * 2;
+
+    pdf.setFontSize(fontSize);
+
+    pdf.text('Disease or agent targeted', xLeft, yLeft);
+    yLeft += lineHeight;
+    pdf.text('Maladie ou agent ciblé', xLeft, yLeft);
+
+    pdf.text(vaccination!.tg!, xRight, yRight);
+
+    yLeft += lineHeight + space;
+    yRight += lineHeight * 2 + space;
+
+    pdf.text('Vaccine/prophylaxis', xLeft, yLeft);
+    yLeft += lineHeight;
+    pdf.text('Vaccin/prophylaxie', xLeft, yLeft);
+
+    pdf.text(vaccination!.vp!, xRight, yRight);
+
+    yLeft += lineHeight + space;
+    yRight += lineHeight * 2 + space;
+
+    pdf.text('Vaccine medicinal product', xLeft, yLeft);
+    yLeft += lineHeight;
+    pdf.text('Médicament vaccinal', xLeft, yLeft);
+
+    pdf.text(vaccination!.mp!, xRight, yRight);
+
+    yLeft += lineHeight + space;
+    yRight += lineHeight * 2 + space;
+
+    let lblManufacturer: string = 'Vaccine marketing authorisation holder or manufacturer';
+    lblManufacturer = pdf.splitTextToSize(lblManufacturer, lblLength);
+    pdf.text(lblManufacturer, xLeft, yLeft);
+    yLeft += lineHeight * 3;
+    lblManufacturer = "Fabricant ou titulaire de l’autorisation de mise sur le marché du vaccin";
+    lblManufacturer = pdf.splitTextToSize(lblManufacturer, lblLength);
+    pdf.text(lblManufacturer, xLeft, yLeft);
+
+    pdf.text(vaccination!.ma!, xRight, yRight);
+
+    yLeft += lineHeight * 3 + space;
+    yRight += lineHeight * 6 + space;
+
+    let lblNumberOfDoses: string = 'Number in a series of vaccinations/doses and the overall number of doses in the series';
+    lblNumberOfDoses = pdf.splitTextToSize(lblNumberOfDoses, lblLength);
+    pdf.text(lblNumberOfDoses, xLeft, yLeft);
+    yLeft += lineHeight * 4;
+    lblNumberOfDoses = "Nombre dans une série de vaccins/doses";
+    lblNumberOfDoses = pdf.splitTextToSize(lblNumberOfDoses, lblLength);
+    pdf.text(lblNumberOfDoses, xLeft, yLeft);
+
+    pdf.text('' + vaccination!.dn!, xRight, yRight);
+
+    yLeft += lineHeight * 2 + space;
+    yRight += lineHeight * 6 + space;
+
+    pdf.text('Date of vaccination', xLeft, yLeft);
+    yLeft += lineHeight;
+    pdf.text('Date de la vaccination', xLeft, yLeft);
+
+    pdf.text(vaccination!.dt!, xRight, yRight);
+
+    yLeft += lineHeight + space;
+    yRight += lineHeight * 2 + space;
+
+    pdf.text('Member State of vaccination', xLeft, yLeft);
+    yLeft += lineHeight;
+    pdf.text('État membre de vaccination', xLeft, yLeft);
+
+    pdf.text(vaccination!.co!, xRight, yRight);
+
+    yLeft += lineHeight + space;
+    yRight += lineHeight * 2 + space;
+
+    pdf.text('Certificate issuer', xLeft, yLeft);
+    yLeft += lineHeight;
+    pdf.text('Émetteur du certificat', xLeft, yLeft);
+
+    pdf.text(vaccination!.is!, xRight, yRight);
+}
+
+function prepareThirdPage(a6width: number, marginLeft: number, paddingRight: number, paddingLeft: number,
     a6height: number, marginTop: number, pdf: jsPDF, lineHeight: number, space: number) {
     let rectWidth = a6width - marginLeft - paddingRight;
     let rectHeight = rectWidth * 0.75;
@@ -235,7 +345,10 @@ function prepareThirdPage(a6width: number, marginLeft: number, paddingRight: num
     pdf.text(lblInfoText, x, y);
 }
 
-function prepareFourthPageRecovery(eudgc: EUDGC | undefined, a6width: number, a6height: number, paddingTop: number, smallHeaderLineHeight: number, pdf: jsPDF, smallHeaderFontSize: number, headerLineHeight: number, paddingLeft: number, lineHeight: number, pageMiddle: number, fontSize: number, lblLength: number, space: number) {
+function prepareFourthPageRecovery(eudgc: EUDGC | undefined, a6width: number, a6height: number,
+    paddingTop: number, smallHeaderLineHeight: number, pdf: jsPDF, smallHeaderFontSize: number,
+    headerLineHeight: number, paddingLeft: number, lineHeight: number, pageMiddle: number,
+    fontSize: number, lblLength: number, space: number) {
     let recovery: RecoveryEntry = eudgc!.r![0];
 
     let x = a6width;
