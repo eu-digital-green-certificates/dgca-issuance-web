@@ -28,7 +28,7 @@ import { jsPDF, TextOptionsLight } from "jspdf";
 
 import logo from '../assets/images/EU_logo_big.png';
 
-import { EUDGC, RecoveryEntry, VaccinationEntry } from '../generated-files/dgc-combined-schema';
+import { EUDGC, RecoveryEntry, TestEntry, VaccinationEntry } from '../generated-files/dgc-combined-schema';
 
 const usePdfGenerator = (qrCodeCanvasElement: any, eudgc: EUDGC | undefined) => {
 
@@ -73,6 +73,8 @@ const usePdfGenerator = (qrCodeCanvasElement: any, eudgc: EUDGC | undefined) => 
                 fontSize, lblLength, space);
         } else if (eudgc!.t) {
             _ci = eudgc!.t![0].ci;
+            prepareFourthPageTest(eudgc, a6width, a6height, lineHeight, pdf, fontSize, paddingLeft, 
+                smallHeaderLineHeight, pageMiddle, lblLength);
         } else if (eudgc!.v) {
             _ci = eudgc!.v![0].ci;
             prepareFourthPageVaccination(eudgc, a6width, a6height, paddingTop, smallHeaderLineHeight,
@@ -99,6 +101,10 @@ const usePdfGenerator = (qrCodeCanvasElement: any, eudgc: EUDGC | undefined) => 
         //pdf.text("erste Seite", 0, 0 + 12);
         //pdf.text("zweite Seite", a6width, 0 + 12);
         //pdf.text("dritte Seite", 0, a6height + 12);
+
+        //Forth page for test
+        
+        //End of forth page for test
 
         prepareFirstPage(marginTop, headerLineHeight, pdf, headerFontSize, a6width, marginBottom);
 
@@ -200,7 +206,148 @@ const prepareFirstPage = (marginTop: number, headerLineHeight: number, pdf: jsPD
     pdf.addImage(logo, 'png', x, a6width - marginBottom, logoWidth, logoHeight);
 }
 
-function prepareFourthPageVaccination(eudgc: EUDGC | undefined, a6width: number, a6height: number, paddingTop: number, smallHeaderLineHeight: number, pdf: jsPDF, smallHeaderFontSize: number, headerLineHeight: number, paddingLeft: number, lineHeight: number, pageMiddle: number, fontSize: number, space: number, lblLength: number) {
+function prepareFourthPageTest(eudgc: EUDGC | undefined, a6width: number, a6height: number, 
+    lineHeight: number, pdf: jsPDF, fontSize: number, paddingLeft: number, smallHeaderLineHeight: number, 
+    pageMiddle: number, lblLength: number) {
+    let test: TestEntry;
+    if (eudgc!.t![0]) {
+        test = eudgc!.t![0];
+    }
+
+    //Font for header is not smallHeaderFontSize, because it's not possible 
+    //to put all the required text on the page.
+    let x = a6width;
+    let y = a6height + lineHeight;
+    pdf.setFontSize(fontSize);
+    let header = 'Test certificate';
+    let width = pdf.getTextWidth(header);
+    x = a6width + (a6width - width) / 2;
+    pdf.text(header, x, y);
+
+    header = 'Certificat de test';
+    width = pdf.getTextWidth(header);
+    x = a6width + (a6width - width) / 2;
+    y += lineHeight;
+    pdf.text(header, x, y);
+
+    pdf.setFontSize(fontSize);
+
+    let xLeft = a6width + paddingLeft;
+    let yLeft = y + smallHeaderLineHeight;
+    //For the text on the right side
+    let xRight = a6width + pageMiddle;
+    let yRight = y + smallHeaderLineHeight;
+
+    pdf.setFontSize(fontSize);
+
+    pdf.text('Disease or agent targeted', xLeft, yLeft);
+    yLeft += lineHeight;
+    pdf.text('Maladie ou agent ciblé', xLeft, yLeft);
+
+    pdf.text(test!.tg!, xRight, yRight);
+
+    yLeft += lineHeight;
+    yRight += lineHeight * 2;
+
+    pdf.text('Type of test', xLeft, yLeft);
+    yLeft += lineHeight;
+    pdf.text('Type de test', xLeft, yLeft);
+
+    pdf.text(test!.tt!, xRight, yRight);
+
+    yLeft += lineHeight;
+    yRight += lineHeight * 2;
+
+    let lblTestName: string = 'Test name (optional for NAAT';
+    lblTestName = pdf.splitTextToSize(lblTestName, lblLength);
+    pdf.text(lblTestName, xLeft, yLeft);
+    yLeft += lineHeight * 2;
+    lblTestName = 'Nom du test (facultatif pour TAAN';
+    lblTestName = pdf.splitTextToSize(lblTestName, lblLength);
+    pdf.text(lblTestName, xLeft, yLeft);
+
+    pdf.text(test!.nm!, xRight, yRight);
+
+    yLeft += lineHeight * 2;
+    yRight += lineHeight * 4;
+
+    let lblManufacturer: string = 'Test manufacturer (optional for NAAT)';
+    lblManufacturer = pdf.splitTextToSize(lblManufacturer, lblLength);
+    pdf.text(lblManufacturer, xLeft, yLeft);
+    yLeft += lineHeight * 2;
+    lblManufacturer = 'Fabricant du test (facultatif pour un test TAAN) ';
+    lblManufacturer = pdf.splitTextToSize(lblManufacturer, lblLength);
+    pdf.text(lblManufacturer, xLeft, yLeft);
+
+    pdf.text(test!.ma!, xRight, yRight);
+
+    yLeft += lineHeight * 2;
+    yRight += lineHeight * 4;
+
+    let lblSampleDate: string = 'Date and time of the test sample collection';
+    lblSampleDate = pdf.splitTextToSize(lblSampleDate, lblLength);
+    pdf.text(lblSampleDate, xLeft, yLeft);
+    yLeft += lineHeight * 2;
+    lblSampleDate = "Date et heure du prélèvement de l’échantillon";
+    lblSampleDate = pdf.splitTextToSize(lblSampleDate, lblLength);
+    pdf.text(lblSampleDate, xLeft, yLeft);
+
+    pdf.text(test!.sc!, xRight, yRight);
+
+    yLeft += lineHeight * 2;
+    yRight += lineHeight * 4;
+
+    let lblDateTestResult: string = 'Date and time of the test result production (optional for RAT)';
+    lblDateTestResult = pdf.splitTextToSize(lblDateTestResult, lblLength);
+    pdf.text(lblDateTestResult, xLeft, yLeft);
+    yLeft += lineHeight * 3;
+    lblDateTestResult = "Date et heure de la production des résultats du test  ";
+    lblDateTestResult = pdf.splitTextToSize(lblDateTestResult, lblLength);
+    pdf.text(lblDateTestResult, xLeft, yLeft);
+
+    pdf.text(test!.dr!, xRight, yRight);
+
+    yLeft += lineHeight * 3;
+    yRight += lineHeight * 6;
+
+    pdf.text('Result of the test', xLeft, yLeft);
+    yLeft += lineHeight;
+    pdf.text('Résultat du test', xLeft, yLeft);
+
+    pdf.text(test!.tr!, xRight, yRight);
+
+    yLeft += lineHeight;
+    yRight += lineHeight * 2;
+
+    pdf.text('Testing centre or facility', xLeft, yLeft);
+    yLeft += lineHeight;
+    pdf.text('Centre ou installation de test', xLeft, yLeft);
+
+    pdf.text(test!.tc!, xRight, yRight);
+
+    yLeft += lineHeight;
+    yRight += lineHeight * 2;
+
+    pdf.text('Member State of vaccination', xLeft, yLeft);
+    yLeft += lineHeight;
+    pdf.text('État membre de vaccination', xLeft, yLeft);
+
+    pdf.text(test!.co!, xRight, yRight);
+
+    yLeft += lineHeight;
+    yRight += lineHeight * 2;
+
+    pdf.text('Certificate issuer', xLeft, yLeft);
+    yLeft += lineHeight;
+    pdf.text('Émetteur du certificat', xLeft, yLeft);
+
+    pdf.text(test!.is!, xRight, yRight);
+}
+
+function prepareFourthPageVaccination(eudgc: EUDGC | undefined, a6width: number, a6height: number, 
+    paddingTop: number, smallHeaderLineHeight: number, pdf: jsPDF, smallHeaderFontSize: number, 
+    headerLineHeight: number, paddingLeft: number, lineHeight: number, pageMiddle: number, 
+    fontSize: number, space: number, lblLength: number) {
     let vaccination: VaccinationEntry;
     if (eudgc!.v![0]) {
         vaccination = eudgc!.v![0];
