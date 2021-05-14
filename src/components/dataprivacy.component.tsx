@@ -1,5 +1,5 @@
 /*
- * eu-digital-green-certificates/ dgca-issuance-web
+ * Corona-Warn-App / cwa-quick-test-frontend
  *
  * (C) 2021, T-Systems International GmbH
  *
@@ -20,64 +20,65 @@
  */
 
 import React from 'react';
-import { Button, Card, Col, Modal, Row } from 'react-bootstrap'
+import { Modal, Row, Col, Card, Button, Container } from 'react-bootstrap'
 
 import '../i18n';
 import { useTranslation } from 'react-i18next';
 
-const ErrorPage = (props: any) => {
+
+const DataprivacyPage = (props: any) => {
 
     const { t } = useTranslation();
-    const [show, setShow] = React.useState(true);
+    const [show, setShow] = React.useState(false);
 
     React.useEffect(() => {
         if (props)
             setShow(props.show);
+            
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [props.show])
 
-    const handleClick = () => {
-        props.onCancel();
-        props.onHide();
+    const handleClose = () => {
+        props.setShow(false)
     }
 
     return (
         <>
             <Modal
-                contentClassName='data-modal'
+                size='lg'
+                scrollable
                 show={show}
-                backdrop="static"
-                keyboard={false}
+                aria-labelledby="example-custom-modal-styling-title"
                 centered
+                onHide={handleClose}
+
             >
-                <Modal.Header id='modal-header' className='pb-0' >
+                <Modal.Header id='modal-header' closeButton className='pb-0' >
                     <Row>
                         <Col >
-                            <Card.Title className='m-0 jcc-xs-jcfs-md' as={'h2'} >{t('translation:error-message')}</Card.Title>
+                            <Card.Title className='m-0 jcc-xs-jcfs-md' as={'h3'} >{t('translation:data-privacy')}</Card.Title>
                         </Col>
                     </Row>
                 </Modal.Header>
+                    <hr className='mx-3 mb-0' />
+                <Modal.Body className='px-3'>
+                    <Container className='px-1 px-sm-2 px-md-3'>
+                        <h5 className='text-justify'>
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam ornare rhoncus enim, sed tincidunt erat lobortis nec. Etiam ac erat vel sem mattis consequat. Pellentesque aliquam consequat tellus, eu sagittis neque laoreet vitae. 
+                    </h5>
 
-                {/*
-    content area with process number input and radios
-    */}
-                <Modal.Body className='py-0 bg-light'>
-                    <hr />
-                    <p className='text-center'>
-                        <span className='font-weight-bold'>{t('translation:serverError')}</span>
-                        <span>{props?.error?.message}</span>
-                    </p>
-
-                    <hr />
+                        
+                    </Container>
                 </Modal.Body>
+                    <hr className='mx-3 mt-0' />
 
                 {/*
-    footer with cancel and submit button
+    footer with ok button
     */}
                 <Modal.Footer id='data-footer'>
                     <Button
-                        className='py-0'
-                        onClick={handleClick}
+                        className=''
+                        onClick={handleClose}
                     >
                         {t('translation:cancel')}
                     </Button>
@@ -87,4 +88,4 @@ const ErrorPage = (props: any) => {
     )
 }
 
-export default ErrorPage;
+export default DataprivacyPage;

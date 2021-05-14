@@ -81,6 +81,7 @@ const RecordVaccinationCertData = (props: any) => {
         setIssuerCountryCode(vac.co);
         setCertificateIssuer(vac.is);
 
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [props.eudgc]);
 
 
@@ -89,15 +90,6 @@ const RecordVaccinationCertData = (props: any) => {
             setTimeout(setIsInit, 200, true);
         }
     }, [navigation]);
-
-    // const handleError = (error: any) => {
-    //     let msg = '';
-
-    //     if (error) {
-    //         msg = error.message
-    //     }
-    //     props.setError({ error: error, message: msg, onCancel: navigation!.toLanding });
-    // }
 
     const handleVacLastDate = (evt: Date | [Date, Date] | null) => {
         const date = handleDateChange(evt);
