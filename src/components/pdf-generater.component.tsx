@@ -73,7 +73,7 @@ const usePdfGenerator = (qrCodeCanvasElement: any, eudgc: EUDGC | undefined) => 
                 fontSize, lblLength, space);
         } else if (eudgc!.t) {
             _ci = eudgc!.t![0].ci;
-            prepareFourthPageTest(eudgc, a6width, a6height, lineHeight, pdf, fontSize, paddingLeft, 
+            prepareFourthPageTest(eudgc, a6width, a6height, lineHeight, pdf, fontSize, paddingLeft,
                 smallHeaderLineHeight, pageMiddle, lblLength);
         } else if (eudgc!.v) {
             _ci = eudgc!.v![0].ci;
@@ -103,7 +103,7 @@ const usePdfGenerator = (qrCodeCanvasElement: any, eudgc: EUDGC | undefined) => 
         //pdf.text("dritte Seite", 0, a6height + 12);
 
         //Forth page for test
-        
+
         //End of forth page for test
 
         prepareFirstPage(marginTop, headerLineHeight, pdf, headerFontSize, a6width, marginBottom);
@@ -112,6 +112,10 @@ const usePdfGenerator = (qrCodeCanvasElement: any, eudgc: EUDGC | undefined) => 
             lblLength, fontSize, paddingLeft, eudgc, space, _ci);
 
         prepareThirdPage(a6width, marginLeft, paddingRight, paddingLeft, a6height, marginTop, pdf, lineHeight, space);
+
+
+
+        printDottedLine(marginLeft, a6height, a6width, marginRight, pdf, marginTop, marginBottom);
 
         pdf.save('edgcPdfTest');
     }, [qrCodeCanvasElement]);
@@ -206,8 +210,33 @@ const prepareFirstPage = (marginTop: number, headerLineHeight: number, pdf: jsPD
     pdf.addImage(logo, 'png', x, a6width - marginBottom, logoWidth, logoHeight);
 }
 
-function prepareFourthPageTest(eudgc: EUDGC | undefined, a6width: number, a6height: number, 
-    lineHeight: number, pdf: jsPDF, fontSize: number, paddingLeft: number, smallHeaderLineHeight: number, 
+function printDottedLine(marginLeft: number, a6height: number, a6width: number, marginRight: number, pdf: jsPDF, marginTop: number, marginBottom: number) {
+    let curX = 0 + marginLeft;
+    let curY = a6height;
+    let xTo = a6width * 2 - marginRight;
+    let deltaX = 3;
+    let deltaY = 3;
+    while (curX <= xTo) {
+        pdf.line(curX, curY, curX + deltaX, curY);
+        curX += 2 * deltaX;
+    }
+
+    curX = a6width;
+    curY = 0 + marginTop;
+    let yTo = a6height * 2 - marginBottom;
+    while (curY <= yTo) {
+        pdf.line(curX, curY, curX, curY + deltaY);
+        curY += 2 * deltaY;
+    }
+
+    //Prints dotted line over page length and height
+    // pdf.setLineDashPattern([3, 3], 0);
+    // pdf.line(0, a6height, a6width*2, a6height);
+    // pdf.line(a6width, 0, a6width, a6height*2);
+}
+
+function prepareFourthPageTest(eudgc: EUDGC | undefined, a6width: number, a6height: number,
+    lineHeight: number, pdf: jsPDF, fontSize: number, paddingLeft: number, smallHeaderLineHeight: number,
     pageMiddle: number, lblLength: number) {
     let test: TestEntry;
     if (eudgc!.t![0]) {
@@ -344,9 +373,9 @@ function prepareFourthPageTest(eudgc: EUDGC | undefined, a6width: number, a6heig
     pdf.text(test!.is!, xRight, yRight);
 }
 
-function prepareFourthPageVaccination(eudgc: EUDGC | undefined, a6width: number, a6height: number, 
-    paddingTop: number, smallHeaderLineHeight: number, pdf: jsPDF, smallHeaderFontSize: number, 
-    headerLineHeight: number, paddingLeft: number, lineHeight: number, pageMiddle: number, 
+function prepareFourthPageVaccination(eudgc: EUDGC | undefined, a6width: number, a6height: number,
+    paddingTop: number, smallHeaderLineHeight: number, pdf: jsPDF, smallHeaderFontSize: number,
+    headerLineHeight: number, paddingLeft: number, lineHeight: number, pageMiddle: number,
     fontSize: number, space: number, lblLength: number) {
     let vaccination: VaccinationEntry;
     if (eudgc!.v![0]) {
