@@ -80,8 +80,8 @@ export const ShowCertificateData = (props: any) => {
             {
                 title: i18n.t('translation:personal-data'),
                 entries: [
-                    { label: i18n.t('translation:name'), data: eudgc?.nam.gn || defaultString },
-                    { label: i18n.t('translation:first-name'), data: eudgc?.nam.fn || defaultString },
+                    { label: i18n.t('translation:name'), data: eudgc?.nam.fn || defaultString },
+                    { label: i18n.t('translation:first-name'), data: eudgc?.nam.gn || defaultString },
                     { label: i18n.t('translation:date-of-birth'), data: eudgc?.dob || defaultString },
                 ]
             }
