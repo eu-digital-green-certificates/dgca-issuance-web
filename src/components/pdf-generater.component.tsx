@@ -29,8 +29,18 @@ import { jsPDF, TextOptionsLight } from "jspdf";
 import logo from '../assets/images/EU_logo_big.png';
 
 import { EUDGC, RecoveryEntry, TestEntry, VaccinationEntry } from '../generated-files/dgc-combined-schema';
+import { useGetDiseaseAgents, useGetVaccineManufacturers, useGetVaccines, 
+    useGetVaccinMedicalData, useGetTestManufacturers, useGetTestResult } from '../api';
+import { getValueSetDisplay, convertDateToOutputFormat } from '../misc/ShowCertificateData';
 
 const usePdfGenerator = (qrCodeCanvasElement: any, eudgc: EUDGC | undefined) => {
+
+    const vacMedsData = useGetVaccinMedicalData();
+    const diseaseAgentsData = useGetDiseaseAgents();
+    const vaccineManufacturers = useGetVaccineManufacturers();
+    const vaccines = useGetVaccines();
+    const testManufacturersValueSet = useGetTestManufacturers();
+    const testResultValueSet = useGetTestResult();
 
     //A4 210 x 297 mm or 2480 x 3508 pixels or 595 × 842 points
     //A6 105 x 74 mm or 1240 x 1748 pixels or 298 × 420 points
@@ -46,7 +56,6 @@ const usePdfGenerator = (qrCodeCanvasElement: any, eudgc: EUDGC | undefined) => 
     const paddingLeft = mm2point(2);
     const paddingRight = mm2point(2);
     const paddingTop = mm2point(1);
-    // let lblLength = canvasWidth/2 - 3;
 
     const lineHeight = 14;
     const fontSize = 11;
@@ -68,16 +77,17 @@ const usePdfGenerator = (qrCodeCanvasElement: any, eudgc: EUDGC | undefined) => 
         let _ci: string = '';
         if (eudgc!.r) {
             _ci = eudgc!.r![0].ci;
-            prepareFourthPageRecovery(eudgc, a6width, a6height, paddingTop, smallHeaderLineHeight,
+            prepareFourthPageRecovery(eudgc, diseaseAgentsData, a6width, a6height, paddingTop, smallHeaderLineHeight,
                 pdf, smallHeaderFontSize, headerLineHeight, paddingLeft, lineHeight, pageMiddle,
                 fontSize, lblLength, space);
         } else if (eudgc!.t) {
             _ci = eudgc!.t![0].ci;
-            prepareFourthPageTest(eudgc, a6width, a6height, lineHeight, pdf, fontSize, paddingLeft,
+            prepareFourthPageTest(eudgc, testResultValueSet, testManufacturersValueSet, diseaseAgentsData, a6width, a6height, lineHeight, pdf, fontSize, paddingLeft,
                 smallHeaderLineHeight, pageMiddle, lblLength);
         } else if (eudgc!.v) {
             _ci = eudgc!.v![0].ci;
-            prepareFourthPageVaccination(eudgc, a6width, a6height, paddingTop, smallHeaderLineHeight,
+            prepareFourthPageVaccination(eudgc, diseaseAgentsData, vaccines, vaccineManufacturers, vacMedsData, 
+                a6width, a6height, paddingTop, smallHeaderLineHeight,
                 pdf, smallHeaderFontSize, headerLineHeight, paddingLeft, lineHeight, pageMiddle,
                 fontSize, space, lblLength);
         }
@@ -102,18 +112,12 @@ const usePdfGenerator = (qrCodeCanvasElement: any, eudgc: EUDGC | undefined) => 
         //pdf.text("zweite Seite", a6width, 0 + 12);
         //pdf.text("dritte Seite", 0, a6height + 12);
 
-        //Forth page for test
-
-        //End of forth page for test
-
         prepareFirstPage(marginTop, headerLineHeight, pdf, headerFontSize, a6width, marginBottom);
 
         prepareSecondPage(qrCodeCanvasElement, a6width, pdf, marginTop, lineHeight, pageMiddle,
             lblLength, fontSize, paddingLeft, eudgc, space, _ci);
 
         prepareThirdPage(a6width, marginLeft, paddingRight, paddingLeft, a6height, marginTop, pdf, lineHeight, space);
-
-
 
         printDottedLine(marginLeft, a6height, a6width, marginRight, pdf, marginTop, marginBottom);
 
@@ -122,16 +126,8 @@ const usePdfGenerator = (qrCodeCanvasElement: any, eudgc: EUDGC | undefined) => 
 
 }
 
-const point2mm = (point: number): number => {
-    return point * 0.352778;
-}
-
 const mm2point = (mm: number): number => {
     return mm * 2.83465;
-}
-
-const pixel2point = (pixel: number): number => {
-    return pixel * 0.75;
 }
 
 export default usePdfGenerator;
@@ -210,7 +206,8 @@ const prepareFirstPage = (marginTop: number, headerLineHeight: number, pdf: jsPD
     pdf.addImage(logo, 'png', x, a6width - marginBottom, logoWidth, logoHeight);
 }
 
-function printDottedLine(marginLeft: number, a6height: number, a6width: number, marginRight: number, pdf: jsPDF, marginTop: number, marginBottom: number) {
+const printDottedLine = (marginLeft: number, a6height: number, a6width: number, marginRight: number, 
+    pdf: jsPDF, marginTop: number, marginBottom: number) => {
     let curX = 0 + marginLeft;
     let curY = a6height;
     let xTo = a6width * 2 - marginRight;
@@ -235,9 +232,10 @@ function printDottedLine(marginLeft: number, a6height: number, a6width: number, 
     // pdf.line(a6width, 0, a6width, a6height*2);
 }
 
-function prepareFourthPageTest(eudgc: EUDGC | undefined, a6width: number, a6height: number,
+const prepareFourthPageTest= (eudgc: EUDGC | undefined, testResultValueSet: any, testManufacturersValueSet: any,
+    diseaseAgentsData: any, a6width: number, a6height: number,
     lineHeight: number, pdf: jsPDF, fontSize: number, paddingLeft: number, smallHeaderLineHeight: number,
-    pageMiddle: number, lblLength: number) {
+    pageMiddle: number, lblLength: number) => {
     let test: TestEntry;
     if (eudgc!.t![0]) {
         test = eudgc!.t![0];
@@ -273,7 +271,8 @@ function prepareFourthPageTest(eudgc: EUDGC | undefined, a6width: number, a6heig
     yLeft += lineHeight;
     pdf.text('Maladie ou agent ciblé', xLeft, yLeft);
 
-    pdf.text(test!.tg!, xRight, yRight);
+    let txtDisplay: string = getValueSetDisplay(test!.tg!, diseaseAgentsData) || '' ;
+    pdf.text(txtDisplay, xRight, yRight);
 
     yLeft += lineHeight;
     yRight += lineHeight * 2;
@@ -290,7 +289,7 @@ function prepareFourthPageTest(eudgc: EUDGC | undefined, a6width: number, a6heig
     let lblTestName: string = 'Test name (optional for NAAT';
     lblTestName = pdf.splitTextToSize(lblTestName, lblLength);
     pdf.text(lblTestName, xLeft, yLeft);
-    yLeft += lineHeight * 2;
+    yLeft += lineHeight * lblTestName.length;
     lblTestName = 'Nom du test (facultatif pour TAAN';
     lblTestName = pdf.splitTextToSize(lblTestName, lblLength);
     pdf.text(lblTestName, xLeft, yLeft);
@@ -308,7 +307,9 @@ function prepareFourthPageTest(eudgc: EUDGC | undefined, a6width: number, a6heig
     lblManufacturer = pdf.splitTextToSize(lblManufacturer, lblLength);
     pdf.text(lblManufacturer, xLeft, yLeft);
 
-    pdf.text(test!.ma!, xRight, yRight);
+    txtDisplay = getValueSetDisplay(test!.ma!, testManufacturersValueSet) || '' ;
+    txtDisplay = pdf.splitTextToSize(txtDisplay, lblLength);
+    pdf.text(txtDisplay, xRight, yRight);
 
     yLeft += lineHeight * 2;
     yRight += lineHeight * 4;
@@ -321,7 +322,7 @@ function prepareFourthPageTest(eudgc: EUDGC | undefined, a6width: number, a6heig
     lblSampleDate = pdf.splitTextToSize(lblSampleDate, lblLength);
     pdf.text(lblSampleDate, xLeft, yLeft);
 
-    pdf.text(test!.sc!, xRight, yRight);
+    pdf.text(convertDateToOutputFormat(test!.sc!), xRight, yRight);
 
     yLeft += lineHeight * 2;
     yRight += lineHeight * 4;
@@ -334,7 +335,7 @@ function prepareFourthPageTest(eudgc: EUDGC | undefined, a6width: number, a6heig
     lblDateTestResult = pdf.splitTextToSize(lblDateTestResult, lblLength);
     pdf.text(lblDateTestResult, xLeft, yLeft);
 
-    pdf.text(test!.dr!, xRight, yRight);
+    pdf.text(convertDateToOutputFormat(test!.dr!), xRight, yRight);
 
     yLeft += lineHeight * 3;
     yRight += lineHeight * 6;
@@ -343,7 +344,8 @@ function prepareFourthPageTest(eudgc: EUDGC | undefined, a6width: number, a6heig
     yLeft += lineHeight;
     pdf.text('Résultat du test', xLeft, yLeft);
 
-    pdf.text(test!.tr!, xRight, yRight);
+    txtDisplay = getValueSetDisplay(test!.tr!, testResultValueSet) || '' ;
+    pdf.text(txtDisplay, xRight, yRight);
 
     yLeft += lineHeight;
     yRight += lineHeight * 2;
@@ -373,10 +375,11 @@ function prepareFourthPageTest(eudgc: EUDGC | undefined, a6width: number, a6heig
     pdf.text(test!.is!, xRight, yRight);
 }
 
-function prepareFourthPageVaccination(eudgc: EUDGC | undefined, a6width: number, a6height: number,
+const  prepareFourthPageVaccination = (eudgc: EUDGC | undefined, diseaseAgentsData:any, vaccines:any, vaccineManufacturers:any, 
+    vacMedsData:any, a6width: number, a6height: number,
     paddingTop: number, smallHeaderLineHeight: number, pdf: jsPDF, smallHeaderFontSize: number,
     headerLineHeight: number, paddingLeft: number, lineHeight: number, pageMiddle: number,
-    fontSize: number, space: number, lblLength: number) {
+    fontSize: number, space: number, lblLength: number) => {
     let vaccination: VaccinationEntry;
     if (eudgc!.v![0]) {
         vaccination = eudgc!.v![0];
@@ -409,7 +412,8 @@ function prepareFourthPageVaccination(eudgc: EUDGC | undefined, a6width: number,
     yLeft += lineHeight;
     pdf.text('Maladie ou agent ciblé', xLeft, yLeft);
 
-    pdf.text(vaccination!.tg!, xRight, yRight);
+    let txtDisplay: string = getValueSetDisplay(vaccination!.tg!, diseaseAgentsData) || '' ;
+    pdf.text(txtDisplay, xRight, yRight);
 
     yLeft += lineHeight + space;
     yRight += lineHeight * 2 + space;
@@ -418,16 +422,19 @@ function prepareFourthPageVaccination(eudgc: EUDGC | undefined, a6width: number,
     yLeft += lineHeight;
     pdf.text('Vaccin/prophylaxie', xLeft, yLeft);
 
-    pdf.text(vaccination!.vp!, xRight, yRight);
+    txtDisplay = getValueSetDisplay(vaccination!.vp!, vaccines) || '' ;
+    txtDisplay = pdf.splitTextToSize(txtDisplay, lblLength);
+    pdf.text(txtDisplay, xRight, yRight);
 
     yLeft += lineHeight + space;
-    yRight += lineHeight * 2 + space;
+    yRight = yLeft;
 
     pdf.text('Vaccine medicinal product', xLeft, yLeft);
     yLeft += lineHeight;
     pdf.text('Médicament vaccinal', xLeft, yLeft);
 
-    pdf.text(vaccination!.mp!, xRight, yRight);
+    txtDisplay = getValueSetDisplay(vaccination!.mp!, vaccines) || '' ;
+    pdf.text(txtDisplay, xRight, yRight);
 
     yLeft += lineHeight + space;
     yRight += lineHeight * 2 + space;
@@ -440,7 +447,9 @@ function prepareFourthPageVaccination(eudgc: EUDGC | undefined, a6width: number,
     lblManufacturer = pdf.splitTextToSize(lblManufacturer, lblLength);
     pdf.text(lblManufacturer, xLeft, yLeft);
 
-    pdf.text(vaccination!.ma!, xRight, yRight);
+    txtDisplay = getValueSetDisplay(vaccination!.ma!, vaccineManufacturers) || '' ;
+    txtDisplay = pdf.splitTextToSize(txtDisplay, lblLength);
+    pdf.text(txtDisplay, xRight, yRight);
 
     yLeft += lineHeight * 3 + space;
     yRight += lineHeight * 6 + space;
@@ -483,8 +492,8 @@ function prepareFourthPageVaccination(eudgc: EUDGC | undefined, a6width: number,
     pdf.text(vaccination!.is!, xRight, yRight);
 }
 
-function prepareThirdPage(a6width: number, marginLeft: number, paddingRight: number, paddingLeft: number,
-    a6height: number, marginTop: number, pdf: jsPDF, lineHeight: number, space: number) {
+const prepareThirdPage = (a6width: number, marginLeft: number, paddingRight: number, paddingLeft: number,
+    a6height: number, marginTop: number, pdf: jsPDF, lineHeight: number, space: number) => {
     let rectWidth = a6width - marginLeft - paddingRight;
     let rectHeight = rectWidth * 0.75;
     let x = (a6width - rectWidth) / 2;
@@ -521,7 +530,7 @@ function prepareThirdPage(a6width: number, marginLeft: number, paddingRight: num
     pdf.text(lblInfoText, x, y);
 }
 
-function prepareFourthPageRecovery(eudgc: EUDGC | undefined, a6width: number, a6height: number,
+function prepareFourthPageRecovery(eudgc: EUDGC | undefined, diseaseAgentsData:any, a6width: number, a6height: number,
     paddingTop: number, smallHeaderLineHeight: number, pdf: jsPDF, smallHeaderFontSize: number,
     headerLineHeight: number, paddingLeft: number, lineHeight: number, pageMiddle: number,
     fontSize: number, lblLength: number, space: number) {
@@ -558,9 +567,10 @@ function prepareFourthPageRecovery(eudgc: EUDGC | undefined, a6width: number, a6
     lblDisease = pdf.splitTextToSize(lblDisease, lblLength);
     pdf.text(lblDisease, xLeft, yLeft);
 
-    let disease = recovery.tg;
-    disease = pdf.splitTextToSize(disease, lblLength);
-    pdf.text(disease, xRight, yRight);
+
+    let txtDisplay: string = getValueSetDisplay(recovery.tg, diseaseAgentsData) || '' ;
+    txtDisplay = pdf.splitTextToSize(txtDisplay, lblLength);
+    pdf.text(txtDisplay, xRight, yRight);
 
     yLeft += lineHeight * 2 + space;
     yRight += lineHeight * 4 + space;
@@ -615,4 +625,3 @@ function prepareFourthPageRecovery(eudgc: EUDGC | undefined, a6width: number, a6
 
     pdf.text(recovery.du!, xRight, yRight);
 }
-
