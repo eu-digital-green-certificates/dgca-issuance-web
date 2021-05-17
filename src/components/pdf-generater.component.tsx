@@ -21,7 +21,7 @@
 
 import React from 'react';
 
-import '../i18n';
+import i18n from '../i18n';
 import { useTranslation } from 'react-i18next';
 
 import { jsPDF, TextOptionsLight } from "jspdf";
@@ -34,6 +34,7 @@ import { useGetDiseaseAgents, useGetVaccineManufacturers, useGetVaccines,
 import { getValueSetDisplay, convertDateToOutputFormat } from '../misc/ShowCertificateData';
 
 const usePdfGenerator = (qrCodeCanvasElement: any, eudgc: EUDGC | undefined) => {
+    const { t } = useTranslation();
 
     const vacMedsData = useGetVaccinMedicalData();
     const diseaseAgentsData = useGetDiseaseAgents();
@@ -114,7 +115,7 @@ const usePdfGenerator = (qrCodeCanvasElement: any, eudgc: EUDGC | undefined) => 
 
         prepareFirstPage(marginTop, headerLineHeight, pdf, headerFontSize, a6width, marginBottom);
 
-        prepareSecondPage(qrCodeCanvasElement, a6width, pdf, marginTop, lineHeight, pageMiddle,
+        prepareSecondPage(qrCodeCanvasElement, t, a6width, pdf, marginTop, lineHeight, pageMiddle,
             lblLength, fontSize, paddingLeft, eudgc, space, _ci);
 
         prepareThirdPage(a6width, marginLeft, paddingRight, paddingLeft, a6height, marginTop, pdf, lineHeight, space);
@@ -132,7 +133,7 @@ const mm2point = (mm: number): number => {
 
 export default usePdfGenerator;
 
-const prepareSecondPage = (qrCodeCanvasElement: any, a6width: number, pdf: jsPDF, marginTop: number,
+const prepareSecondPage = (qrCodeCanvasElement: any, t:any, a6width: number, pdf: jsPDF, marginTop: number,
     lineHeight: number, pageMiddle: number, lblLength: number, fontSize: number, paddingLeft: number,
     eudgc: EUDGC | undefined, space: number, _ci: string) => {
 
@@ -151,11 +152,12 @@ const prepareSecondPage = (qrCodeCanvasElement: any, a6width: number, pdf: jsPDF
 
     pdf.setFontSize(fontSize);
 
-    let lblSurname: string = 'Surname(s) and forename(s)';
+    let lblSurname: string = t('translation:pdfSurname');
     lblSurname = pdf.splitTextToSize(lblSurname, lblLength);
     pdf.text(lblSurname, xLeft, yLeft);
     yLeft += lineHeight * 2;
-    lblSurname = 'Nom(s) de famille et prénom(s)';
+   
+    lblSurname = i18n!.getDataByLanguage('fr')!.translation.pdfSurname
     lblSurname = pdf.splitTextToSize(lblSurname, lblLength);
     pdf.text(lblSurname, xLeft, yLeft);
 
@@ -517,7 +519,7 @@ const prepareThirdPage = (a6width: number, marginLeft: number, paddingRight: num
 
     lblInfoText = "This certificate is not a travel document. The scientific evidence on COVID-19 vaccination, testing and recovery continues to evolve, also in view of new variants of concern of the virus. Before traveling, please check the applicable public health measures and related restrictions applied at the point of destination.";
     lblInfoText = pdf.splitTextToSize(lblInfoText, rectWidth);
-    pdf.text(lblInfoText, x, y);
+    pdf.text(lblInfoText, x, y, {align: 'justify', maxWidth: rectWidth});
 
     y += lineHeight * 8;
 
