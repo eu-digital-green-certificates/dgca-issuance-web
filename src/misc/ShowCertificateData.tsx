@@ -171,19 +171,6 @@ export const ShowCertificateData = (props: any) => {
         return recoveryData;
     }
 
-    const convertDateToOutputFormat = (dateString: string): string => dateString ? moment(dateString, 'YYYY-MM-DDTHH:mm:ss.sssZ').format(utils.momentDateTimeFormat).toString() : '';
-
-
-    // returns display value for key 
-    const getValueSetDisplay = (key: string | undefined, valueSet: IValueSet | undefined): string | undefined => {
-        let result = key;
-
-        if (valueSet && key && valueSet[key]) {
-            result = valueSet[key].display;
-        }
-        return result;
-    }
-
     const getDataOutputElement = (dataSet: IDataEntry) => {
         return (
             <React.Fragment key={JSON.stringify(dataSet)}>
@@ -208,3 +195,15 @@ export const ShowCertificateData = (props: any) => {
 }
 
 export default ShowCertificateData
+
+export const convertDateToOutputFormat = (dateString: string): string => dateString ? moment(dateString, 'YYYY-MM-DDTHH:mm:ss.sssZ').format(utils.momentDateTimeFormat).toString() : '';
+
+// returns display value for key 
+export const getValueSetDisplay = (key: string | undefined, valueSet: IValueSet | undefined): string | undefined => {
+    let result = key;
+
+    if (valueSet && key && valueSet[key]) {
+        result = valueSet[key].display;
+    }
+    return result;
+}
