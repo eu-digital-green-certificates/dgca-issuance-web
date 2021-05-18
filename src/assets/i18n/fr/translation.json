@@ -1,3 +1,5 @@
 {
-    "pdfSurname": "Nom(s) de famille et prénom(s)"
+    "pdfSurname": "Nom(s) de famille et prénom(s)",
+    "pdfDateOfBirth": "Date de naissance",
+    "pdfCi":"Identifiant unique du certificat"
 }

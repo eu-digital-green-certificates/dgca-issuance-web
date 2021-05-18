@@ -26,7 +26,9 @@ import { useTranslation } from 'react-i18next';
 
 import { jsPDF } from "jspdf";
 
-import logo from '../assets/images/EU_logo_big.png';
+import logo from '../assets/images/eu_flag.png';
+import card_seperator from '../assets/images/card.png';
+import flag_seperator from '../assets/images/flag.png';
 
 import { EUDGC, RecoveryEntry, TestEntry, VaccinationEntry } from '../generated-files/dgc-combined-schema';
 import {
@@ -59,6 +61,7 @@ interface IPageParameter {
 
     lineHeight: number,
     fontSize: number,
+    fontSize12: number,
     headerLineHeight: number,
     headerFontSize: number,
     smallHeaderLineHeight: number,
@@ -94,6 +97,7 @@ const usePdfGenerator = (qrCodeCanvasElement: any, eudgc: EUDGC | undefined) => 
 
         lineHeight: 14,
         fontSize: 11,
+        fontSize12: 12,
         headerLineHeight: 22,
         headerFontSize: 18,
         smallHeaderLineHeight: 15,
@@ -132,7 +136,7 @@ const usePdfGenerator = (qrCodeCanvasElement: any, eudgc: EUDGC | undefined) => 
         // _pdf.setFont('calibri', 'italic');
         // console.log(_pdf.getFont());
         // _pdf.text('world', 100, 50,);
-        
+
         // _pdf.setFont('calibri', 'bold');
         // console.log(_pdf.getFont());
 
@@ -181,7 +185,7 @@ const usePdfGenerator = (qrCodeCanvasElement: any, eudgc: EUDGC | undefined) => 
 
         prepareFirstPage(_pdf, params);
 
-        prepareSecondPage(_pdf, params, eudgc, t, qrCodeCanvasElement, pageMiddle, lblLength, _ci);
+        prepareSecondPage(_pdf, params, eudgc, t, qrCodeCanvasElement, _ci);
 
         prepareThirdPage(_pdf, params);
 
@@ -195,56 +199,77 @@ const usePdfGenerator = (qrCodeCanvasElement: any, eudgc: EUDGC | undefined) => 
 export default usePdfGenerator;
 
 const prepareSecondPage = (pdf: jsPDF, params: IPageParameter, eudgc: EUDGC | undefined,
-    t: any, qrCodeCanvasElement: HTMLCanvasElement, pageMiddle: number, lblLength: number, _ci: string) => {
+    t: any, qrCodeCanvasElement: HTMLCanvasElement, _ci: string) => {
 
-    var canvas: HTMLCanvasElement = qrCodeCanvasElement;
-    var img = canvas!.toDataURL("image/png,base64");
-    let canvasWidth = 192;
-    let centerLeft = (params.a6width - canvasWidth) / 2;
-    pdf.addImage(img, 'png', params.a6width + centerLeft, params.marginTop, canvasWidth, canvasWidth);
+    //LblLength goes over A6 and not the half of A6
+    let lblLength = params.a6width * 2 - params.paddingRight - params.paddingRight;
+    //space between the lines is greater
+    let space = mm2point(10);
+    let canvas: HTMLCanvasElement = qrCodeCanvasElement;
+    let img = canvas!.toDataURL("image/png,base64");
+    let canvasWidth = mm2point(40);
+    let x = params.a6width * 2 - canvasWidth - mm2point(10);
+    let y = space;
+    pdf.addImage(img, 'png', x, y, canvasWidth, canvasWidth);
+
+    let imageWidth = 258;
+    let imageHeight = 55.5;
+    y += imageHeight + mm2point(8);
+    x = params.a6width * 2 - imageWidth - mm2point(9);
+
+    pdf.addImage(card_seperator, x, y, imageWidth, imageHeight);
 
     //For the labels on the left side
-    let xLeft = params.a6width + params.paddingLeft;
-    let yLeft = params.marginTop + canvasWidth + params.lineHeight * 2;
-    //For the variables on the right side
-    let xRight = params.a6width + pageMiddle;
-    let yRight = params.marginTop + canvasWidth + params.lineHeight * 2;
+    x = params.a6width + params.paddingLeft;
+    y += imageHeight + space;
 
-    pdf.setFontSize(params.fontSize);
+    pdf.setFontSize(params.fontSize12);
 
     let lblSurname: string = t('translation:pdfSurname');
-    lblSurname = pdf.splitTextToSize(lblSurname, lblLength);
-    pdf.text(lblSurname, xLeft, yLeft);
-    yLeft += params.lineHeight * 2;
+    pdf.text(lblSurname, x, y);
+    pdf.text(lblSurname, x, y);
 
+    y += params.lineHeight;
     lblSurname = i18n!.getDataByLanguage('fr')!.translation.pdfSurname
-    lblSurname = pdf.splitTextToSize(lblSurname, lblLength);
-    pdf.text(lblSurname, xLeft, yLeft);
+    pdf.text(lblSurname, x, y);
 
-    let name = eudgc!.nam!.fnt + ' ' + eudgc!.nam!.gnt;
+    y += params.lineHeight;
+    setTextColorTurkis(pdf);
+    let name = eudgc!.nam!.fnt + ' ';
+    name += eudgc!.nam.gnt ? eudgc!.nam.gnt : '';
     name = pdf.splitTextToSize(name, lblLength);
-    pdf.text(name, xRight, yRight);
+    pdf.text(name, x, y);
 
-    yLeft += params.lineHeight * 2 + params.space;
-    pdf.text('Date of birth', xLeft, yLeft);
-    yLeft += params.lineHeight;
-    pdf.text('Date de naissance', xLeft, yLeft);
+    y += params.lineHeight * name.length + space;
+    setTextColorBlack(pdf);
+    let lblDateOfBirth: string = t('translation:pdfDateOfBirth');
+    pdf.text(lblDateOfBirth, x, y);
+    pdf.text(lblDateOfBirth, x, y);
+    y += params.lineHeight;
+    lblDateOfBirth = i18n!.getDataByLanguage('fr')!.translation.pdfDateOfBirth;
+    pdf.text(lblDateOfBirth, x, y);
 
-    yRight += params.lineHeight * 4 + params.space;
-    pdf.text(eudgc!.dob, xRight, yRight);
+    y += params.lineHeight;
+    setTextColorTurkis(pdf);
+    pdf.text(eudgc!.dob, x, y);
 
-    yLeft += params.lineHeight + params.space;
-    let lblci = 'Unique certificate identifier';
+    y += params.lineHeight + space;
+    setTextColorBlack(pdf);
+    let lblci: string = t('translation:pdfCi');
     lblci = pdf.splitTextToSize(lblci, lblLength);
-    pdf.text(lblci, xLeft, yLeft);
-    yLeft += params.lineHeight;
-    lblci = 'Identifiant unique du certificat';
+    pdf.text(lblci, x, y);
+    pdf.text(lblci, x, y);
+    y += params.lineHeight;
+    lblci = i18n!.getDataByLanguage('fr')!.translation.pdfCi;
     lblci = pdf.splitTextToSize(lblci, lblLength);
-    pdf.text(lblci, xLeft, yLeft);
+    pdf.text(lblci, x, y);
 
-    yRight += params.lineHeight * 2 + params.space;
-    _ci = pdf.splitTextToSize(_ci, lblLength);
-    pdf.text(_ci, xRight, yRight);
+    y += params.lineHeight;
+    setTextColorTurkis(pdf);
+    lblci = pdf.splitTextToSize(_ci, lblLength);
+    pdf.text(lblci, x, y);
+
+    setTextColorBlack(pdf);
 }
 
 const prepareFirstPage = (pdf: jsPDF, params: IPageParameter) => {
@@ -274,6 +299,9 @@ const printDottedLine = (pdf: jsPDF, params: IPageParameter) => {
     let xTo = params.a6width * 2 - params.marginRight;
     let deltaX = 3;
     let deltaY = 3;
+
+    pdf.setDrawColor(0, 122, 102);
+
     while (curX <= xTo) {
         pdf.line(curX, curY, curX + deltaX, curY);
         curX += 2 * deltaX;
@@ -293,7 +321,7 @@ const printDottedLine = (pdf: jsPDF, params: IPageParameter) => {
     // pdf.line(a6width, 0, a6width, a6height*2);
 }
 
-const prepareFourthPageTest = (pdf: jsPDF, eudgc: EUDGC | undefined, params:IPageParameter, 
+const prepareFourthPageTest = (pdf: jsPDF, eudgc: EUDGC | undefined, params: IPageParameter,
     testResultValueSet: any, testManufacturersValueSet: any,
     diseaseAgentsData: any, pageMiddle: number, lblLength: number) => {
 
@@ -307,7 +335,7 @@ const prepareFourthPageTest = (pdf: jsPDF, eudgc: EUDGC | undefined, params:IPag
     //to put all the required text on the page.
     let x = params.a6width;
     let y = params.a6height + params.lineHeight;
-    
+
     pdf.setFontSize(params.fontSize);
 
     let header = 'Test certificate';
@@ -685,4 +713,12 @@ function prepareFourthPageRecovery(pdf: jsPDF, eudgc: EUDGC | undefined, disease
     pdf.text(lblValidTo, xLeft, yLeft);
 
     pdf.text(recovery.du!, xRight, yRight);
+}
+
+const setTextColorTurkis = (pdf : jsPDF) => {
+    pdf.setTextColor(0, 122, 102);
+}
+
+const setTextColorBlack = (pdf : jsPDF) => {
+    pdf.setTextColor(0, 0, 0);
 }

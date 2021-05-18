@@ -111,5 +111,7 @@
   "first-positive-test-date": "First Positive Test Result",
   "recovery-country": "Country of Test",
   "cert-valid-from-to": "Certificate Valid From - To",
-  "pdfSurname": "Surname(s) and forename(s)"
+  "pdfSurname": "Surname(s) and forename(s)",
+  "pdfDateOfBirth": "Date of birth",
+  "pdfCi":"Unique certificate identifier"
 }
