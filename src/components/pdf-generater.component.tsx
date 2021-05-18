@@ -35,6 +35,11 @@ import {
 } from '../api';
 import { getValueSetDisplay, convertDateToOutputFormat } from '../misc/ShowCertificateData';
 
+import calibri from '../assets/SCSS/fonts/calibri.ttf';
+import calibriI from '../assets/SCSS/fonts/calibrii.ttf';
+import calibriB from '../assets/SCSS/fonts/calibrib.ttf';
+import calibriBI from '../assets/SCSS/fonts/calibriz.ttf';
+
 const mm2point = (mm: number): number => {
     return mm * 2.83465;
 }
@@ -99,24 +104,65 @@ const usePdfGenerator = (qrCodeCanvasElement: any, eudgc: EUDGC | undefined) => 
     const lblLength = params.a6width / 2 - params.paddingLeft - params.paddingRight;
     const pageMiddle = params.a6width / 2;
 
+    const [pdf, setPdf] = React.useState<jsPDF>();
+
     React.useEffect(() => {
-        if (!qrCodeCanvasElement && !eudgc) {
+        const _pdf = new jsPDF("p", "pt", "a4", true);
+
+        const c = Buffer.from(calibri);
+        const ci = Buffer.from(calibriI);
+        const cb = Buffer.from(calibriB);
+        const cbi = Buffer.from(calibriBI);
+
+        _pdf.addFileToVFS("Calibri", c.toString());
+        _pdf.addFileToVFS("Calibri-Italic", ci.toString());
+        _pdf.addFileToVFS("Calibri-Bold", cb.toString());
+        _pdf.addFileToVFS("Calibri-BoldItalic", cbi.toString());
+
+        _pdf.addFont("Calibri", "calibri", "normal");
+        _pdf.addFont("Calibri-Italic", "calibri", "italic");
+        _pdf.addFont("Calibri-Bold", "calibri", "bold");
+        _pdf.addFont("Calibri-BoldItalic", "calibri", "bolditalic");
+
+        // _pdf.setFont('calibri', 'normal');
+        // console.log(_pdf.getFont());
+
+        // _pdf.text('Hello', 50, 50,);
+
+        // _pdf.setFont('calibri', 'italic');
+        // console.log(_pdf.getFont());
+        // _pdf.text('world', 100, 50,);
+        
+        // _pdf.setFont('calibri', 'bold');
+        // console.log(_pdf.getFont());
+
+        // _pdf.text('Hello', 50, 100,);
+
+        // _pdf.setFont('calibri', 'bolditalic');
+
+        // _pdf.text('world', 100, 100,);
+
+
+        setPdf(_pdf);
+    }, [])
+
+    React.useEffect(() => {
+        if (!qrCodeCanvasElement && !eudgc && !pdf) {
             return;
         }
-
-        const pdf = new jsPDF("p", "pt", "a4", true);
+        const _pdf = pdf!;
 
         let _ci: string = '';
         if (eudgc!.r) {
             _ci = eudgc!.r![0].ci;
-            prepareFourthPageRecovery(pdf, eudgc, diseaseAgentsData, params, pageMiddle, lblLength);
+            prepareFourthPageRecovery(_pdf, eudgc, diseaseAgentsData, params, pageMiddle, lblLength);
         } else if (eudgc!.t) {
             _ci = eudgc!.t![0].ci;
-            prepareFourthPageTest(pdf, eudgc, params, testResultValueSet, testManufacturersValueSet,
+            prepareFourthPageTest(_pdf, eudgc, params, testResultValueSet, testManufacturersValueSet,
                 diseaseAgentsData, pageMiddle, lblLength);
         } else if (eudgc!.v) {
             _ci = eudgc!.v![0].ci;
-            prepareFourthPageVaccination(pdf, eudgc, params, diseaseAgentsData, vaccines, vaccineManufacturers,
+            prepareFourthPageVaccination(_pdf, eudgc, params, diseaseAgentsData, vaccines, vaccineManufacturers,
                 vacMedsData, pageMiddle, lblLength);
         }
 
@@ -131,17 +177,17 @@ const usePdfGenerator = (qrCodeCanvasElement: any, eudgc: EUDGC | undefined) => 
         // pdf.text('Hello World', 15, 15);
         // pdf.setFont('calibri');
         // pdf.text('Hello World', 15, 30);
-        // console.log(pdf.getFont());
+        console.log(_pdf.getFont());
 
-        prepareFirstPage(pdf, params);
+        prepareFirstPage(_pdf, params);
 
-        prepareSecondPage(pdf, params, eudgc, t, qrCodeCanvasElement, pageMiddle, lblLength, _ci);
+        prepareSecondPage(_pdf, params, eudgc, t, qrCodeCanvasElement, pageMiddle, lblLength, _ci);
 
-        prepareThirdPage(pdf, params);
+        prepareThirdPage(_pdf, params);
 
-        printDottedLine(pdf, params);
+        printDottedLine(_pdf, params);
 
-        pdf.save('edgcPdfTest');
+        _pdf.save('edgcPdfTest');
     }, [qrCodeCanvasElement]);
 
 }
@@ -261,7 +307,9 @@ const prepareFourthPageTest = (pdf: jsPDF, eudgc: EUDGC | undefined, params:IPag
     //to put all the required text on the page.
     let x = params.a6width;
     let y = params.a6height + params.lineHeight;
+    
     pdf.setFontSize(params.fontSize);
+
     let header = 'Test certificate';
     let width = pdf.getTextWidth(header);
     x = params.a6width + (params.a6width - width) / 2;
