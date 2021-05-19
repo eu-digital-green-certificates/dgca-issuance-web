@@ -113,5 +113,6 @@
   "cert-valid-from-to": "Certificate Valid From - To",
   "pdfSurname": "Surname(s) and forename(s)",
   "pdfDateOfBirth": "Date of birth",
-  "pdfCi":"Unique certificate identifier"
+  "pdfCi":"Unique certificate identifier",
+  "pdfGreenCertificate" : "DIGITAL GREEN CERTIFICATE"
 }

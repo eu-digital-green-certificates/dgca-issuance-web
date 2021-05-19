@@ -1,5 +1,6 @@
 {
     "pdfSurname": "Nom(s) de famille et prénom(s)",
     "pdfDateOfBirth": "Date de naissance",
-    "pdfCi":"Identifiant unique du certificat"
+    "pdfCi":"Identifiant unique du certificat",
+    "pdfGreenCertificate" : "CERTIFICAT VERT NUMÉRIQUE"
 }

@@ -98,8 +98,8 @@ const usePdfGenerator = (qrCodeCanvasElement: any, eudgc: EUDGC | undefined) => 
         lineHeight: 14,
         fontSize: 11,
         fontSize12: 12,
-        headerLineHeight: 22,
-        headerFontSize: 18,
+        headerLineHeight: 28,
+        headerFontSize: 28,
         smallHeaderLineHeight: 15,
         smallHeaderFontSize: 12,
         space: 2
@@ -183,7 +183,7 @@ const usePdfGenerator = (qrCodeCanvasElement: any, eudgc: EUDGC | undefined) => 
         // pdf.text('Hello World', 15, 30);
         console.log(_pdf.getFont());
 
-        prepareFirstPage(_pdf, params);
+        prepareFirstPage(_pdf, params, t);
 
         prepareSecondPage(_pdf, params, eudgc, t, qrCodeCanvasElement, _ci);
 
@@ -199,10 +199,10 @@ const usePdfGenerator = (qrCodeCanvasElement: any, eudgc: EUDGC | undefined) => 
 export default usePdfGenerator;
 
 const prepareSecondPage = (pdf: jsPDF, params: IPageParameter, eudgc: EUDGC | undefined,
-    t: any, qrCodeCanvasElement: HTMLCanvasElement, _ci: string) => {
+    translation: any, qrCodeCanvasElement: HTMLCanvasElement, _ci: string) => {
 
     //LblLength goes over A6 and not the half of A6
-    let lblLength = params.a6width * 2 - params.paddingRight - params.paddingRight;
+    let lblLength = params.a6width - params.paddingRight - params.paddingRight*3;
     //space between the lines is greater
     let space = mm2point(10);
     let canvas: HTMLCanvasElement = qrCodeCanvasElement;
@@ -225,7 +225,7 @@ const prepareSecondPage = (pdf: jsPDF, params: IPageParameter, eudgc: EUDGC | un
 
     pdf.setFontSize(params.fontSize12);
 
-    let lblSurname: string = t('translation:pdfSurname');
+    let lblSurname: string = translation('translation:pdfSurname');
     pdf.text(lblSurname, x, y);
     pdf.text(lblSurname, x, y);
 
@@ -242,7 +242,7 @@ const prepareSecondPage = (pdf: jsPDF, params: IPageParameter, eudgc: EUDGC | un
 
     y += params.lineHeight * name.length + space;
     setTextColorBlack(pdf);
-    let lblDateOfBirth: string = t('translation:pdfDateOfBirth');
+    let lblDateOfBirth: string = translation('translation:pdfDateOfBirth');
     pdf.text(lblDateOfBirth, x, y);
     pdf.text(lblDateOfBirth, x, y);
     y += params.lineHeight;
@@ -255,7 +255,7 @@ const prepareSecondPage = (pdf: jsPDF, params: IPageParameter, eudgc: EUDGC | un
 
     y += params.lineHeight + space;
     setTextColorBlack(pdf);
-    let lblci: string = t('translation:pdfCi');
+    let lblci: string = translation('translation:pdfCi');
     lblci = pdf.splitTextToSize(lblci, lblLength);
     pdf.text(lblci, x, y);
     pdf.text(lblci, x, y);
@@ -272,25 +272,37 @@ const prepareSecondPage = (pdf: jsPDF, params: IPageParameter, eudgc: EUDGC | un
     setTextColorBlack(pdf);
 }
 
-const prepareFirstPage = (pdf: jsPDF, params: IPageParameter) => {
-    let x = 0;
-    let y = params.marginTop + params.headerLineHeight;
+const prepareFirstPage = (pdf: jsPDF, params: IPageParameter, translation: any) => {
+    let x = params.a6width/2;
+    let y = mm2point(38);
+    setTextColorTurkis(pdf);
+    let lblLength = params.a6width - params.paddingRight - params.paddingRight;
     pdf.setFontSize(params.headerFontSize);
-    let header = 'DIGITAL GREEN CERTIFICATE';
-    let width = pdf.getTextWidth(header);
-    x = (params.a6width - width) / 2;
-    pdf.text(header, x, y);
+    let header = translation('translation:pdfGreenCertificate');
+    header = pdf.splitTextToSize(header, lblLength);
+    pdf.text(header, x, y, { align: 'center', maxWidth: lblLength });
+    pdf.text(header, x, y, { align: 'center', maxWidth: lblLength });
 
-    header = 'CERTIFICAT VERT NUMÉRIQUE';
-    width = pdf.getTextWidth(header);
-    x = (params.a6width - width) / 2;
-    y += params.headerLineHeight;
-    pdf.text(header, x, y);
+    pdf.setFillColor(255, 242, 0);
+    x = params.a6width - lblLength;
+    y += params.headerLineHeight * header.length - mm2point(4);
+    console.log("WErt für y:" + y);
+    pdf.rect(x, y, lblLength - x, 3, 'F');
 
-    let logoWidth = 132.75;
-    let logoHeight = 88.5;
+    x = params.a6width/2;
+    y += params.headerLineHeight + mm2point(4);
+
+    header = i18n!.getDataByLanguage('fr')!.translation.pdfGreenCertificate;
+    header = pdf.splitTextToSize(header, lblLength);
+    pdf.text(header, x, y, { align: 'center', maxWidth: lblLength });
+
+    let logoWidth = 82.495;
+    let logoHeight = 59.5;
     x = (params.a6width - logoWidth) / 2;
-    pdf.addImage(logo, 'png', x, params.a6width - params.marginBottom, logoWidth, logoHeight);
+    y += params.headerLineHeight + mm2point(7);
+    pdf.addImage(logo, 'png', x, y, logoWidth, logoHeight);
+
+    setTextColorBlack(pdf);
 }
 
 const printDottedLine = (pdf: jsPDF, params: IPageParameter) => {
