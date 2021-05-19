@@ -1,63 +1,31 @@
 //Font Definitions
-@font-face {
-    font-family: 'Telegrotesk Next Regular';
-    src: url(./fonts/telegrotesknext-regular.woff) format('woff');
-}
-@font-face {
-    font-family: 'Telegrotesk Next Bold';
-    src: url(./fonts/telegrotesknext-bold.woff) format('woff');
-}
-@font-face {
-    font-family: 'Telegrotesk Next Thin';
-    src: url(./fonts/telegrotesknext-thin.woff) format('woff');
-}
-@font-face {
-    font-family: 'TeleNeo';
-    src: url(./fonts/TeleNeoWeb-Regular.eot) format('eot'), url(./fonts/TeleNeoWeb-Regular.woff) format('woff'),
-        url(./fonts/TeleNeoWeb-Regular.woff2) format('woff2');
-}
-@font-face {
-    font-family: 'TeleNeo';
-    src: url(./fonts/TeleNeoWeb-Bold.eot) format('eot'), url(./fonts/TeleNeoWeb-Bold.woff) format('woff'),
-        url(./fonts/TeleNeoWeb-Bold.woff2) format('woff2');
-    font-weight: bold;
-}
 
 // Override default variables before the import
 $body-bg: #cfcfcf;
 $font-family-base: Arial, sans-serif;
 $primary: #004494;
-$primary-dark: #002F67;
-$info:#FFD617;
+$primary-dark: #002f67;
+$info: #ffd617;
 $dark: #404040;
-$gray-100: #F2F5F9;
-$body-color:$dark;
+$gray-100: #f2f5f9;
+$body-color: $dark;
 $light: #ebebeb;
 
 // Import Bootstrap and its default variables
-@import '~bootstrap/scss/bootstrap.scss';
+@import "~bootstrap/scss/bootstrap.scss";
 
 $header-height: 120px;
 $menu-width: 120px;
 $menu-padding: 1rem;
 $data-card-border-radius: 0px;
 $input-border-radius: 4px;
-$user-image-width:39px;
+$user-image-width: 39px;
 
 hr {
     margin-left: 0;
     margin-right: 0;
     margin-top: 0px;
-    border-top: 1px solid #d9d9d9
-  }
-
-#qt-header {
-    margin: 0;
-    padding: 1rem;
-    height: 84px;
-    width: 100%;
-    text-align: center;
-    justify-content: center;
+    border-top: 1px solid #d9d9d9;
 }
 
 #qt-body {
@@ -69,7 +37,7 @@ hr {
 }
 
 #qt-footer {
-    margin:0px;
+    margin: 0px;
     height: 32px;
     width: 100%;
     align-items: center;
@@ -81,40 +49,13 @@ hr {
     flex-flow: column;
 }
 
-#user-container {
-    justify-content: center;
-
-    // all greater than md
-    
-    @include media-breakpoint-up(md) {
-        position: absolute;
-        right: 0;
-        top: 0;
-        padding: 1rem;
-        justify-content: flex-end;
-    }
-    
-}
-
-#process-row {
-    justify-content: center;
-    font-size: 20px;
-    padding-bottom: 0;
-    margin: 0;
-    padding-right: 1rem;
-
-    @include media-breakpoint-up(sm) {
-        justify-content: flex-end;
-    }
-}
-
-#data-card{
+#data-card {
     height: 100%;
     background-color: white;
     border-radius: $data-card-border-radius;
     border: none;
 }
-.data-modal{
+.data-modal {
     background-color: white;
     border-radius: $data-card-border-radius;
 }
@@ -126,12 +67,6 @@ hr {
     border: 0;
 }
 
-#modal-header {
-    background-color: white;
-    border-top-left-radius: $data-card-border-radius;
-    border-top-right-radius: $data-card-border-radius;
-    border: 0;
-}
 #data-footer {
     background-color: white;
     border: 0;
@@ -173,119 +108,80 @@ hr {
     width: 80%;
     height: 80%;
 }
-.qt-input{
+
+.qt-input {
     align-self: center;
     border-radius: 0px;
     border: 1px solid #7e7e7e;
-    
 }
-.qt-input:focus{
+
+.qt-input:focus {
     border: none;
-    box-shadow:none !important;
+    box-shadow: none !important;
     // box-shadow: 3px 3px px $info;
     outline: 3px solid $info;
 }
-.qt-input:hover:not(:focus){
+
+.qt-input:hover:not(:focus) {
     border: 1px solid $primary;
 }
-.btn-primary:focus{
+
+.btn-primary:focus {
     border: 1px solid $info;
-    box-shadow:none !important;
+    box-shadow: none !important;
     // box-shadow: 3px 3px px $info;
-    outline: 4px solid $info!important;
+    outline: 4px solid $info !important;
 }
 
-.btn-outline-primary:focus{
+.btn-outline-primary:focus {
     border: 1px solid $info;
     background-color: white !important;
-    color:$primary-dark !important;
+    color: $primary-dark !important;
     font-weight: bold;
-    box-shadow:none !important;
+    box-shadow: none !important;
     // box-shadow: 3px 3px px $info;
-    outline: 4px solid $info!important;
+    outline: 4px solid $info !important;
 }
-.btn-outline-primary:active{
+
+.btn-outline-primary:active {
     border: 1px solid white !important;
     background-color: white !important;
-    color:$primary-dark !important;
+    color: $primary-dark !important;
 }
-.btn-outline-primary{
+
+.btn-outline-primary {
     outline: 1px solid $primary;
-    color:$primary;
+    color: $primary;
     font-weight: bold;
 }
-.btn-outline-primary:hover:not(:focus){
+
+.btn-outline-primary:hover:not(:focus) {
     border: 1px solid $primary-dark;
     outline: 1px solid $primary-dark;
-    box-shadow:none !important;
+    box-shadow: none !important;
     background-color: white;
-    color:$primary-dark;
+    color: $primary-dark;
     font-weight: bold;
     // box-shadow: 3px 3px px $info;
     // outline: 4px solid $info!important;
 }
-.btn-info{
-    border: 1px solid $info;
-    color: black;
-    
-    @include media-breakpoint-down(xs) {
-        padding-right: 15%;
-    }
-}
-.btn-info:focus{
-    border: 1px solid black;
-    box-shadow:none !important;
-    // box-shadow: 3px 3px px $info;
-    outline: 3px solid $dark!important;
-}
-.btn-info:hover:not(:focus){
-    border: 1px solid black;
-    outline: 3px solid black;
-}
-.btn-info::after{
-    position: absolute;
-  content: "";
-  top:13px;
-  right:8%;
-  width: 0;
-  height: 0;
-  border: solid black;
-  border-width: 0 3px 3px 0;
-  display: inline-block;
-  padding: 4px;
-  transform: rotate(-45deg);
-  -webkit-transform: rotate(-45deg);
-}
+
 .footer-font {
     font-size: 11px !important;
     color: white;
 }
 
-.header-font {
-    font-weight: bold;
-    font-size: 26px;
-    color: black;
-}
-
-// @media screen and (max-device-width: 480px) {
-//     .header-font {
-//         font-family: 'TeleNeo';
-//         font-weight: bold;
-//         font-size: 14px;
-//         color: black;
-//         white-space: nowrap;
-//     }
-// }
-
 .btn {
     font-size: 16px;
     border-radius: 0px;
 }
-.landing-title{
+
+.landing-title {
     font-size: 18px;
     max-width: 480px;
     width: 100%;
 }
+
 .landing-btn {
     position: relative;
     font-weight: bold;
@@ -295,49 +191,48 @@ hr {
     margin-left: auto;
     margin-right: auto;
     padding: 0px;
+
     @include media-breakpoint-down(xs) {
         padding-right: 15%;
     }
-    
 }
-.landing-btn::after{
+
+.landing-btn::after {
     position: absolute;
-  content: "";
-  top:13px;
-  right:10%;
-  width: 0;
-  height: 0;
-  border: solid white;
-  border-width: 0 4px 4px 0;
-  display: inline-block;
-  padding: 7px;
-  transform: rotate(-45deg);
-  -webkit-transform: rotate(-45deg);
+    content: "";
+    top: 13px;
+    right: 10%;
+    width: 0;
+    height: 0;
+    border: solid white;
+    border-width: 0 4px 4px 0;
+    display: inline-block;
+    padding: 7px;
+    transform: rotate(-45deg);
+    -webkit-transform: rotate(-45deg);
 }
+
 .center-content {
     display: flex;
     flex-flow: column;
     flex: 1;
     padding: 1rem;
 }
+
 .data-header-title {
     color: #002f67;
     font-size: 22px;
 }
+
 .data-label {
     font-size: 16px;
     line-height: 22px;
 }
+
 .input-label {
     font-size: 16px;
     @include media-breakpoint-up(md) {
         font-size: 20px;
-    }
-}
-
-.first-col-item {
-    @include media-breakpoint-up(sm) {
-        padding-left: 15px;
     }
 }
 
@@ -358,6 +253,7 @@ hr {
         justify-content: flex-start;
     }
 }
+
 .jcc-xs-jcfe-md {
     display: flex;
     justify-content: center;
@@ -366,6 +262,7 @@ hr {
         justify-content: flex-end;
     }
 }
+
 .tac-xs-tal-md {
     text-align: center;
 
@@ -374,95 +271,39 @@ hr {
     }
 }
 
-.position-inherit {
-    position: inherit;
-}
-
-.dropdown-toggle::after {
-    width: $user-image-width;
-    height: $user-image-width;
-    background-image: url('../images/user.png') !important;
-    border: 0;
-    align-self: center;
-}
-.nav-link {
-    padding: 0;
-    display: flex;
-    height: $user-image-width;
-    line-height: $user-image-width;
-    font-size: 20px;
-
-}
-.navbar-toggler {
-    border: 0 !important;
-    padding: 0;
-    &:active,
-    &:focus {
-        outline: 0;
-    }
-}
-.dropdown-menu {
-    min-width: $menu-width;
-    padding-left: $menu-padding;
-    padding-right: $menu-padding;
-    padding-top: 0px;
-    padding-bottom: 0px;
-    box-shadow: 4px 2px 8px rgba(0, 0, 0, 0.25);
-    border: 0;
-    justify-content: center;
-}
-
-.dropdown-item {
-    text-align: center;
-}
 .react-date-picker__wrapper {
     border: 0 !important;
 }
 
-.ckb-input{
+.ckb-input {
     position: inherit;
     width: 20px;
-    height:20px;
+    height: 20px;
     border-radius: $data-card-border-radius;
 }
-.rdb-input{ 
+
+.rdb-input {
     position: inherit;
     width: 20px;
-    height:20px;
+    height: 20px;
 }
-.rdb-label{
+
+.rdb-label {
     height: 20px;
     align-self: center;
     padding-left: 0.5rem;
-} 
-.qt-notification{
-    margin-bottom: 20%;
-    border-radius: 6px;
-    border-color: #46A800;
-    color: black;
+}
+
+.form-flex {
     display: flex;
+    flex-direction: column;
+    height: 100%;
 }
 
-.qt-notification-text{
-    font-size: 22px;
+.space-five {
+    padding: 5px;
 }
 
-.success-icon {
-    background-image: url('../images/icon_success.svg') !important;
-    height: 40px;
-    width: 40px;
-  }
-
-  .form-flex{
-      display: flex;
-      flex-direction: column;
-      height: 100%;
-  }
-
-  .space-five {
-      padding: 5px;
-  }
-  
 .selection-placeholder {
     color: $secondary;
     option:not(:first-child) {
@@ -474,21 +315,24 @@ hr {
     display: none;
 }
 
-.eu-logo{
+.eu-logo {
     margin-left: 1rem;
     margin: 13px 0px 13px 16px;
 }
-.header-title{
+
+.header-title {
     font-size: 18px;
     margin-left: 16px;
     display: flex;
     align-self: center;
 }
-.bg-gray-1{
-    height:32px;
+
+.bg-gray-1 {
+    height: 32px;
     background-color: $gray-100;
 }
-.modal-content{
+
+.modal-content {
     background-color: white;
     border: 0px;
     border-radius: $data-card-border-radius;
