@@ -146,7 +146,11 @@ const usePdfGenerator = (qrCodeCanvasElement: any, eudgc: EUDGC | undefined) => 
 
         printDottedLine(_pdf, params);
 
-        _pdf.save('edgcPdfTest');
+        // _pdf.save('edgcPdfTest');
+        var blobPDF = new Blob([_pdf.output('blob')], { type: 'application/pdf' });
+        var blobUrl = URL.createObjectURL(blobPDF);
+        window.open(blobUrl);
+        
     }, [qrCodeCanvasElement]);
 
 }
