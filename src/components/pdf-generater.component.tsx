@@ -37,10 +37,10 @@ import {
 } from '../api';
 import { getValueSetDisplay, convertDateToOutputFormat } from '../misc/ShowCertificateData';
 
-import calibri from '../assets/SCSS/fonts/calibri.ttf';
-import calibriI from '../assets/SCSS/fonts/calibrii.ttf';
-import calibriB from '../assets/SCSS/fonts/calibrib.ttf';
-import calibriBI from '../assets/SCSS/fonts/calibriz.ttf';
+require('../assets/SCSS/fonts/calibri-normal.js');
+require('../assets/SCSS/fonts/calibri-bold.js');
+require('../assets/SCSS/fonts/calibri-italic.js');
+require('../assets/SCSS/fonts/calibri-bolditalic.js');
 
 const mm2point = (mm: number): number => {
     return mm * 2.83465;
@@ -113,39 +113,7 @@ const usePdfGenerator = (qrCodeCanvasElement: any, eudgc: EUDGC | undefined) => 
     React.useEffect(() => {
         const _pdf = new jsPDF("p", "pt", "a4", true);
 
-        const c = Buffer.from(calibri);
-        const ci = Buffer.from(calibriI);
-        const cb = Buffer.from(calibriB);
-        const cbi = Buffer.from(calibriBI);
-
-        _pdf.addFileToVFS("Calibri", c.toString());
-        _pdf.addFileToVFS("Calibri-Italic", ci.toString());
-        _pdf.addFileToVFS("Calibri-Bold", cb.toString());
-        _pdf.addFileToVFS("Calibri-BoldItalic", cbi.toString());
-
-        _pdf.addFont("Calibri", "calibri", "normal");
-        _pdf.addFont("Calibri-Italic", "calibri", "italic");
-        _pdf.addFont("Calibri-Bold", "calibri", "bold");
-        _pdf.addFont("Calibri-BoldItalic", "calibri", "bolditalic");
-
-        // _pdf.setFont('calibri', 'normal');
-        // console.log(_pdf.getFont());
-
-        // _pdf.text('Hello', 50, 50,);
-
-        // _pdf.setFont('calibri', 'italic');
-        // console.log(_pdf.getFont());
-        // _pdf.text('world', 100, 50,);
-
-        // _pdf.setFont('calibri', 'bold');
-        // console.log(_pdf.getFont());
-
-        // _pdf.text('Hello', 50, 100,);
-
-        // _pdf.setFont('calibri', 'bolditalic');
-
-        // _pdf.text('world', 100, 100,);
-
+        _pdf.setFont('calibri', 'normal');
 
         setPdf(_pdf);
     }, [])
@@ -170,19 +138,6 @@ const usePdfGenerator = (qrCodeCanvasElement: any, eudgc: EUDGC | undefined) => 
                 vacMedsData, pageMiddle, lblLength);
         }
 
-        // const calibri: string = pdf.loadFile('../assets/SCSS/fonts/calibri.ttf');
-        // console.log("Font: " + calibri);
-        // const calibrib: string = pdf.loadFile('../assets/SCSS/fonts/calibrib.ttf');
-        // pdf.addFileToVFS('calibri.ttf', calibri);
-        // pdf.addFileToVFS('calibrib.ttf', calibrib);
-        // pdf.addFont('calibrib.ttf', 'calibrib', 'normal');
-        // pdf.addFont('calibri.ttf', 'calibri', 'normal');
-        // pdf.setFont('calibrib');
-        // pdf.text('Hello World', 15, 15);
-        // pdf.setFont('calibri');
-        // pdf.text('Hello World', 15, 30);
-        console.log(_pdf.getFont());
-
         prepareFirstPage(_pdf, params, t);
 
         prepareSecondPage(_pdf, params, eudgc, t, qrCodeCanvasElement, _ci);
@@ -202,7 +157,7 @@ const prepareSecondPage = (pdf: jsPDF, params: IPageParameter, eudgc: EUDGC | un
     translation: any, qrCodeCanvasElement: HTMLCanvasElement, _ci: string) => {
 
     //LblLength goes over A6 and not the half of A6
-    let lblLength = params.a6width - params.paddingRight - params.paddingRight*3;
+    let lblLength = params.a6width - params.paddingRight - params.paddingRight * 3;
     //space between the lines is greater
     let space = mm2point(10);
     let canvas: HTMLCanvasElement = qrCodeCanvasElement;
@@ -273,7 +228,7 @@ const prepareSecondPage = (pdf: jsPDF, params: IPageParameter, eudgc: EUDGC | un
 }
 
 const prepareFirstPage = (pdf: jsPDF, params: IPageParameter, translation: any) => {
-    let x = params.a6width/2;
+    let x = params.a6width / 2;
     let y = mm2point(38);
     setTextColorTurkis(pdf);
     let lblLength = params.a6width - params.paddingRight - params.paddingRight;
@@ -289,7 +244,7 @@ const prepareFirstPage = (pdf: jsPDF, params: IPageParameter, translation: any) 
     console.log("WErt für y:" + y);
     pdf.rect(x, y, lblLength - x, 3, 'F');
 
-    x = params.a6width/2;
+    x = params.a6width / 2;
     y += params.headerLineHeight + mm2point(4);
 
     header = i18n!.getDataByLanguage('fr')!.translation.pdfGreenCertificate;
@@ -727,10 +682,10 @@ function prepareFourthPageRecovery(pdf: jsPDF, eudgc: EUDGC | undefined, disease
     pdf.text(recovery.du!, xRight, yRight);
 }
 
-const setTextColorTurkis = (pdf : jsPDF) => {
+const setTextColorTurkis = (pdf: jsPDF) => {
     pdf.setTextColor(0, 122, 102);
 }
 
-const setTextColorBlack = (pdf : jsPDF) => {
+const setTextColorBlack = (pdf: jsPDF) => {
     pdf.setTextColor(0, 0, 0);
 }
