@@ -128,5 +128,14 @@
   "pdfNumberOfDoses" : "Number in a series of vaccinations/doses and the overall number of doses in the series",
   "pdfDateOfVaccination" : "Date of vaccination",
   "pdfMemberStateOfVaccination" : "Member State of vaccination",
-  "pdfCertificateIssuer" : "Certificate issuer"
+  "pdfCertificateIssuer" : "Certificate issuer",
+  "pdfHeaderTest" : "TEST CERTIFICATE",
+  "pdfTypeOfTest" : "Type of test",
+  "pdfTestName" : "Test name (optional for NAAT)",
+  "pdfTestManufacturer" : "Test manufacturer (optional for NAAT)",
+  "pdfDateSampleCollection" : "Date and time of the test sample collection",
+  "pdfDateTestResult" : "Date and time of the test result production (optional for RAT)",
+  "pdfTestResult" : "Result of the test",
+  "pdfTestingCentre" : "Testing centre or facility",
+  "pdfStateOfVaccination" : "Member State of vaccination"
 }
