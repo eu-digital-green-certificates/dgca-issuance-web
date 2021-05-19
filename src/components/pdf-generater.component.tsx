@@ -61,7 +61,13 @@ interface IPageParameter {
 
     lineHeight: number,
     fontSize: number,
+    fontSize9: number,
+    fontSize10: number,
     fontSize12: number,
+    lineHeight9: number,
+    lineHeight10: number,
+    lineHeight11: number,
+    lineHeight12: number,
     headerLineHeight: number,
     headerFontSize: number,
     smallHeaderLineHeight: number,
@@ -97,7 +103,13 @@ const usePdfGenerator = (qrCodeCanvasElement: any, eudgc: EUDGC | undefined) => 
 
         lineHeight: 14,
         fontSize: 11,
+        fontSize9: 9,
+        fontSize10: 10,
         fontSize12: 12,
+        lineHeight9: 9,
+        lineHeight10: 10,
+        lineHeight11: 11,
+        lineHeight12: 12,
         headerLineHeight: 28,
         headerFontSize: 28,
         smallHeaderLineHeight: 15,
@@ -142,7 +154,7 @@ const usePdfGenerator = (qrCodeCanvasElement: any, eudgc: EUDGC | undefined) => 
 
         prepareSecondPage(_pdf, params, eudgc, t, qrCodeCanvasElement, _ci);
 
-        prepareThirdPage(_pdf, params);
+        prepareThirdPage(_pdf, params, t);
 
         printDottedLine(_pdf, params);
 
@@ -234,8 +246,9 @@ const prepareSecondPage = (pdf: jsPDF, params: IPageParameter, eudgc: EUDGC | un
 const prepareFirstPage = (pdf: jsPDF, params: IPageParameter, translation: any) => {
     let x = params.a6width / 2;
     let y = mm2point(38);
-    setTextColorTurkis(pdf);
     let lblLength = params.a6width - params.paddingRight - params.paddingRight;
+    setTextColorTurkis(pdf);
+
     pdf.setFontSize(params.headerFontSize);
     let header = translation('translation:pdfGreenCertificate');
     header = pdf.splitTextToSize(header, lblLength);
@@ -554,41 +567,49 @@ const prepareFourthPageVaccination = (pdf: jsPDF, eudgc: EUDGC | undefined, para
     pdf.text(vaccination!.is!, xRight, yRight);
 }
 
-const prepareThirdPage = (pdf: jsPDF, params: IPageParameter) => {
-    let rectWidth = params.a6width - params.marginLeft - params.paddingRight;
-    let rectHeight = rectWidth * 0.75;
-    let x = (params.a6width - rectWidth) / 2;
-    let y = params.a6height + params.marginTop;
-    pdf.rect(x, y, rectWidth, rectHeight);
+const prepareThirdPage = (pdf: jsPDF, params: IPageParameter, translation: any) => {
 
-    y += params.lineHeight + params.space;
-    let lblInfoText = "Member state placeholder";
-    let widthTxt = pdf.getTextWidth(lblInfoText);
-    x = x + (rectWidth - widthTxt) / 2;
-    pdf.text(lblInfoText, x, y);
+    let lblLength = params.a6width - params.paddingRight - params.paddingRight - mm2point(14);
+    let space = mm2point(3);
+    let imageWidth = 258.75;
+    let imageHeight = 54.75;
+    let y = params.a6height + mm2point(4);
+    let x = (params.a6width - imageWidth) / 2;
 
-    y += params.lineHeight * 2;
-    lblInfoText = "(information on issuing entity, national COVID-19 information etc. – no additional personal data).";
-    lblInfoText = pdf.splitTextToSize(lblInfoText, rectWidth - params.paddingLeft - params.paddingRight);
-    x = (params.a6width - rectWidth) / 2 + params.paddingRight;
-    pdf.text(lblInfoText, x, y);
+    pdf.addImage(flag_seperator, x, y, imageWidth, imageHeight);
 
-    x = (params.a6width - rectWidth) / 2
-    y = params.a6height + params.marginTop + rectHeight + params.lineHeight * 2;
+    x = params.a6width / 2;
+    y += imageHeight + params.fontSize12 + mm2point(2);
 
-    lblInfoText = "This certificate is not a travel document. The scientific evidence on COVID-19 vaccination, testing and recovery continues to evolve, also in view of new variants of concern of the virus. Before traveling, please check the applicable public health measures and related restrictions applied at the point of destination.";
-    lblInfoText = pdf.splitTextToSize(lblInfoText, rectWidth);
-    pdf.text(lblInfoText, x, y, { align: 'justify', maxWidth: rectWidth });
+    setTextColorTurkis(pdf);
+    pdf.setFontSize(params.fontSize12);
+    let header = translation('translation:pdfMemberPlaceholder');
+    header = pdf.splitTextToSize(header, lblLength);
+    pdf.text(header, x, y, { align: 'center', maxWidth: lblLength });
+    pdf.text(header, x, y, { align: 'center', maxWidth: lblLength });
 
-    y += params.lineHeight * 8;
+    y += params.lineHeight12 + space;
+    setTextColorBlack(pdf);
+    pdf.setFontSize(params.fontSize10);
+    let infotext = translation('translation:pdfMemberPlaceholderInfo');
+    infotext = pdf.splitTextToSize(infotext, lblLength);
+    pdf.text(infotext, x, y, { align: 'center', maxWidth: lblLength });
 
-    lblInfoText = "Relevant information can be found here:";
-    pdf.text(lblInfoText, x, y);
+    y += mm2point(65);
+    pdf.setFontSize(params.fontSize9);
+    infotext = translation('translation:pdfInfoText');
+    infotext = pdf.splitTextToSize(infotext, lblLength);
+    pdf.text(infotext, x, y, { align: 'center', maxWidth: lblLength });
 
-    y += params.lineHeight;
+    y += mm2point(10) + params.lineHeight9*infotext.length;
+    infotext = translation('translation:pdfRelevantInformation');
+    infotext = pdf.splitTextToSize(infotext, lblLength);
+    pdf.text(infotext, x, y, { align: 'center', maxWidth: lblLength });
 
-    lblInfoText = "https://reopen.europa.eu/en";
-    pdf.text(lblInfoText, x, y);
+    y += space + params.lineHeight9*infotext.length;
+    infotext = translation('translation:pdfInfoURL');
+    infotext = pdf.splitTextToSize(infotext, lblLength);
+    pdf.text(infotext, x, y, { align: 'center', maxWidth: lblLength });
 }
 
 function prepareFourthPageRecovery(pdf: jsPDF, eudgc: EUDGC | undefined, diseaseAgentsData: any, params: IPageParameter,
