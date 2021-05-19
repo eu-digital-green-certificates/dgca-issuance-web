@@ -119,5 +119,14 @@
   "pdfMemberPlaceholderInfo" : "(information on issuing entity, national COVID-19  information etc. – no additional personal data).",
   "pdfInfoText" : "This certificate is not a travel document. The scientific evidence on COVID-19 vaccination, testing and recovery continues to evolve, also in view of new variants of concern of the virus. Before traveling, please check the applicable public health measures and related restrictions applied at the point of destination.",
   "pdfRelevantInformation" : "Relevant information can be found here:",
-  "pdfInfoURL" : "https://reopen.europa.eu/en"
+  "pdfInfoURL" : "https://reopen.europa.eu/en",
+  "pdfHeaderVaccination" : "VACCINATION CERTIFICATE",
+  "pdfDisease" : "Disease or agent targeted",
+  "pdfVaccineProphylaxis" : "Vaccine/prophylaxis",
+  "pdfVaccineMedicalProduct" : "Vaccine medicinal product",
+  "pdfVaccineManufacturer" : "Vaccine marketing authorisation holder or manufacturer",
+  "pdfNumberOfDoses" : "Number in a series of vaccinations/doses and the overall number of doses in the series",
+  "pdfDateOfVaccination" : "Date of vaccination",
+  "pdfMemberStateOfVaccination" : "Member State of vaccination",
+  "pdfCertificateIssuer" : "Certificate issuer"
 }

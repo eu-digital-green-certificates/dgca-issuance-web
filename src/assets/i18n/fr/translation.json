@@ -1,6 +1,15 @@
 {
     "pdfSurname": "Nom(s) de famille et prénom(s)",
     "pdfDateOfBirth": "Date de naissance",
-    "pdfCi":"Identifiant unique du certificat",
-    "pdfGreenCertificate" : "CERTIFICAT VERT NUMÉRIQUE"
+    "pdfCi": "Identifiant unique du certificat",
+    "pdfGreenCertificate": "CERTIFICAT VERT NUMÉRIQUE",
+    "pdfHeaderVaccination": "CERTIFICAT DE VACCINATION",
+    "pdfDisease": "Maladie ou agent ciblé",
+    "pdfVaccineProphylaxis": "Vaccin/prophylaxie",
+    "pdfVaccineMedicalProduct": "Médicament vaccinal",
+    "pdfVaccineManufacturer": "Fabricant ou titulaire de l’autorisation de mise sur le marché du vaccin",
+    "pdfNumberOfDoses": "Nombre dans une série de vaccins/doses",
+    "pdfDateOfVaccination": "Date of vaccination",
+    "pdfMemberStateOfVaccination" : "État membre de vaccination",
+    "pdfCertificateIssuer" : "Émetteur du certificat"
 }
