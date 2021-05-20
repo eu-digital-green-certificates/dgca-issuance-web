@@ -283,28 +283,24 @@ const printDottedLine = (pdf: jsPDF, params: IPageParameter) => {
     let curX = 0 + params.marginLeft;
     let curY = params.a6height;
     let xTo = params.a6width * 2 - params.marginRight;
-    let deltaX = 3;
-    let deltaY = 3;
+    let rectWidth = 2;
+    let rectHeight = 2;
+    let spaceWidth = 8;
 
-    pdf.setDrawColor(0, 122, 102);
+    pdf.setFillColor(0, 122, 102);
 
     while (curX <= xTo) {
-        pdf.line(curX, curY, curX + deltaX, curY);
-        curX += 2 * deltaX;
+        pdf.rect(curX - 1, curY - 1, rectWidth , rectHeight, 'F');
+        curX += spaceWidth;
     }
 
     curX = params.a6width;
     curY = 0 + params.marginTop;
     let yTo = params.a6height * 2 - params.marginBottom;
     while (curY <= yTo) {
-        pdf.line(curX, curY, curX, curY + deltaY);
-        curY += 2 * deltaY;
+        pdf.rect(curX - 1, curY -1, rectWidth, rectHeight, 'F');
+        curY += spaceWidth;
     }
-
-    //Prints dotted line over page length and height
-    // pdf.setLineDashPattern([3, 3], 0);
-    // pdf.line(0, a6height, a6width*2, a6height);
-    // pdf.line(a6width, 0, a6width, a6height*2);
 }
 
 const prepareFourthPageTest = (pdf: jsPDF, eudgc: EUDGC | undefined, params: IPageParameter,
