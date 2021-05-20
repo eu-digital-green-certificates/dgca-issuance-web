@@ -426,7 +426,7 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudgcProp: EUDGC | undefi
             y = printBlock(xLeft, xRight, y,
                 t('translation:pdfNumberOfDoses'),
                 french.translation.pdfNumberOfDoses,
-                vaccinationSet.dn.toString());
+                vaccinationSet.dn.toString() + ' / ' + vaccinationSet.sd.toString());
 
             y = printBlock(xLeft, xRight, y,
                 t('translation:pdfDateOfVaccination'),
@@ -450,7 +450,7 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudgcProp: EUDGC | undefi
     const prepareFourthPageTest = () => {
         if (pdf && testSet && french) {
 
-            const space = 7;
+            const space = 5.5;
             let y = printCertificateHeader(t('translation:pdfHeaderTest'), french.translation.pdfHeaderTest);
             y += params.lineHeight10 * 2 + params.space;
 
@@ -474,8 +474,8 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudgcProp: EUDGC | undefi
                 space);
 
             y = printBlock(xLeft, xRight, y,
-                t('translation:pdfTypeOfTest'),
-                french.translation.pdfTypeOfTest,
+                t('translation:pdfTestName'),
+                french.translation.pdfTestName,
                 testSet.nm,
                 space);
 
