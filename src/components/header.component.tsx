@@ -45,25 +45,6 @@ const Header = (props: any) => {
         <Container className='bg-white px-0 position-relative'>
             {/* simple header with logo */}
             <Image src={EULogo} className='eu-logo' />
-            {/* user icon and user name */}
-            {/* <Row id='qt-header'>
-                <Image src={dgcaIwLogo} onClick={navigation!.toLanding} />
-                <span className='header-font my-auto mx-1'>{t('translation:title')}</span>
-            </Row>
-            <Navbar id='user-container' >
-                <NavDropdown
-                    className="nav-dropdown-title"
-                    title={userName}
-                    id="responsive-navbar-nav"
-                >
-                    <Navbar.Brand
-                        className='mx-0 dropdown-item'
-                        onClick={handleLogout}
-                    >
-                        {t('translation:logout')}
-                    </Navbar.Brand>
-                </NavDropdown>
-            </Navbar> */}
         </Container>
         <Container className='d-flex bg-gray-1 px-0 position-relative'>
             <span className='header-title'>{t('translation:title')}</span>

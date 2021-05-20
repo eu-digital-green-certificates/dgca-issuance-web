@@ -26,7 +26,9 @@ import { useTranslation } from 'react-i18next';
 
 import { jsPDF } from "jspdf";
 
-import logo from '../assets/images/EU_logo_big.png';
+import logo from '../assets/images/eu_flag.png';
+import card_seperator from '../assets/images/card.png';
+import flag_seperator from '../assets/images/flag.png';
 
 import { EUDGC, RecoveryEntry, TestEntry, VaccinationEntry } from '../generated-files/dgc-combined-schema';
 import {
@@ -34,6 +36,11 @@ import {
     useGetVaccinMedicalData, useGetTestManufacturers, useGetTestResult
 } from '../api';
 import { getValueSetDisplay, convertDateToOutputFormat } from '../misc/ShowCertificateData';
+
+require('../assets/SCSS/fonts/calibri-normal.js');
+require('../assets/SCSS/fonts/calibri-bold.js');
+require('../assets/SCSS/fonts/calibri-italic.js');
+require('../assets/SCSS/fonts/calibri-bolditalic.js');
 
 const mm2point = (mm: number): number => {
     return mm * 2.83465;
@@ -54,6 +61,13 @@ interface IPageParameter {
 
     lineHeight: number,
     fontSize: number,
+    fontSize9: number,
+    fontSize10: number,
+    fontSize12: number,
+    lineHeight9: number,
+    lineHeight10: number,
+    lineHeight11: number,
+    lineHeight12: number,
     headerLineHeight: number,
     headerFontSize: number,
     smallHeaderLineHeight: number,
@@ -89,59 +103,66 @@ const usePdfGenerator = (qrCodeCanvasElement: any, eudgc: EUDGC | undefined) => 
 
         lineHeight: 14,
         fontSize: 11,
-        headerLineHeight: 22,
-        headerFontSize: 18,
-        smallHeaderLineHeight: 15,
-        smallHeaderFontSize: 12,
+        fontSize9: 9,
+        fontSize10: 10,
+        fontSize12: 12,
+        lineHeight9: 9,
+        lineHeight10: 10,
+        lineHeight11: 11,
+        lineHeight12: 12,
+        headerLineHeight: 28,
+        headerFontSize: 28,
+        smallHeaderLineHeight: 20,
+        smallHeaderFontSize: 20,
         space: 2
     }
 
     const lblLength = params.a6width / 2 - params.paddingLeft - params.paddingRight;
     const pageMiddle = params.a6width / 2;
 
+    const [pdf, setPdf] = React.useState<jsPDF>();
+
     React.useEffect(() => {
-        if (!qrCodeCanvasElement && !eudgc) {
+        const _pdf = new jsPDF("p", "pt", "a4", true);
+
+        _pdf.setFont('calibri', 'normal');
+
+        setPdf(_pdf);
+    }, [])
+
+    React.useEffect(() => {
+        if (!qrCodeCanvasElement && !eudgc && !pdf) {
             return;
         }
-
-        const pdf = new jsPDF("p", "pt", "a4", true);
+        const _pdf = pdf!;
 
         let _ci: string = '';
         if (eudgc!.r) {
             _ci = eudgc!.r![0].ci;
-            prepareFourthPageRecovery(pdf, eudgc, diseaseAgentsData, params, pageMiddle, lblLength);
+            prepareFourthPageRecovery(_pdf, eudgc, t, diseaseAgentsData, params, pageMiddle, lblLength);
         } else if (eudgc!.t) {
             _ci = eudgc!.t![0].ci;
-            prepareFourthPageTest(pdf, eudgc, params, testResultValueSet, testManufacturersValueSet,
+            prepareFourthPageTest(_pdf, eudgc, params, t, testResultValueSet, testManufacturersValueSet,
                 diseaseAgentsData, pageMiddle, lblLength);
         } else if (eudgc!.v) {
             _ci = eudgc!.v![0].ci;
-            prepareFourthPageVaccination(pdf, eudgc, params, diseaseAgentsData, vaccines, vaccineManufacturers,
+            prepareFourthPageVaccination(_pdf, eudgc, params, t, diseaseAgentsData, vaccines, vaccineManufacturers,
                 vacMedsData, pageMiddle, lblLength);
         }
 
-        // const calibri: string = pdf.loadFile('../assets/SCSS/fonts/calibri.ttf');
-        // console.log("Font: " + calibri);
-        // const calibrib: string = pdf.loadFile('../assets/SCSS/fonts/calibrib.ttf');
-        // pdf.addFileToVFS('calibri.ttf', calibri);
-        // pdf.addFileToVFS('calibrib.ttf', calibrib);
-        // pdf.addFont('calibrib.ttf', 'calibrib', 'normal');
-        // pdf.addFont('calibri.ttf', 'calibri', 'normal');
-        // pdf.setFont('calibrib');
-        // pdf.text('Hello World', 15, 15);
-        // pdf.setFont('calibri');
-        // pdf.text('Hello World', 15, 30);
-        // console.log(pdf.getFont());
+        prepareFirstPage(_pdf, params, t);
 
-        prepareFirstPage(pdf, params);
+        prepareSecondPage(_pdf, params, eudgc, t, qrCodeCanvasElement, _ci);
 
-        prepareSecondPage(pdf, params, eudgc, t, qrCodeCanvasElement, pageMiddle, lblLength, _ci);
+        prepareThirdPage(_pdf, params, t);
 
-        prepareThirdPage(pdf, params);
+        printDottedLine(_pdf, params);
 
-        printDottedLine(pdf, params);
+        // _pdf.save('edgcPdfTest');
+        const blobPDF = new Blob([_pdf.output('blob')], { type: 'application/pdf' });
+        const blobUrl = URL.createObjectURL(blobPDF);
+        window.open(blobUrl);
 
-        pdf.save('edgcPdfTest');
     }, [qrCodeCanvasElement]);
 
 }
@@ -149,106 +170,141 @@ const usePdfGenerator = (qrCodeCanvasElement: any, eudgc: EUDGC | undefined) => 
 export default usePdfGenerator;
 
 const prepareSecondPage = (pdf: jsPDF, params: IPageParameter, eudgc: EUDGC | undefined,
-    t: any, qrCodeCanvasElement: HTMLCanvasElement, pageMiddle: number, lblLength: number, _ci: string) => {
+    translation: any, qrCodeCanvasElement: HTMLCanvasElement, _ci: string) => {
 
-    var canvas: HTMLCanvasElement = qrCodeCanvasElement;
-    var img = canvas!.toDataURL("image/png,base64");
-    let canvasWidth = 192;
-    let centerLeft = (params.a6width - canvasWidth) / 2;
-    pdf.addImage(img, 'png', params.a6width + centerLeft, params.marginTop, canvasWidth, canvasWidth);
+    let lblLength = params.a6width - params.paddingRight - params.paddingRight * 3;
+    let space = mm2point(10);
+    let canvas: HTMLCanvasElement = qrCodeCanvasElement;
+    let img = canvas!.toDataURL("image/png,base64");
+    let canvasWidth = mm2point(40);
+    let x = params.a6width * 2 - canvasWidth - mm2point(10);
+    let y = space;
+    pdf.addImage(img, 'png', x, y, canvasWidth, canvasWidth);
+
+    let imageWidth = 258;
+    let imageHeight = 55.5;
+    y += imageHeight + mm2point(8);
+    x = params.a6width * 2 - imageWidth - mm2point(9);
+
+    pdf.addImage(card_seperator, x, y, imageWidth, imageHeight);
 
     //For the labels on the left side
-    let xLeft = params.a6width + params.paddingLeft;
-    let yLeft = params.marginTop + canvasWidth + params.lineHeight * 2;
-    //For the variables on the right side
-    let xRight = params.a6width + pageMiddle;
-    let yRight = params.marginTop + canvasWidth + params.lineHeight * 2;
+    x = params.a6width + params.paddingLeft;
+    y += imageHeight + space;
 
-    pdf.setFontSize(params.fontSize);
+    pdf.setFontSize(params.fontSize12);
 
-    let lblSurname: string = t('translation:pdfSurname');
-    lblSurname = pdf.splitTextToSize(lblSurname, lblLength);
-    pdf.text(lblSurname, xLeft, yLeft);
-    yLeft += params.lineHeight * 2;
+    pdf.setFont('calibri', 'bold');
+    let lblSurname: string = translation('translation:pdfSurname');
+    pdf.text(lblSurname, x, y);
+    pdf.setFont('calibri', 'normal');
 
+    y += params.lineHeight;
     lblSurname = i18n!.getDataByLanguage('fr')!.translation.pdfSurname
-    lblSurname = pdf.splitTextToSize(lblSurname, lblLength);
-    pdf.text(lblSurname, xLeft, yLeft);
+    pdf.text(lblSurname, x, y);
 
-    let name = eudgc!.nam!.fnt + ' ' + eudgc!.nam!.gnt;
+    y += params.lineHeight;
+    setTextColorTurkis(pdf);
+    let name = eudgc!.nam!.fnt + ' ';
+    name += eudgc!.nam.gnt ? eudgc!.nam.gnt : '';
     name = pdf.splitTextToSize(name, lblLength);
-    pdf.text(name, xRight, yRight);
+    pdf.text(name, x, y);
 
-    yLeft += params.lineHeight * 2 + params.space;
-    pdf.text('Date of birth', xLeft, yLeft);
-    yLeft += params.lineHeight;
-    pdf.text('Date de naissance', xLeft, yLeft);
+    y += params.lineHeight * name.length + space;
+    setTextColorBlack(pdf);
+    pdf.setFont('calibri', 'bold');
+    let lblDateOfBirth: string = translation('translation:pdfDateOfBirth');
+    pdf.text(lblDateOfBirth, x, y);
+    pdf.setFont('calibri', 'normal');
+    y += params.lineHeight;
+    lblDateOfBirth = i18n!.getDataByLanguage('fr')!.translation.pdfDateOfBirth;
+    pdf.text(lblDateOfBirth, x, y);
 
-    yRight += params.lineHeight * 4 + params.space;
-    pdf.text(eudgc!.dob, xRight, yRight);
 
-    yLeft += params.lineHeight + params.space;
-    let lblci = 'Unique certificate identifier';
+    y += params.lineHeight;
+    setTextColorTurkis(pdf);
+    pdf.text(eudgc!.dob, x, y);
+
+    y += params.lineHeight + space;
+    setTextColorBlack(pdf);
+    pdf.setFont('calibri', 'bold');
+    let lblci: string = translation('translation:pdfCi');
     lblci = pdf.splitTextToSize(lblci, lblLength);
-    pdf.text(lblci, xLeft, yLeft);
-    yLeft += params.lineHeight;
-    lblci = 'Identifiant unique du certificat';
+    pdf.text(lblci, x, y);
+    pdf.setFont('calibri', 'normal');
+    y += params.lineHeight;
+    lblci = i18n!.getDataByLanguage('fr')!.translation.pdfCi;
     lblci = pdf.splitTextToSize(lblci, lblLength);
-    pdf.text(lblci, xLeft, yLeft);
+    pdf.text(lblci, x, y);
 
-    yRight += params.lineHeight * 2 + params.space;
-    _ci = pdf.splitTextToSize(_ci, lblLength);
-    pdf.text(_ci, xRight, yRight);
+    y += params.lineHeight;
+    setTextColorTurkis(pdf);
+    lblci = pdf.splitTextToSize(_ci, lblLength);
+    pdf.text(lblci, x, y);
+
+    setTextColorBlack(pdf);
 }
 
-const prepareFirstPage = (pdf: jsPDF, params: IPageParameter) => {
-    let x = 0;
-    let y = params.marginTop + params.headerLineHeight;
+const prepareFirstPage = (pdf: jsPDF, params: IPageParameter, translation: any) => {
+    let x = params.a6width / 2;
+    let y = mm2point(38);
+    let lblLength = params.a6width - params.paddingRight - params.paddingRight;
+    setTextColorTurkis(pdf);
+    pdf.setFont('calibri', 'bold');
+
     pdf.setFontSize(params.headerFontSize);
-    let header = 'DIGITAL GREEN CERTIFICATE';
-    let width = pdf.getTextWidth(header);
-    x = (params.a6width - width) / 2;
-    pdf.text(header, x, y);
+    let header = translation('translation:pdfGreenCertificate');
+    header = pdf.splitTextToSize(header, lblLength);
+    pdf.text(header, x, y, { align: 'center', maxWidth: lblLength });
 
-    header = 'CERTIFICAT VERT NUMÉRIQUE';
-    width = pdf.getTextWidth(header);
-    x = (params.a6width - width) / 2;
-    y += params.headerLineHeight;
-    pdf.text(header, x, y);
+    pdf.setFillColor(255, 242, 0);
+    x = params.a6width - lblLength;
+    y += params.headerLineHeight * header.length - mm2point(4);
+    pdf.rect(x, y, lblLength - x, 3, 'F');
 
-    let logoWidth = 132.75;
-    let logoHeight = 88.5;
+    x = params.a6width / 2;
+    y += params.headerLineHeight + mm2point(4);
+
+    header = i18n!.getDataByLanguage('fr')!.translation.pdfGreenCertificate;
+    header = pdf.splitTextToSize(header, lblLength);
+    pdf.text(header, x, y, { align: 'center', maxWidth: lblLength });
+
+    let logoWidth = 82.495;
+    let logoHeight = 59.5;
     x = (params.a6width - logoWidth) / 2;
-    pdf.addImage(logo, 'png', x, params.a6width - params.marginBottom, logoWidth, logoHeight);
+    y += params.headerLineHeight + mm2point(7);
+    pdf.addImage(logo, 'png', x, y, logoWidth, logoHeight);
+
+    setTextColorBlack(pdf);
+    pdf.setFont('calibri', 'normal');
 }
 
 const printDottedLine = (pdf: jsPDF, params: IPageParameter) => {
     let curX = 0 + params.marginLeft;
     let curY = params.a6height;
     let xTo = params.a6width * 2 - params.marginRight;
-    let deltaX = 3;
-    let deltaY = 3;
+    let rectWidth = 2;
+    let rectHeight = 2;
+    let spaceWidth = 8;
+
+    pdf.setFillColor(0, 122, 102);
+
     while (curX <= xTo) {
-        pdf.line(curX, curY, curX + deltaX, curY);
-        curX += 2 * deltaX;
+        pdf.rect(curX - 1, curY - 1, rectWidth , rectHeight, 'F');
+        curX += spaceWidth;
     }
 
     curX = params.a6width;
     curY = 0 + params.marginTop;
     let yTo = params.a6height * 2 - params.marginBottom;
     while (curY <= yTo) {
-        pdf.line(curX, curY, curX, curY + deltaY);
-        curY += 2 * deltaY;
+        pdf.rect(curX - 1, curY -1, rectWidth, rectHeight, 'F');
+        curY += spaceWidth;
     }
-
-    //Prints dotted line over page length and height
-    // pdf.setLineDashPattern([3, 3], 0);
-    // pdf.line(0, a6height, a6width*2, a6height);
-    // pdf.line(a6width, 0, a6width, a6height*2);
 }
 
-const prepareFourthPageTest = (pdf: jsPDF, eudgc: EUDGC | undefined, params:IPageParameter, 
-    testResultValueSet: any, testManufacturersValueSet: any,
+const prepareFourthPageTest = (pdf: jsPDF, eudgc: EUDGC | undefined, params: IPageParameter,
+    translation: any, testResultValueSet: any, testManufacturersValueSet: any,
     diseaseAgentsData: any, pageMiddle: number, lblLength: number) => {
 
     let test: TestEntry;
@@ -257,384 +313,358 @@ const prepareFourthPageTest = (pdf: jsPDF, eudgc: EUDGC | undefined, params:IPag
         test = eudgc!.t![0];
     }
 
-    //Font for header is not smallHeaderFontSize, because it's not possible 
-    //to put all the required text on the page.
-    let x = params.a6width;
-    let y = params.a6height + params.lineHeight;
-    pdf.setFontSize(params.fontSize);
-    let header = 'Test certificate';
-    let width = pdf.getTextWidth(header);
-    x = params.a6width + (params.a6width - width) / 2;
-    pdf.text(header, x, y);
+    let headerEn = translation('translation:pdfHeaderTest');
+    let headerFr = i18n!.getDataByLanguage('fr')!.translation.pdfHeaderTest;
 
-    header = 'Certificat de test';
-    width = pdf.getTextWidth(header);
-    x = params.a6width + (params.a6width - width) / 2;
-    y += params.lineHeight;
-    pdf.text(header, x, y);
+    let y = printCertificateHeader(params, pdf, headerEn, headerFr);
 
-    pdf.setFontSize(params.fontSize);
-
+    //For the labels on the left side
     let xLeft = params.a6width + params.paddingLeft;
-    let yLeft = y + params.smallHeaderLineHeight;
+    let yLeft = y + params.lineHeight10 * 2 + params.space;
     //For the text on the right side
     let xRight = params.a6width + pageMiddle;
-    let yRight = y + params.smallHeaderLineHeight;
+    let yRight = yLeft;
+    let space = 7;
 
-    pdf.setFontSize(params.fontSize);
+    pdf.setFontSize(params.fontSize10);
 
-    pdf.text('Disease or agent targeted', xLeft, yLeft);
-    yLeft += params.lineHeight;
-    pdf.text('Maladie ou agent ciblé', xLeft, yLeft);
+    let lblLeftEn = translation('translation:pdfDisease');
+    let lblLeftFr = i18n!.getDataByLanguage('fr')!.translation.pdfDisease;
+    yLeft = printLine(pdf, lblLeftEn, xLeft, yLeft, params, lblLeftFr);
 
     let txtDisplay: string = getValueSetDisplay(test!.tg!, diseaseAgentsData) || '';
     pdf.text(txtDisplay, xRight, yRight);
 
-    yLeft += params.lineHeight;
-    yRight += params.lineHeight * 2;
+    yLeft += space;
+    yRight = yLeft;
 
-    pdf.text('Type of test', xLeft, yLeft);
-    yLeft += params.lineHeight;
-    pdf.text('Type de test', xLeft, yLeft);
+    lblLeftEn = translation('translation:pdfTypeOfTest');
+    lblLeftFr = i18n!.getDataByLanguage('fr')!.translation.pdfTypeOfTest;
+    yLeft = printLine(pdf, lblLeftEn, xLeft, yLeft, params, lblLeftFr);
 
     pdf.text(test!.tt!, xRight, yRight);
 
-    yLeft += params.lineHeight;
-    yRight += params.lineHeight * 2;
+    yLeft += space;
+    yRight = yLeft;
 
-    let lblTestName: string = 'Test name (optional for NAAT';
-    lblTestName = pdf.splitTextToSize(lblTestName, lblLength);
-    pdf.text(lblTestName, xLeft, yLeft);
-    yLeft += params.lineHeight * lblTestName.length;
-    lblTestName = 'Nom du test (facultatif pour TAAN';
-    lblTestName = pdf.splitTextToSize(lblTestName, lblLength);
-    pdf.text(lblTestName, xLeft, yLeft);
+    lblLeftEn = translation('translation:pdfTestName');
+    lblLeftFr = i18n!.getDataByLanguage('fr')!.translation.pdfTypeOfTest;
+    yLeft = printSplittedLine(pdf, lblLeftEn, lblLeftFr, lblLength, xLeft, yLeft, params);
 
-    pdf.text(test!.nm!, xRight, yRight);
+    txtDisplay = pdf.splitTextToSize(test!.nm!, lblLength);
+    pdf.text(txtDisplay, xRight, yRight);
 
-    yLeft += params.lineHeight * 2;
-    yRight += params.lineHeight * 4;
+    yLeft += space;
+    yRight = yLeft;
 
-    let lblManufacturer: string = 'Test manufacturer (optional for NAAT)';
-    lblManufacturer = pdf.splitTextToSize(lblManufacturer, lblLength);
-    pdf.text(lblManufacturer, xLeft, yLeft);
-    yLeft += params.lineHeight * 2;
-    lblManufacturer = 'Fabricant du test (facultatif pour un test TAAN) ';
-    lblManufacturer = pdf.splitTextToSize(lblManufacturer, lblLength);
-    pdf.text(lblManufacturer, xLeft, yLeft);
+    lblLeftEn = translation('translation:pdfTestManufacturer');
+    lblLeftFr = i18n!.getDataByLanguage('fr')!.translation.pdfTestManufacturer;
+    yLeft = printSplittedLine(pdf, lblLeftEn, lblLeftFr, lblLength, xLeft, yLeft, params);
 
     txtDisplay = getValueSetDisplay(test!.ma!, testManufacturersValueSet) || '';
     txtDisplay = pdf.splitTextToSize(txtDisplay, lblLength);
     pdf.text(txtDisplay, xRight, yRight);
 
-    yLeft += params.lineHeight * 2;
-    yRight += params.lineHeight * 4;
+    yLeft += space;
+    yRight = yLeft;
 
-    let lblSampleDate: string = 'Date and time of the test sample collection';
-    lblSampleDate = pdf.splitTextToSize(lblSampleDate, lblLength);
-    pdf.text(lblSampleDate, xLeft, yLeft);
-    yLeft += params.lineHeight * 2;
-    lblSampleDate = "Date et heure du prélèvement de l’échantillon";
-    lblSampleDate = pdf.splitTextToSize(lblSampleDate, lblLength);
-    pdf.text(lblSampleDate, xLeft, yLeft);
-
+    lblLeftEn = translation('translation:pdfDateSampleCollection');
+    lblLeftEn = i18n!.getDataByLanguage('fr')!.translation.pdfDateSampleCollection;
+    yLeft = printSplittedLine(pdf, lblLeftEn, lblLeftFr, lblLength, xLeft, yLeft, params);
     pdf.text(convertDateToOutputFormat(test!.sc!), xRight, yRight);
 
-    yLeft += params.lineHeight * 2;
-    yRight += params.lineHeight * 4;
+    yLeft += space;
+    yRight = yLeft;
 
-    let lblDateTestResult: string = 'Date and time of the test result production (optional for RAT)';
-    lblDateTestResult = pdf.splitTextToSize(lblDateTestResult, lblLength);
-    pdf.text(lblDateTestResult, xLeft, yLeft);
-    yLeft += params.lineHeight * 3;
-    lblDateTestResult = "Date et heure de la production des résultats du test  ";
-    lblDateTestResult = pdf.splitTextToSize(lblDateTestResult, lblLength);
-    pdf.text(lblDateTestResult, xLeft, yLeft);
-
+    lblLeftEn = translation('translation:pdfDateTestResult');
+    lblLeftEn = i18n!.getDataByLanguage('fr')!.translation.pdfDateTestResult;
+    yLeft = printSplittedLine(pdf, lblLeftEn, lblLeftFr, lblLength, xLeft, yLeft, params);
     pdf.text(convertDateToOutputFormat(test!.dr!), xRight, yRight);
 
-    yLeft += params.lineHeight * 3;
-    yRight += params.lineHeight * 6;
+    yLeft += space;
+    yRight = yLeft;
 
-    pdf.text('Result of the test', xLeft, yLeft);
-    yLeft += params.lineHeight;
-    pdf.text('Résultat du test', xLeft, yLeft);
+    lblLeftEn = translation('translation:pdfTestResult');
+    lblLeftFr = i18n!.getDataByLanguage('fr')!.translation.pdfTestResult;
+    yLeft = printLine(pdf, lblLeftEn, xLeft, yLeft, params, lblLeftFr);
 
     txtDisplay = getValueSetDisplay(test!.tr!, testResultValueSet) || '';
     pdf.text(txtDisplay, xRight, yRight);
 
-    yLeft += params.lineHeight;
-    yRight += params.lineHeight * 2;
+    yLeft += space;
+    yRight = yLeft;
 
-    pdf.text('Testing centre or facility', xLeft, yLeft);
-    yLeft += params.lineHeight;
-    pdf.text('Centre ou installation de test', xLeft, yLeft);
-
+    lblLeftEn = translation('translation:pdfTestingCentre');
+    lblLeftFr = i18n!.getDataByLanguage('fr')!.translation.pdfTestingCentre;
+    yLeft = printLine(pdf, lblLeftEn, xLeft, yLeft, params, lblLeftFr);
     pdf.text(test!.tc!, xRight, yRight);
 
-    yLeft += params.lineHeight;
-    yRight += params.lineHeight * 2;
+    yLeft += space;
+    yRight = yLeft;
 
-    pdf.text('Member State of vaccination', xLeft, yLeft);
-    yLeft += params.lineHeight;
-    pdf.text('État membre de vaccination', xLeft, yLeft);
-
+    lblLeftEn = translation('translation:pdfStateOfVaccination');
+    lblLeftFr = i18n!.getDataByLanguage('fr')!.translation.pdfStateOfVaccination;
+    yLeft = printLine(pdf, lblLeftEn, xLeft, yLeft, params, lblLeftFr);
     pdf.text(test!.co!, xRight, yRight);
 
-    yLeft += params.lineHeight;
-    yRight += params.lineHeight * 2;
+    yLeft += space;
+    yRight = yLeft;
 
-    pdf.text('Certificate issuer', xLeft, yLeft);
-    yLeft += params.lineHeight;
-    pdf.text('Émetteur du certificat', xLeft, yLeft);
-
+    lblLeftEn = translation('translation:pdfCertificateIssuer');
+    lblLeftFr = i18n!.getDataByLanguage('fr')!.translation.pdfCertificateIssuer;
+    yLeft = printLine(pdf, lblLeftEn, xLeft, yLeft, params, lblLeftFr);
     pdf.text(test!.is!, xRight, yRight);
 }
 
-const prepareFourthPageVaccination = (pdf: jsPDF, eudgc: EUDGC | undefined, params: IPageParameter,
+const prepareFourthPageVaccination = (pdf: jsPDF, eudgc: EUDGC | undefined, params: IPageParameter, translation: any,
     diseaseAgentsData: any, vaccines: any, vaccineManufacturers: any,
     vacMedsData: any, pageMiddle: number, lblLength: number) => {
+
     let vaccination: VaccinationEntry;
     if (eudgc!.v![0]) {
         vaccination = eudgc!.v![0];
     }
 
-    let x = params.a6width;
-    let y = params.a6height + params.paddingTop + params.smallHeaderLineHeight;
-    pdf.setFontSize(params.smallHeaderFontSize);
-    let header = 'Vaccination certificate';
-    let width = pdf.getTextWidth(header);
-    x = params.a6width + (params.a6width - width) / 2;
-    pdf.text(header, x, y);
+    let headerEn = translation('translation:pdfHeaderVaccination');
+    let headerFr = i18n!.getDataByLanguage('fr')!.translation.pdfHeaderVaccination;
 
-    header = 'Certificat de vaccination';
-    width = pdf.getTextWidth(header);
-    x = params.a6width + (params.a6width - width) / 2;
-    y += params.headerLineHeight;
-    pdf.text(header, x, y);
+    let y = printCertificateHeader(params, pdf, headerEn, headerFr);
 
     //For the labels on the left side
     let xLeft = params.a6width + params.paddingLeft;
-    let yLeft = y + params.lineHeight * 2;
+    let yLeft = y + params.lineHeight10 * 2 + params.space;
     //For the text on the right side
     let xRight = params.a6width + pageMiddle;
-    let yRight = y + params.lineHeight * 2;
+    let yRight = yLeft;
 
-    pdf.setFontSize(params.fontSize);
+    pdf.setFontSize(params.fontSize10);
 
-    pdf.text('Disease or agent targeted', xLeft, yLeft);
-    yLeft += params.lineHeight;
-    pdf.text('Maladie ou agent ciblé', xLeft, yLeft);
+    let lblLeftEn = translation('translation:pdfDisease');
+    let lblLeftFr = i18n!.getDataByLanguage('fr')!.translation.pdfDisease;
+    yLeft = printLine(pdf, lblLeftEn, xLeft, yLeft, params, lblLeftFr);
 
     let txtDisplay: string = getValueSetDisplay(vaccination!.tg!, diseaseAgentsData) || '';
     pdf.text(txtDisplay, xRight, yRight);
 
-    yLeft += params.lineHeight + params.space;
-    yRight += params.lineHeight * 2 + params.space;
+    yLeft += params.lineHeight10 + params.space;
+    yRight = yLeft;
 
-    pdf.text('Vaccine/prophylaxis', xLeft, yLeft);
-    yLeft += params.lineHeight;
-    pdf.text('Vaccin/prophylaxie', xLeft, yLeft);
+    lblLeftEn = translation('translation:pdfVaccineProphylaxis');
+    lblLeftEn = i18n!.getDataByLanguage('fr')!.translation.pdfVaccineProphylaxis;
+    yLeft = printLine(pdf, lblLeftEn, xLeft, yLeft, params, lblLeftFr);
 
     txtDisplay = getValueSetDisplay(vaccination!.vp!, vaccines) || '';
     txtDisplay = pdf.splitTextToSize(txtDisplay, lblLength);
     pdf.text(txtDisplay, xRight, yRight);
 
-    yLeft += params.lineHeight + params.space;
+    yLeft += params.lineHeight10 + params.space;
     yRight = yLeft;
 
-    pdf.text('Vaccine medicinal product', xLeft, yLeft);
-    yLeft += params.lineHeight;
-    pdf.text('Médicament vaccinal', xLeft, yLeft);
+    lblLeftEn = translation('translation:pdfVaccineMedicalProduct');
+    lblLeftFr = i18n!.getDataByLanguage('fr')!.translation.pdfVaccineProphylaxis;
+    yLeft = printLine(pdf, lblLeftEn, xLeft, yLeft, params, lblLeftFr);
 
     txtDisplay = getValueSetDisplay(vaccination!.mp!, vacMedsData) || '';
     txtDisplay = pdf.splitTextToSize(txtDisplay, lblLength);
     pdf.text(txtDisplay, xRight, yRight);
 
-    yLeft += params.lineHeight + params.space;
-    yRight += params.lineHeight * 2 + params.space;
+    yLeft += params.lineHeight10 + params.space;
+    yRight = yLeft;
 
-    let lblManufacturer: string = 'Vaccine marketing authorisation holder or manufacturer';
-    lblManufacturer = pdf.splitTextToSize(lblManufacturer, lblLength);
-    pdf.text(lblManufacturer, xLeft, yLeft);
-    yLeft += params.lineHeight * 3;
-    lblManufacturer = "Fabricant ou titulaire de l’autorisation de mise sur le marché du vaccin";
-    lblManufacturer = pdf.splitTextToSize(lblManufacturer, lblLength);
-    pdf.text(lblManufacturer, xLeft, yLeft);
+    lblLeftEn = translation('translation:pdfVaccineManufacturer');
+    lblLeftFr = i18n!.getDataByLanguage('fr')!.translation.pdfVaccineManufacturer;
+    yLeft = printSplittedLine(pdf, lblLeftEn, lblLeftFr, lblLength, xLeft, yLeft, params);
 
     txtDisplay = getValueSetDisplay(vaccination!.ma!, vaccineManufacturers) || '';
     txtDisplay = pdf.splitTextToSize(txtDisplay, lblLength);
     pdf.text(txtDisplay, xRight, yRight);
 
-    yLeft += params.lineHeight * 3 + params.space;
-    yRight += params.lineHeight * 6 + params.space;
+    yLeft += params.lineHeight10 + params.space;
+    yRight = yLeft;
 
-    let lblNumberOfDoses: string = 'Number in a series of vaccinations/doses and the overall number of doses in the series';
-    lblNumberOfDoses = pdf.splitTextToSize(lblNumberOfDoses, lblLength);
-    pdf.text(lblNumberOfDoses, xLeft, yLeft);
-    yLeft += params.lineHeight * 4;
-    lblNumberOfDoses = "Nombre dans une série de vaccins/doses";
-    lblNumberOfDoses = pdf.splitTextToSize(lblNumberOfDoses, lblLength);
-    pdf.text(lblNumberOfDoses, xLeft, yLeft);
-
+    lblLeftEn = translation('translation:pdfNumberOfDoses');
+    lblLeftFr = i18n!.getDataByLanguage('fr')!.translation.pdfNumberOfDoses;
+    yLeft = printSplittedLine(pdf, lblLeftEn, lblLeftFr, lblLength, xLeft, yLeft, params);
     pdf.text('' + vaccination!.dn!, xRight, yRight);
 
-    yLeft += params.lineHeight * 2 + params.space;
-    yRight += params.lineHeight * 6 + params.space;
+    yLeft += params.lineHeight10 + params.space;
+    yRight = yLeft
 
-    pdf.text('Date of vaccination', xLeft, yLeft);
-    yLeft += params.lineHeight;
-    pdf.text('Date de la vaccination', xLeft, yLeft);
-
+    lblLeftEn = translation('translation:pdfDateOfVaccination');
+    lblLeftFr = i18n!.getDataByLanguage('fr')!.translation.pdfDateOfVaccination;
+    yLeft = printLine(pdf, lblLeftEn, xLeft, yLeft, params, lblLeftFr);
     pdf.text(vaccination!.dt!, xRight, yRight);
 
-    yLeft += params.lineHeight + params.space;
-    yRight += params.lineHeight * 2 + params.space;
+    yLeft += params.lineHeight10 + params.space;
+    yRight = yLeft
 
-    pdf.text('Member State of vaccination', xLeft, yLeft);
-    yLeft += params.lineHeight;
-    pdf.text('État membre de vaccination', xLeft, yLeft);
-
+    lblLeftEn = translation('translation:pdfMemberStateOfVaccination');
+    lblLeftFr = i18n!.getDataByLanguage('fr')!.translation.pdfMemberStateOfVaccination;
+    yLeft = printLine(pdf, lblLeftEn, xLeft, yLeft, params, lblLeftFr);
     pdf.text(vaccination!.co!, xRight, yRight);
 
-    yLeft += params.lineHeight + params.space;
-    yRight += params.lineHeight * 2 + params.space;
+    yLeft += params.lineHeight10 + params.space;
+    yRight = yLeft
 
-    pdf.text('Certificate issuer', xLeft, yLeft);
-    yLeft += params.lineHeight;
-    pdf.text('Émetteur du certificat', xLeft, yLeft);
-
+    lblLeftEn = translation('translation:pdfCertificateIssuer');
+    lblLeftFr = i18n!.getDataByLanguage('fr')!.translation.pdfCertificateIssuer;
+    yLeft = printLine(pdf, lblLeftEn, xLeft, yLeft, params, lblLeftFr);
     pdf.text(vaccination!.is!, xRight, yRight);
 }
 
-const prepareThirdPage = (pdf: jsPDF, params: IPageParameter) => {
-    let rectWidth = params.a6width - params.marginLeft - params.paddingRight;
-    let rectHeight = rectWidth * 0.75;
-    let x = (params.a6width - rectWidth) / 2;
-    let y = params.a6height + params.marginTop;
-    pdf.rect(x, y, rectWidth, rectHeight);
+const prepareThirdPage = (pdf: jsPDF, params: IPageParameter, translation: any) => {
 
-    y += params.lineHeight + params.space;
-    let lblInfoText = "Member state placeholder";
-    let widthTxt = pdf.getTextWidth(lblInfoText);
-    x = x + (rectWidth - widthTxt) / 2;
-    pdf.text(lblInfoText, x, y);
+    let lblLength = params.a6width - params.paddingRight - params.paddingRight - mm2point(14);
+    let space = mm2point(3);
+    let imageWidth = 258.75;
+    let imageHeight = 54.75;
+    let y = params.a6height + mm2point(4);
+    let x = (params.a6width - imageWidth) / 2;
 
-    y += params.lineHeight * 2;
-    lblInfoText = "(information on issuing entity, national COVID-19 information etc. – no additional personal data).";
-    lblInfoText = pdf.splitTextToSize(lblInfoText, rectWidth - params.paddingLeft - params.paddingRight);
-    x = (params.a6width - rectWidth) / 2 + params.paddingRight;
-    pdf.text(lblInfoText, x, y);
+    pdf.addImage(flag_seperator, x, y, imageWidth, imageHeight);
 
-    x = (params.a6width - rectWidth) / 2
-    y = params.a6height + params.marginTop + rectHeight + params.lineHeight * 2;
+    x = params.a6width / 2;
+    y += imageHeight + params.fontSize12 + mm2point(2);
 
-    lblInfoText = "This certificate is not a travel document. The scientific evidence on COVID-19 vaccination, testing and recovery continues to evolve, also in view of new variants of concern of the virus. Before traveling, please check the applicable public health measures and related restrictions applied at the point of destination.";
-    lblInfoText = pdf.splitTextToSize(lblInfoText, rectWidth);
-    pdf.text(lblInfoText, x, y, { align: 'justify', maxWidth: rectWidth });
+    setTextColorTurkis(pdf);
+    pdf.setFontSize(params.fontSize12);
+    pdf.setFont('calibri', 'bold');
+    let header = translation('translation:pdfMemberPlaceholder');
+    header = pdf.splitTextToSize(header, lblLength);
+    pdf.text(header, x, y, { align: 'center', maxWidth: lblLength });
+    pdf.setFont('calibri', 'normal');
 
-    y += params.lineHeight * 8;
+    y += params.lineHeight12 + space;
+    setTextColorBlack(pdf);
+    pdf.setFontSize(params.fontSize10);
+    let infotext = translation('translation:pdfMemberPlaceholderInfo');
+    infotext = pdf.splitTextToSize(infotext, lblLength);
+    pdf.text(infotext, x, y, { align: 'center', maxWidth: lblLength });
 
-    lblInfoText = "Relevant information can be found here:";
-    pdf.text(lblInfoText, x, y);
+    y += mm2point(65);
+    pdf.setFontSize(params.fontSize9);
+    infotext = translation('translation:pdfInfoText');
+    infotext = pdf.splitTextToSize(infotext, lblLength);
+    pdf.text(infotext, x, y, { align: 'center', maxWidth: lblLength });
 
-    y += params.lineHeight;
+    y += mm2point(10) + params.lineHeight9 * infotext.length;
+    infotext = translation('translation:pdfRelevantInformation');
+    infotext = pdf.splitTextToSize(infotext, lblLength);
+    pdf.text(infotext, x, y, { align: 'center', maxWidth: lblLength });
 
-    lblInfoText = "https://reopen.europa.eu/en";
-    pdf.text(lblInfoText, x, y);
+    y += space + params.lineHeight9 * infotext.length;
+    infotext = translation('translation:pdfInfoURL');
+    infotext = pdf.splitTextToSize(infotext, lblLength);
+    pdf.text(infotext, x, y, { align: 'center', maxWidth: lblLength });
 }
 
-function prepareFourthPageRecovery(pdf: jsPDF, eudgc: EUDGC | undefined, diseaseAgentsData: any, params: IPageParameter,
+function printSplittedLine(pdf: jsPDF, lblLeft: any, lblLeftFrench: any, lblLength: number, xLeft: number, yLeft: number, params: IPageParameter): number {
+    pdf.setFont('calibri', 'bold');
+    lblLeft = pdf.splitTextToSize(lblLeft, lblLength);
+    pdf.text(lblLeft, xLeft, yLeft);
+    pdf.setFont('calibri', 'normal');
+    yLeft += params.lineHeight10 * lblLeft.length + params.space;
+    lblLeftFrench = pdf.splitTextToSize(lblLeftFrench, lblLength);
+    pdf.text(lblLeftFrench, xLeft, yLeft);
+    return yLeft + params.lineHeight10 * lblLeftFrench.length;
+}
+
+function printLine(pdf: jsPDF, lblLeft: any, xLeft: number, yLeft: number, params: IPageParameter, lblLeftFrench: string): number {
+    pdf.setFont('calibri', 'bold');
+    pdf.text(lblLeft, xLeft, yLeft);
+    pdf.setFont('calibri', 'normal');
+    yLeft += params.lineHeight10 + params.space;
+    pdf.text(lblLeftFrench, xLeft, yLeft);
+    return yLeft + params.lineHeight10;
+}
+
+function printCertificateHeader(params: IPageParameter, pdf: jsPDF, header: any, frenchHeader: string): number {
+    let x = params.a6width + params.a6width / 2;
+    let y = params.a6height + params.paddingTop + params.smallHeaderLineHeight;
+    pdf.setFont('calibri', 'bold');
+    pdf.setFontSize(params.smallHeaderFontSize);
+    setTextColorTurkis(pdf);
+
+    pdf.text(header, x, y, { align: 'center', maxWidth: params.a6width });
+    y += params.smallHeaderLineHeight;
+    frenchHeader = pdf.splitTextToSize(frenchHeader, params.a6width);
+    pdf.text(frenchHeader, x, y, { align: 'center', maxWidth: params.a6width });
+    setTextColorBlack(pdf);
+    return y + frenchHeader.length;
+}
+
+function prepareFourthPageRecovery(pdf: jsPDF, eudgc: EUDGC | undefined, translation: any, diseaseAgentsData: any, params: IPageParameter,
     pageMiddle: number, lblLength: number) {
 
     let recovery: RecoveryEntry = eudgc!.r![0];
 
-    let x = params.a6width;
-    let y = params.a6height + params.paddingTop + params.smallHeaderLineHeight;
-    pdf.setFontSize(params.smallHeaderFontSize);
-    let header = 'Certificate of recovery';
-    let width = pdf.getTextWidth(header);
-    x = params.a6width + (params.a6width - width) / 2;
-    pdf.text(header, x, y);
+    let headerEn = translation('translation:pdfHeaderRecovery');
+    let headerFr = i18n!.getDataByLanguage('fr')!.translation.pdfHeaderRecovery;
 
-    header = 'Certificat de rétablissement';
-    width = pdf.getTextWidth(header);
-    x = params.a6width + (params.a6width - width) / 2;
-    y += params.headerLineHeight;
-    pdf.text(header, x, y);
+    let y = printCertificateHeader(params, pdf, headerEn, headerFr);
 
     //For the labels on the left side
     let xLeft = params.a6width + params.paddingLeft;
-    let yLeft = y + params.lineHeight * 2;
+    let yLeft = y + params.lineHeight10 * 2 + params.space;
     //For the text on the right side
     let xRight = params.a6width + pageMiddle;
-    let yRight = y + params.lineHeight * 2;
+    let yRight = yLeft;
 
-    pdf.setFontSize(params.fontSize);
+    pdf.setFontSize(params.fontSize10);
 
-    let lblDisease: string = 'Disease or agent the citizen has recovered from';
-    lblDisease = pdf.splitTextToSize(lblDisease, lblLength);
-    pdf.text(lblDisease, xLeft, yLeft);
-    yLeft += params.lineHeight * 2;
-    lblDisease = "Maladie ou agent dont le citoyen s'est rétabli";
-    lblDisease = pdf.splitTextToSize(lblDisease, lblLength);
-    pdf.text(lblDisease, xLeft, yLeft);
-
+    let lblLeftEn = translation('translation:pdfDisease');
+    let lblLeftFr = i18n!.getDataByLanguage('fr')!.translation.pdfDisease;
+    yLeft = printLine(pdf, lblLeftEn, xLeft, yLeft, params, lblLeftFr);
 
     let txtDisplay: string = getValueSetDisplay(recovery.tg, diseaseAgentsData) || '';
-    txtDisplay = pdf.splitTextToSize(txtDisplay, lblLength);
     pdf.text(txtDisplay, xRight, yRight);
 
-    yLeft += params.lineHeight * 2 + params.space;
-    yRight += params.lineHeight * 4 + params.space;
+    yLeft += params.lineHeight10 + params.space;
+    yRight = yLeft;
 
-    let lblDate: string = 'Date of first positive test result';
-    lblDate = pdf.splitTextToSize(lblDate, lblLength);
-    pdf.text(lblDate, xLeft, yLeft);
-    yLeft += params.lineHeight * 2;
-    lblDate = "Date du premier résultat de test posifif";
-    lblDate = pdf.splitTextToSize(lblDate, lblLength);
-    pdf.text(lblDate, xLeft, yLeft);
+    lblLeftEn = translation('translation:pdfDatePositiveTestResult');
+    lblLeftFr = i18n!.getDataByLanguage('fr')!.translation.pdfDatePositiveTestResult;
+    yLeft = printSplittedLine(pdf, lblLeftEn, lblLeftFr, lblLength, xLeft, yLeft, params);
 
     pdf.text(recovery.fr!, xRight, yRight);
 
-    yLeft += params.lineHeight * 2 + params.space;
-    yRight += params.lineHeight * 4 + params.space;
+    yLeft += params.lineHeight10 + params.space;
+    yRight = yLeft;
 
-    pdf.text('Member State of test', xLeft, yLeft);
-    yLeft += params.lineHeight;
-    pdf.text('État membre du test', xLeft, yLeft);
-
+    lblLeftEn = translation('translation:pdfStateOfTest');
+    lblLeftFr = i18n!.getDataByLanguage('fr')!.translation.pdfStateOfTest;
+    yLeft = printLine(pdf, lblLeftEn, xLeft, yLeft, params, lblLeftFr);
     pdf.text(recovery.co!, xRight, yRight);
 
-    yLeft += params.lineHeight + params.space;
-    yRight += params.lineHeight * 2 + params.space;
+    yLeft += params.lineHeight10 + params.space;
+    yRight = yLeft;
 
-    pdf.text('Certificate issuer', xLeft, yLeft);
-    yLeft += params.lineHeight;
-    pdf.text('Émetteur du certificat', xLeft, yLeft);
-
+    lblLeftEn = translation('translation:pdfCertificateIssuer');
+    lblLeftFr = i18n!.getDataByLanguage('fr')!.translation.pdfCertificateIssuer;
+    yLeft = printLine(pdf, lblLeftEn, xLeft, yLeft, params, lblLeftFr);
     pdf.text(recovery.is!, xRight, yRight);
 
-    yLeft += params.lineHeight + params.space;
-    yRight += params.lineHeight * 2 + params.space;
+    yLeft += params.lineHeight10 + params.space;
+    yRight = yLeft;
 
-    pdf.text('Certificate valid from', xLeft, yLeft);
-    yLeft += params.lineHeight;
-    pdf.text('Certificat valable à partir du', xLeft, yLeft);
-
+    lblLeftEn = translation('translation:pdfValidFrom');
+    lblLeftFr = i18n!.getDataByLanguage('fr')!.translation.pdfValidFrom;
+    yLeft = printLine(pdf, lblLeftEn, xLeft, yLeft, params, lblLeftFr);
     pdf.text(recovery.df!, xRight, yRight);
 
-    yLeft += params.lineHeight + params.space;
-    yRight += params.lineHeight * 2 + params.space;
+    yLeft += params.lineHeight10 + params.space;
+    yRight = yLeft;
 
-    let lblValidTo: string = 'Certificate valid until (not more than 180 days after the date of first positive test result)';
-    lblValidTo = pdf.splitTextToSize(lblValidTo, lblLength);
-    pdf.text(lblValidTo, xLeft, yLeft);
-    yLeft += params.lineHeight * 4;
-    lblValidTo = "Certificat valable jusqu’au (180 jours au maximum après la date du premier résultat positif)";
-    lblValidTo = pdf.splitTextToSize(lblValidTo, lblLength);
-    pdf.text(lblValidTo, xLeft, yLeft);
-
+    lblLeftEn = translation('translation:pdfValidTo');
+    lblLeftFr = i18n!.getDataByLanguage('fr')!.translation.pdfValidTo;
+    yLeft = printSplittedLine(pdf, lblLeftEn, lblLeftFr, lblLength, xLeft, yLeft, params);
     pdf.text(recovery.du!, xRight, yRight);
+}
+
+const setTextColorTurkis = (pdf: jsPDF) => {
+    pdf.setTextColor(0, 122, 102);
+}
+
+const setTextColorBlack = (pdf: jsPDF) => {
+    pdf.setTextColor(0, 0, 0);
 }

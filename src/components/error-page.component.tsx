@@ -61,7 +61,7 @@ const ErrorPage = (props: any) => {
                 {/*
     content area with process number input and radios
     */}
-                <Modal.Body className='py-0 bg-light'>
+                <Modal.Body className='py-0'>
                     <hr />
                     <p className='text-center'>
                         <span className='font-weight-bold'>{t('translation:serverError')}</span>
