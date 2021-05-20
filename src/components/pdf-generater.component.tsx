@@ -139,7 +139,7 @@ const usePdfGenerator = (qrCodeCanvasElement: any, eudgc: EUDGC | undefined) => 
         let _ci: string = '';
         if (eudgc!.r) {
             _ci = eudgc!.r![0].ci;
-            prepareFourthPageRecovery(_pdf, eudgc, diseaseAgentsData, params, pageMiddle, lblLength);
+            prepareFourthPageRecovery(_pdf, eudgc, t, diseaseAgentsData, params, pageMiddle, lblLength);
         } else if (eudgc!.t) {
             _ci = eudgc!.t![0].ci;
             prepareFourthPageTest(_pdf, eudgc, params, t, testResultValueSet, testManufacturersValueSet,
@@ -498,7 +498,7 @@ const prepareFourthPageVaccination = (pdf: jsPDF, eudgc: EUDGC | undefined, para
     lblLeftFr = i18n!.getDataByLanguage('fr')!.translation.pdfDateOfVaccination;
     yLeft = printLine(pdf, lblLeftEn, xLeft, yLeft, params, lblLeftFr);
     pdf.text(vaccination!.dt!, xRight, yRight);
-    
+
     yLeft += params.lineHeight10 + params.space;
     yRight = yLeft
 
@@ -562,7 +562,7 @@ const prepareThirdPage = (pdf: jsPDF, params: IPageParameter, translation: any) 
     pdf.text(infotext, x, y, { align: 'center', maxWidth: lblLength });
 }
 
-function printSplittedLine(pdf: jsPDF, lblLeft: any, lblLeftFrench: any, lblLength: number, xLeft: number, yLeft: number, params: IPageParameter) : number{
+function printSplittedLine(pdf: jsPDF, lblLeft: any, lblLeftFrench: any, lblLength: number, xLeft: number, yLeft: number, params: IPageParameter): number {
     pdf.setFont('calibri', 'bold');
     lblLeft = pdf.splitTextToSize(lblLeft, lblLength);
     pdf.text(lblLeft, xLeft, yLeft);
@@ -573,7 +573,7 @@ function printSplittedLine(pdf: jsPDF, lblLeft: any, lblLeftFrench: any, lblLeng
     return yLeft + params.lineHeight10 * lblLeftFrench.length;
 }
 
-function printLine(pdf: jsPDF, lblLeft: any, xLeft: number, yLeft: number, params: IPageParameter, lblLeftFrench: string) : number{
+function printLine(pdf: jsPDF, lblLeft: any, xLeft: number, yLeft: number, params: IPageParameter, lblLeftFrench: string): number {
     pdf.setFont('calibri', 'bold');
     pdf.text(lblLeft, xLeft, yLeft);
     pdf.setFont('calibri', 'normal');
@@ -582,7 +582,7 @@ function printLine(pdf: jsPDF, lblLeft: any, xLeft: number, yLeft: number, param
     return yLeft + params.lineHeight10;
 }
 
-function printCertificateHeader(params: IPageParameter, pdf: jsPDF, header: any, frenchHeader: string) : number{
+function printCertificateHeader(params: IPageParameter, pdf: jsPDF, header: any, frenchHeader: string): number {
     let x = params.a6width + params.a6width / 2;
     let y = params.a6height + params.paddingTop + params.smallHeaderLineHeight;
     pdf.setFont('calibri', 'bold');
@@ -597,98 +597,71 @@ function printCertificateHeader(params: IPageParameter, pdf: jsPDF, header: any,
     return y + frenchHeader.length;
 }
 
-function prepareFourthPageRecovery(pdf: jsPDF, eudgc: EUDGC | undefined, diseaseAgentsData: any, params: IPageParameter,
+function prepareFourthPageRecovery(pdf: jsPDF, eudgc: EUDGC | undefined, translation: any, diseaseAgentsData: any, params: IPageParameter,
     pageMiddle: number, lblLength: number) {
 
     let recovery: RecoveryEntry = eudgc!.r![0];
 
-    let x = params.a6width;
-    let y = params.a6height + params.paddingTop + params.smallHeaderLineHeight;
-    pdf.setFontSize(params.smallHeaderFontSize);
-    let header = 'Certificate of recovery';
-    let width = pdf.getTextWidth(header);
-    x = params.a6width + (params.a6width - width) / 2;
-    pdf.text(header, x, y);
+    let headerEn = translation('translation:pdfHeaderRecovery');
+    let headerFr = i18n!.getDataByLanguage('fr')!.translation.pdfHeaderRecovery;
 
-    header = 'Certificat de rétablissement';
-    width = pdf.getTextWidth(header);
-    x = params.a6width + (params.a6width - width) / 2;
-    y += params.headerLineHeight;
-    pdf.text(header, x, y);
+    let y = printCertificateHeader(params, pdf, headerEn, headerFr);
 
     //For the labels on the left side
     let xLeft = params.a6width + params.paddingLeft;
-    let yLeft = y + params.lineHeight10 * 2;
+    let yLeft = y + params.lineHeight10 * 2 + params.space;
     //For the text on the right side
     let xRight = params.a6width + pageMiddle;
-    let yRight = y + params.lineHeight10 * 2;
+    let yRight = yLeft;
 
-    pdf.setFontSize(params.fontSize);
+    pdf.setFontSize(params.fontSize10);
 
-    let lblDisease: string = 'Disease or agent the citizen has recovered from';
-    lblDisease = pdf.splitTextToSize(lblDisease, lblLength);
-    pdf.text(lblDisease, xLeft, yLeft);
-    yLeft += params.lineHeight10 * 2;
-    lblDisease = "Maladie ou agent dont le citoyen s'est rétabli";
-    lblDisease = pdf.splitTextToSize(lblDisease, lblLength);
-    pdf.text(lblDisease, xLeft, yLeft);
-
+    let lblLeftEn = translation('translation:pdfDisease');
+    let lblLeftFr = i18n!.getDataByLanguage('fr')!.translation.pdfDisease;
+    yLeft = printLine(pdf, lblLeftEn, xLeft, yLeft, params, lblLeftFr);
 
     let txtDisplay: string = getValueSetDisplay(recovery.tg, diseaseAgentsData) || '';
-    txtDisplay = pdf.splitTextToSize(txtDisplay, lblLength);
     pdf.text(txtDisplay, xRight, yRight);
 
-    yLeft += params.lineHeight10 * 2 + params.space;
-    yRight += params.lineHeight10 * 4 + params.space;
+    yLeft += params.lineHeight10 + params.space;
+    yRight = yLeft;
 
-    let lblDate: string = 'Date of first positive test result';
-    lblDate = pdf.splitTextToSize(lblDate, lblLength);
-    pdf.text(lblDate, xLeft, yLeft);
-    yLeft += params.lineHeight10 * 2;
-    lblDate = "Date du premier résultat de test posifif";
-    lblDate = pdf.splitTextToSize(lblDate, lblLength);
-    pdf.text(lblDate, xLeft, yLeft);
+    lblLeftEn = translation('translation:pdfDatePositiveTestResult');
+    lblLeftFr = i18n!.getDataByLanguage('fr')!.translation.pdfDatePositiveTestResult;
+    yLeft = printSplittedLine(pdf, lblLeftEn, lblLeftFr, lblLength, xLeft, yLeft, params);
 
     pdf.text(recovery.fr!, xRight, yRight);
 
-    yLeft += params.lineHeight10 * 2 + params.space;
-    yRight += params.lineHeight10 * 4 + params.space;
+    yLeft += params.lineHeight10 + params.space;
+    yRight = yLeft;
 
-    pdf.text('Member State of test', xLeft, yLeft);
-    yLeft += params.lineHeight10;
-    pdf.text('État membre du test', xLeft, yLeft);
-
+    lblLeftEn = translation('translation:pdfStateOfTest');
+    lblLeftFr = i18n!.getDataByLanguage('fr')!.translation.pdfStateOfTest;
+    yLeft = printLine(pdf, lblLeftEn, xLeft, yLeft, params, lblLeftFr);
     pdf.text(recovery.co!, xRight, yRight);
 
     yLeft += params.lineHeight10 + params.space;
-    yRight += params.lineHeight10 * 2 + params.space;
+    yRight = yLeft;
 
-    pdf.text('Certificate issuer', xLeft, yLeft);
-    yLeft += params.lineHeight10;
-    pdf.text('Émetteur du certificat', xLeft, yLeft);
-
+    lblLeftEn = translation('translation:pdfCertificateIssuer');
+    lblLeftFr = i18n!.getDataByLanguage('fr')!.translation.pdfCertificateIssuer;
+    yLeft = printLine(pdf, lblLeftEn, xLeft, yLeft, params, lblLeftFr);
     pdf.text(recovery.is!, xRight, yRight);
 
     yLeft += params.lineHeight10 + params.space;
-    yRight += params.lineHeight10 * 2 + params.space;
+    yRight = yLeft;
 
-    pdf.text('Certificate valid from', xLeft, yLeft);
-    yLeft += params.lineHeight10;
-    pdf.text('Certificat valable à partir du', xLeft, yLeft);
-
+    lblLeftEn = translation('translation:pdfValidFrom');
+    lblLeftFr = i18n!.getDataByLanguage('fr')!.translation.pdfValidFrom;
+    yLeft = printLine(pdf, lblLeftEn, xLeft, yLeft, params, lblLeftFr);
     pdf.text(recovery.df!, xRight, yRight);
 
     yLeft += params.lineHeight10 + params.space;
-    yRight += params.lineHeight10 * 2 + params.space;
+    yRight = yLeft;
 
-    let lblValidTo: string = 'Certificate valid until (not more than 180 days after the date of first positive test result)';
-    lblValidTo = pdf.splitTextToSize(lblValidTo, lblLength);
-    pdf.text(lblValidTo, xLeft, yLeft);
-    yLeft += params.lineHeight10 * 4;
-    lblValidTo = "Certificat valable jusqu’au (180 jours au maximum après la date du premier résultat positif)";
-    lblValidTo = pdf.splitTextToSize(lblValidTo, lblLength);
-    pdf.text(lblValidTo, xLeft, yLeft);
-
+    lblLeftEn = translation('translation:pdfValidTo');
+    lblLeftFr = i18n!.getDataByLanguage('fr')!.translation.pdfValidTo;
+    yLeft = printSplittedLine(pdf, lblLeftEn, lblLeftFr, lblLength, xLeft, yLeft, params);
     pdf.text(recovery.du!, xRight, yRight);
 }
 

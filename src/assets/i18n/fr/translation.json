@@ -20,5 +20,10 @@
     "pdfDateTestResult" : "Date et heure de la production des résultats du test",
     "pdfTestResult" : "Résultat du test",
     "pdfTestingCentre" : "Centre ou installation de test",
-    "pdfStateOfVaccination" : "État membre de vaccination"
+    "pdfStateOfVaccination" : "État membre de vaccination",
+    "pdfHeaderRecovery" : "CERTIFICATE DE RÉTABLISSEMENT",
+    "pdfDatePositiveTestResult" : "Date du premier résultat de test posifif",
+    "pdfStateOfTest" : "État membre du test",
+    "pdfValidFrom" : "Certificat valable à partir du",
+    "pdfValidTo" : "Certificat valable jusqu’au (180 jours au maximum après la date du premier résultat positif)"
 }
