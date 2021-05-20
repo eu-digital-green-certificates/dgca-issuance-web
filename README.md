@@ -11,7 +11,6 @@
 <p align="center">
   <a href="#about">About</a> •
   <a href="#development">Development</a> •
-  <a href="#documentation">Documentation</a> •
   <a href="#support-and-feedback">Support</a> •
   <a href="#how-to-contribute">Contribute</a> •
   <a href="#contributors">Contributors</a> •
@@ -22,29 +21,46 @@
 
 This repository contains the source code of the Digital Green Certificates Issuance Web Frontend.
 
-The issuer application frontend provides a user interface that is used by the issuer to enter the
-necessary data for DGC issuance.
+The issuer application frontend provides a user interface that is used by the issuer to enter the necessary data for DGC issuance.
+
+The system is based on EU-Guidelines for the [EU digital green certificates](https://ec.europa.eu/info/live-work-travel-eu/coronavirus-response/safe-covid-19-vaccines-europeans/covid-19-digital-green-certificates_en).
 
 ## Development
 
 ### Prerequisites
+- [ ] [Git](https://git-scm.com/)
+- [ ] [Node.js](https://nodejs.org/en/download/) (which comes with [npm](https://www.npmjs.com/))
+- [ ] [yarn](https://yarnpkg.com/) (recommended)
 
-- [ ] TODO: Describe prerequisites
+### How to use
+We recommend to use yarn to install and run the project. However the npm package manager can also be used.
 
-### Build
+#### Getting the source code
+```
+# Clone this repository
+$ git clone https://github.com/eu-digital-green-certificates/dgca-issuance-web.git
 
-Whether you cloned or downloaded the 'zipped' sources you will either find the sources in the chosen checkout-directory or get a zip file with the source code, which you can expand to a folder of your choice.
+# Go into the repository
+$ cd dgca-issuance-web
+```
 
-In either case open a terminal pointing to the directory you put the sources in. The local build process is described afterwards depending on the way you choose.
+#### Starting the project (yarn)
+```
+# Install dependencies
+$ yarn install
 
-#### XYZ (Maven, Docker ...) based build
+# Run the app
+$ yarn start
+```
 
-- [ ] TODO: Add instructions for different build types
+#### Starting the project (npm)
+```
+# Install dependencies
+$ npm install
 
-## Documentation  
-
-- [ ] TODO: Link to documentation
-
+# Run the app
+$ npm run start
+```
 ## Support and feedback
 
 The following channels are available for discussions, feedback, and support requests:
