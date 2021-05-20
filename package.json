@@ -31,7 +31,6 @@
     "json-schema-to-typescript": "^10.1.4",
     "jsonschema": "^1.4.0",
     "jspdf": "^2.3.1",
-    "jspdf-customfonts": "^0.0.4-rc.4",
     "keycloak-js": "^10.0.1",
     "lint-staged": "^10.5.4",
     "moment": "^2.29.1",
@@ -51,8 +50,12 @@
     "web-vitals": "^1.0.1"
   },
   "lint-staged": {
-    "*.{js,jsx,ts,tsx}": ["eslint --fix"],
-    "src/**/*.{js,jsx,ts,tsx,json,css,scss,md}": ["prettier --write"]
+    "*.{js,jsx,ts,tsx}": [
+      "eslint --fix"
+    ],
+    "src/**/*.{js,jsx,ts,tsx,json,css,scss,md}": [
+      "prettier --write"
+    ]
   },
   "proxy": "http://localhost:8080",
   "scripts": {
