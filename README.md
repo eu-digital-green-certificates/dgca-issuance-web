@@ -46,6 +46,9 @@ $ cd dgca-issuance-web
 
 #### Starting the project (yarn)
 ```
+# Install yarn
+$ npm install -g yarn
+
 # Install dependencies
 $ yarn install
 
