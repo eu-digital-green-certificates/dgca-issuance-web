@@ -15,7 +15,7 @@ services:
       internal:
 
   dgc-issuance-service:
-    image: docker.pkg.github.com/eu-digital-green-certificates/dgca-issuance-service/dgca-issuance-service:0.0.9
+    image: docker.pkg.github.com/eu-digital-green-certificates/dgca-issuance-service/dgca-issuance-service:1.0.0
     container_name: dgc-issuance-service
     hostname: dgc-issuance-service
     ports:
