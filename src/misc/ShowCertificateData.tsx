@@ -196,7 +196,7 @@ export const ShowCertificateData = (props: any) => {
 
 export default ShowCertificateData
 
-export const convertDateToOutputFormat = (dateString: string): string => dateString ? moment(dateString, 'YYYY-MM-DDTHH:mm:ss.sssZ').format(utils.momentDateTimeFormat).toString() : '';
+export const convertDateToOutputFormat = (dateString?: string): string => dateString ? moment(dateString, 'YYYY-MM-DDTHH:mm:ss.sssZ').format(utils.momentDateTimeFormat).toString() : '';
 
 // returns display value for key 
 export const getValueSetDisplay = (key: string | undefined, valueSet: IValueSet | undefined): string | undefined => {

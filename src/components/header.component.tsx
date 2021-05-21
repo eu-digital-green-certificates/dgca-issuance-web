@@ -26,7 +26,7 @@ import '../i18n';
 import { useTranslation } from 'react-i18next';
 
 import useNavigation from '../misc/navigation';
-import EULogo from '../assets/images/EU_logo@3x.png'
+import EULogo from '../assets/images/Flag+EU.png'
 
 const Header = (props: any) => {
 
@@ -44,7 +44,7 @@ const Header = (props: any) => {
         <>
         <Container className='bg-white px-0 position-relative'>
             {/* simple header with logo */}
-            <Image src={EULogo} className='eu-logo' />
+            <Image src={EULogo} className='m-3' />
         </Container>
         <Container className='d-flex bg-gray-1 px-0 position-relative'>
             <span className='header-title'>{t('translation:title')}</span>

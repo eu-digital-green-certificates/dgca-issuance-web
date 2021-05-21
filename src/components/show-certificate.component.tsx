@@ -44,13 +44,16 @@ const ShowCertificate = (props: any) => {
     const { t } = useTranslation();
 
     const [isInit, setIsInit] = React.useState(false)
+    const [pdfIsInit, setPdfIsInit] = React.useState(false)
+    const [pdfIsReady, setPdfIsReady] = React.useState(false)
     const [eudgc, setEudgc] = React.useState<EUDGC>();
     const [qrCodeValue, setQrCodeValue] = React.useState('');
 
     const [tan, setTAN] = React.useState('');
 
     const [qrCodeForPDF, setQrCodeForPDF] = React.useState<any>();
-    const pdfGenerator = usePdfGenerator(qrCodeForPDF, eudgc);
+    const [eudgcForPDF, setEudgcForPDF] = React.useState<EUDGC>();
+    const pdf = usePdfGenerator(qrCodeForPDF, eudgcForPDF, (isInit) => setPdfIsInit(isInit), (isReady) => setPdfIsReady(isReady));
 
     // set patient data on mount and set hash from uuid
     React.useEffect(() => {
@@ -89,6 +92,13 @@ const ShowCertificate = (props: any) => {
         }
     }, [navigation]);
 
+    React.useEffect(() => {
+        if (pdf) {
+            handleShowPdf();
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [pdfIsReady]);
+
     const finishProcess = () => {
         props.setEudgc(undefined);
         navigation!.toLanding();
@@ -122,6 +132,15 @@ const ShowCertificate = (props: any) => {
 
     const handleGeneratePdf = () => {
         setQrCodeForPDF(document.getElementById('qr-code-pdf'));
+        setEudgcForPDF(eudgc);
+    }
+
+    const handleShowPdf = () => {
+        if (pdf) {
+            const blobPDF = new Blob([pdf.output('blob')], { type: 'application/pdf' });
+            const blobUrl = URL.createObjectURL(blobPDF);
+            window.open(blobUrl);
+        }
     }
 
     return (
@@ -139,7 +158,7 @@ const ShowCertificate = (props: any) => {
                     <Card.Body id='data-body' className='p-3'>
                         <Row>
                             <Col sm='6' className='p-3'>
-                                
+
                                 <ShowCertificateData eudgc={eudgc} />
 
                             </Col>
@@ -161,7 +180,7 @@ const ShowCertificate = (props: any) => {
                     {/*    footer with correction and finish button    */}
                     <Card.Footer id='data-footer'>
                         <Row>
-                            <Col xs='6' md='4' className='pl-0 pr-2'>
+                            <Col xs='12' md='4' className='pl-md-0 pr-md-2 pb-3 pb-md-0'>
                                 <Button
                                     className=''
                                     variant='outline-primary'
@@ -171,16 +190,26 @@ const ShowCertificate = (props: any) => {
                                     {t('translation:patient-data-correction')}
                                 </Button>
                             </Col>
-                            <Col xs='6' md='4' className='pl-0 pr-2'>
+                            <Col xs='6' md='4' className='px-md-2 pr-2'>
                                 <Button
-                                    className='my-1 my-md-0'
+                                    className=''
                                     block
                                     onClick={handleGeneratePdf}
+                                    disabled={!pdfIsInit}
+                                    hidden={pdfIsReady}
                                 >
                                     {t('translation:generate-pdf')}
                                 </Button>
+                                <Button
+                                    className='m-0'
+                                    block
+                                    onClick={handleShowPdf}
+                                    hidden={!pdfIsReady}
+                                >
+                                    {t('translation:show-pdf')}
+                                </Button>
                             </Col>
-                            <Col xs='6' md='3' className='pr-0 pl-2'>
+                            <Col xs='6' md='4' className='pr-md-0 pl-2'>
                                 <Button
                                     className=''
                                     block
