@@ -399,55 +399,63 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudgcProp: EUDGC | undefi
     const prepareFourthPageVaccination = () => {
         if (pdf && vaccinationSet && french) {
 
-            let y = printCertificateHeader(t('translation:pdfHeaderVaccination'), french.translation.pdfHeaderVaccination);
-            y += params.lineHeight10 * 2 + params.space;
+            const lineHeight = params.lineHeight10;
+
+            let y = printCertificateHeader(t('translation:pdfHeaderVaccination'), french.translation.pdfHeaderVaccination, params.paddingTop);
+            y += params.space;
 
             //For the labels on the left side
-            let xLeft = params.a6width + params.paddingLeft;
-            //For the text on the right side
-            let xRight = params.a6width + pageMiddle;
+            let xLeft = params.a6width + params.paddingInnerLeft;
 
             pdf.setFontSize(params.fontSize10);
 
-            y = printBlock(xLeft, xRight, y,
+            y = printVerticalBlock(xLeft, y,
                 t('translation:pdfDisease'),
                 french.translation.pdfDisease,
-                getValueSetDisplay(vaccinationSet.tg, diseaseAgentsData));
+                getValueSetDisplay(vaccinationSet.tg, diseaseAgentsData),
+                lineHeight, true);
 
-            y = printBlock(xLeft, xRight, y,
+            y = printVerticalBlock(xLeft, y,
                 t('translation:pdfVaccineProphylaxis'),
                 french.translation.pdfVaccineProphylaxis,
-                getValueSetDisplay(vaccinationSet.vp, vaccines));
+                getValueSetDisplay(vaccinationSet.vp, vaccines),
+                lineHeight, true);
 
-            y = printBlock(xLeft, xRight, y,
+            y = printVerticalBlock(xLeft, y,
                 t('translation:pdfVaccineMedicalProduct'),
                 french.translation.pdfVaccineMedicalProduct,
-                getValueSetDisplay(vaccinationSet.mp, vacMedsData));
+                getValueSetDisplay(vaccinationSet.mp, vacMedsData),
+                lineHeight, true);
 
-            y = printBlock(xLeft, xRight, y,
+            y = printVerticalBlock(xLeft, y,
                 t('translation:pdfVaccineManufacturer'),
                 french.translation.pdfVaccineManufacturer,
-                getValueSetDisplay(vaccinationSet.ma, vaccineManufacturers));
+                getValueSetDisplay(vaccinationSet.ma, vaccineManufacturers),
+                lineHeight, true);
 
-            y = printBlock(xLeft, xRight, y,
+            y = printVerticalBlock(xLeft, y,
                 t('translation:pdfNumberOfDoses'),
                 french.translation.pdfNumberOfDoses,
-                vaccinationSet.dn.toString() + ' / ' + vaccinationSet.sd.toString());
+                vaccinationSet.dn.toString() + ' / ' + vaccinationSet.sd.toString(),
+                lineHeight, true);
 
-            y = printBlock(xLeft, xRight, y,
+            y = printVerticalBlock(xLeft, y,
                 t('translation:pdfDateOfVaccination'),
                 french.translation.pdfDateOfVaccination,
-                vaccinationSet.dt);
+                vaccinationSet.dt,
+                lineHeight, true);
 
-            y = printBlock(xLeft, xRight, y,
+            y = printVerticalBlock(xLeft, y,
                 t('translation:pdfMemberStateOfVaccination'),
                 french.translation.pdfMemberStateOfVaccination,
-                vaccinationSet.co);
+                vaccinationSet.co,
+                lineHeight, true);
 
-            printBlock(xLeft, xRight, y,
+            printVerticalBlock(xLeft, y,
                 t('translation:pdfCertificateIssuer'),
                 french.translation.pdfCertificateIssuer,
-                vaccinationSet.is);
+                vaccinationSet.is,
+                lineHeight, true);
 
             setFourthPageIsReady(true);
         }
@@ -456,13 +464,10 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudgcProp: EUDGC | undefi
     const prepareFourthPageTest = () => {
         if (pdf && testSet && french) {
 
-            const space = 5.5;
             const lineHeight = params.lineHeight10;
 
             let y = printCertificateHeader(t('translation:pdfHeaderTest'), french.translation.pdfHeaderTest);
-            y += lineHeight + params.space;
 
-            //For the labels on the left side
             let x = params.a6width + params.paddingInnerLeft;
 
             pdf.setFontSize(params.fontSize10);
@@ -540,45 +545,50 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudgcProp: EUDGC | undefi
     const prepareFourthPageRecovery = () => {
         if (pdf && recoverySet && french) {
 
-            let y = printCertificateHeader(t('translation:pdfHeaderRecovery'), french.translation.pdfHeaderRecovery);
-            y += params.lineHeight10 * 2 + params.space;
+            const lineHeight = params.lineHeight10;
+
+            let y = printCertificateHeader(t('translation:pdfHeaderRecovery'), french.translation.pdfHeaderRecovery, params.paddingTop);
+            y += params.smallHeaderLineHeight + params.space;
 
             //For the labels on the left side
-            let xLeft = params.a6width + params.paddingLeft;
-            //For the text on the right side
-            let xRight = params.a6width + pageMiddle;
+            let xLeft = params.a6width + params.paddingInnerLeft;
 
             pdf.setFontSize(params.fontSize10);
 
-            y = printBlock(xLeft, xRight, y,
+           y = printVerticalBlock(xLeft, y,
                 t('translation:pdfDisease'),
                 french.translation.pdfDisease,
-                getValueSetDisplay(recoverySet.tg, diseaseAgentsData));
+                getValueSetDisplay(recoverySet.tg, diseaseAgentsData),
+                lineHeight, true);
 
-            y = printBlock(xLeft, xRight, y,
+            y = printVerticalBlock(xLeft, y,
                 t('translation:pdfDatePositiveTestResult'),
                 french.translation.pdfDatePositiveTestResult,
                 recoverySet.fr);
 
-            y = printBlock(xLeft, xRight, y,
+            y = printVerticalBlock(xLeft, y,
                 t('translation:pdfStateOfTest'),
                 french.translation.pdfStateOfTest,
-                recoverySet.co);
+                recoverySet.co,
+                lineHeight, true);
 
-            y = printBlock(xLeft, xRight, y,
+            y = printVerticalBlock(xLeft, y,
                 t('translation:pdfCertificateIssuer'),
                 french.translation.pdfCertificateIssuer,
-                recoverySet.is);
+                recoverySet.is,
+                lineHeight, true);
 
-            y = printBlock(xLeft, xRight, y,
+            y = printVerticalBlock(xLeft, y,
                 t('translation:pdfValidFrom'),
                 french.translation.pdfValidFrom,
-                recoverySet.df);
+                recoverySet.df,
+                lineHeight, true);
 
-            printBlock(xLeft, xRight, y,
+            printVerticalBlock(xLeft, y,
                 t('translation:pdfValidTo'),
                 french.translation.pdfValidTo,
-                recoverySet.du);
+                recoverySet.du,
+                lineHeight, true);
 
             setFourthPageIsReady(true);
         }
@@ -610,13 +620,14 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudgcProp: EUDGC | undefi
         lineHeight = lineHeight ? lineHeight : params.lineHeight;
 
         if (value && pdf) {
-            const lblLength = params.a6width - params.paddingLeft - params.paddingRight;
+            const lblLength = params.a6width - params.paddingInnerLeft - params.paddingRight;
 
             pdf.setFont('calibri', 'bold');
+            lbl = pdf.splitTextToSize(lbl, lblLength);
             pdf.text(lbl, x, y);
-            y += lineHeight;
+            y += lineHeight * lbl.length;
 
-            if(isItalic) {
+            if (isItalic) {
                 pdf.setFont('calibri', 'italic');
             } else {
                 pdf.setFont('calibri', 'normal');
@@ -625,6 +636,7 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudgcProp: EUDGC | undefi
             pdf.text(frenchText, x, y);
             y += lineHeight * frenchText.length;
 
+            pdf.setFont('calibri', 'normal');
             const valueText = pdf.splitTextToSize(value, lblLength);
             pdf.text(valueText, x, y);
 
@@ -658,7 +670,7 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudgcProp: EUDGC | undefi
         return result;
     }
 
-    const printCertificateHeader = (header: any, frenchHeader: string): number => {
+    const printCertificateHeader = (header: any, frenchHeader: string, paddingTop?: number): number => {
         let result = 0;
 
         if (pdf) {
@@ -669,16 +681,17 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudgcProp: EUDGC | undefi
             pdf.setFontSize(params.smallHeaderFontSize);
             setTextColorBlue(pdf);
 
-            y += params.smallHeaderLineHeight;
+            paddingTop = paddingTop ? paddingTop : 0;
+            y += params.smallHeaderLineHeight + paddingTop;
 
-            pdf.text(header, x, y, { align: 'center', maxWidth: params.a6width });
+            pdf.text(header, x, y, { align: 'center', maxWidth: params.a6width - params.paddingRight });
 
             y += params.smallHeaderLineHeight;
             frenchHeader = pdf.splitTextToSize(frenchHeader, params.a6width);
-            pdf.text(frenchHeader, x, y, { align: 'center', maxWidth: params.a6width });
+            pdf.text(frenchHeader, x, y, { align: 'center', maxWidth: params.a6width  - params.paddingRight });
             setTextColorBlack(pdf);
 
-            return y + frenchHeader.length;
+            return y + params.smallHeaderLineHeight * frenchHeader.length;
         }
 
         return result;
