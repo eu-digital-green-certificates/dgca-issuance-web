@@ -487,19 +487,13 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudgcProp: EUDGC | undefi
             y = printVerticalBlock(x, y,
                 t('translation:pdfTestName'),
                 french.translation.pdfTestName,
-                testSet.ma,
+                testSet.nm ? testSet.nm : ' ',
                 lineHeight, true);
 
             y = printVerticalBlock(x, y,
                 t('translation:pdfTestManufacturer'),
                 french.translation.pdfTestManufacturer,
-                testSet.nm,
-                lineHeight, true);
-
-            y = printVerticalBlock(x, y,
-                t('translation:pdfTestManufacturer'),
-                french.translation.pdfTestManufacturer,
-                getValueSetDisplay(testSet.ma!, testManufacturersValueSet),
+                getValueSetDisplay(testSet.ma, testManufacturersValueSet),
                 lineHeight, true);
 
             y = printVerticalBlock(x, y,
