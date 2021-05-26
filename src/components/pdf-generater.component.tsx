@@ -38,10 +38,10 @@ import {
 import { getValueSetDisplay, convertDateToOutputFormat } from '../misc/ShowCertificateData';
 import { doc } from 'prettier';
 
-require('../assets/SCSS/fonts/calibri-normal.js');
-require('../assets/SCSS/fonts/calibri-bold.js');
-require('../assets/SCSS/fonts/calibri-italic.js');
-require('../assets/SCSS/fonts/calibri-bolditalic.js');
+require('../assets/SCSS/fonts/arial-normal.js');
+require('../assets/SCSS/fonts/arial-bold.js');
+require('../assets/SCSS/fonts/arial-italic.js');
+require('../assets/SCSS/fonts/arial-bolditalic.js');
 
 const mm2point = (mm: number): number => {
     return mm * 2.83465;
@@ -149,7 +149,7 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudgcProp: EUDGC | undefi
     React.useEffect(() => {
         const _pdf = new jsPDF("p", "pt", "a4", true);
 
-        _pdf.setFont('calibri', 'normal');
+        _pdf.setFont('arial', 'normal');
 
         setPdf(_pdf);
     }, [])
@@ -284,7 +284,7 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudgcProp: EUDGC | undefi
             const lblLength = params.a6width - params.paddingRight - params.paddingRight;
 
             setTextColorBlue(pdf);
-            pdf.setFont('calibri', 'bold');
+            pdf.setFont('arial', 'bold');
             pdf.setFontSize(params.headerFontSize);
 
             let header = t('translation:pdfGreenCertificate');
@@ -314,7 +314,7 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudgcProp: EUDGC | undefi
             pdf.addImage(logo, 'png', x, y, logoWidth, logoHeight);
 
             setTextColorBlack(pdf);
-            pdf.setFont('calibri', 'normal');
+            pdf.setFont('arial', 'normal');
 
             setFirstPageIsReady(true);
         }
@@ -379,11 +379,11 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudgcProp: EUDGC | undefi
 
             // setTextColorBlue(pdf);
             // pdf.setFontSize(params.fontSize12);
-            // pdf.setFont('calibri', 'bold');
+            // pdf.setFont('arial', 'bold');
             // let header = t('translation:pdfMemberPlaceholder');
             // header = pdf.splitTextToSize(header, lblLength);
             // pdf.text(header, x, y, { align: 'center', maxWidth: lblLength });
-            // pdf.setFont('calibri', 'normal');
+            // pdf.setFont('arial', 'normal');
 
             // y += params.lineHeight12 + space;
             // setTextColorBlack(pdf);
@@ -431,7 +431,7 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudgcProp: EUDGC | undefi
 
             setTextColorBlue(pdf);
             pdf.setFontSize(params.fontSize12);
-            pdf.setFont('calibri', 'bold');
+            pdf.setFont('arial', 'bold');
             let header = t('translation:pdfMemberPlaceholder');
             header = pdf.splitTextToSize(header, lblLength);
             x = params.a6width;
@@ -439,7 +439,7 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudgcProp: EUDGC | undefi
 
             y -= params.lineHeight12 - space;
 
-            pdf.setFont('calibri', 'normal');
+            pdf.setFont('arial', 'normal');
             setTextColorBlack(pdf);
             pdf.setFontSize(params.fontSize10);
             let infotext = t('translation:pdfMemberPlaceholderInfo');
@@ -719,11 +719,11 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudgcProp: EUDGC | undefi
         let result = 0;
 
         if (pdf) {
-            pdf.setFont('calibri', 'bold');
+            pdf.setFont('arial', 'bold');
             lblLeft = pdf.splitTextToSize(lblLeft, lblLength);
             pdf.text(lblLeft, x, y);
 
-            pdf.setFont('calibri', 'normal');
+            pdf.setFont('arial', 'normal');
 
             const lineheight = lblLeft.length > 2 ? params.lineHeight10 + 1 : params.lineHeight10;
             y += (lineheight * lblLeft.length) + params.space;
@@ -743,21 +743,21 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudgcProp: EUDGC | undefi
         if (value && pdf) {
             const lblLength = params.a6width - params.paddingInnerLeft - params.paddingRight;
 
-            pdf.setFont('calibri', 'bold');
+            pdf.setFont('arial', 'bold');
             lbl = pdf.splitTextToSize(lbl, lblLength);
             pdf.text(lbl, x, y);
             y += lineHeight * lbl.length;
 
             if (isItalic) {
-                pdf.setFont('calibri', 'italic');
+                pdf.setFont('arial', 'italic');
             } else {
-                pdf.setFont('calibri', 'normal');
+                pdf.setFont('arial', 'normal');
             }
             const frenchText = pdf.splitTextToSize(lblFrench, lblLength);
             pdf.text(frenchText, x, y);
             y += lineHeight * frenchText.length;
 
-            pdf.setFont('calibri', 'normal');
+            pdf.setFont('arial', 'normal');
             const valueText = pdf.splitTextToSize(value, lblLength);
             pdf.text(valueText, x, y);
 
@@ -774,19 +774,19 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudgcProp: EUDGC | undefi
         if (value && pdf) {
             const lblLength = params.a6width - params.paddingInnerLeft - params.paddingRight;
 
-            pdf.setFont('calibri', 'bold');
+            pdf.setFont('arial', 'bold');
             lbl = pdf.splitTextToSize(lbl, lblLength);
             y = leftSplittedText(lbl, x, y);
 
             if (isItalic) {
-                pdf.setFont('calibri', 'italic');
+                pdf.setFont('arial', 'italic');
             } else {
-                pdf.setFont('calibri', 'normal');
+                pdf.setFont('arial', 'normal');
             }
             const frenchText = pdf.splitTextToSize(lblFrench, lblLength);
             y = leftSplittedText(frenchText, x, y);
 
-            pdf.setFont('calibri', 'normal');
+            pdf.setFont('arial', 'normal');
             const valueText = pdf.splitTextToSize(value, lblLength);
             y = leftSplittedText(valueText, x, y);
 
@@ -827,7 +827,7 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudgcProp: EUDGC | undefi
             let x = params.a6width + params.a6width / 2;
             let y = params.a6height;
 
-            pdf.setFont('calibri', 'bold');
+            pdf.setFont('arial', 'bold');
             pdf.setFontSize(params.smallHeaderFontSize);
             setTextColorBlue(pdf);
 
@@ -854,7 +854,7 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudgcProp: EUDGC | undefi
             let x = params.a6width * 2
             let y = params.a6height * 2;
 
-            pdf.setFont('calibri', 'bold');
+            pdf.setFont('arial', 'bold');
             pdf.setFontSize(params.smallHeaderFontSize);
             setTextColorBlue(pdf);
 
