@@ -26,9 +26,10 @@ import { useTranslation } from 'react-i18next';
 
 import { jsPDF } from "jspdf";
 
-import logo from '../assets/images/eu_flag.png';
-import card_seperator from '../assets/images/card.png';
-import flag_seperator from '../assets/images/flag.png';
+import logo from '../assets/images/eu_flag_neu.png';
+import card_seperator from '../assets/images/certificate.png';
+import flag_seperator from '../assets/images/flag_seperator.png';
+import yellow_seperator from '../assets/images/yellow_seperator.png';
 
 import { EUDGC, RecoveryEntry, TestEntry, VaccinationEntry } from '../generated-files/dgc-combined-schema';
 import {
@@ -67,11 +68,14 @@ interface IPageParameter {
     fontSize: number,
     fontSize9: number,
     fontSize10: number,
+    fontSize11: number,
     fontSize12: number,
+    fontSize16: number,
     lineHeight9: number,
     lineHeight10: number,
     lineHeight11: number,
     lineHeight12: number,
+    lineHeight16: number,
     headerLineHeight: number,
     headerFontSize: number,
     smallHeaderLineHeight: number,
@@ -113,13 +117,16 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudgcProp: EUDGC | undefi
         fontSize: 11,
         fontSize9: 9,
         fontSize10: 10,
+        fontSize11: 11,
         fontSize12: 12,
+        fontSize16: 16,
         lineHeight9: 9,
         lineHeight10: 10,
         lineHeight11: 11,
         lineHeight12: 12,
-        headerLineHeight: 28,
-        headerFontSize: 28,
+        lineHeight16: 12,
+        headerLineHeight: 21,
+        headerFontSize: 21,
         smallHeaderLineHeight: 20,
         smallHeaderFontSize: 20,
         space: 2
@@ -280,10 +287,10 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudgcProp: EUDGC | undefi
         if (pdf && french) {
 
             let x = params.a6width / 2;
-            let y = mm2point(38);
+            let y = mm2point(40);
             const lblLength = params.a6width - params.paddingRight - params.paddingRight;
 
-            setTextColorBlue(pdf);
+            setTextColorBlue();
             pdf.setFont('arial', 'bold');
             pdf.setFontSize(params.headerFontSize);
 
@@ -291,14 +298,11 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudgcProp: EUDGC | undefi
             header = pdf.splitTextToSize(header, lblLength);
             pdf.text(header, x, y, { align: 'center', maxWidth: lblLength });
 
-            pdf.setFillColor(255, 204, 0);
-            const rectWidth = mm2point(85);
-            const rectHeight = mm2point(2);
-            x = (params.a6width - rectWidth) / 2;
+            let imgWidth = 219.75;
+            let imgHeight = 6.75;
+            x = (params.a6width - imgWidth) / 2;
             y += params.headerLineHeight * header.length - mm2point(4);
-            pdf.rect(x, y, rectWidth, 5, 'F');
-            pdf.setDrawColor(0, 51, 153);
-            pdf.rect(x, y, rectWidth, 5);
+            pdf.addImage(yellow_seperator, x, y, imgWidth, imgHeight);
 
             x = params.a6width / 2;
             y += params.headerLineHeight + mm2point(4);
@@ -310,10 +314,16 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudgcProp: EUDGC | undefi
             let logoWidth = 82.495;
             let logoHeight = 59.5;
             x = (params.a6width - logoWidth) / 2;
-            y += params.headerLineHeight + mm2point(7);
+            y += params.headerLineHeight + mm2point(10);
             pdf.addImage(logo, 'png', x, y, logoWidth, logoHeight);
+            x += logoWidth/2;
+            y += logoHeight/2 + params.lineHeight16/2;
+            setTextColorWhite();
+            pdf.setFontSize(params.fontSize16);
+            //TODO: country
+            pdf.text('BE', x, y, {align: 'center'});
 
-            setTextColorBlack(pdf);
+            setTextColorBlack();
             pdf.setFont('arial', 'normal');
 
             setFirstPageIsReady(true);
@@ -327,33 +337,33 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudgcProp: EUDGC | undefi
             const space = mm2point(5);
 
             const img = (qrCodeCanvasElement as HTMLCanvasElement).toDataURL("image/png,base64");
-            const canvasWidth = mm2point(45);
+            const canvasWidth = mm2point(60);
             let x = params.a6width + (params.a6width - canvasWidth) / 2;
             let y = space_top;
             pdf.addImage(img, 'png', x, y, canvasWidth, canvasWidth);
 
-            const imageWidth = 258;
-            const imageHeight = 55.5;
-            y += canvasWidth + mm2point(5);
-            x = params.a6width * 2 - imageWidth - mm2point(9);
+            const imageWidth = 221.25;
+            const imageHeight = 52.5;
+            y += canvasWidth + mm2point(1);
+            x = (params.a6width - imageWidth)/2 + params.a6width;
             pdf.addImage(card_seperator, x, y, imageWidth, imageHeight);
 
             //For the labels on the left side
             x = params.a6width + params.paddingInnerLeft;
             y += imageHeight + space;
-            pdf.setFontSize(params.fontSize12);
+            pdf.setFontSize(params.fontSize11);
 
-            y = printVerticalBlock(x, y,
+            y = printHorizontalBlockPerson(x, y,
                 t('translation:pdfSurname'),
                 french.translation.pdfSurname,
                 (eudgc.nam.fnt + ' ') + (eudgc.nam.gnt ? eudgc.nam.gnt : ''));
 
-            y = printVerticalBlock(x, y,
+            y = printHorizontalBlockPerson(x, y,
                 t('translation:pdfDateOfBirth'),
                 french.translation.pdfDateOfBirth,
                 eudgc.dob);
 
-            y = printVerticalBlock(x, y,
+            y = printHorizontalBlockPerson(x, y,
                 t('translation:pdfCi'),
                 french.translation.pdfCi,
                 ci);
@@ -429,7 +439,7 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudgcProp: EUDGC | undefi
             x = params.a6width / 2;
             y += imageHeight - params.lineHeight12 - mm2point(2);
 
-            setTextColorBlue(pdf);
+            setTextColorBlue();
             pdf.setFontSize(params.fontSize12);
             pdf.setFont('arial', 'bold');
             let header = t('translation:pdfMemberPlaceholder');
@@ -440,7 +450,7 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudgcProp: EUDGC | undefi
             y -= params.lineHeight12 - space;
 
             pdf.setFont('arial', 'normal');
-            setTextColorBlack(pdf);
+            setTextColorBlack();
             pdf.setFontSize(params.fontSize10);
             let infotext = t('translation:pdfMemberPlaceholderInfo');
             infotext = pdf.splitTextToSize(infotext, lblLength);
@@ -748,11 +758,8 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudgcProp: EUDGC | undefi
             pdf.text(lbl, x, y);
             y += lineHeight * lbl.length;
 
-            if (isItalic) {
-                pdf.setFont('arial', 'italic');
-            } else {
-                pdf.setFont('arial', 'normal');
-            }
+            pdf.setFont('arial', 'italic');
+            
             const frenchText = pdf.splitTextToSize(lblFrench, lblLength);
             pdf.text(frenchText, x, y);
             y += lineHeight * frenchText.length;
@@ -762,6 +769,38 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudgcProp: EUDGC | undefi
             pdf.text(valueText, x, y);
 
             result = y + lineHeight * valueText.length + mm2point(2);
+        }
+
+        return result;
+    }
+
+    const printHorizontalBlockPerson = (x: number, y: number, lbl: any, lblFrench: any, value?: string): number => {
+        let result = y;
+
+        if (value && pdf) {
+            const lblLength = params.a6width - params.paddingInnerLeft - params.paddingRight;
+
+            pdf.setFontSize(params.fontSize11)
+            pdf.setFont('arial', 'bold');
+            lbl = pdf.splitTextToSize(lbl, lblLength);
+            pdf.text(lbl, x, y);
+            y += params.lineHeight12 * lbl.length;
+
+            pdf.setFontSize(params.fontSize10)
+            pdf.setFont('arial', 'italic');
+            
+            const frenchText = pdf.splitTextToSize(lblFrench, lblLength);
+            pdf.text(frenchText, x, y);
+            y += params.lineHeight12 * frenchText.length;
+
+            pdf.setFontSize(params.fontSize11);
+            pdf.setFont('arial', 'normal');
+            setTextColorBlue()
+            const valueText = pdf.splitTextToSize(value, lblLength);
+            pdf.text(valueText, x, y);
+            setTextColorBlack()
+
+            result = y + params.lineHeight11 * valueText.length + mm2point(2);
         }
 
         return result;
@@ -829,7 +868,7 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudgcProp: EUDGC | undefi
 
             pdf.setFont('arial', 'bold');
             pdf.setFontSize(params.smallHeaderFontSize);
-            setTextColorBlue(pdf);
+            setTextColorBlue();
 
             paddingTop = paddingTop ? paddingTop : 0;
             y += params.smallHeaderLineHeight + paddingTop;
@@ -839,7 +878,7 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudgcProp: EUDGC | undefi
             y += params.smallHeaderLineHeight;
             frenchHeader = pdf.splitTextToSize(frenchHeader, params.a6width);
             pdf.text(frenchHeader, x, y, { align: 'center', maxWidth: params.a6width - params.paddingRight });
-            setTextColorBlack(pdf);
+            setTextColorBlack();
 
             return y + params.smallHeaderLineHeight * frenchHeader.length;
         }
@@ -856,7 +895,7 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudgcProp: EUDGC | undefi
 
             pdf.setFont('arial', 'bold');
             pdf.setFontSize(params.smallHeaderFontSize);
-            setTextColorBlue(pdf);
+            setTextColorBlue();
 
             paddingTop = paddingTop ? paddingTop : 0;
             y -= params.smallHeaderLineHeight + paddingTop;
@@ -869,7 +908,7 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudgcProp: EUDGC | undefi
             y -= params.smallHeaderLineHeight;
             frenchHeader = pdf.splitTextToSize(frenchHeader, params.a6width);
             centerSplittedText(header, x, y);
-            setTextColorBlack(pdf);
+            setTextColorBlack();
 
             return y - params.smallHeaderLineHeight * frenchHeader.length;
         }
@@ -903,12 +942,16 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudgcProp: EUDGC | undefi
         return 0;
     }
 
-    const setTextColorBlue = (pdf: jsPDF) => {
-        pdf.setTextColor(0, 51, 153);
+    const setTextColorBlue = () => {
+        pdf!.setTextColor(0, 51, 153);
     }
 
-    const setTextColorBlack = (pdf: jsPDF) => {
-        pdf.setTextColor(0, 0, 0);
+    const setTextColorBlack = () => {
+        pdf!.setTextColor(0, 0, 0);
+    }
+
+    const setTextColorWhite = () => {
+        pdf!.setTextColor(256, 256, 256);
     }
 
     return pdf;
