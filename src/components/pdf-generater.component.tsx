@@ -30,6 +30,7 @@ import logo from '../assets/images/eu_flag_neu.png';
 import card_seperator from '../assets/images/certificate.png';
 import flag_seperator from '../assets/images/flag_seperator.png';
 import yellow_seperator from '../assets/images/yellow_seperator.png';
+import folding_instruction from '../assets/images/folding-instruction.png';
 
 import { EUDGC, RecoveryEntry, TestEntry, VaccinationEntry } from '../generated-files/dgc-combined-schema';
 import {
@@ -66,15 +67,18 @@ interface IPageParameter {
 
     lineHeight: number,
     fontSize: number,
+    fontSize8: number,
     fontSize9: number,
     fontSize10: number,
     fontSize11: number,
     fontSize12: number,
+    fontSize14: number,
     fontSize16: number,
     lineHeight9: number,
     lineHeight10: number,
     lineHeight11: number,
     lineHeight12: number,
+    lineHeight14: number,
     lineHeight16: number,
     headerLineHeight: number,
     headerFontSize: number,
@@ -115,16 +119,19 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudgcProp: EUDGC | undefi
 
         lineHeight: 14,
         fontSize: 11,
+        fontSize8: 8,
         fontSize9: 9,
         fontSize10: 10,
         fontSize11: 11,
         fontSize12: 12,
+        fontSize14: 14,
         fontSize16: 16,
         lineHeight9: 9,
         lineHeight10: 10,
         lineHeight11: 11,
         lineHeight12: 12,
-        lineHeight16: 12,
+        lineHeight14: 12,
+        lineHeight16: 16,
         headerLineHeight: 21,
         headerFontSize: 21,
         smallHeaderLineHeight: 20,
@@ -164,6 +171,7 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudgcProp: EUDGC | undefi
     // on pdf generated set all static data
     React.useEffect(() => {
         if (pdf) {
+            pdf.addPage();
             printDottedLine();
             prepareFirstPage();
             prepareThirdPage();
@@ -249,6 +257,7 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudgcProp: EUDGC | undefi
 
     const printDottedLine = () => {
         if (pdf) {
+            pdf.setPage(1);
             let curX = 0;
             let curY = 0;
             let deltaX = mm2point(10);
@@ -260,8 +269,8 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudgcProp: EUDGC | undefi
             pdf.line(params.a6width, curY, params.a6width, curY + deltaY);
             pdf.line(params.a6width, params.a6height * 2 - deltaY, params.a6width, params.a6height * 2);
 
-            pdf.line(params.a6width, params.a6height - deltaY/2, params.a6width, params.a6height + deltaY/2);
-            pdf.line(params.a6width - deltaX/2, params.a6height, params.a6width + deltaX/2, params.a6height);
+            pdf.line(params.a6width, params.a6height - deltaY / 2, params.a6width, params.a6height + deltaY / 2);
+            pdf.line(params.a6width - deltaX / 2, params.a6height, params.a6width + deltaX / 2, params.a6height);
 
             // let curX = 0 + params.marginLeft;
             // let curY = params.a6height;
@@ -285,46 +294,70 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudgcProp: EUDGC | undefi
 
     const prepareFirstPage = () => {
         if (pdf && french) {
+            for (let page = 1; page < 3; page++) {
+                let x = 0;
+                let y = 0;
 
-            let x = params.a6width / 2;
-            let y = mm2point(40);
-            const lblLength = params.a6width - params.paddingRight - params.paddingRight;
+                pdf.setPage(page);
+                if (page === 1) {
+                    x = params.a6width;
+                    y = params.a6height;
+                }
 
-            setTextColorBlue();
-            pdf.setFont('arial', 'bold');
-            pdf.setFontSize(params.headerFontSize);
+                x += params.a6width / 2;
+                y += mm2point(40);
 
-            let header = t('translation:pdfGreenCertificate');
-            header = pdf.splitTextToSize(header, lblLength);
-            pdf.text(header, x, y, { align: 'center', maxWidth: lblLength });
+                const lblLength = params.a6width - params.paddingRight - params.paddingRight;
 
-            let imgWidth = 219.75;
-            let imgHeight = 6.75;
-            x = (params.a6width - imgWidth) / 2;
-            y += params.headerLineHeight * header.length - mm2point(4);
-            pdf.addImage(yellow_seperator, x, y, imgWidth, imgHeight);
+                setTextColorBlue();
+                pdf.setFont('arial', 'bold');
+                pdf.setFontSize(params.headerFontSize);
 
-            x = params.a6width / 2;
-            y += params.headerLineHeight + mm2point(4);
+                let header = t('translation:pdfGreenCertificate');
+                header = pdf.splitTextToSize(header, lblLength);
+                pdf.text(header, x, y, { align: 'center', maxWidth: lblLength });
 
-            header = french.translation.pdfGreenCertificate;
-            header = pdf.splitTextToSize(header, lblLength);
-            pdf.text(header, x, y, { align: 'center', maxWidth: lblLength });
+                let imgWidth = 219.75;
+                let imgHeight = 6.75;
+                if (page === 1) {
+                    x = params.a6width + (params.a6width - imgWidth) / 2;
+                } else {
+                    x = (params.a6width - imgWidth) / 2;
+                }
+                y += params.headerLineHeight * header.length - mm2point(4);
+                pdf.addImage(yellow_seperator, x, y, imgWidth, imgHeight);
 
-            let logoWidth = 82.495;
-            let logoHeight = 59.5;
-            x = (params.a6width - logoWidth) / 2;
-            y += params.headerLineHeight + mm2point(10);
-            pdf.addImage(logo, 'png', x, y, logoWidth, logoHeight);
-            x += logoWidth/2;
-            y += logoHeight/2 + params.lineHeight16/2;
-            setTextColorWhite();
-            pdf.setFontSize(params.fontSize16);
-            //TODO: country
-            pdf.text('BE', x, y, {align: 'center'});
+                if (page === 1) {
+                    x = params.a6width + params.a6width / 2;
+                } else {
+                    x = params.a6width / 2;
+                }
 
-            setTextColorBlack();
-            pdf.setFont('arial', 'normal');
+                y += params.headerLineHeight + mm2point(4);
+
+                header = french.translation.pdfGreenCertificate;
+                header = pdf.splitTextToSize(header, lblLength);
+                pdf.text(header, x, y, { align: 'center', maxWidth: lblLength });
+
+                let logoWidth = 82.495;
+                let logoHeight = 59.5;
+                if (page === 1) {
+                    x = params.a6width + (params.a6width - logoWidth) / 2;
+                } else {
+                    x = (params.a6width - logoWidth) / 2;
+                }
+                y += params.headerLineHeight + mm2point(10);
+                pdf.addImage(logo, 'png', x, y, logoWidth, logoHeight);
+                x += logoWidth / 2;
+                y += logoHeight / 2 + params.lineHeight16 / 2 - 3;
+                setTextColorWhite();
+                pdf.setFontSize(params.fontSize16);
+                //TODO: country
+                pdf.text('BE', x, y, { align: 'center' });
+
+                setTextColorBlack();
+                pdf.setFont('arial', 'normal');
+            }
 
             setFirstPageIsReady(true);
         }
@@ -338,35 +371,56 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudgcProp: EUDGC | undefi
 
             const img = (qrCodeCanvasElement as HTMLCanvasElement).toDataURL("image/png,base64");
             const canvasWidth = mm2point(60);
-            let x = params.a6width + (params.a6width - canvasWidth) / 2;
-            let y = space_top;
-            pdf.addImage(img, 'png', x, y, canvasWidth, canvasWidth);
 
-            const imageWidth = 221.25;
-            const imageHeight = 52.5;
-            y += canvasWidth + mm2point(1);
-            x = (params.a6width - imageWidth)/2 + params.a6width;
-            pdf.addImage(card_seperator, x, y, imageWidth, imageHeight);
+            for (let page = 1; page < 3; page++) {
+                let x = 0;
+                let y = 0;
 
-            //For the labels on the left side
-            x = params.a6width + params.paddingInnerLeft;
-            y += imageHeight + space;
-            pdf.setFontSize(params.fontSize11);
+                pdf.setPage(page);
+                if (page === 1) {
+                    y = params.a6height - mm2point(10);
+                } else {
+                    x = params.a6width;
+                }
+                x += (params.a6width - canvasWidth) / 2;
+                y += space_top;
+                pdf.addImage(img, 'png', x, y, canvasWidth, canvasWidth);
 
-            y = printHorizontalBlockPerson(x, y,
-                t('translation:pdfSurname'),
-                french.translation.pdfSurname,
-                (eudgc.nam.fnt + ' ') + (eudgc.nam.gnt ? eudgc.nam.gnt : ''));
+                const imageWidth = 221.25;
+                const imageHeight = 52.5;
+                y += canvasWidth + mm2point(1);
+                if (page === 1) {
+                    x = (params.a6width - imageWidth) / 2;
+                } else {
+                    x = params.a6width + (params.a6width - imageWidth) / 2;
+                }
+                pdf.addImage(card_seperator, x, y, imageWidth, imageHeight);
 
-            y = printHorizontalBlockPerson(x, y,
-                t('translation:pdfDateOfBirth'),
-                french.translation.pdfDateOfBirth,
-                eudgc.dob);
+                //For the labels on the left side
+                if (page === 1) {
+                    x = params.paddingLeft;
+                } else {
+                    x = params.a6width + params.paddingInnerLeft;
+                }
 
-            y = printHorizontalBlockPerson(x, y,
-                t('translation:pdfCi'),
-                french.translation.pdfCi,
-                ci);
+                y += imageHeight + space;
+                pdf.setFontSize(params.fontSize11);
+
+                y = printHorizontalBlockPerson(x, y,
+                    t('translation:pdfSurname'),
+                    french.translation.pdfSurname,
+                    (eudgc.nam.fnt + ' ') + (eudgc.nam.gnt ? eudgc.nam.gnt : ''));
+
+                y = printHorizontalBlockPerson(x, y,
+                    t('translation:pdfDateOfBirth'),
+                    french.translation.pdfDateOfBirth,
+                    eudgc.dob);
+
+                y = printHorizontalBlockPerson(x, y,
+                    t('translation:pdfCi'),
+                    french.translation.pdfCi,
+                    ci);
+            }
 
             setSecondPageIsReady(true);
         }
@@ -374,51 +428,60 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudgcProp: EUDGC | undefi
 
     const prepareThirdPage = () => {
         if (pdf) {
-            prepareThirdPageRotated();
-            // let lblLength = params.a6width - params.paddingRight - params.paddingRight - mm2point(14);
-            // let space = mm2point(3);
-            // let imageWidth = 258.75;
-            // let imageHeight = 54.75;
-            // let y = params.a6height + mm2point(4);
-            // let x = (params.a6width - imageWidth) / 2;
 
-            // pdf.addImage(flag_seperator, x, y, imageWidth, imageHeight);
 
-            // x = params.a6width / 2;
-            // y += imageHeight + params.fontSize12 + mm2point(2);
+            for (let page = 1; page < 3; page++) {
+                pdf.setPage(page);
+                if (page === 1) {
+                    prepareThirdPageRotated();
+                } else {
 
-            // setTextColorBlue(pdf);
-            // pdf.setFontSize(params.fontSize12);
-            // pdf.setFont('arial', 'bold');
-            // let header = t('translation:pdfMemberPlaceholder');
-            // header = pdf.splitTextToSize(header, lblLength);
-            // pdf.text(header, x, y, { align: 'center', maxWidth: lblLength });
-            // pdf.setFont('arial', 'normal');
+                    let lblLength = params.a6width - params.paddingRight - params.paddingRight - mm2point(14);
+                    let space = mm2point(3);
+                    let imageWidth = 258.75;
+                    let imageHeight = 54.75;
+                    let y = params.a6height + mm2point(4);
+                    let x = (params.a6width - imageWidth) / 2;
 
-            // y += params.lineHeight12 + space;
-            // setTextColorBlack(pdf);
-            // pdf.setFontSize(params.fontSize10);
-            // let infotext = t('translation:pdfMemberPlaceholderInfo');
-            // infotext = pdf.splitTextToSize(infotext, lblLength);
-            // pdf.text(infotext, x, y, { align: 'center', maxWidth: lblLength });
+                    pdf.addImage(flag_seperator, x, y, imageWidth, imageHeight);
 
-            // y += mm2point(65);
-            // pdf.setFontSize(params.fontSize9);
-            // infotext = t('translation:pdfInfoText');
-            // infotext = pdf.splitTextToSize(infotext, lblLength);
-            // pdf.text(infotext, x, y, { align: 'center', maxWidth: lblLength });
+                    x = params.a6width / 2;
+                    y += imageHeight + params.fontSize12 + mm2point(2);
 
-            // y += mm2point(10) + params.lineHeight9 * infotext.length;
-            // infotext = t('translation:pdfRelevantInformation');
-            // infotext = pdf.splitTextToSize(infotext, lblLength);
-            // pdf.text(infotext, x, y, { align: 'center', maxWidth: lblLength });
+                    setTextColorBlue();
+                    pdf.setFontSize(params.fontSize14);
+                    pdf.setFont('arial', 'bold');
+                    let header = t('translation:pdfMemberPlaceholder');
+                    header = pdf.splitTextToSize(header, lblLength);
+                    pdf.text(header, x, y, { align: 'center', maxWidth: lblLength });
+                    pdf.setFont('arial', 'normal');
 
-            // y += space + params.lineHeight9 * infotext.length;
-            // infotext = t('translation:pdfInfoURL');
-            // infotext = pdf.splitTextToSize(infotext, lblLength);
-            // pdf.text(infotext, x, y, { align: 'center', maxWidth: lblLength });
+                    y += mm2point(40) + params.lineHeight9;
+                    setTextColorBlack();
+                    pdf.setFont('arial', 'normal');
+                    pdf.setFontSize(params.fontSize8);
+                    let infotext = t('translation:pdfInfoText');
+                    infotext = pdf.splitTextToSize(infotext, lblLength);
+                    pdf.text(infotext, x, y, { align: 'center', maxWidth: lblLength });
 
-            // setThirdPageIsReady(true);
+                    y += mm2point(2) + params.lineHeight9 * infotext.length;
+                    infotext = t('translation:pdfRelevantInformation');
+                    infotext = pdf.splitTextToSize(infotext, lblLength);
+                    pdf.text(infotext, x, y, { align: 'center', maxWidth: lblLength });
+
+                    y += space + params.lineHeight9 * infotext.length;
+                    setTextColorBlue();
+                    pdf.setFontSize(params.fontSize10);
+                    infotext = t('translation:pdfInfoURL');
+                    infotext = pdf.splitTextToSize(infotext, lblLength);
+                    pdf.text(infotext, x, y, { align: 'center', maxWidth: lblLength });
+
+                    setTextColorBlack();
+                    pdf.setFont('arial', 'normal');
+                }
+            }
+
+            setThirdPageIsReady(true);
         }
     }
 
@@ -428,51 +491,61 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudgcProp: EUDGC | undefi
     const prepareThirdPageRotated = () => {
         if (pdf) {
             let lblLength = params.a6width - params.paddingRight - params.paddingRight - mm2point(14);
-            let space = mm2point(3);
             let imageWidth = 258.75;
             let imageHeight = 54.75;
-            let y = params.a6height * 2 - imageHeight * 2 - mm2point(4);
-            let x = imageWidth + (params.a6width - imageWidth) / 2;
+            let y = params.a6height - imageHeight * 2 - mm2point(4);
+            let x = imageWidth + (params.a6width - imageWidth) / 2 + params.a6width;
 
             pdf.addImage(flag_seperator, x, y, imageWidth, imageHeight, undefined, undefined, 180);
 
-            x = params.a6width / 2;
+            x = params.a6width + params.a6width / 2;
             y += imageHeight - params.lineHeight12 - mm2point(2);
 
             setTextColorBlue();
-            pdf.setFontSize(params.fontSize12);
+            pdf.setFontSize(params.fontSize14);
             pdf.setFont('arial', 'bold');
             let header = t('translation:pdfMemberPlaceholder');
             header = pdf.splitTextToSize(header, lblLength);
-            x = params.a6width;
+            x = params.a6width * 2;
             y = centerSplittedText(header, x, y);
 
-            y -= params.lineHeight12 - space;
-
-            pdf.setFont('arial', 'normal');
+            y -= mm2point(40);
             setTextColorBlack();
-            pdf.setFontSize(params.fontSize10);
-            let infotext = t('translation:pdfMemberPlaceholderInfo');
+            pdf.setFont('arial', 'normal');
+            pdf.setFontSize(params.fontSize8);
+            let infotext = t('translation:pdfInfoText');
             infotext = pdf.splitTextToSize(infotext, lblLength);
             y = centerSplittedText(infotext, x, y);
 
-            y -= mm2point(65);
-            pdf.setFontSize(params.fontSize9);
-            infotext = t('translation:pdfInfoText');
-            infotext = pdf.splitTextToSize(infotext, lblLength);
-            y = centerSplittedText(infotext, x, y);
-
-            y -= mm2point(10);
+            y -= mm2point(2);
             infotext = t('translation:pdfRelevantInformation');
             infotext = pdf.splitTextToSize(infotext, lblLength);
             y = centerSplittedText(infotext, x, y);
 
-            y -= space;
+            setTextColorBlue();
+            pdf.setFontSize(params.fontSize10);
             infotext = t('translation:pdfInfoURL');
             infotext = pdf.splitTextToSize(infotext, lblLength);
             y = centerSplittedText(infotext, x, y);
 
-            setThirdPageIsReady(true);
+            pdf.line(params.a6width + params.paddingLeft, y + 4, params.a6width * 2 - params.paddingRight, y + 4);
+
+            y -= params.lineHeight9;
+            setTextColorBlack();
+            pdf.setFontSize(params.fontSize9);
+            pdf.setFont('arial', 'italic');
+            infotext = t('translation:pdfFoldingInstruction');
+            infotext = pdf.splitTextToSize(infotext, lblLength);
+            y = centerSplittedText(infotext, x, y);
+
+            imageWidth = 173.25;
+            imageHeight = 51;
+            y -= imageHeight - mm2point(2);
+            x = (params.a6width - imageWidth) / 2 + params.a6width;
+            pdf.addImage(folding_instruction, x, y, imageWidth, imageHeight);
+
+            setTextColorBlack();
+            pdf.setFont('arial', 'normal');
         }
     }
 
@@ -759,7 +832,7 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudgcProp: EUDGC | undefi
             y += lineHeight * lbl.length;
 
             pdf.setFont('arial', 'italic');
-            
+
             const frenchText = pdf.splitTextToSize(lblFrench, lblLength);
             pdf.text(frenchText, x, y);
             y += lineHeight * frenchText.length;
@@ -788,7 +861,7 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudgcProp: EUDGC | undefi
 
             pdf.setFontSize(params.fontSize10)
             pdf.setFont('arial', 'italic');
-            
+
             const frenchText = pdf.splitTextToSize(lblFrench, lblLength);
             pdf.text(frenchText, x, y);
             y += params.lineHeight12 * frenchText.length;
@@ -923,7 +996,7 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudgcProp: EUDGC | undefi
                 let dim = pdf.getTextDimensions(txt[i]);
                 x = offset - (params.a6width - dim.w) / 2;
                 pdf.text(txt[i], x, y, { align: 'left', angle: 180 });
-                y -= dim.h;
+                y -= dim.h + 2;
             }
             return y;
         }
