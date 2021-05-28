@@ -38,7 +38,7 @@ import {
     useGetVaccinMedicalData, useGetTestManufacturers, useGetTestResult
 } from '../api';
 import { getValueSetDisplay, convertDateToOutputFormat } from '../misc/ShowCertificateData';
-import pdfParams from '../pdf-settings.json';
+// import pdfParams from '../pdf-settings.json';
 
 require('../assets/SCSS/fonts/arial-normal.js');
 require('../assets/SCSS/fonts/arial-bold.js');
@@ -140,7 +140,7 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudgcProp: EUDGC | undefi
     }
 
     const lblLength = params.a6width - params.paddingInnerLeft - params.paddingRight;
-    const pageMiddle = params.a6width / 2;
+    // const pageMiddle = params.a6width / 2;
 
     const [isInit, setIsInit] = React.useState(false);
     const [isReady, setIsReady] = React.useState(false);
@@ -157,6 +157,7 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudgcProp: EUDGC | undefi
     const [testSet, setTestSet] = React.useState<TestEntry>();
     const [recoverySet, setRecoverySet] = React.useState<RecoveryEntry>();
     const [ci, setCi] = React.useState<string>();
+    const [co, setCo] = React.useState<string>();
     const [qrCodeCanvasElement, setQrCodeCanvasElement] = React.useState<any>();
 
     // on mount generate pdf
@@ -164,6 +165,8 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudgcProp: EUDGC | undefi
         const _pdf = new jsPDF("p", "pt", "a4", true);
 
         _pdf.setFont('arial', 'normal');
+        _pdf.setLineHeightFactor(1);
+        _pdf.addPage();
 
         setPdf(_pdf);
     }, [])
@@ -171,7 +174,6 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudgcProp: EUDGC | undefi
     // on pdf generated set all static data
     React.useEffect(() => {
         if (pdf) {
-            pdf.addPage();
             printDottedLine();
             prepareThirdPage();
         }
@@ -224,6 +226,7 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudgcProp: EUDGC | undefi
     React.useEffect(() => {
         if (vaccinationSet && isInit) {
             setCi(vaccinationSet.ci);
+            setCo(vaccinationSet.co);
             prepareFourthPageVaccination();
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -233,6 +236,7 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudgcProp: EUDGC | undefi
     React.useEffect(() => {
         if (testSet && isInit) {
             setCi(testSet.ci);
+            setCo(testSet.co);
             prepareFourthPageTest();
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -242,6 +246,7 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudgcProp: EUDGC | undefi
     React.useEffect(() => {
         if (recoverySet && isInit) {
             setCi(recoverySet.ci);
+            setCo(recoverySet.co);
             prepareFourthPageRecovery();
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -253,13 +258,13 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudgcProp: EUDGC | undefi
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [qrCodeCanvasElement, ci, isInit, eudgc]);
-
+    
     React.useEffect(() => {
-        if (isInit && eudgc) {
+        if (co && isInit && eudgc) {
             prepareFirstPage();
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [isInit && eudgc]);
+    }, [co, isInit, eudgc]);
 
     const printDottedLine = () => {
         if (pdf) {
@@ -302,7 +307,7 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudgcProp: EUDGC | undefi
     }
 
     const prepareFirstPage = () => {
-        if (pdf && french && eudgc) {
+        if (pdf && french && eudgc && co) {
             for (let page = 1; page < 3; page++) {
                 let x = 0;
                 let y = 0;
@@ -363,8 +368,8 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudgcProp: EUDGC | undefi
                 // if(pdfParams.issuer_country_code) {
                 //     pdf.text(pdfParams.issuer_country_code, x, y, { align: 'center' });
                 // }
-                let certificate = eudgc.v || eudgc.t || eudgc.r || [ {co: 'BE'} ];
-                pdf.text(certificate[0]!.co, x, y, { align: 'center' });
+
+                pdf.text(co, x, y, { align: 'center' });
                 setTextColorBlack();
                 pdf.setFont('arial', 'normal');
             }
@@ -967,26 +972,26 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudgcProp: EUDGC | undefi
         }
     }
 
-    const printSplittedLine = (x: number, y: number, lblLeft: any, lblLeftFrench: any): number => {
-        let result = 0;
+    // const printSplittedLine = (x: number, y: number, lblLeft: any, lblLeftFrench: any): number => {
+    //     let result = 0;
 
-        if (pdf) {
-            pdf.setFont('arial', 'bold');
-            lblLeft = pdf.splitTextToSize(lblLeft, lblLength);
-            pdf.text(lblLeft, x, y);
+    //     if (pdf) {
+    //         pdf.setFont('arial', 'bold');
+    //         lblLeft = pdf.splitTextToSize(lblLeft, lblLength);
+    //         pdf.text(lblLeft, x, y);
 
-            pdf.setFont('arial', 'normal');
+    //         pdf.setFont('arial', 'normal');
 
-            const lineheight = lblLeft.length > 2 ? params.lineHeight10 + 1 : params.lineHeight10;
-            y += (lineheight * lblLeft.length) + params.space;
-            lblLeftFrench = pdf.splitTextToSize(lblLeftFrench, lblLength);
-            pdf.text(lblLeftFrench, x, y);
+    //         const lineheight = lblLeft.length > 2 ? params.lineHeight10 + 1 : params.lineHeight10;
+    //         y += (lineheight * lblLeft.length) + params.space;
+    //         lblLeftFrench = pdf.splitTextToSize(lblLeftFrench, lblLength);
+    //         pdf.text(lblLeftFrench, x, y);
 
-            result = y + params.lineHeight10 * lblLeftFrench.length;
-        }
+    //         result = y + params.lineHeight10 * lblLeftFrench.length;
+    //     }
 
-        return result;
-    }
+    //     return result;
+    // }
 
     const printVerticalBlock = (x: number, y: number, lbl: any, lblFrench: any, value?: string, lineHeight?: number, isItalic?: boolean): number => {
         let result = y;
@@ -996,6 +1001,7 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudgcProp: EUDGC | undefi
             pdf.setFont('arial', 'bold');
             lbl = pdf.splitTextToSize(lbl, lblLength);
             pdf.text(lbl, x, y);
+
             y += lineHeight * lbl.length;
 
             pdf.setFont('arial', 'italic');
@@ -1071,29 +1077,18 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudgcProp: EUDGC | undefi
         return result;
     }
 
-    /**
-     *  @deprecated
-     * @param xLeft
-     * @param xRight 
-     * @param y 
-     * @param lblLeft 
-     * @param lblLeftFrench 
-     * @param value 
-     * @param space 
-     * @returns 
-     */
-    const printBlock = (xLeft: number, xRight: number, y: number, lblLeft: any, lblLeftFrench: any, value?: string, space?: number): number => {
-        let result = y;
+    // const printBlock = (xLeft: number, xRight: number, y: number, lblLeft: any, lblLeftFrench: any, value?: string, space?: number): number => {
+    //     let result = y;
 
-        if (pdf && value) {
-            const valueText = pdf.splitTextToSize(value, lblLength);
-            pdf.text(valueText, xRight, y);
-            result = printSplittedLine(xLeft, y, lblLeft, lblLeftFrench);
-            result += space ? space : params.lineHeight10 + params.space;
-        }
+    //     if (pdf && value) {
+    //         const valueText = pdf.splitTextToSize(value, lblLength);
+    //         pdf.text(valueText, xRight, y);
+    //         result = printSplittedLine(xLeft, y, lblLeft, lblLeftFrench);
+    //         result += space ? space : params.lineHeight10 + params.space;
+    //     }
 
-        return result;
-    }
+    //     return result;
+    // }
 
     const printCertificateHeader = (header: any, frenchHeader: string, paddingTop?: number): number => {
         let result = 0;
@@ -1119,7 +1114,7 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudgcProp: EUDGC | undefi
             pdf.text(frenchHeader, x, y, { align: 'center', maxWidth: lblLength });
             setTextColorBlack();
 
-            return y + params.smallHeaderLineHeight * frenchHeader.length;
+            result = y + params.smallHeaderLineHeight * frenchHeader.length;
         }
 
         return result;
@@ -1131,7 +1126,7 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudgcProp: EUDGC | undefi
         if (pdf) {
             let x = params.a6width
             let y = params.a6height;
-            
+
             pdf.setFont('arial', 'bold');
             pdf.setFontSize(params.smallHeaderFontSize);
             setTextColorBlue();
@@ -1142,44 +1137,47 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudgcProp: EUDGC | undefi
             header = pdf.splitTextToSize(header, lblLength);
             centerSplittedText(header, x, y);
 
-            // pdf.text(header, x, y, { align: 'center', maxWidth: params.a6width - params.paddingRight });
-
             y -= params.smallHeaderLineHeight;
             pdf.setFontSize(params.fontSize14);
             frenchHeader = pdf.splitTextToSize(frenchHeader, lblLength);
             centerSplittedText(frenchHeader, x, y);
             setTextColorBlack();
 
-            return y - params.smallHeaderLineHeight * frenchHeader.length;
+            result = y - params.smallHeaderLineHeight * frenchHeader.length;
         }
 
         return result;
     }
 
     const centerSplittedText = (txt: string, x: number, y: number): number => {
+        let result = y;
+
         if (pdf) {
-            let offset = x;
+            const offset = x;
             for (let i = 0; i < txt.length; i++) {
-                let dim = pdf.getTextDimensions(txt[i]);
+                const dim = pdf.getTextDimensions(txt[i]);
                 x = offset - (params.a6width - dim.w) / 2;
                 pdf.text(txt[i], x, y, { align: 'left', angle: 180 });
                 y -= dim.h + 2;
             }
-            return y;
+
+            result = y;
         }
-        return 0;
+        return result;
     }
 
     const leftSplittedTextRotated = (text: string, x: number, y: number): number => {
+        let result = y;
+
         if (pdf) {
             for (let i = 0; i < text.length; i++) {
-                let dim = pdf.getTextDimensions(text[i]);
+                const dim = pdf.getTextDimensions(text[i]);
                 pdf.text(text[i], x, y, { align: 'left', angle: 180 });
                 y -= dim.h;
             }
-            return y;
+            result = y;
         }
-        return 0;
+        return result;
     }
 
     const setTextColorBlue = () => {
