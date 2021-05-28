@@ -26,9 +26,11 @@ import { useTranslation } from 'react-i18next';
 
 import { jsPDF } from "jspdf";
 
-import logo from '../assets/images/eu_flag.png';
-import card_seperator from '../assets/images/card.png';
-import flag_seperator from '../assets/images/flag.png';
+import logo from '../assets/images/eu_flag_neu.png';
+import card_seperator from '../assets/images/certificate.png';
+import flag_seperator from '../assets/images/flag_seperator.png';
+import yellow_seperator from '../assets/images/yellow_seperator.png';
+import folding_instruction from '../assets/images/folding-instruction.png';
 
 import { EUDGC, RecoveryEntry, TestEntry, VaccinationEntry } from '../generated-files/dgc-combined-schema';
 import {
@@ -36,11 +38,12 @@ import {
     useGetVaccinMedicalData, useGetTestManufacturers, useGetTestResult
 } from '../api';
 import { getValueSetDisplay, convertDateToOutputFormat } from '../misc/ShowCertificateData';
+// import pdfParams from '../pdf-settings.json';
 
-require('../assets/SCSS/fonts/calibri-normal.js');
-require('../assets/SCSS/fonts/calibri-bold.js');
-require('../assets/SCSS/fonts/calibri-italic.js');
-require('../assets/SCSS/fonts/calibri-bolditalic.js');
+require('../assets/SCSS/fonts/arial-normal.js');
+require('../assets/SCSS/fonts/arial-bold.js');
+require('../assets/SCSS/fonts/arial-italic.js');
+require('../assets/SCSS/fonts/arial-bolditalic.js');
 
 const mm2point = (mm: number): number => {
     return mm * 2.83465;
@@ -56,18 +59,27 @@ interface IPageParameter {
     marginRight: number,
 
     paddingLeft: number,
+    paddingInnerLeft: number,
     paddingRight: number,
     paddingTop: number,
+    paddingInnerTop: number,
+    paddingBottom: number,
 
     lineHeight: number,
     fontSize: number,
+    fontSize8: number,
     fontSize9: number,
     fontSize10: number,
+    fontSize11: number,
     fontSize12: number,
+    fontSize14: number,
+    fontSize16: number,
     lineHeight9: number,
     lineHeight10: number,
     lineHeight11: number,
     lineHeight12: number,
+    lineHeight14: number,
+    lineHeight16: number,
     headerLineHeight: number,
     headerFontSize: number,
     smallHeaderLineHeight: number,
@@ -98,28 +110,37 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudgcProp: EUDGC | undefi
         marginLeft: mm2point(15),
         marginRight: mm2point(15),
 
-        paddingLeft: mm2point(2),
-        paddingRight: mm2point(2),
-        paddingTop: mm2point(1),
+        paddingLeft: mm2point(10),
+        paddingInnerLeft: mm2point(3),
+        paddingRight: mm2point(10),
+        paddingTop: mm2point(10),
+        paddingInnerTop: mm2point(4),
+        paddingBottom: mm2point(10),
 
         lineHeight: 14,
         fontSize: 11,
+        fontSize8: 8,
         fontSize9: 9,
         fontSize10: 10,
+        fontSize11: 11,
         fontSize12: 12,
+        fontSize14: 14,
+        fontSize16: 16,
         lineHeight9: 9,
         lineHeight10: 10,
         lineHeight11: 11,
         lineHeight12: 12,
-        headerLineHeight: 28,
-        headerFontSize: 28,
-        smallHeaderLineHeight: 20,
-        smallHeaderFontSize: 20,
+        lineHeight14: 14,
+        lineHeight16: 16,
+        headerLineHeight: 21,
+        headerFontSize: 21,
+        smallHeaderLineHeight: 17,
+        smallHeaderFontSize: 17,
         space: 2
     }
 
-    const lblLength = params.a6width / 2 - params.paddingLeft - params.paddingRight;
-    const pageMiddle = params.a6width / 2;
+    const lblLength = params.a6width - params.paddingInnerLeft - params.paddingRight;
+    // const pageMiddle = params.a6width / 2;
 
     const [isInit, setIsInit] = React.useState(false);
     const [isReady, setIsReady] = React.useState(false);
@@ -136,13 +157,16 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudgcProp: EUDGC | undefi
     const [testSet, setTestSet] = React.useState<TestEntry>();
     const [recoverySet, setRecoverySet] = React.useState<RecoveryEntry>();
     const [ci, setCi] = React.useState<string>();
+    const [co, setCo] = React.useState<string>();
     const [qrCodeCanvasElement, setQrCodeCanvasElement] = React.useState<any>();
 
     // on mount generate pdf
     React.useEffect(() => {
         const _pdf = new jsPDF("p", "pt", "a4", true);
 
-        _pdf.setFont('calibri', 'normal');
+        _pdf.setFont('arial', 'normal');
+        _pdf.setLineHeightFactor(1);
+        _pdf.addPage();
 
         setPdf(_pdf);
     }, [])
@@ -151,7 +175,6 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudgcProp: EUDGC | undefi
     React.useEffect(() => {
         if (pdf) {
             printDottedLine();
-            prepareFirstPage();
             prepareThirdPage();
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -203,6 +226,7 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudgcProp: EUDGC | undefi
     React.useEffect(() => {
         if (vaccinationSet && isInit) {
             setCi(vaccinationSet.ci);
+            setCo(vaccinationSet.co);
             prepareFourthPageVaccination();
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -212,6 +236,7 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudgcProp: EUDGC | undefi
     React.useEffect(() => {
         if (testSet && isInit) {
             setCi(testSet.ci);
+            setCo(testSet.co);
             prepareFourthPageTest();
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -221,6 +246,7 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudgcProp: EUDGC | undefi
     React.useEffect(() => {
         if (recoverySet && isInit) {
             setCi(recoverySet.ci);
+            setCo(recoverySet.co);
             prepareFourthPageRecovery();
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -232,69 +258,121 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudgcProp: EUDGC | undefi
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [qrCodeCanvasElement, ci, isInit, eudgc]);
+    
+    React.useEffect(() => {
+        if (co && isInit && eudgc) {
+            prepareFirstPage();
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [co, isInit, eudgc]);
 
     const printDottedLine = () => {
         if (pdf) {
-            let curX = 0 + params.marginLeft - 0.5;
-            let curY = params.a6height;
-            let xTo = params.a6width * 2 - params.marginRight;
-            let rectWidth = 2;
-            let rectHeight = 2;
-            let spaceWidth = 8;
+            pdf.setPage(1);
+            let curX = 0;
+            let curY = 0;
+            let deltaX = mm2point(10);
+            let deltaY = mm2point(10);
 
-            pdf.setFillColor(0, 122, 102);
+            pdf.line(curX, params.a6height, curX + deltaX, params.a6height);
+            pdf.line(params.a6width * 2 - curX, params.a6height, params.a6width * 2 - curX - deltaX, params.a6height);
 
-            while (curX <= xTo) {
-                pdf.rect(curX - 1, curY - 1, rectWidth, rectHeight, 'F');
-                curX += spaceWidth;
-            }
+            pdf.line(params.a6width, curY, params.a6width, curY + deltaY);
+            pdf.line(params.a6width, params.a6height * 2 - deltaY, params.a6width, params.a6height * 2);
 
-            curX = params.a6width;
-            curY = 0 + params.marginTop + 1.5;
-            let yTo = params.a6height * 2 - params.marginBottom;
-            while (curY <= yTo) {
-                pdf.rect(curX - 1, curY - 1, rectWidth, rectHeight, 'F');
-                curY += spaceWidth;
-            }
+            pdf.line(params.a6width, params.a6height - deltaY / 2, params.a6width, params.a6height + deltaY / 2);
+            pdf.line(params.a6width - deltaX / 2, params.a6height, params.a6width + deltaX / 2, params.a6height);
+
+            // for (let page = 1; page < 3; page++) {
+            //     pdf.setPage(page)
+            //     let curX = 0 + params.marginLeft;
+            //     let curY = params.a6height;
+            //     let xTo = params.a6width * 2 - params.marginRight;
+            //     let deltaX = 3;
+            //     let deltaY = 3;
+            //     while (curX <= xTo) {
+            //         pdf.line(curX, curY, curX + deltaX, curY);
+            //         curX += 2 * deltaX;
+            //     }
+
+            //     curX = params.a6width;
+            //     curY = 0 + params.marginTop;
+            //     let yTo = params.a6height * 2 - params.marginBottom;
+            //     while (curY <= yTo) {
+            //         pdf.line(curX, curY, curX, curY + deltaY);
+            //         curY += 2 * deltaY;
+            //     }
+            // }
         }
     }
 
     const prepareFirstPage = () => {
-        if (pdf && french) {
+        if (pdf && french && eudgc && co) {
+            for (let page = 1; page < 3; page++) {
+                let x = 0;
+                let y = 0;
 
-            let x = params.a6width / 2;
-            let y = mm2point(38);
-            const lblLength = params.a6width - params.paddingRight - params.paddingRight;
+                pdf.setPage(page);
+                if (page === 1) {
+                    x = params.a6width;
+                    y = params.a6height;
+                }
 
-            setTextColorTurkis(pdf);
-            pdf.setFont('calibri', 'bold');
-            pdf.setFontSize(params.headerFontSize);
+                x += params.a6width / 2;
+                y += mm2point(40);
 
-            let header = t('translation:pdfGreenCertificate');
-            header = pdf.splitTextToSize(header, lblLength);
-            pdf.text(header, x, y, { align: 'center', maxWidth: lblLength });
+                setTextColorBlue();
+                pdf.setFont('arial', 'bold');
+                pdf.setFontSize(params.headerFontSize);
 
-            pdf.setFillColor(255, 242, 0);
-            const rectWidth = mm2point(78);
-            x = (params.a6width - rectWidth) / 2;
-            y += params.headerLineHeight * header.length - mm2point(4);
-            pdf.rect(x, y, rectWidth, 5, 'F');
+                let header = t('translation:pdfGreenCertificate');
+                header = pdf.splitTextToSize(header, lblLength);
+                pdf.text(header, x, y, { align: 'center', maxWidth: lblLength });
 
-            x = params.a6width / 2;
-            y += params.headerLineHeight + mm2point(4);
+                let imgWidth = 219.75;
+                let imgHeight = 6.75;
+                if (page === 1) {
+                    x = params.a6width + (params.a6width - imgWidth) / 2;
+                } else {
+                    x = (params.a6width - imgWidth) / 2;
+                }
+                y += params.headerLineHeight * header.length - mm2point(4);
+                pdf.addImage(yellow_seperator, x, y, imgWidth, imgHeight);
 
-            header = french.translation.pdfGreenCertificate;
-            header = pdf.splitTextToSize(header, lblLength);
-            pdf.text(header, x, y, { align: 'center', maxWidth: lblLength });
+                if (page === 1) {
+                    x = params.a6width + params.a6width / 2;
+                } else {
+                    x = params.a6width / 2;
+                }
 
-            let logoWidth = 82.495;
-            let logoHeight = 59.5;
-            x = (params.a6width - logoWidth) / 2;
-            y += params.headerLineHeight + mm2point(7);
-            pdf.addImage(logo, 'png', x, y, logoWidth, logoHeight);
+                y += params.headerLineHeight + mm2point(4);
 
-            setTextColorBlack(pdf);
-            pdf.setFont('calibri', 'normal');
+                header = french.translation.pdfGreenCertificate;
+                header = pdf.splitTextToSize(header, lblLength);
+                pdf.text(header, x, y, { align: 'center', maxWidth: lblLength });
+
+                let logoWidth = 82.495;
+                let logoHeight = 59.5;
+                if (page === 1) {
+                    x = params.a6width + (params.a6width - logoWidth) / 2;
+                } else {
+                    x = (params.a6width - logoWidth) / 2;
+                }
+                y += params.headerLineHeight + mm2point(10);
+                pdf.addImage(logo, 'png', x, y, logoWidth, logoHeight);
+                x += logoWidth / 2;
+                y += logoHeight / 2 + params.lineHeight16 / 2 - 3;
+                setTextColorWhite();
+                pdf.setFontSize(params.fontSize16);
+                //TODO: country
+                // if(pdfParams.issuer_country_code) {
+                //     pdf.text(pdfParams.issuer_country_code, x, y, { align: 'center' });
+                // }
+
+                pdf.text(co, x, y, { align: 'center' });
+                setTextColorBlack();
+                pdf.setFont('arial', 'normal');
+            }
 
             setFirstPageIsReady(true);
         }
@@ -303,369 +381,823 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudgcProp: EUDGC | undefi
     const prepareSecondPage = () => {
         if (pdf && eudgc && ci && qrCodeCanvasElement && french) {
 
-            const space = mm2point(10);
+            const space = mm2point(5);
 
             const img = (qrCodeCanvasElement as HTMLCanvasElement).toDataURL("image/png,base64");
-            const canvasWidth = mm2point(40);
-            let x = params.a6width * 2 - canvasWidth - mm2point(10);
-            let y = space;
-            pdf.addImage(img, 'png', x, y, canvasWidth, canvasWidth);
+            const canvasWidth = mm2point(60);
 
-            const imageWidth = 258;
-            const imageHeight = 55.5;
-            y += imageHeight + mm2point(8);
-            x = params.a6width * 2 - imageWidth - mm2point(9);
-            pdf.addImage(card_seperator, x, y, imageWidth, imageHeight);
+            for (let page = 1; page < 3; page++) {
+                let x = 0;
+                let y = 0;
 
-            //For the labels on the left side
-            x = params.a6width + params.paddingLeft;
-            y += imageHeight + space;
-            pdf.setFontSize(params.fontSize12);
+                pdf.setPage(page);
+                if (page === 1) {
+                    y = params.a6height - space;
+                } else {
+                    x = params.a6width;
+                }
+                x += (params.a6width - canvasWidth) / 2;
+                y += params.paddingTop;
+                pdf.addImage(img, 'png', x, y, canvasWidth, canvasWidth);
 
-            y = printVerticalBlock(x, y,
-                t('translation:pdfSurname'),
-                french.translation.pdfSurname,
-                (eudgc.nam.fnt + ' ') + (eudgc.nam.gnt ? eudgc.nam.gnt : ''));
+                const imageWidth = 221.25;
+                const imageHeight = 52.5;
+                y += canvasWidth + mm2point(1);
+                if (page === 1) {
+                    x = (params.a6width - imageWidth) / 2;
+                } else {
+                    x = params.a6width + (params.a6width - imageWidth) / 2;
+                }
+                pdf.addImage(card_seperator, x, y, imageWidth, imageHeight);
 
-            y = printVerticalBlock(x, y,
-                t('translation:pdfDateOfBirth'),
-                french.translation.pdfDateOfBirth,
-                eudgc.dob);
+                //For the labels on the left side
+                if (page === 1) {
+                    x = params.paddingLeft;
+                } else {
+                    x = params.a6width + params.paddingInnerLeft;
+                }
 
-            y = printVerticalBlock(x, y,
-                t('translation:pdfCi'),
-                french.translation.pdfCi,
-                ci);
+                y += imageHeight + space;
+                pdf.setFontSize(params.fontSize11);
 
-                setSecondPageIsReady(true);
+                y = printHorizontalBlockPerson(x, y,
+                    t('translation:pdfSurname'),
+                    french.translation.pdfSurname,
+                    (eudgc.nam.fnt + ' ') + (eudgc.nam.gnt ? eudgc.nam.gnt : ''));
+
+                y = printHorizontalBlockPerson(x, y,
+                    t('translation:pdfDateOfBirth'),
+                    french.translation.pdfDateOfBirth,
+                    eudgc.dob);
+
+                y = printHorizontalBlockPerson(x, y,
+                    t('translation:pdfCi'),
+                    french.translation.pdfCi,
+                    ci);
+            }
+
+            setSecondPageIsReady(true);
         }
     }
 
     const prepareThirdPage = () => {
         if (pdf) {
-            let lblLength = params.a6width - params.paddingRight - params.paddingRight - mm2point(14);
-            let space = mm2point(3);
-            let imageWidth = 258.75;
-            let imageHeight = 54.75;
-            let y = params.a6height + mm2point(4);
-            let x = (params.a6width - imageWidth) / 2;
 
-            pdf.addImage(flag_seperator, x, y, imageWidth, imageHeight);
 
-            x = params.a6width / 2;
-            y += imageHeight + params.fontSize12 + mm2point(2);
+            for (let page = 1; page < 3; page++) {
+                pdf.setPage(page);
+                if (page === 1) {
+                    prepareThirdPageRotated();
+                } else {
 
-            setTextColorTurkis(pdf);
-            pdf.setFontSize(params.fontSize12);
-            pdf.setFont('calibri', 'bold');
-            let header = t('translation:pdfMemberPlaceholder');
-            header = pdf.splitTextToSize(header, lblLength);
-            pdf.text(header, x, y, { align: 'center', maxWidth: lblLength });
-            pdf.setFont('calibri', 'normal');
+                    let lblLength = params.a6width - params.paddingRight - params.paddingRight - mm2point(14);
+                    let space = mm2point(3);
+                    let imageWidth = 225.75;
+                    let imageHeight = 54.75;
+                    let y = params.a6height + mm2point(4);
+                    let x = (params.a6width - imageWidth) / 2;
 
-            y += params.lineHeight12 + space;
-            setTextColorBlack(pdf);
-            pdf.setFontSize(params.fontSize10);
-            let infotext = t('translation:pdfMemberPlaceholderInfo');
-            infotext = pdf.splitTextToSize(infotext, lblLength);
-            pdf.text(infotext, x, y, { align: 'center', maxWidth: lblLength });
+                    pdf.addImage(flag_seperator, x, y, imageWidth, imageHeight);
 
-            y += mm2point(65);
-            pdf.setFontSize(params.fontSize9);
-            infotext = t('translation:pdfInfoText');
-            infotext = pdf.splitTextToSize(infotext, lblLength);
-            pdf.text(infotext, x, y, { align: 'center', maxWidth: lblLength });
+                    x = params.a6width / 2;
+                    y += imageHeight + params.fontSize12 + mm2point(2);
 
-            y += mm2point(10) + params.lineHeight9 * infotext.length;
-            infotext = t('translation:pdfRelevantInformation');
-            infotext = pdf.splitTextToSize(infotext, lblLength);
-            pdf.text(infotext, x, y, { align: 'center', maxWidth: lblLength });
+                    setTextColorBlue();
+                    pdf.setFontSize(params.fontSize14);
+                    pdf.setFont('arial', 'bold');
+                    let header = t('translation:pdfMemberPlaceholder');
+                    header = pdf.splitTextToSize(header, lblLength);
+                    pdf.text(header, x, y, { align: 'center', maxWidth: lblLength });
+                    pdf.setFont('arial', 'normal');
 
-            y += space + params.lineHeight9 * infotext.length;
-            infotext = t('translation:pdfInfoURL');
-            infotext = pdf.splitTextToSize(infotext, lblLength);
-            pdf.text(infotext, x, y, { align: 'center', maxWidth: lblLength });
+                    y += mm2point(40) + params.lineHeight9;
+                    setTextColorBlack();
+                    pdf.setFont('arial', 'normal');
+                    pdf.setFontSize(params.fontSize8);
+                    let infotext = t('translation:pdfInfoText');
+                    infotext = pdf.splitTextToSize(infotext, lblLength);
+                    pdf.text(infotext, x, y, { align: 'center', maxWidth: lblLength });
+
+                    y += mm2point(2) + params.lineHeight9 * infotext.length;
+                    infotext = t('translation:pdfRelevantInformation');
+                    infotext = pdf.splitTextToSize(infotext, lblLength);
+                    pdf.text(infotext, x, y, { align: 'center', maxWidth: lblLength });
+
+                    y += space + params.lineHeight9 * infotext.length;
+                    setTextColorBlue();
+                    pdf.setFontSize(params.fontSize10);
+                    infotext = t('translation:pdfInfoURL');
+                    infotext = pdf.splitTextToSize(infotext, lblLength);
+                    pdf.text(infotext, x, y, { align: 'center', maxWidth: lblLength });
+
+                    setTextColorBlack();
+                    pdf.setFont('arial', 'normal');
+                }
+            }
 
             setThirdPageIsReady(true);
+        }
+    }
+
+    /**
+     * Rotated Third page is the new second page on the A4.
+     */
+    const prepareThirdPageRotated = () => {
+        if (pdf) {
+            let lblLength = params.a6width - params.paddingRight - params.paddingRight - mm2point(14);
+            let imageWidth = 225.75;
+            let imageHeight = 54.75;
+            let y = params.a6height - imageHeight * 2 - mm2point(4);
+            let x = imageWidth + (params.a6width - imageWidth) / 2 + params.a6width;
+
+            pdf.addImage(flag_seperator, x, y, imageWidth, imageHeight, undefined, undefined, 180);
+
+            x = params.a6width + params.a6width / 2;
+            y += imageHeight - params.lineHeight12 - mm2point(2);
+
+            setTextColorBlue();
+            pdf.setFontSize(params.fontSize14);
+            pdf.setFont('arial', 'bold');
+            let header = t('translation:pdfMemberPlaceholder');
+            header = pdf.splitTextToSize(header, lblLength);
+            x = params.a6width * 2;
+            y = centerSplittedText(header, x, y);
+
+            y -= mm2point(40);
+            setTextColorBlack();
+            pdf.setFont('arial', 'normal');
+            pdf.setFontSize(params.fontSize8);
+            let infotext = t('translation:pdfInfoText');
+            infotext = pdf.splitTextToSize(infotext, lblLength);
+            y = centerSplittedText(infotext, x, y);
+
+            y -= mm2point(2);
+            infotext = t('translation:pdfRelevantInformation');
+            infotext = pdf.splitTextToSize(infotext, lblLength);
+            y = centerSplittedText(infotext, x, y);
+
+            setTextColorBlue();
+            pdf.setFontSize(params.fontSize10);
+            infotext = t('translation:pdfInfoURL');
+            infotext = pdf.splitTextToSize(infotext, lblLength);
+            y = centerSplittedText(infotext, x, y);
+
+            pdf.line(params.a6width + params.paddingLeft, y + 4, params.a6width * 2 - params.paddingRight, y + 4);
+
+            y -= params.lineHeight9;
+            setTextColorBlack();
+            pdf.setFontSize(params.fontSize9);
+            pdf.setFont('arial', 'italic');
+            infotext = t('translation:pdfFoldingInstruction');
+            infotext = pdf.splitTextToSize(infotext, lblLength);
+            y = centerSplittedText(infotext, x, y);
+
+            imageWidth = 173.25;
+            imageHeight = 51;
+            y -= imageHeight - mm2point(2);
+            x = (params.a6width - imageWidth) / 2 + params.a6width;
+            pdf.addImage(folding_instruction, x, y, imageWidth, imageHeight);
+
+            setTextColorBlack();
+            pdf.setFont('arial', 'normal');
         }
     }
 
     const prepareFourthPageVaccination = () => {
         if (pdf && vaccinationSet && french) {
 
-            let y = printCertificateHeader(t('translation:pdfHeaderVaccination'), french.translation.pdfHeaderVaccination);
-            y += params.lineHeight10 * 2 + params.space;
+            for (let page = 1; page < 3; page++) {
+
+                pdf.setPage(page);
+
+                if (page === 1) {
+                    prepareFourthPageVaccinationRotated();
+                } else {
+
+                    const lineHeight = params.lineHeight10;
+
+                    let y = printCertificateHeader(t('translation:pdfHeaderVaccination'), french.translation.pdfHeaderVaccination, params.paddingTop);
+                    y += params.space;
+
+                    //For the labels on the left side
+                    let xLeft = params.a6width + params.paddingInnerLeft;
+
+                    pdf.setFontSize(params.fontSize10);
+
+                    y = printVerticalBlock(xLeft, y,
+                        t('translation:pdfDisease'),
+                        french.translation.pdfDisease,
+                        getValueSetDisplay(vaccinationSet.tg, diseaseAgentsData),
+                        lineHeight, true);
+
+                    y = printVerticalBlock(xLeft, y,
+                        t('translation:pdfVaccineProphylaxis'),
+                        french.translation.pdfVaccineProphylaxis,
+                        getValueSetDisplay(vaccinationSet.vp, vaccines),
+                        lineHeight, true);
+
+                    y = printVerticalBlock(xLeft, y,
+                        t('translation:pdfVaccineMedicalProduct'),
+                        french.translation.pdfVaccineMedicalProduct,
+                        getValueSetDisplay(vaccinationSet.mp, vacMedsData),
+                        lineHeight, true);
+
+                    y = printVerticalBlock(xLeft, y,
+                        t('translation:pdfVaccineManufacturer'),
+                        french.translation.pdfVaccineManufacturer,
+                        getValueSetDisplay(vaccinationSet.ma, vaccineManufacturers),
+                        lineHeight, true);
+
+                    y = printVerticalBlock(xLeft, y,
+                        t('translation:pdfNumberOfDoses'),
+                        french.translation.pdfNumberOfDoses,
+                        vaccinationSet.dn.toString() + ' / ' + vaccinationSet.sd.toString(),
+                        lineHeight, true);
+
+                    y = printVerticalBlock(xLeft, y,
+                        t('translation:pdfDateOfVaccination'),
+                        french.translation.pdfDateOfVaccination,
+                        vaccinationSet.dt,
+                        lineHeight, true);
+
+                    y = printVerticalBlock(xLeft, y,
+                        t('translation:pdfMemberStateOfVaccination'),
+                        french.translation.pdfMemberStateOfVaccination,
+                        vaccinationSet.co,
+                        lineHeight, true);
+
+                    printVerticalBlock(xLeft, y,
+                        t('translation:pdfCertificateIssuer'),
+                        french.translation.pdfCertificateIssuer,
+                        vaccinationSet.is,
+                        lineHeight, true);
+                }
+
+                setFourthPageIsReady(true);
+            }
+        }
+    }
+
+    const prepareFourthPageVaccinationRotated = () => {
+        if (pdf && vaccinationSet && french) {
+            const lineHeight = params.lineHeight10;
+
+            let y = printCertificateHeaderRotated(t('translation:pdfHeaderVaccination'), french.translation.pdfHeaderVaccination, params.paddingTop);
+            y += params.space;
 
             //For the labels on the left side
-            let xLeft = params.a6width + params.paddingLeft;
-            //For the text on the right side
-            let xRight = params.a6width + pageMiddle;
+            let xLeft = params.a6width - params.paddingInnerLeft;
 
             pdf.setFontSize(params.fontSize10);
 
-            y = printBlock(xLeft, xRight, y,
+            y = printVerticalBlockRotated(xLeft, y,
                 t('translation:pdfDisease'),
                 french.translation.pdfDisease,
-                getValueSetDisplay(vaccinationSet.tg, diseaseAgentsData));
+                getValueSetDisplay(vaccinationSet.tg, diseaseAgentsData),
+                lineHeight, true);
 
-            y = printBlock(xLeft, xRight, y,
+            y = printVerticalBlockRotated(xLeft, y,
                 t('translation:pdfVaccineProphylaxis'),
                 french.translation.pdfVaccineProphylaxis,
-                getValueSetDisplay(vaccinationSet.vp, vaccines));
+                getValueSetDisplay(vaccinationSet.vp, vaccines),
+                lineHeight, true);
 
-            y = printBlock(xLeft, xRight, y,
+            y = printVerticalBlockRotated(xLeft, y,
                 t('translation:pdfVaccineMedicalProduct'),
                 french.translation.pdfVaccineMedicalProduct,
-                getValueSetDisplay(vaccinationSet.mp, vacMedsData));
+                getValueSetDisplay(vaccinationSet.mp, vacMedsData),
+                lineHeight, true);
 
-            y = printBlock(xLeft, xRight, y,
+            y = printVerticalBlockRotated(xLeft, y,
                 t('translation:pdfVaccineManufacturer'),
                 french.translation.pdfVaccineManufacturer,
-                getValueSetDisplay(vaccinationSet.ma, vaccineManufacturers));
+                getValueSetDisplay(vaccinationSet.ma, vaccineManufacturers),
+                lineHeight, true);
 
-            y = printBlock(xLeft, xRight, y,
+            y = printVerticalBlockRotated(xLeft, y,
                 t('translation:pdfNumberOfDoses'),
                 french.translation.pdfNumberOfDoses,
-                vaccinationSet.dn.toString() + ' / ' + vaccinationSet.sd.toString());
+                vaccinationSet.dn.toString() + ' / ' + vaccinationSet.sd.toString(),
+                lineHeight, true);
 
-            y = printBlock(xLeft, xRight, y,
+            y = printVerticalBlockRotated(xLeft, y,
                 t('translation:pdfDateOfVaccination'),
                 french.translation.pdfDateOfVaccination,
-                vaccinationSet.dt);
+                vaccinationSet.dt,
+                lineHeight, true);
 
-            y = printBlock(xLeft, xRight, y,
+            y = printVerticalBlockRotated(xLeft, y,
                 t('translation:pdfMemberStateOfVaccination'),
                 french.translation.pdfMemberStateOfVaccination,
-                vaccinationSet.co);
+                vaccinationSet.co,
+                lineHeight, true);
 
-            printBlock(xLeft, xRight, y,
+            printVerticalBlockRotated(xLeft, y,
                 t('translation:pdfCertificateIssuer'),
                 french.translation.pdfCertificateIssuer,
-                vaccinationSet.is);
-
-                setFourthPageIsReady(true);
+                vaccinationSet.is,
+                lineHeight, true);
         }
     }
 
     const prepareFourthPageTest = () => {
         if (pdf && testSet && french) {
+            for (let page = 1; page < 3; page++) {
 
-            const space = 5.5;
-            let y = printCertificateHeader(t('translation:pdfHeaderTest'), french.translation.pdfHeaderTest);
-            y += params.lineHeight10 * 2 + params.space;
+                pdf.setPage(page);
 
-            //For the labels on the left side
-            let xLeft = params.a6width + params.paddingLeft;
-            //For the text on the right side
-            let xRight = params.a6width + pageMiddle;
+                if (page === 1) {
+                    prepareFourthPageTestRotated();
+                } else {
 
-            pdf.setFontSize(params.fontSize10);
+                    const lineHeight = params.lineHeight10;
 
-            y = printBlock(xLeft, xRight, y,
+                    let y = printCertificateHeader(t('translation:pdfHeaderTest'), french.translation.pdfHeaderTest);
+
+                    let x = params.a6width + params.paddingInnerLeft;
+
+                    pdf.setFontSize(params.fontSize9);
+
+                    y = printVerticalBlock(x, y,
+                        t('translation:pdfDisease'),
+                        french.translation.pdfDisease,
+                        getValueSetDisplay(testSet.tg, diseaseAgentsData),
+                        lineHeight, true);
+
+                    y = printVerticalBlock(x, y,
+                        t('translation:pdfTypeOfTest'),
+                        french.translation.pdfTypeOfTest,
+                        testSet.tt,
+                        lineHeight, true);
+
+                    y = printVerticalBlock(x, y,
+                        t('translation:pdfTestName'),
+                        french.translation.pdfTestName,
+                        testSet.nm ? testSet.nm : ' ',
+                        lineHeight, true);
+
+                    y = printVerticalBlock(x, y,
+                        t('translation:pdfTestManufacturer'),
+                        french.translation.pdfTestManufacturer,
+                        getValueSetDisplay(testSet.ma, testManufacturersValueSet),
+                        lineHeight, true);
+
+                    y = printVerticalBlock(x, y,
+                        t('translation:pdfDateSampleCollection'),
+                        french.translation.pdfDateSampleCollection,
+                        convertDateToOutputFormat(testSet.sc),
+                        lineHeight, true);
+
+                    y = printVerticalBlock(x, y,
+                        t('translation:pdfDateTestResult'),
+                        french.translation.pdfDateTestResult,
+                        convertDateToOutputFormat(testSet.dr ? testSet.dr : ' '),
+                        lineHeight, true);
+
+                    y = printVerticalBlock(x, y,
+                        t('translation:pdfTestResult'),
+                        french.translation.pdfTestResult,
+                        getValueSetDisplay(testSet.tr, testResultValueSet),
+                        lineHeight, true);
+
+                    y = printVerticalBlock(x, y,
+                        t('translation:pdfTestingCentre'),
+                        french.translation.pdfTestingCentre,
+                        testSet.tc,
+                        lineHeight, true);
+
+                    y = printVerticalBlock(x, y,
+                        t('translation:pdfStateOfVaccination'),
+                        french.translation.pdfStateOfVaccination,
+                        testSet.co,
+                        lineHeight, true);
+
+                    printVerticalBlock(x, y,
+                        t('translation:pdfCertificateIssuer'),
+                        french.translation.pdfCertificateIssuer,
+                        testSet.is,
+                        lineHeight, true);
+
+                    setFourthPageIsReady(true);
+                }
+            }
+        }
+
+    }
+
+    const prepareFourthPageTestRotated = () => {
+        if (pdf && testSet && french) {
+            const lineHeight = params.lineHeight10;
+
+            let y = printCertificateHeaderRotated(t('translation:pdfHeaderTest'), french.translation.pdfHeaderTest);
+
+            let x = params.a6width - params.paddingInnerLeft;
+
+            pdf.setFontSize(params.fontSize9);
+
+            y = printVerticalBlockRotated(x, y,
                 t('translation:pdfDisease'),
                 french.translation.pdfDisease,
                 getValueSetDisplay(testSet.tg, diseaseAgentsData),
-                space);
+                lineHeight, true);
 
-            y = printBlock(xLeft, xRight, y,
+            y = printVerticalBlockRotated(x, y,
                 t('translation:pdfTypeOfTest'),
                 french.translation.pdfTypeOfTest,
                 testSet.tt,
-                space);
+                lineHeight, true);
 
-            y = printBlock(xLeft, xRight, y,
+            y = printVerticalBlockRotated(x, y,
                 t('translation:pdfTestName'),
                 french.translation.pdfTestName,
-                testSet.nm,
-                space);
+                testSet.nm ? testSet.nm : ' ',
+                lineHeight, true);
 
-            y = printBlock(xLeft, xRight, y,
+            y = printVerticalBlockRotated(x, y,
                 t('translation:pdfTestManufacturer'),
                 french.translation.pdfTestManufacturer,
-                getValueSetDisplay(testSet.ma!, testManufacturersValueSet),
-                space);
+                getValueSetDisplay(testSet.ma, testManufacturersValueSet),
+                lineHeight, true);
 
-            y = printBlock(xLeft, xRight, y,
+            y = printVerticalBlockRotated(x, y,
                 t('translation:pdfDateSampleCollection'),
                 french.translation.pdfDateSampleCollection,
                 convertDateToOutputFormat(testSet.sc),
-                space);
+                lineHeight, true);
 
-            y = printBlock(xLeft, xRight, y,
+            y = printVerticalBlockRotated(x, y,
                 t('translation:pdfDateTestResult'),
                 french.translation.pdfDateTestResult,
-                convertDateToOutputFormat(testSet.dr),
-                space);
+                convertDateToOutputFormat(testSet.dr ? testSet.dr : ' '),
+                lineHeight, true);
 
-            y = printBlock(xLeft, xRight, y,
+            y = printVerticalBlockRotated(x, y,
                 t('translation:pdfTestResult'),
                 french.translation.pdfTestResult,
                 getValueSetDisplay(testSet.tr, testResultValueSet),
-                space);
+                lineHeight, true);
 
-            y = printBlock(xLeft, xRight, y,
+            y = printVerticalBlockRotated(x, y,
                 t('translation:pdfTestingCentre'),
                 french.translation.pdfTestingCentre,
                 testSet.tc,
-                space);
+                lineHeight, true);
 
-            y = printBlock(xLeft, xRight, y,
+            y = printVerticalBlockRotated(x, y,
                 t('translation:pdfStateOfVaccination'),
                 french.translation.pdfStateOfVaccination,
                 testSet.co,
-                space);
+                lineHeight, true);
 
-            printBlock(xLeft, xRight, y,
+            printVerticalBlockRotated(x, y,
                 t('translation:pdfCertificateIssuer'),
                 french.translation.pdfCertificateIssuer,
                 testSet.is,
-                space);
-
-                setFourthPageIsReady(true);
+                lineHeight, true);
         }
     }
 
     const prepareFourthPageRecovery = () => {
         if (pdf && recoverySet && french) {
 
-            let y = printCertificateHeader(t('translation:pdfHeaderRecovery'), french.translation.pdfHeaderRecovery);
-            y += params.lineHeight10 * 2 + params.space;
+            for (let page = 1; page < 3; page++) {
+
+                pdf.setPage(page);
+
+                if (page === 1) {
+                    prepareFourthPageRecoveryRotated();
+                }
+                else {
+                    const lineHeight = params.lineHeight10;
+
+                    let y = printCertificateHeader(t('translation:pdfHeaderRecovery'), french.translation.pdfHeaderRecovery, params.paddingTop);
+                    y += params.smallHeaderLineHeight + params.space;
+
+                    //For the labels on the left side
+                    let xLeft = params.a6width + params.paddingInnerLeft;
+
+                    pdf.setFontSize(params.fontSize10);
+
+                    y = printVerticalBlock(xLeft, y,
+                        t('translation:pdfDisease'),
+                        french.translation.pdfDisease,
+                        getValueSetDisplay(recoverySet.tg, diseaseAgentsData),
+                        lineHeight, true);
+
+                    y = printVerticalBlock(xLeft, y,
+                        t('translation:pdfDatePositiveTestResult'),
+                        french.translation.pdfDatePositiveTestResult,
+                        recoverySet.fr);
+
+                    y = printVerticalBlock(xLeft, y,
+                        t('translation:pdfStateOfTest'),
+                        french.translation.pdfStateOfTest,
+                        recoverySet.co,
+                        lineHeight, true);
+
+                    y = printVerticalBlock(xLeft, y,
+                        t('translation:pdfCertificateIssuer'),
+                        french.translation.pdfCertificateIssuer,
+                        recoverySet.is,
+                        lineHeight, true);
+
+                    y = printVerticalBlock(xLeft, y,
+                        t('translation:pdfValidFrom'),
+                        french.translation.pdfValidFrom,
+                        recoverySet.df,
+                        lineHeight, true);
+
+                    printVerticalBlock(xLeft, y,
+                        t('translation:pdfValidTo'),
+                        french.translation.pdfValidTo,
+                        recoverySet.du,
+                        lineHeight, true);
+
+                    setFourthPageIsReady(true);
+                }
+            }
+        }
+    }
+
+    /**
+     * Rotated Fourth page is the new first page on the A4.
+     */
+    const prepareFourthPageRecoveryRotated = () => {
+        if (pdf && recoverySet && french) {
+
+            const lineHeight = params.lineHeight10;
+
+            let y = printCertificateHeaderRotated(t('translation:pdfHeaderRecovery'), french.translation.pdfHeaderRecovery, params.paddingTop);
+            y -= params.smallHeaderLineHeight - params.space;
 
             //For the labels on the left side
-            let xLeft = params.a6width + params.paddingLeft;
-            //For the text on the right side
-            let xRight = params.a6width + pageMiddle;
+            let xLeft = params.a6width - params.paddingInnerLeft;
 
             pdf.setFontSize(params.fontSize10);
 
-            y = printBlock(xLeft, xRight, y,
+            y = printVerticalBlockRotated(xLeft, y,
                 t('translation:pdfDisease'),
                 french.translation.pdfDisease,
-                getValueSetDisplay(recoverySet.tg, diseaseAgentsData));
+                getValueSetDisplay(recoverySet.tg, diseaseAgentsData),
+                lineHeight, true);
 
-            y = printBlock(xLeft, xRight, y,
+            y = printVerticalBlockRotated(xLeft, y,
                 t('translation:pdfDatePositiveTestResult'),
                 french.translation.pdfDatePositiveTestResult,
                 recoverySet.fr);
 
-            y = printBlock(xLeft, xRight, y,
+            y = printVerticalBlockRotated(xLeft, y,
                 t('translation:pdfStateOfTest'),
                 french.translation.pdfStateOfTest,
-                recoverySet.co);
+                recoverySet.co,
+                lineHeight, true);
 
-            y = printBlock(xLeft, xRight, y,
+            y = printVerticalBlockRotated(xLeft, y,
                 t('translation:pdfCertificateIssuer'),
                 french.translation.pdfCertificateIssuer,
-                recoverySet.is);
+                recoverySet.is,
+                lineHeight, true);
 
-            y = printBlock(xLeft, xRight, y,
+            y = printVerticalBlockRotated(xLeft, y,
                 t('translation:pdfValidFrom'),
                 french.translation.pdfValidFrom,
-                recoverySet.df);
+                recoverySet.df,
+                lineHeight, true);
 
-            printBlock(xLeft, xRight, y,
+            printVerticalBlockRotated(xLeft, y,
                 t('translation:pdfValidTo'),
                 french.translation.pdfValidTo,
-                recoverySet.du);
-
-                setFourthPageIsReady(true);
+                recoverySet.du,
+                lineHeight, true);
         }
     }
 
-    const printSplittedLine = (x: number, y: number, lblLeft: any, lblLeftFrench: any): number => {
-        let result = 0;
+    // const printSplittedLine = (x: number, y: number, lblLeft: any, lblLeftFrench: any): number => {
+    //     let result = 0;
 
-        if (pdf) {
-            pdf.setFont('calibri', 'bold');
-            lblLeft = pdf.splitTextToSize(lblLeft, lblLength);
-            pdf.text(lblLeft, x, y);
+    //     if (pdf) {
+    //         pdf.setFont('arial', 'bold');
+    //         lblLeft = pdf.splitTextToSize(lblLeft, lblLength);
+    //         pdf.text(lblLeft, x, y);
 
-            pdf.setFont('calibri', 'normal');
+    //         pdf.setFont('arial', 'normal');
 
-            const lineheight = lblLeft.length > 2 ? params.lineHeight10 + 1 : params.lineHeight10;
-            y += (lineheight * lblLeft.length) + params.space;
-            lblLeftFrench = pdf.splitTextToSize(lblLeftFrench, lblLength);
-            pdf.text(lblLeftFrench, x, y);
+    //         const lineheight = lblLeft.length > 2 ? params.lineHeight10 + 1 : params.lineHeight10;
+    //         y += (lineheight * lblLeft.length) + params.space;
+    //         lblLeftFrench = pdf.splitTextToSize(lblLeftFrench, lblLength);
+    //         pdf.text(lblLeftFrench, x, y);
 
-            result = y + params.lineHeight10 * lblLeftFrench.length;
+    //         result = y + params.lineHeight10 * lblLeftFrench.length;
+    //     }
+
+    //     return result;
+    // }
+
+    const printVerticalBlock = (x: number, y: number, lbl: any, lblFrench: any, value?: string, lineHeight?: number, isItalic?: boolean): number => {
+        let result = y;
+        lineHeight = lineHeight ? lineHeight : params.lineHeight;
+
+        if (value && pdf) {
+            pdf.setFont('arial', 'bold');
+            lbl = pdf.splitTextToSize(lbl, lblLength);
+            pdf.text(lbl, x, y);
+
+            y += lineHeight * lbl.length;
+
+            pdf.setFont('arial', 'italic');
+
+            const frenchText = pdf.splitTextToSize(lblFrench, lblLength);
+            pdf.text(frenchText, x, y);
+            y += lineHeight * frenchText.length;
+
+            pdf.setFont('arial', 'normal');
+            const valueText = pdf.splitTextToSize(value, lblLength);
+            pdf.text(valueText, x, y);
+
+            result = y + lineHeight * valueText.length + mm2point(2);
         }
 
         return result;
     }
 
-    const printVerticalBlock = (x: number, y: number, lbl: any, lblFrench: any, value?: string): number => {
+    const printHorizontalBlockPerson = (x: number, y: number, lbl: any, lblFrench: any, value?: string): number => {
         let result = y;
 
         if (value && pdf) {
-            const lblLength = params.a6width - params.paddingRight - params.paddingRight * 3;
-
-            pdf.setFont('calibri', 'bold');
+            pdf.setFontSize(params.fontSize11)
+            pdf.setFont('arial', 'bold');
+            lbl = pdf.splitTextToSize(lbl, lblLength);
             pdf.text(lbl, x, y);
-            y += params.lineHeight;
+            y += params.lineHeight12 * lbl.length;
 
-            pdf.setFont('calibri', 'normal');
+            pdf.setFontSize(params.fontSize10)
+            pdf.setFont('arial', 'italic');
+
             const frenchText = pdf.splitTextToSize(lblFrench, lblLength);
             pdf.text(frenchText, x, y);
-            y += params.lineHeight * frenchText.length;
+            y += params.lineHeight12 * frenchText.length;
 
-            setTextColorTurkis(pdf);
+            pdf.setFontSize(params.fontSize11);
+            pdf.setFont('arial', 'normal');
+            setTextColorBlue()
             const valueText = pdf.splitTextToSize(value, lblLength);
             pdf.text(valueText, x, y);
-            setTextColorBlack(pdf);
+            setTextColorBlack()
 
-            result = y + params.lineHeight * valueText.length + mm2point(10);
+            result = y + params.lineHeight11 * valueText.length + mm2point(2);
         }
 
         return result;
     }
 
-    const printBlock = (xLeft: number, xRight: number, y: number, lblLeft: any, lblLeftFrench: any, value?: string, space?: number): number => {
+    const printVerticalBlockRotated = (x: number, y: number, lbl: any, lblFrench: any, value?: string, lineHeight?: number, isItalic?: boolean): number => {
         let result = y;
+        lineHeight = lineHeight ? lineHeight : params.lineHeight;
 
-        if (pdf && value) {
+        if (value && pdf) {
+            pdf.setFont('arial', 'bold');
+            lbl = pdf.splitTextToSize(lbl, lblLength);
+            y = leftSplittedTextRotated(lbl, x, y);
+
+            if (isItalic) {
+                pdf.setFont('arial', 'italic');
+            } else {
+                pdf.setFont('arial', 'normal');
+            }
+            const frenchText = pdf.splitTextToSize(lblFrench, lblLength);
+            y = leftSplittedTextRotated(frenchText, x, y);
+
+            pdf.setFont('arial', 'normal');
             const valueText = pdf.splitTextToSize(value, lblLength);
-            pdf.text(valueText, xRight, y);
-            result = printSplittedLine(xLeft, y, lblLeft, lblLeftFrench);
-            result += space ? space : params.lineHeight10 + params.space;
+            y = leftSplittedTextRotated(valueText, x, y);
+
+            result = y - 6;
         }
 
         return result;
     }
 
-    const printCertificateHeader = (header: any, frenchHeader: string): number => {
+    // const printBlock = (xLeft: number, xRight: number, y: number, lblLeft: any, lblLeftFrench: any, value?: string, space?: number): number => {
+    //     let result = y;
+
+    //     if (pdf && value) {
+    //         const valueText = pdf.splitTextToSize(value, lblLength);
+    //         pdf.text(valueText, xRight, y);
+    //         result = printSplittedLine(xLeft, y, lblLeft, lblLeftFrench);
+    //         result += space ? space : params.lineHeight10 + params.space;
+    //     }
+
+    //     return result;
+    // }
+
+    const printCertificateHeader = (header: any, frenchHeader: string, paddingTop?: number): number => {
         let result = 0;
 
         if (pdf) {
             let x = params.a6width + params.a6width / 2;
-            let y = params.a6height + params.paddingTop + params.smallHeaderLineHeight;
+            let y = params.a6height;
+            const lblLength = params.a6width - params.paddingLeft - params.paddingRight;
 
-            pdf.setFont('calibri', 'bold');
+            pdf.setFont('arial', 'bold');
             pdf.setFontSize(params.smallHeaderFontSize);
-            setTextColorTurkis(pdf);
+            setTextColorBlue();
 
-            pdf.text(header, x, y, { align: 'center', maxWidth: params.a6width });
+            paddingTop = paddingTop ? paddingTop : 0;
+            y += params.smallHeaderLineHeight + paddingTop;
 
-            y += params.smallHeaderLineHeight;
+            header = pdf.splitTextToSize(header, params.a6width);
+            pdf.text(header, x, y, { align: 'center', maxWidth: lblLength });
+
+            y += params.smallHeaderLineHeight + header.length;
+            pdf.setFontSize(params.fontSize14);
             frenchHeader = pdf.splitTextToSize(frenchHeader, params.a6width);
-            pdf.text(frenchHeader, x, y, { align: 'center', maxWidth: params.a6width });
-            setTextColorBlack(pdf);
+            pdf.text(frenchHeader, x, y, { align: 'center', maxWidth: lblLength });
+            setTextColorBlack();
 
-            return y + frenchHeader.length;
+            result = y + params.smallHeaderLineHeight * frenchHeader.length;
         }
 
         return result;
     }
 
-    const setTextColorTurkis = (pdf: jsPDF) => {
-        pdf.setTextColor(0, 122, 102);
+    const printCertificateHeaderRotated = (header: any, frenchHeader: string, paddingTop?: number): number => {
+        let result = 0;
+
+        if (pdf) {
+            let x = params.a6width
+            let y = params.a6height;
+
+            pdf.setFont('arial', 'bold');
+            pdf.setFontSize(params.smallHeaderFontSize);
+            setTextColorBlue();
+
+            paddingTop = paddingTop ? paddingTop : 0;
+            y -= params.smallHeaderLineHeight + paddingTop;
+
+            header = pdf.splitTextToSize(header, lblLength);
+            centerSplittedText(header, x, y);
+
+            y -= params.smallHeaderLineHeight;
+            pdf.setFontSize(params.fontSize14);
+            frenchHeader = pdf.splitTextToSize(frenchHeader, lblLength);
+            centerSplittedText(frenchHeader, x, y);
+            setTextColorBlack();
+
+            result = y - params.smallHeaderLineHeight * frenchHeader.length;
+        }
+
+        return result;
     }
 
-    const setTextColorBlack = (pdf: jsPDF) => {
-        pdf.setTextColor(0, 0, 0);
+    const centerSplittedText = (txt: string, x: number, y: number): number => {
+        let result = y;
+
+        if (pdf) {
+            const offset = x;
+            for (let i = 0; i < txt.length; i++) {
+                const dim = pdf.getTextDimensions(txt[i]);
+                x = offset - (params.a6width - dim.w) / 2;
+                pdf.text(txt[i], x, y, { align: 'left', angle: 180 });
+                y -= dim.h + 2;
+            }
+
+            result = y;
+        }
+        return result;
+    }
+
+    const leftSplittedTextRotated = (text: string, x: number, y: number): number => {
+        let result = y;
+
+        if (pdf) {
+            for (let i = 0; i < text.length; i++) {
+                const dim = pdf.getTextDimensions(text[i]);
+                pdf.text(text[i], x, y, { align: 'left', angle: 180 });
+                y -= dim.h;
+            }
+            result = y;
+        }
+        return result;
+    }
+
+    const setTextColorBlue = () => {
+        pdf!.setTextColor(0, 51, 153);
+    }
+
+    const setTextColorBlack = () => {
+        pdf!.setTextColor(0, 0, 0);
+    }
+
+    const setTextColorWhite = () => {
+        pdf!.setTextColor(256, 256, 256);
     }
 
     return pdf;
 }
 
+
+
 export default usePdfGenerator;
+
+
 
