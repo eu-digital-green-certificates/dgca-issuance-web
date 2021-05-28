@@ -38,7 +38,7 @@ import {
     useGetVaccinMedicalData, useGetTestManufacturers, useGetTestResult
 } from '../api';
 import { getValueSetDisplay, convertDateToOutputFormat } from '../misc/ShowCertificateData';
-import { doc } from 'prettier';
+import pdfParams from '../pdf-settings.json';
 
 require('../assets/SCSS/fonts/arial-normal.js');
 require('../assets/SCSS/fonts/arial-bold.js');
@@ -139,7 +139,7 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudgcProp: EUDGC | undefi
         space: 2
     }
 
-    const lblLength = params.a6width / 2 - params.paddingLeft - params.paddingRight;
+    const lblLength = params.a6width - params.paddingInnerLeft - params.paddingRight;
     const pageMiddle = params.a6width / 2;
 
     const [isInit, setIsInit] = React.useState(false);
@@ -310,8 +310,6 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudgcProp: EUDGC | undefi
                 x += params.a6width / 2;
                 y += mm2point(40);
 
-                const lblLength = params.a6width - params.paddingRight - params.paddingRight;
-
                 setTextColorBlue();
                 pdf.setFont('arial', 'bold');
                 pdf.setFontSize(params.headerFontSize);
@@ -356,8 +354,9 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudgcProp: EUDGC | undefi
                 setTextColorWhite();
                 pdf.setFontSize(params.fontSize16);
                 //TODO: country
-                pdf.text('BE', x, y, { align: 'center' });
-
+                if(pdfParams.issuer_country_code) {
+                    pdf.text(pdfParams.issuer_country_code, x, y, { align: 'center' });
+                }
                 setTextColorBlack();
                 pdf.setFont('arial', 'normal');
             }
@@ -369,7 +368,6 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudgcProp: EUDGC | undefi
     const prepareSecondPage = () => {
         if (pdf && eudgc && ci && qrCodeCanvasElement && french) {
 
-            const space_top = mm2point(16);
             const space = mm2point(5);
 
             const img = (qrCodeCanvasElement as HTMLCanvasElement).toDataURL("image/png,base64");
@@ -381,12 +379,12 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudgcProp: EUDGC | undefi
 
                 pdf.setPage(page);
                 if (page === 1) {
-                    y = params.a6height - mm2point(10);
+                    y = params.a6height - space;
                 } else {
                     x = params.a6width;
                 }
                 x += (params.a6width - canvasWidth) / 2;
-                y += space_top;
+                y += params.paddingTop;
                 pdf.addImage(img, 'png', x, y, canvasWidth, canvasWidth);
 
                 const imageWidth = 221.25;
@@ -987,8 +985,6 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudgcProp: EUDGC | undefi
         lineHeight = lineHeight ? lineHeight : params.lineHeight;
 
         if (value && pdf) {
-            const lblLength = params.a6width - params.paddingInnerLeft - params.paddingRight;
-
             pdf.setFont('arial', 'bold');
             lbl = pdf.splitTextToSize(lbl, lblLength);
             pdf.text(lbl, x, y);
@@ -1014,8 +1010,6 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudgcProp: EUDGC | undefi
         let result = y;
 
         if (value && pdf) {
-            const lblLength = params.a6width - params.paddingInnerLeft - params.paddingRight;
-
             pdf.setFontSize(params.fontSize11)
             pdf.setFont('arial', 'bold');
             lbl = pdf.splitTextToSize(lbl, lblLength);
@@ -1047,8 +1041,6 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudgcProp: EUDGC | undefi
         lineHeight = lineHeight ? lineHeight : params.lineHeight;
 
         if (value && pdf) {
-            const lblLength = params.a6width - params.paddingInnerLeft - params.paddingRight;
-
             pdf.setFont('arial', 'bold');
             lbl = pdf.splitTextToSize(lbl, lblLength);
             y = leftSplittedTextRotated(lbl, x, y);
@@ -1131,8 +1123,7 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudgcProp: EUDGC | undefi
         if (pdf) {
             let x = params.a6width
             let y = params.a6height;
-            const lblLength = params.a6width - params.paddingLeft - params.paddingRight;
-
+            
             pdf.setFont('arial', 'bold');
             pdf.setFontSize(params.smallHeaderFontSize);
             setTextColorBlue();
