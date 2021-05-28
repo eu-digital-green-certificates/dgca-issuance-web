@@ -173,7 +173,6 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudgcProp: EUDGC | undefi
         if (pdf) {
             pdf.addPage();
             printDottedLine();
-            prepareFirstPage();
             prepareThirdPage();
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -255,6 +254,13 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudgcProp: EUDGC | undefi
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [qrCodeCanvasElement, ci, isInit, eudgc]);
 
+    React.useEffect(() => {
+        if (isInit && eudgc) {
+            prepareFirstPage();
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [isInit && eudgc]);
+
     const printDottedLine = () => {
         if (pdf) {
             pdf.setPage(1);
@@ -296,7 +302,7 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudgcProp: EUDGC | undefi
     }
 
     const prepareFirstPage = () => {
-        if (pdf && french) {
+        if (pdf && french && eudgc) {
             for (let page = 1; page < 3; page++) {
                 let x = 0;
                 let y = 0;
@@ -354,9 +360,11 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudgcProp: EUDGC | undefi
                 setTextColorWhite();
                 pdf.setFontSize(params.fontSize16);
                 //TODO: country
-                if(pdfParams.issuer_country_code) {
-                    pdf.text(pdfParams.issuer_country_code, x, y, { align: 'center' });
-                }
+                // if(pdfParams.issuer_country_code) {
+                //     pdf.text(pdfParams.issuer_country_code, x, y, { align: 'center' });
+                // }
+                let certificate = eudgc.v || eudgc.t || eudgc.r || [ {co: 'BE'} ];
+                pdf.text(certificate[0]!.co, x, y, { align: 'center' });
                 setTextColorBlack();
                 pdf.setFont('arial', 'normal');
             }
