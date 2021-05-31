@@ -169,8 +169,6 @@ const RecordTestCertData = (props: any) => {
                 t: [test]
             }
 
-            console.log(JSON.stringify(eudgc));
-
             var result = validator.validate(eudgc, schema);
 
             if (result.valid) {
