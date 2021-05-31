@@ -258,7 +258,7 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudgcProp: EUDGC | undefi
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [qrCodeCanvasElement, ci, isInit, eudgc]);
-    
+
     React.useEffect(() => {
         if (co && isInit && eudgc) {
             prepareFirstPage();
@@ -733,7 +733,7 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudgcProp: EUDGC | undefi
                     y = printVerticalBlock(x, y,
                         t('translation:pdfTestName'),
                         french.translation.pdfTestName,
-                        testSet.nm ? testSet.nm : ' ',
+                        testSet.nm,
                         lineHeight, true);
 
                     y = printVerticalBlock(x, y,
@@ -751,7 +751,7 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudgcProp: EUDGC | undefi
                     y = printVerticalBlock(x, y,
                         t('translation:pdfDateTestResult'),
                         french.translation.pdfDateTestResult,
-                        convertDateToOutputFormat(testSet.dr ? testSet.dr : ' '),
+                        testSet.dr ? convertDateToOutputFormat(testSet.dr) : '',
                         lineHeight, true);
 
                     y = printVerticalBlock(x, y,
@@ -997,7 +997,7 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudgcProp: EUDGC | undefi
         let result = y;
         lineHeight = lineHeight ? lineHeight : params.lineHeight;
 
-        if (value && pdf) {
+        if (pdf) {
             pdf.setFont('arial', 'bold');
             lbl = pdf.splitTextToSize(lbl, lblLength);
             pdf.text(lbl, x, y);
@@ -1010,11 +1010,15 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudgcProp: EUDGC | undefi
             pdf.text(frenchText, x, y);
             y += lineHeight * frenchText.length;
 
-            pdf.setFont('arial', 'normal');
-            const valueText = pdf.splitTextToSize(value, lblLength);
-            pdf.text(valueText, x, y);
+            if (value) {
+                pdf.setFont('arial', 'normal');
+                const valueText = pdf.splitTextToSize(value, lblLength);
+                pdf.text(valueText, x, y);
 
-            result = y + lineHeight * valueText.length + mm2point(2);
+                y += lineHeight * valueText.length;
+            }
+
+            result = y + mm2point(2);
         }
 
         return result;

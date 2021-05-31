@@ -80,7 +80,7 @@ export const FormGroupValueSetSelect = (props: any) => {
                     placeholder={props.placeholder ? props.placeholder : props.title}
                     required={props.required}
                 >
-                    <option disabled={props.required} key={0} value={props.required ? '' : undefined} >{props.placeholder ? props.placeholder : props.title}</option>
+                    <option disabled={props.required} key={0} value=''>{props.placeholder ? props.placeholder : props.title}</option>
                     {options}
                 </Form.Control>
             </Col>
