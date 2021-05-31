@@ -1,5 +1,5 @@
 <h1 align="center">
-    EU Digital Green Certificates Issuance Web Frontend
+    EU Digital COVID Certificate Issuance Web Frontend
 </h1>
 
 <p align="center">
@@ -19,7 +19,7 @@
 
 ## About
 
-This repository contains the source code of the Digital Green Certificates Issuance Web Frontend.
+This repository contains the source code of the EU Digital COVID Certificate Issuance Web Frontend.
 
 The issuer application frontend provides a user interface that is used by the issuer to enter the necessary data for DGC issuance.
 
