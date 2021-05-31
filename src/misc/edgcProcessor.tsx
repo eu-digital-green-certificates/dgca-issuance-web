@@ -58,7 +58,7 @@ const encodeCBOR = (certData: any, certMetaData: CertificateMetaData): Buffer =>
     v1.set((1 as number), certData)
     cborMap.set((-260 as number), v1);
 
-    return cbor.encode(cborMap);
+    return cbor.encodeOne(cborMap, { omitUndefinedProperties: true });
 }
 
 const computeCOSEHash = (coseSigData: Buffer): string => {
