@@ -118,7 +118,6 @@ const RecordTestCertData = (props: any) => {
         setTestDateTime(date);
     }
 
-
     const handleDateTimeChange = (evt: Date | [Date, Date] | null) => {
         let date: Date;
 
@@ -147,8 +146,8 @@ const RecordTestCertData = (props: any) => {
             const test: TestEntry = {
                 tg: disease,
                 tt: testType,
-                nm: testName,
-                ma: testManufacturers,
+                nm: testName ? testName : undefined,
+                ma: testManufacturers ? testManufacturers : undefined,
                 sc: sampleDateTime!.toISOString(),
                 dr: testDateTime ? testDateTime.toISOString() : undefined,
                 tr: testResult,
@@ -169,6 +168,8 @@ const RecordTestCertData = (props: any) => {
                 dob: person!.dateOfBirth!.toISOString().split('T')[0],
                 t: [test]
             }
+
+            console.log(JSON.stringify(eudgc));
 
             var result = validator.validate(eudgc, schema);
 
