@@ -26,7 +26,7 @@ import { initReactI18next } from 'react-i18next';
 const resBundle = require('i18next-resource-store-loader!./assets/i18n/index.js');
 
 i18n.use(initReactI18next).init({
-  lng: 'en',
+  lng: 'de',
   resources: resBundle,
   fallbackLng: 'en',
   debug: true,
