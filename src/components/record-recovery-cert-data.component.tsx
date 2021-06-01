@@ -42,6 +42,7 @@ import { PersonInputs, IPersonData, FormGroupInput, FormGroupValueSetSelect, For
 import CardFooter from './modules/card-footer.component';
 
 const validator = new Validator();
+const expirationMilSeconds = 60 * 60 * 24 * 180 * 1000;
 
 const RecordRecoveryCertData = (props: any) => {
 
@@ -207,7 +208,7 @@ const RecordRecoveryCertData = (props: any) => {
                             <hr />
 
                             {/* Date of First Positive Test Result  */}
-                            <Form.Group as={Row} controlId='formLastDateInput'className='pb-3 mb-0'>
+                            <Form.Group as={Row} controlId='formLastDateInput' className='pb-3 mb-0'>
                                 <Form.Label className='input-label ' column xs='5' sm='3'>{t('translation:first-positive-test-date') + '*'}</Form.Label>
 
                                 <Col xs='7' sm='9' className='d-flex'>
@@ -248,7 +249,7 @@ const RecordRecoveryCertData = (props: any) => {
                             />
 
                             {/* Date: Certificate Valid From - To */}
-                            <Form.Group as={Row} controlId='formDateOfBirthInput'className='pb-3 mb-0'>
+                            <Form.Group as={Row} controlId='formDateOfBirthInput' className='pb-3 mb-0'>
                                 <Form.Label className='input-label ' column xs='5' sm='3'>{t('translation:cert-valid-from-to') + '*'}</Form.Label>
 
                                 <Col xs='7' sm='9' className='d-flex'>
@@ -264,8 +265,8 @@ const RecordRecoveryCertData = (props: any) => {
                                         showYearDropdown
                                         dropdownMode="select"
                                         //TODO: possibly calculate dat min and max
-                                        maxDate={new Date()}
-                                        minDate={new Date(2020, 10)}
+                                        maxDate={dateValidTo ? dateValidTo : new Date()}
+                                        minDate={dateValidTo ? new Date(dateValidTo.getTime() - expirationMilSeconds) : new Date(Date.now() - expirationMilSeconds)}
                                         openToDate={new Date()}
                                         required
                                     />
@@ -282,8 +283,8 @@ const RecordRecoveryCertData = (props: any) => {
                                         showYearDropdown
                                         dropdownMode="select"
                                         //TODO: calculate date min and max
-                                        maxDate={new Date(2099, 12)}
-                                        minDate={new Date()}
+                                        maxDate={dateValidFrom ? new Date(dateValidFrom.getTime() + expirationMilSeconds) : new Date(Date.now() + expirationMilSeconds)}
+                                        minDate={dateValidFrom ? dateValidFrom : new Date()}
                                         openToDate={new Date()}
                                         required
                                     />
