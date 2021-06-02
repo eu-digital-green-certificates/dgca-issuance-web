@@ -24,9 +24,8 @@ import base45 from './wbase45'
 import CryptoJS from 'crypto-js';
 
 import zlib from 'browserify-zlib'
+import { EUDGC } from '../generated-files/dgc-combined-schema';
 
-
-const expiredSeconds = 60 * 60 * 24 * 364;
 const edgcPrefix = 'HC1:'
 
 export interface CertificateMetaData {
@@ -43,13 +42,14 @@ export interface SignService {
     (hash: string): Promise<string>;
 }
 
-const encodeCBOR = (certData: any, certMetaData: CertificateMetaData): Buffer => {
+const encodeCBOR = (certData: EUDGC, certMetaData: CertificateMetaData): Buffer => {
 
     const cborMap = new cbor.Map();
     const issuedAtSec = Date.now() / 1000 | 0;
+    const expiration = getExpiration(certData, certMetaData);
 
     // expiration
-    cborMap.set((4 as number), issuedAtSec + expiredSeconds);
+    cborMap.set((4 as number), expiration);
     // issued at
     cborMap.set((6 as number), issuedAtSec);
     // issuer country code
@@ -59,6 +59,16 @@ const encodeCBOR = (certData: any, certMetaData: CertificateMetaData): Buffer =>
     cborMap.set((-260 as number), v1);
 
     return cbor.encodeOne(cborMap, { omitUndefinedProperties: true });
+}
+
+const getExpiration = (certData: EUDGC, certMetaData: CertificateMetaData) => {
+    let result = certMetaData.expired;
+
+    if (certData && certData.r && certData.r[0]) {
+        result = new Date(certData.r[0].du).getTime() / 1000 | 0;
+    }
+
+    return result;
 }
 
 const computeCOSEHash = (coseSigData: Buffer): string => {
@@ -115,7 +125,7 @@ const dataPrefix = (data: string): string => {
 }
 
 
-export const createCertificateQRData = (certData: any, certMetaData: CertificateMetaData, signService: SignService): Promise<string> => {
+export const createCertificateQRData = (certData: EUDGC, certMetaData: CertificateMetaData, signService: SignService): Promise<string> => {
 
     let cbor = encodeCBOR(certData, certMetaData);
 
