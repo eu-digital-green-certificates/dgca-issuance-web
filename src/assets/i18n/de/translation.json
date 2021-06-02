@@ -43,7 +43,7 @@
   "def-sequence": "Anzahl der in einem Zyklus verabreichten Dosen (e.g. 2)",
   "tot": "Gesamtzahl der Dosen",
   "def-tot": "Anzahl der erwarteten Dosen für einen vollständigen Zyklus (z.B. 1)",
-  "vac-last-date": "Letzter Impfdatum",
+  "vac-last-date": "Letztes Impfdatum",
   "vac-country": "Land",
   "certificateIssuer": "Verwaltungszentrum",
   "adm": "Verwaltungzentrum",

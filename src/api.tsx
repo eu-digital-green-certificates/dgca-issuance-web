@@ -30,6 +30,7 @@ import VaccineManufacturers from './assets/json-res/vaccine-mah-manf.json';
 import Vaccines from './assets/json-res/vaccine-prophylaxis.json';
 import TestManufacturers from './assets/json-res/test-manf.json';
 import TestResult from './assets/json-res/test-result.json';
+import TestType from './assets/json-res/test-type.json';
 
 interface IValue {
     active: boolean,
@@ -114,6 +115,23 @@ export const useGetVaccines = () => {
     }, [])
     
     return vaccines;
+}
+
+// TestType
+export const useGetTestType = () => {
+
+    const [testType, setTestType] = React.useState<IValueSet>();
+
+    React.useEffect(() => {
+        // get object via api
+        // const testManufacturers = getApiData('/testManufacturers');
+
+        // get object via public
+        const testType = TestType.valueSetValues;
+        setTestType(testType);
+    }, [])
+
+    return testType;
 }
 
 // TestManufacturers

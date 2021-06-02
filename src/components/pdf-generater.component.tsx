@@ -35,7 +35,7 @@ import folding_instruction from '../assets/images/folding-instruction.png';
 import { EUDGC, RecoveryEntry, TestEntry, VaccinationEntry } from '../generated-files/dgc-combined-schema';
 import {
     useGetDiseaseAgents, useGetVaccineManufacturers, useGetVaccines,
-    useGetVaccinMedicalData, useGetTestManufacturers, useGetTestResult
+    useGetVaccinMedicalData, useGetTestManufacturers, useGetTestResult, useGetTestType
 } from '../api';
 import { getValueSetDisplay, convertDateToOutputFormat } from '../misc/ShowCertificateData';
 // import pdfParams from '../pdf-settings.json';
@@ -97,6 +97,7 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudgcProp: EUDGC | undefi
     const vaccines = useGetVaccines();
     const testManufacturersValueSet = useGetTestManufacturers();
     const testResultValueSet = useGetTestResult();
+    const testTypeValueSet = useGetTestType();
 
     //A4 210 x 297 mm or 2480 x 3508 pixels or 595 × 842 points
     //A6 105 x 74 mm or 1240 x 1748 pixels or 298 × 420 points
@@ -727,7 +728,7 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudgcProp: EUDGC | undefi
                     y = printVerticalBlock(x, y,
                         t('translation:pdfTypeOfTest'),
                         french.translation.pdfTypeOfTest,
-                        testSet.tt,
+                        getValueSetDisplay(testSet.tt, testTypeValueSet),
                         lineHeight, true);
 
                     y = printVerticalBlock(x, y,
@@ -804,7 +805,7 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudgcProp: EUDGC | undefi
             y = printVerticalBlockRotated(x, y,
                 t('translation:pdfTypeOfTest'),
                 french.translation.pdfTypeOfTest,
-                testSet.tt,
+                getValueSetDisplay(testSet.tt, testTypeValueSet),
                 lineHeight, true);
 
             y = printVerticalBlockRotated(x, y,
