@@ -3,9 +3,9 @@
 </h1>
 
 <p align="center">
-    <a href="/../../commits/" title="Last Commit"><img src="https://img.shields.io/github/last-commit/eu-digital-green-certificates/dgca-issuance-web?style=flat"></a>
-    <a href="/../../issues" title="Open Issues"><img src="https://img.shields.io/github/issues/eu-digital-green-certificates/dgca-issuance-web?style=flat"></a>
-    <a href="./LICENSE" title="License"><img src="https://img.shields.io/badge/License-Apache%202.0-green.svg?style=flat"></a>
+    <a href="/../../commits/" title="Last Commit"><img src=https://img.shields.io/github/last-commit/eu-digital-green-certificates/dgca-issuance-web?style=flat></a>
+    <a href="/../../issues" title="Open Issues"><img src=https://img.shields.io/github/issues/eu-digital-green-certificates/dgca-issuance-web?style=flat></a>
+    <a href="./LICENSE" title="License"><img src=https://img.shields.io/badge/License-Apache%202.0-green.svg?style=flat></a>
 </p>
 
 <p align="center">
@@ -46,6 +46,9 @@ $ cd dgca-issuance-web
 
 #### Starting the project (yarn)
 ```
+# Install yarn
+$ npm install -g yarn
+
 # Install dependencies
 $ yarn install
 
@@ -67,8 +70,8 @@ The following channels are available for discussions, feedback, and support requ
 
 | Type                     | Channel                                                |
 | ------------------------ | ------------------------------------------------------ |
-| **Issues**    | <a href="/../../issues" title="Open Issues"><img src="https://img.shields.io/github/issues/eu-digital-green-certificates/dgca-issuance-web?style=flat"></a>  |
-| **Other requests**    | <a href="mailto:opensource@telekom.de" title="Email DGC Team"><img src="https://img.shields.io/badge/email-DGC%20team-green?logo=mail.ru&style=flat-square&logoColor=white"></a>   |
+| **Issues**    | <a href="/../../issues" title="Open Issues"><img src=https://img.shields.io/github/issues/eu-digital-green-certificates/dgca-issuance-web?style=flat></a>  |
+| **Other requests**    | <a href=mailto:opensource@telekom.de title="Email DGC Team"><img src=https://img.shields.io/badge/email-DGC%20team-green?logo=mail.ru&style=flat-square&logoColor=white></a>   |
 
 ## How to contribute  
 
@@ -87,3 +90,23 @@ Licensed under the **Apache License, Version 2.0** (the "License"); you may not 
 You may obtain a copy of the License at https://www.apache.org/licenses/LICENSE-2.0.
 
 Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the [LICENSE](./LICENSE) for the specific language governing permissions and limitations under the License.
+
+
+
+Vielen Dank und beste Grüße
+Gordon Grund
+
+T-SYSTEMS INTERNATIONAL GMBH
+Digital Solutions
+Chapter Edge Computing & 5G
+Gordon Grund
+System Engineer
+Holzhauser Straße 4-8, 13509 Berlin (Hausanschrift) 
+Telefon: +49 30 8353 24240
+Mobil: +49 171 308 24 49 
+E-Mail: gordon.grund@t-systems.com
+Internet: http://www.t-systems.de
+Die gesetzlichen Pflichtangaben finden Sie unter: http://www.t-systems.de/pflichtangaben
+GROSSE VERÄNDERUNGEN FANGEN KLEIN AN – RESSOURCEN SCHONEN UND NICHT JEDE E-MAIL DRUCKEN. 
+Hinweis: Diese E-Mail und/oder die Anhänge sind vertraulich und ausschließlich für den bezeichneten Adressaten bestimmt. Die Weitergabe oder Kopieren dieser E-Mail ist strengstens verboten. Wenn Sie diese E-Mail irrtümlich erhalten haben, informieren Sie bitte unverzüglich den Absender und vernichten Sie die Nachricht und alle Anhänge. Vielen Dank
+
