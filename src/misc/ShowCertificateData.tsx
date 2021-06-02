@@ -3,7 +3,7 @@ import i18n from 'i18next'
 import { IValueSet } from '../api';
 import moment from 'moment';
 import utils from './utils';
-import { useGetDiseaseAgents, useGetVaccineManufacturers, useGetVaccines, useGetVaccinMedicalData, useGetTestManufacturers, useGetTestResult } from '../api';
+import { useGetDiseaseAgents, useGetVaccineManufacturers, useGetVaccines, useGetVaccinMedicalData, useGetTestManufacturers, useGetTestResult, useGetTestType } from '../api';
 import React from 'react';
 import { Card } from 'react-bootstrap';
 
@@ -28,6 +28,7 @@ export const ShowCertificateData = (props: any) => {
     const vaccines = useGetVaccines();
     const testManufacturersValueSet = useGetTestManufacturers();
     const testResultValueSet = useGetTestResult();
+    const testTypeValueSet = useGetTestType();
 
     const [eudgc, setEudgc] = React.useState<EUDGC>();
     const [vaccinationSet, setVaccinationSet] = React.useState<VaccinationEntry>();
@@ -124,7 +125,7 @@ export const ShowCertificateData = (props: any) => {
                 title: i18n.t('translation:test-data'),
                 entries: [
                     { label: i18n.t('translation:disease-agent'), data: getValueSetDisplay(testSet?.tg, diseaseAgentsData) || defaultString },
-                    { label: i18n.t('translation:testType'), data: testSet?.tt || defaultString },
+                    { label: i18n.t('translation:testType'), data: getValueSetDisplay(testSet?.tt, testTypeValueSet) || defaultString },
                     { label: i18n.t('translation:testName'), data: testSet?.nm || defaultString },
                     { label: i18n.t('translation:testManufacturers'), data: getValueSetDisplay(testSet?.ma, testManufacturersValueSet) || defaultString }
                 ]
