@@ -32,7 +32,7 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
 import { EUDGC, TestEntry } from '../generated-files/dgc-combined-schema';
-import { useGetDiseaseAgents, useGetTestManufacturers, useGetTestResult } from '../api';
+import { useGetDiseaseAgents, useGetTestManufacturers, useGetTestResult, useGetTestType } from '../api';
 
 import schema from '../generated-files/DGC.combined-schema.json';
 import { Validator } from 'jsonschema';
@@ -214,11 +214,11 @@ const RecordTestCertData = (props: any) => {
                             />
 
                             {/* testType input */}
-                            <FormGroupInput controlId='formTestTypeInput' title={t('translation:testType')}
+                            <FormGroupValueSetSelect controlId='formTestTypeInput' title={t('translation:testType')}
                                 value={testType}
                                 onChange={(evt: any) => setTestType(evt.target.value)}
                                 required
-                                maxLength={50}
+                                valueSet={useGetTestType}
                             />
 
                             {/* testName input */}
