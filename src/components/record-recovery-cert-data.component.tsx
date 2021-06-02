@@ -138,6 +138,11 @@ const RecordRecoveryCertData = (props: any) => {
 
         if (form.checkValidity()) {
 
+            if( dateValidFrom && dateValidTo &&
+                (dateValidTo.getTime() > (dateValidFrom.getTime() + expirationMilSeconds)) ) {
+                //TODO: Fehlermeldung + Springe in das Feld Datum bis    
+            }
+
             const r: RecoveryEntry = {
                 tg: disease,
                 fr: firstPositiveResultDate!.toISOString().split('T')[0],
@@ -265,8 +270,8 @@ const RecordRecoveryCertData = (props: any) => {
                                         showYearDropdown
                                         dropdownMode="select"
                                         //TODO: possibly calculate dat min and max
-                                        maxDate={dateValidTo ? dateValidTo : new Date()}
-                                        minDate={dateValidTo ? new Date(dateValidTo.getTime() - expirationMilSeconds) : new Date(Date.now() - expirationMilSeconds)}
+                                        maxDate={dateValidTo ? (dateValidTo.getTime() > Date.now()) ?  new Date() : dateValidTo : new Date() }
+                                        minDate={new Date(Date.now() - expirationMilSeconds)}
                                         openToDate={new Date()}
                                         required
                                     />
@@ -284,7 +289,7 @@ const RecordRecoveryCertData = (props: any) => {
                                         dropdownMode="select"
                                         //TODO: calculate date min and max
                                         maxDate={dateValidFrom ? new Date(dateValidFrom.getTime() + expirationMilSeconds) : new Date(Date.now() + expirationMilSeconds)}
-                                        minDate={dateValidFrom ? dateValidFrom : new Date()}
+                                        minDate={new Date()}
                                         openToDate={new Date()}
                                         required
                                     />
