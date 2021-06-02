@@ -33,7 +33,7 @@
   "record-recovery-cert-dat": "Genesungszertifikat erstellen",
   "vaccination-cert": "Impfpass erstellen",
   "test-cert": "Testzertifikat erstellen",
-  "disease-agent": "Krankheit/Erreger gezielt",
+  "disease-agent": "Krankheit/Erreger",
   "def-disease-agent": "Krankheit oder Erreger (z.B. 840539006)",
   "vaccine": "Impfstoff/Prophylaxe",
   "vac-medical-product": "Impfstoff/Arzneimittel",
