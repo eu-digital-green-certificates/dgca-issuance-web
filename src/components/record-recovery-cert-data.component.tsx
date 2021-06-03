@@ -61,7 +61,6 @@ const RecordRecoveryCertData = (props: any) => {
     const [dateValidFrom, setDateValidFrom] = React.useState<Date>();
     const [dateValidTo, setDateValidTo] = React.useState<Date>();
 
-
     React.useEffect(() => {
         if (!props.eudgc || !props.eudgc.r || !props.eudgc.r[0]) {
             return;
@@ -264,10 +263,9 @@ const RecordRecoveryCertData = (props: any) => {
                                         showMonthDropdown
                                         showYearDropdown
                                         dropdownMode="select"
-                                        //TODO: possibly calculate dat min and max
-                                        maxDate={dateValidTo ? dateValidTo : new Date()}
+                                        maxDate={new Date()}
                                         minDate={dateValidTo ? new Date(dateValidTo.getTime() - expirationMilSeconds) : new Date(Date.now() - expirationMilSeconds)}
-                                        openToDate={new Date()}
+                                        openToDate={dateValidFrom ? dateValidFrom : new Date()}
                                         required
                                     />
                                     <span className='space-five'>{'-'}</span>
@@ -282,10 +280,9 @@ const RecordRecoveryCertData = (props: any) => {
                                         showMonthDropdown
                                         showYearDropdown
                                         dropdownMode="select"
-                                        //TODO: calculate date min and max
                                         maxDate={dateValidFrom ? new Date(dateValidFrom.getTime() + expirationMilSeconds) : new Date(Date.now() + expirationMilSeconds)}
-                                        minDate={dateValidFrom ? dateValidFrom : new Date()}
-                                        openToDate={new Date()}
+                                        minDate={new Date()}
+                                        openToDate={dateValidTo ? dateValidTo : new Date()}
                                         required
                                     />
                                 </Col>
