@@ -27,6 +27,10 @@ import zlib from 'browserify-zlib'
 import { EUDGC } from '../generated-files/dgc-combined-schema';
 
 const edgcPrefix = 'HC1:'
+// one year
+const vac_expire_in = 60 * 60 * 24 * 365;
+// 3 days
+const tst_expire_in = 60 * 60 * 24 * 3;
 
 export interface CertificateMetaData {
     id: number,
@@ -64,8 +68,18 @@ const encodeCBOR = (certData: EUDGC, certMetaData: CertificateMetaData): Buffer 
 const getExpiration = (certData: EUDGC, certMetaData: CertificateMetaData) => {
     let result = certMetaData.expired;
 
-    if (certData && certData.r && certData.r[0]) {
-        result = new Date(certData.r[0].du).getTime() / 1000 | 0;
+    if (certData) {
+        if (certData.r && certData.r[0] && certData.r[0].du) {
+            result = new Date(certData.r[0].du).getTime() / 1000 | 0;
+        }
+
+        if (certData.v && certData.v[0] && certData.v[0].dt) {
+            result = new Date(certData.v[0].dt).getTime() / 1000 + vac_expire_in;
+        }
+
+        if (certData.t && certData.t[0] && certData.t[0].sc) {
+            result = new Date(certData.t[0].sc).getTime() / 1000 + tst_expire_in;
+        }
     }
 
     return result;

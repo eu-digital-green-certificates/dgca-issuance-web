@@ -223,8 +223,8 @@ const RecordRecoveryCertData = (props: any) => {
                                         showYearDropdown
                                         dropdownMode="select"
                                         maxDate={new Date()}
-                                        minDate={new Date(2020, 10)}
-                                        openToDate={new Date()}
+                                        minDate={new Date(Date.now() - expirationMilSeconds)}
+                                        openToDate={dateValidFrom ? dateValidFrom : new Date()}
                                         required
                                     />
                                 </Col>
@@ -248,7 +248,7 @@ const RecordRecoveryCertData = (props: any) => {
                             />
 
                             {/* Date: Certificate Valid From - To */}
-                            <Form.Group as={Row} controlId='formDateOfBirthInput' className='pb-3 mb-0'>
+                            <Form.Group as={Row} controlId='formDateValidFromToInput' className='pb-3 mb-0'>
                                 <Form.Label className='input-label ' column xs='5' sm='3'>{t('translation:cert-valid-from-to') + '*'}</Form.Label>
 
                                 <Col xs='7' sm='9' className='d-flex'>
