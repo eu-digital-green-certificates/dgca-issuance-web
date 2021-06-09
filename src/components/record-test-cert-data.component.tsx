@@ -254,7 +254,10 @@ const RecordTestCertData = (props: any) => {
                                         showTimeSelect
                                         dropdownMode="select"
                                         minDate={new Date(2020, 10)}
-                                        openToDate={new Date()}
+                                        minTime={new Date(2020, 10)}
+                                        openToDate={sampleDateTime ? sampleDateTime : new Date()}
+                                        maxDate={new Date()}
+                                        maxTime={sampleDateTime == testDateTime ? testDateTime : new Date()}
                                         required
                                     />
                                 </Col>
@@ -276,8 +279,11 @@ const RecordTestCertData = (props: any) => {
                                         showYearDropdown
                                         showTimeSelect
                                         dropdownMode="select"
-                                        minDate={new Date(2020, 10)}
-                                        openToDate={new Date()}
+                                        minDate={sampleDateTime ? sampleDateTime : new Date(2020, 10)}
+                                        minTime={sampleDateTime ? sampleDateTime : new Date(2020, 10)}
+                                        maxTime={new Date()}
+                                        maxDate={new Date()}
+                                        openToDate={testDateTime ? testDateTime : new Date()}
                                     />
                                 </Col>
                             </Form.Group>
