@@ -31,14 +31,13 @@ import Vaccines from './assets/json-res/vaccine-prophylaxis.json';
 import TestManufacturers from './assets/json-res/test-manf.json';
 import TestResult from './assets/json-res/test-result.json';
 import TestType from './assets/json-res/test-type.json';
-import DateFormats from './assets/json-res/dob-formats.json';
 
 interface IValue {
-    active?: boolean,
+    active: boolean,
     display: string,
-    lang?: string,
-    system?: string,
-    version?: string
+    lang: string,
+    system: string,
+    version: string
     valueSetId?: string,
 }
 
@@ -48,11 +47,17 @@ export interface IValueSet {
 
 // Date of Birth Formats
 export const useGetDateFormats = () => {
-    const [dateFormats, setDateFormats] = React.useState<IValueSet>();
-    React.useEffect(() => {
-        const dateFormatsData = DateFormats.valueSetValues;
-        setDateFormats(dateFormatsData);
-    }, [])
+    const [dateFormats] = React.useState({
+        "yyyy-MM-dd": {
+            "display": "full date (yyyy-MM-dd)"
+        },
+        "yyyy-MM": {
+            "display": "no day (yyyy-MM)"
+        },
+        "yyyy": {
+            "display": "year only (yyyy)"
+        }
+    });
     return dateFormats
 }
 
@@ -88,7 +93,7 @@ export const useGetDiseaseAgents = () => {
         const diseaseAgentsData = DiseaseAgents.valueSetValues;
         setDiseaseAgents(diseaseAgentsData);
     }, [])
-    
+
     return diseaseAgents;
 }
 
@@ -124,7 +129,7 @@ export const useGetVaccines = () => {
         const vaccinesData = Vaccines.valueSetValues;
         setVaccines(vaccinesData);
     }, [])
-    
+
     return vaccines;
 }
 
