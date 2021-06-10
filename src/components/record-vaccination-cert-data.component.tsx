@@ -156,7 +156,7 @@ const RecordVaccinationCertData = (props: any) => {
                     gnt: person!.standardisedGivenName
                 },
                 dob: moment(person!.dateOfBirth!)
-                    .format(person!.dobFormat === 'yyyy-MM-dd' ? 'yyyy-MM-DD' : person!.dobFormat), // translates day into moment format
+                    .format(person!.dobFormat === 'yyyy-MM-dd' ? 'yyyy-MM-DD' : person!.dobFormat),
                 v: [vacc]
             }
 
