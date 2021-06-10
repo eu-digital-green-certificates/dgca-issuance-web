@@ -31,18 +31,29 @@ import Vaccines from './assets/json-res/vaccine-prophylaxis.json';
 import TestManufacturers from './assets/json-res/test-manf.json';
 import TestResult from './assets/json-res/test-result.json';
 import TestType from './assets/json-res/test-type.json';
+import DateFormats from './assets/json-res/dob-formats.json';
 
 interface IValue {
-    active: boolean,
+    active?: boolean,
     display: string,
-    lang: string,
-    system: string,
-    version: string
+    lang?: string,
+    system?: string,
+    version?: string
     valueSetId?: string,
 }
 
 export interface IValueSet {
     [key: string]: IValue;
+}
+
+// Date of Birth Formats
+export const useGetDateFormats = () => {
+    const [dateFormats, setDateFormats] = React.useState<IValueSet>();
+    React.useEffect(() => {
+        const dateFormatsData = DateFormats.valueSetValues;
+        setDateFormats(dateFormatsData);
+    }, [])
+    return dateFormats
 }
 
 

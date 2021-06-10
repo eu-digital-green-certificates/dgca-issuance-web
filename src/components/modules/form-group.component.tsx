@@ -8,7 +8,7 @@ import utils from "../../misc/utils";
 import DatePicker from "react-datepicker";
 // import { registerLocale } from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { IValueSet } from "../../api";
+import { IValueSet, useGetDateFormats } from "../../api";
 
 const iso3311a2 = require('iso-3166-1-alpha-2');
 
@@ -97,8 +97,8 @@ export const FormGroupISOCountrySelect = (props: any) => {
         const options: JSX.Element[] = [];
         // const codes: string[] = iso3311a2.getCodes().sort();
         const eu_country_codes: string[] = ["AT", "BE", "BG", "HR", "CY", "CZ", "DK", "EE", "FI", "FR",
-                                    "DE", "GR", "HU", "IE", "IT", "LV", "LT", "LU", "MT", "NL", "PL",
-                                    "PT", "RO", "SK", "SI", "ES", "SE"].sort();
+            "DE", "GR", "HU", "IE", "IT", "LV", "LT", "LU", "MT", "NL", "PL",
+            "PT", "RO", "SK", "SI", "ES", "SE"].sort();
 
         for (const code of eu_country_codes) {
             options.push(<option key={code} value={code}>{code + " : " + iso3311a2.getCountry(code)}</option>)
@@ -246,12 +246,20 @@ export const PersonInputs = (props: any) => {
 
                 <hr />
 
+                {/* date of birth format */}
+                <FormGroupValueSetSelect title={"Date of Birth Format"}
+                    value={dateFormat}
+                    onChange={(evt: any) => setDateFormat(evt.target.value)}
+                    valueSet={useGetDateFormats}
+                    required
+                />
+
+
                 {/* date of birth input */}
                 <Form.Group as={Row} controlId='formDateOfBirthInput' className='pb-3 mb-0'>
                     <Form.Label className='input-label ' column xs='5' sm='3'>{t('translation:date-of-birth') + '*'}</Form.Label>
 
                     <Col xs='7' sm='9' className='d-flex'>
-                        <input type="text" value={dateFormat} onChange={(e) => setDateFormat(e.target.value)} />
                         <DatePicker
                             selected={dateOfBirth}
                             onChange={handleDateOfBirthChange}
