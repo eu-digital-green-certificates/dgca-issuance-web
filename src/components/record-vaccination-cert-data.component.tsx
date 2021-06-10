@@ -40,6 +40,7 @@ import { Validator } from 'jsonschema';
 import CardHeader from './modules/card-header.component';
 import { PersonInputs, IPersonData, FormGroupInput, FormGroupValueSetSelect, FormGroupISOCountrySelect } from './modules/form-group.component';
 import CardFooter from './modules/card-footer.component';
+import moment from 'moment';
 
 const validator = new Validator();
 
@@ -154,7 +155,8 @@ const RecordVaccinationCertData = (props: any) => {
                     gn: person!.givenName,
                     gnt: person!.standardisedGivenName
                 },
-                dob: person!.dateOfBirth!.toISOString().split('T')[0],
+                dob: moment(person!.dateOfBirth!)
+                    .format(person!.dobFormat === 'yyyy-MM-dd' ? 'yyyy-MM-DD' : person!.dobFormat), // translates day into moment format
                 v: [vacc]
             }
 
@@ -246,7 +248,7 @@ const RecordVaccinationCertData = (props: any) => {
                             />
 
                             {/* vacLastDate */}
-                            <Form.Group as={Row} controlId='formLastDateInput'className='pb-3 mb-0'>
+                            <Form.Group as={Row} controlId='formLastDateInput' className='pb-3 mb-0'>
                                 <Form.Label className='input-label ' column xs='5' sm='3'>{t('translation:vac-last-date') + '*'}</Form.Label>
 
                                 <Col xs='7' sm='9' className='d-flex'>

@@ -19,6 +19,7 @@ export interface IPersonData {
     standardisedGivenName?: string;
     standardisedFamilyName: string;
     dateOfBirth: Date | undefined;
+    dobFormat: string;
 }
 
 export const FormGroupInput = (props: any) => {
@@ -139,7 +140,7 @@ export const PersonInputs = (props: any) => {
     const [standardisedFamilyName, setStandardisedFamilyName] = React.useState<string>('');
 
     const [dateOfBirth, setDateOfBirth] = React.useState<Date>();
-
+    const [dateFormat, setDateFormat] = React.useState('yyyy-MM-dd');
 
     React.useEffect(() => {
         if (props && props.eudgc && props.eudgc.nam) {
@@ -169,7 +170,8 @@ export const PersonInputs = (props: any) => {
             familyName: familyName ? familyName : undefined,
             standardisedGivenName: standardisedGivenName ? standardisedGivenName : undefined,
             standardisedFamilyName: standardisedFamilyName,
-            dateOfBirth: dateOfBirth
+            dateOfBirth: dateOfBirth,
+            dobFormat: dateFormat
         }
 
         props.onChange(result);
@@ -249,10 +251,11 @@ export const PersonInputs = (props: any) => {
                     <Form.Label className='input-label ' column xs='5' sm='3'>{t('translation:date-of-birth') + '*'}</Form.Label>
 
                     <Col xs='7' sm='9' className='d-flex'>
+                        <input type="text" value={dateFormat} onChange={(e) => setDateFormat(e.target.value)} />
                         <DatePicker
                             selected={dateOfBirth}
                             onChange={handleDateOfBirthChange}
-                            dateFormat={utils.pickerDateFormat}
+                            dateFormat={dateFormat}
                             isClearable
                             placeholderText={t('translation:date-of-birth')}
                             className='qt-input form-control'
