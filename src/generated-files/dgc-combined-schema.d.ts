@@ -6,64 +6,74 @@
  */
 
 /**
- * Version of the schema, according to Semantic versioning (ISO, https://semver.org/ version 2.0.0 or newer)
+ * EU Digital Covid Certificate
  */
-export type SchemaVersion = string;
-/**
- * The family or primary name(s) of the person addressed in the certificate
- */
-export type FamilyName = string;
-/**
- * The family name(s) of the person transliterated
- */
-export type StandardisedFamilyName = string;
-/**
- * The given name(s) of the person addressed in the certificate
- */
-export type GivenName = string;
-/**
- * The given name(s) of the person transliterated
- */
-export type StandardisedGivenName = string;
-/**
- * Date of Birth of the person addressed in the DGC. ISO 8601 date format restricted to range 1900-2099
- */
-export type DateOfBirth = string;
-/**
- * EU eHealthNetwork: Value Sets for Digital Green Certificates. version 1.0, 2021-04-16, section 2.1
- */
-export type DiseaseAgentTargeted = string;
-
-/**
- * EU Digital Green Certificate
- */
-export interface EUDGC {
+export type EUDCC = {
   ver: SchemaVersion;
   /**
    * Surname(s), given name(s) - in that order
    */
   nam: {
-    fn?: FamilyName;
-    fnt: StandardisedFamilyName;
-    gn?: GivenName;
-    gnt?: StandardisedGivenName;
+    fn?: Surname;
+    fnt: StandardisedSurname;
+    gn?: Forename;
+    gnt?: StandardisedForename;
     [k: string]: unknown;
   };
   dob: DateOfBirth;
-  /**
-   * Vaccination Group
-   */
-  v?: [VaccinationEntry, ...VaccinationEntry[]];
-  /**
-   * Test Group
-   */
-  t?: [TestEntry, ...TestEntry[]];
-  /**
-   * Recovery Group
-   */
-  r?: [RecoveryEntry, ...RecoveryEntry[]];
   [k: string]: unknown;
-}
+} & (
+  | {
+      /**
+       * Vaccination Group
+       */
+      v: [VaccinationEntry];
+      [k: string]: unknown;
+    }
+  | {
+      /**
+       * Test Group
+       */
+      t: [TestEntry];
+      [k: string]: unknown;
+    }
+  | {
+      /**
+       * Recovery Group
+       */
+      r: [RecoveryEntry];
+      [k: string]: unknown;
+    }
+);
+/**
+ * Version of the schema, according to Semantic versioning (ISO, https://semver.org/ version 2.0.0 or newer)
+ */
+export type SchemaVersion = string;
+/**
+ * The surname or primary name(s) of the person addressed in the certificate
+ */
+export type Surname = string;
+/**
+ * The surname(s) of the person, transliterated ICAO 9303
+ */
+export type StandardisedSurname = string;
+/**
+ * The forename(s) of the person addressed in the certificate
+ */
+export type Forename = string;
+/**
+ * The forename(s) of the person, transliterated ICAO 9303
+ */
+export type StandardisedForename = string;
+/**
+ * Date of Birth of the person addressed in the DCC. ISO 8601 date format restricted to range 1900-2099
+ */
+export type DateOfBirth = string;
+/**
+ * EU eHealthNetwork: Value Sets for Digital Covid Certificates. version 1.0, 2021-04-16, section 2.1
+ */
+export type DiseaseAgentTargeted = string;
+
 /**
  * Vaccination Entry
  */
@@ -93,7 +103,7 @@ export interface VaccinationEntry {
    */
   sd: number;
   /**
-   * Date of Vaccination
+   * ISO8601 complete date: Date of Vaccination
    */
   dt: string;
   /**
@@ -132,10 +142,6 @@ export interface TestEntry {
    */
   sc: string;
   /**
-   * Date/Time of Test Result
-   */
-  dr?: string;
-  /**
    * Test Result
    */
   tr: string;
@@ -163,7 +169,7 @@ export interface TestEntry {
 export interface RecoveryEntry {
   tg: DiseaseAgentTargeted;
   /**
-   * ISO 8601 Date of First Positive Test Result
+   * ISO 8601 complete date of first positive NAA test result
    */
   fr: string;
   /**
@@ -175,11 +181,11 @@ export interface RecoveryEntry {
    */
   is: string;
   /**
-   * ISO 8601 Date: Certificate Valid From
+   * ISO 8601 complete date: Certificate Valid From
    */
   df: string;
   /**
-   * Certificate Valid Until
+   * ISO 8601 complete date: Certificate Valid Until
    */
   du: string;
   /**

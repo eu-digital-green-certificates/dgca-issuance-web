@@ -32,7 +32,7 @@ import Spinner from './spinner/spinner.component';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
-import { EUDGC, VaccinationEntry } from '../generated-files/dgc-combined-schema';
+import { EUDCC, VaccinationEntry } from '../generated-files/dgc-combined-schema';
 import { useGetDiseaseAgents, useGetVaccineManufacturers, useGetVaccines, useGetVaccinMedicalData } from '../api';
 
 import schema from '../generated-files/DGC.combined-schema.json';
@@ -146,8 +146,8 @@ const RecordVaccinationCertData = (props: any) => {
                 ci: ''
             };
 
-            const eudgc: EUDGC = {
-                ver: '1.0.0',
+            const eudgc: EUDCC = {
+                ver: '1.3.0',
                 nam: {
                     fn: person!.familyName,
                     fnt: person!.standardisedFamilyName!,
@@ -158,18 +158,23 @@ const RecordVaccinationCertData = (props: any) => {
                 v: [vacc]
             }
 
-            var result = validator.validate(eudgc, schema);
+            // console.log(JSON.stringify(eudgc));
+            // let vac = eudgc.v[0];
+            // console.log(vac);
+            // console.log(vac.tg);
 
-            if (result.valid) {
-                // console.log(JSON.stringify(eudgc));
+            // var result = validator.validate(eudgc, schema);
+
+            // if (result.valid) {
+            //     // console.log(JSON.stringify(eudgc));
 
                 props.setEudgc(eudgc);
                 setTimeout(navigation!.toShowCert, 200);
-            }
-            else {
-                console.error(result);
-                props.setError({ error: result, message: result.errors[0].message, onCancel: navigation!.toLanding });
-            }
+            // }
+            // else {
+            //     console.error(result);
+            //     props.setError({ error: result, message: result.errors[0].message, onCancel: navigation!.toLanding });
+            // }
         }
     }
 

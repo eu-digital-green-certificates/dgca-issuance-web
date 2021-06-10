@@ -21,7 +21,7 @@
 
 import { createCertificateQRData, CertificateMetaData } from '../misc/edgcProcessor'
 import axios from 'axios';
-import { EUDGC } from '../generated-files/dgc-combined-schema';
+import { EUDCC, RecoveryEntry, TestEntry, VaccinationEntry } from '../generated-files/dgc-combined-schema';
 
 const api = axios.create({
     baseURL: '',
@@ -62,25 +62,32 @@ const signerCall = (id: string, hash: string): Promise<SigResponse> => {
         });
 }
 
-const setDgci = (dgcPayload: EUDGC, dgci: string) => {
-    if (dgcPayload.v) {
-        for (let vac of dgcPayload.v) {
-            vac.ci = dgci;  
+const setDgci = (dgcPayload: EUDCC, dgci: string) => {
+    if (dgcPayload) {
+
+        const vacc: [VaccinationEntry] = dgcPayload.v as [VaccinationEntry];
+        const test: [TestEntry] = dgcPayload.t as [TestEntry];
+        const recovery: [RecoveryEntry] = dgcPayload.r as [RecoveryEntry];
+
+        if (dgcPayload.v) {
+            for (let vac of vacc) {
+                vac.ci = dgci;
+            }
         }
-    }
-    if (dgcPayload.r) {
-        for (let recovery of dgcPayload.r) {
-            recovery.ci = dgci;  
+        if (dgcPayload.r) {
+            for (let rec of recovery) {
+                rec.ci = dgci;
+            }
         }
-    }
-    if (dgcPayload.t) {
-        for (let test of dgcPayload.t) {
-            test.ci = dgci;  
+        if (dgcPayload.t) {
+            for (let tst of test) {
+                tst.ci = dgci;
+            }
         }
     }
 }
 
-const getEdgcType = (edgcPayload: EUDGC) : CertType => {
+const getEdgcType = (edgcPayload: EUDCC): CertType => {
     return edgcPayload.r ? CertType.Recovery
         : edgcPayload.t
             ? CertType.Test
@@ -88,7 +95,7 @@ const getEdgcType = (edgcPayload: EUDGC) : CertType => {
 }
 
 
-const generateQRCode = (edgcPayload: EUDGC): Promise<CertResult> => {
+const generateQRCode = (edgcPayload: EUDCC): Promise<CertResult> => {
     const certInit: CertificateInit = {
         greenCertificateType: getEdgcType(edgcPayload)
     }

@@ -32,7 +32,7 @@ import Spinner from './spinner/spinner.component';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
-import { EUDGC, RecoveryEntry } from '../generated-files/dgc-combined-schema';
+import { EUDCC, RecoveryEntry } from '../generated-files/dgc-combined-schema';
 import { useGetDiseaseAgents } from '../api';
 
 import schema from '../generated-files/DGC.combined-schema.json';
@@ -147,8 +147,8 @@ const RecordRecoveryCertData = (props: any) => {
                 ci: ''
             };
 
-            const eudgc: EUDGC = {
-                ver: '1.0.0',
+            const eudgc: EUDCC = {
+                ver: '1.3.0',
                 nam: {
                     fn: person!.familyName,
                     fnt: person!.standardisedFamilyName!,
@@ -159,18 +159,18 @@ const RecordRecoveryCertData = (props: any) => {
                 r: [r]
             }
 
-            var result = validator.validate(eudgc, schema);
+            // var result = validator.validate(eudgc, schema);
 
-            if (result.valid) {
-                //console.log(JSON.stringify(eudgc));
+            // if (result.valid) {
+            //     //console.log(JSON.stringify(eudgc));
 
                 props.setEudgc(eudgc);
                 setTimeout(navigation!.toShowCert, 200);
-            }
-            else {
-                console.error(result);
-                props.setError({ error: result, message: result.errors[0].message, onCancel: navigation!.toLanding });
-            }
+            // }
+            // else {
+            //     console.error(result);
+            //     props.setError({ error: result, message: result.errors[0].message, onCancel: navigation!.toLanding });
+            // }
         }
     }
 
