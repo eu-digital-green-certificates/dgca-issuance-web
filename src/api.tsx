@@ -31,6 +31,7 @@ import Vaccines from './assets/json-res/vaccine-prophylaxis.json';
 import TestManufacturers from './assets/json-res/test-manf.json';
 import TestResult from './assets/json-res/test-result.json';
 import TestType from './assets/json-res/test-type.json';
+import { useTranslation } from 'react-i18next';
 
 interface IValue {
     active: boolean,
@@ -47,15 +48,16 @@ export interface IValueSet {
 
 // Date of Birth Formats
 export const useGetDateFormats = () => {
+    const {t} = useTranslation();
     const [dateFormats] = React.useState({
         "yyyy-MM-dd": {
-            "display": "full date (yyyy-MM-dd)"
+            "display": t('translation:date-full')
         },
         "yyyy-MM": {
-            "display": "no day (yyyy-MM)"
+            "display": t('translation:date-no-day')
         },
         "yyyy": {
-            "display": "year only (yyyy)"
+            "display": t('translation:date-year')
         }
     });
     return dateFormats

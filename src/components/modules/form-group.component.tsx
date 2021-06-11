@@ -247,7 +247,7 @@ export const PersonInputs = (props: any) => {
                 <hr />
 
                 {/* date of birth format */}
-                <FormGroupValueSetSelect title={"Date of Birth Format"}
+                <FormGroupValueSetSelect title={t('translation:date-of-birth-format')}
                     value={dateFormat}
                     onChange={(evt: any) => setDateFormat(evt.target.value)}
                     valueSet={useGetDateFormats}
