@@ -163,18 +163,18 @@ const RecordVaccinationCertData = (props: any) => {
             // console.log(vac);
             // console.log(vac.tg);
 
-            // var result = validator.validate(eudgc, schema);
+            var result = validator.validate(eudgc, schema);
 
-            // if (result.valid) {
-            //     // console.log(JSON.stringify(eudgc));
+            if (result.valid) {
+                // console.log(JSON.stringify(eudgc));
 
                 props.setEudgc(eudgc);
                 setTimeout(navigation!.toShowCert, 200);
-            // }
-            // else {
-            //     console.error(result);
-            //     props.setError({ error: result, message: result.errors[0].message, onCancel: navigation!.toLanding });
-            // }
+            }
+            else {
+                console.error(result);
+                props.setError({ error: result, message: result.errors[0].message, onCancel: navigation!.toLanding });
+            }
         }
     }
 
