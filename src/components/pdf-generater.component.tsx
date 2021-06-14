@@ -750,12 +750,6 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudgcProp: EUDGC | undefi
                         lineHeight, true);
 
                     y = printVerticalBlock(x, y,
-                        t('translation:pdfDateTestResult'),
-                        french.translation.pdfDateTestResult,
-                        testSet.dr ? convertDateToOutputFormat(testSet.dr) : '',
-                        lineHeight, true);
-
-                    y = printVerticalBlock(x, y,
                         t('translation:pdfTestResult'),
                         french.translation.pdfTestResult,
                         getValueSetDisplay(testSet.tr, testResultValueSet),
@@ -824,12 +818,6 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudgcProp: EUDGC | undefi
                 t('translation:pdfDateSampleCollection'),
                 french.translation.pdfDateSampleCollection,
                 convertDateToOutputFormat(testSet.sc),
-                lineHeight, true);
-
-            y = printVerticalBlockRotated(x, y,
-                t('translation:pdfDateTestResult'),
-                french.translation.pdfDateTestResult,
-                convertDateToOutputFormat(testSet.dr ? testSet.dr : ' '),
                 lineHeight, true);
 
             y = printVerticalBlockRotated(x, y,

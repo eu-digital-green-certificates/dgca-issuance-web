@@ -17,13 +17,12 @@
     "pdfTestName" : "Nom du test (facultatif pour un test TAAN)",
     "pdfTestManufacturer" : "Fabricant du test (facultatif pour un test TAAN)",
     "pdfDateSampleCollection" : "Date et heure du prélèvement de l’échantillon",
-    "pdfDateTestResult" : "Date et heure de la production des résultats du test",
     "pdfTestResult" : "Résultat du test",
-    "pdfTestingCentre" : "Centre ou installation de test",
-    "pdfStateOfVaccination" : "État membre de vaccination",
+    "pdfTestingCentre" : "Centre ou installation de test (facultatif pour les tests rapides de détection d’antigènes)",
+    "pdfStateOfVaccination" : "État membre dans lequel le test a été effectué",
     "pdfHeaderRecovery" : "Certificat de rétablissement",
-    "pdfDatePositiveTestResult" : "Date du premier résultat de test posifif",
-    "pdfStateOfTest" : "État membre du test",
+    "pdfDatePositiveTestResult" : "Date du premier résultat de test TAAN positif du titulaire",
+    "pdfStateOfTest" : "état membre du test dans lequel le test a été effectué",
     "pdfValidFrom" : "Certificat valable à partir du",
     "pdfValidTo" : "Certificat valable jusqu’au (180 jours au maximum après la date du premier résultat positif)"
 }
