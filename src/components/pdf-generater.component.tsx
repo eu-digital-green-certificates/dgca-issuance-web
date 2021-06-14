@@ -269,41 +269,41 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudgcProp: EUDGC | undefi
 
     const printDottedLine = () => {
         if (pdf) {
-            // pdf.setPage(1);
-            // let curX = 0;
-            // let curY = 0;
-            // let deltaX = mm2point(10);
-            // let deltaY = mm2point(10);
+            pdf.setPage(1);
+            let curX = 0;
+            let curY = 0;
+            let deltaX = mm2point(10);
+            let deltaY = mm2point(10);
 
-            // pdf.line(curX, params.a6height, curX + deltaX, params.a6height);
-            // pdf.line(params.a6width * 2 - curX, params.a6height, params.a6width * 2 - curX - deltaX, params.a6height);
+            pdf.line(curX, params.a6height, curX + deltaX, params.a6height);
+            pdf.line(params.a6width * 2 - curX, params.a6height, params.a6width * 2 - curX - deltaX, params.a6height);
 
-            // pdf.line(params.a6width, curY, params.a6width, curY + deltaY);
-            // pdf.line(params.a6width, params.a6height * 2 - deltaY, params.a6width, params.a6height * 2);
+            pdf.line(params.a6width, curY, params.a6width, curY + deltaY);
+            pdf.line(params.a6width, params.a6height * 2 - deltaY, params.a6width, params.a6height * 2);
 
-            // pdf.line(params.a6width, params.a6height - deltaY / 2, params.a6width, params.a6height + deltaY / 2);
-            // pdf.line(params.a6width - deltaX / 2, params.a6height, params.a6width + deltaX / 2, params.a6height);
+            pdf.line(params.a6width, params.a6height - deltaY / 2, params.a6width, params.a6height + deltaY / 2);
+            pdf.line(params.a6width - deltaX / 2, params.a6height, params.a6width + deltaX / 2, params.a6height);
 
-            for (let page = 1; page < 3; page++) {
-                pdf.setPage(page)
-                let curX = 0 + params.marginLeft;
-                let curY = params.a6height;
-                let xTo = params.a6width * 2 - params.marginRight;
-                let deltaX = 3;
-                let deltaY = 3;
-                while (curX <= xTo) {
-                    pdf.line(curX, curY, curX + deltaX, curY);
-                    curX += 2 * deltaX;
-                }
+            // for (let page = 1; page < 3; page++) {
+            //     pdf.setPage(page)
+            //     let curX = 0 + params.marginLeft;
+            //     let curY = params.a6height;
+            //     let xTo = params.a6width * 2 - params.marginRight;
+            //     let deltaX = 3;
+            //     let deltaY = 3;
+            //     while (curX <= xTo) {
+            //         pdf.line(curX, curY, curX + deltaX, curY);
+            //         curX += 2 * deltaX;
+            //     }
 
-                curX = params.a6width;
-                curY = 0 + params.marginTop;
-                let yTo = params.a6height * 2 - params.marginBottom;
-                while (curY <= yTo) {
-                    pdf.line(curX, curY, curX, curY + deltaY);
-                    curY += 2 * deltaY;
-                }
-            }
+            //     curX = params.a6width;
+            //     curY = 0 + params.marginTop;
+            //     let yTo = params.a6height * 2 - params.marginBottom;
+            //     while (curY <= yTo) {
+            //         pdf.line(curX, curY, curX, curY + deltaY);
+            //         curY += 2 * deltaY;
+            //     }
+            // }
         }
     }
 
@@ -444,8 +444,6 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudgcProp: EUDGC | undefi
 
     const prepareThirdPage = () => {
         if (pdf) {
-
-
             for (let page = 1; page < 3; page++) {
                 pdf.setPage(page);
                 if (page === 1) {
@@ -479,7 +477,7 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudgcProp: EUDGC | undefi
                     pdf.setFontSize(params.fontSize8);
                     let infotext = t('translation:pdfInfoText');
                     infotext = pdf.splitTextToSize(infotext, params.a6width - params.paddingLeft - params.paddingRight);
-                    justify(pdf, t('translation:pdfInfoText'), x, y, params.a6width - params.paddingLeft - params.paddingRight)
+                    justify(pdf, t('translation:pdfInfoText'), x, y, params.a6width - params.paddingLeft - params.paddingRight);
                     // pdf.text(infotext, x, y, { align: 'justify', maxWidth: params.a6width - params.paddingLeft - params.paddingRight });
 
                     y += mm2point(2) + params.lineHeight9 * infotext.length;
@@ -528,18 +526,24 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudgcProp: EUDGC | undefi
             x = params.a6width * 2;
             y = centerSplittedText(header, x, y);
 
-            y -= mm2point(40);
+            y -= mm2point(50);
             setTextColorBlack();
             pdf.setFont('arial', 'normal');
             pdf.setFontSize(params.fontSize8);
             let infotext = t('translation:pdfInfoText');
             infotext = pdf.splitTextToSize(infotext, lblLength);
-            y = centerSplittedText(infotext, x, y);
+            justify(pdf,
+                t('translation:pdfInfoText'),
+                x - params.paddingRight,
+                y,
+                params.a6width - params.paddingLeft - params.paddingRight,
+                true);
+            y -= params.lineHeight9 * 2;
 
             y -= mm2point(2);
             infotext = t('translation:pdfRelevantInformation');
             infotext = pdf.splitTextToSize(infotext, lblLength);
-            y = centerSplittedText(infotext, x, y);
+            y = centerSplittedText(infotext, x, y) - params.lineHeight9;
 
             setTextColorBlue();
             pdf.setFontSize(params.fontSize10);
@@ -1233,7 +1237,8 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudgcProp: EUDGC | undefi
         pdf!.setTextColor(256, 256, 256);
     }
 
-    const justify = (pdfGen: jsPDF, text: string, xStart: number, yStart: number, textWidth: number) => {
+    const justify = (pdfGen: jsPDF, text: string, xStart: number, yStart: number, textWidth: number, rotation?: boolean) => {
+        rotation = rotation ? rotation : false;
         text = text.replace(/(?:\r\n|\r|\n)/g, ' ');
         text = text.replace(/ +(?= )/g, '');
         const lineHeight = pdfGen.getTextDimensions('a').h * 1.15;
@@ -1244,7 +1249,11 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudgcProp: EUDGC | undefi
         for (const word of words) {
             const wordLength = pdfGen.getTextWidth(word + ' ');
             if (wordLength + lineLength > textWidth) {
-                writeLine(pdfGen, wordsInfo, lineLength, lineNumber++, xStart, yStart, lineHeight, textWidth);
+                if (!rotation) {
+                    writeLine(pdfGen, wordsInfo, lineLength, lineNumber++, xStart, yStart, lineHeight, textWidth);
+                } else {
+                    writeLineRotated(pdfGen, wordsInfo, lineLength, lineNumber++, xStart, yStart, lineHeight, textWidth);
+                }
                 wordsInfo = [];
                 lineLength = 0;
             }
@@ -1252,12 +1261,25 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudgcProp: EUDGC | undefi
             lineLength += wordLength;
         }
         if (wordsInfo.length > 0) {
-            writeLastLine(wordsInfo, pdfGen, xStart, yStart, lineNumber, lineHeight);
+            if (!rotation) {
+                writeLastLine(wordsInfo, pdfGen, xStart, yStart, lineNumber, lineHeight, textWidth);
+            } else {
+                writeLastLineRotated(wordsInfo, pdfGen, xStart, yStart, lineNumber, lineHeight, textWidth);
+            }
         }
     }
-    const writeLastLine = (wordsInfo: IWordInfo[], pdfGen: jsPDF, xStart: number, yStart: number, lineNumber: number, lineHeight: number) => {
+
+    const writeLastLine = (wordsInfo: IWordInfo[], pdfGen: jsPDF, xStart: number, yStart: number, lineNumber: number, lineHeight: number, textWidth: number) => {
         const line = wordsInfo.map(x => x.text).join(' ');
-        pdfGen.text(line, xStart, yStart + lineNumber * lineHeight);
+        xStart = params.paddingLeft + (textWidth/2);
+        pdfGen.text(line, xStart, yStart + lineNumber * lineHeight, { align: 'center' });
+    }
+
+    const writeLastLineRotated = (wordsInfo: IWordInfo[], pdfGen: jsPDF, xStart: number, yStart: number, lineNumber: number, lineHeight: number, textWidth: number) => {
+        let line = wordsInfo.map(x => x.text).join(' ');
+        xStart = params.a6width * 2;
+        line = pdfGen.splitTextToSize(line, textWidth);
+        centerSplittedText(line, xStart, yStart - lineHeight);
     }
 
     const writeLine = (pdfGen: jsPDF, wordsInfo: IWordInfo[], lineLength: number, lineNumber: number, xStart: number, yStart: number, lineHeight: number, textWidth: number) => {
@@ -1268,6 +1290,17 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudgcProp: EUDGC | undefi
         for (const wordInfo of wordsInfo) {
             pdfGen.text(wordInfo.text, x, y);
             x += wordInfo.wordLength + wordSpacing;
+        }
+    }
+
+    const writeLineRotated = (pdfGen: jsPDF, wordsInfo: IWordInfo[], lineLength: number, lineNumber: number, xStart: number, yStart: number, lineHeight: number, textWidth: number) => {
+
+        const wordSpacing = (textWidth - lineLength) / (wordsInfo.length - 1);
+        let x = xStart;
+        const y = yStart + lineNumber * lineHeight;
+        for (const wordInfo of wordsInfo) {
+            pdfGen.text(wordInfo.text, x, y, { align: 'left', angle: 180 });
+            x -= wordInfo.wordLength + wordSpacing;
         }
     }
 
