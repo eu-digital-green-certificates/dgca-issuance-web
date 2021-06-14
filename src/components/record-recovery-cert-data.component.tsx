@@ -43,7 +43,10 @@ import CardFooter from './modules/card-footer.component';
 import moment from 'moment';
 
 const validator = new Validator();
+// 180 days
 const expirationMilSeconds = 60 * 60 * 24 * 180 * 1000;
+// 11 days
+const timeAfter = 60 * 60 * 24 * 11 * 1000;
 
 const RecordRecoveryCertData = (props: any) => {
 
@@ -61,6 +64,8 @@ const RecordRecoveryCertData = (props: any) => {
     const [testCountryCode, setTestCountryCode] = useLocalStorage('testCountryCode', '');
     const [dateValidFrom, setDateValidFrom] = React.useState<Date>();
     const [dateValidTo, setDateValidTo] = React.useState<Date>();
+    const [firstPosMinDate] = React.useState<Date>(new Date(Date.now() - expirationMilSeconds));
+    const [firstPosMaxDate] = React.useState<Date>(new Date(Date.now() - timeAfter));
 
     React.useEffect(() => {
         if (!props.eudgc || !props.eudgc.r || !props.eudgc.r[0]) {
@@ -97,6 +102,7 @@ const RecordRecoveryCertData = (props: any) => {
     const handleFirstPositiveResultDate = (evt: Date | [Date, Date] | null) => {
         const date = handleDateChange(evt);
         setFirstPositiveResultDate(date);
+
     }
 
     const handleDateValidFrom = (evt: Date | [Date, Date] | null) => {
@@ -225,9 +231,13 @@ const RecordRecoveryCertData = (props: any) => {
                                         showMonthDropdown
                                         showYearDropdown
                                         dropdownMode="select"
-                                        maxDate={new Date()}
-                                        minDate={new Date(Date.now() - expirationMilSeconds)}
-                                        openToDate={dateValidFrom ? dateValidFrom : new Date()}
+                                        maxDate={dateValidFrom ? new Date(dateValidFrom.getTime() - timeAfter) : firstPosMaxDate}
+                                        minDate={dateValidTo ? new Date(dateValidTo.getTime() - expirationMilSeconds) : firstPosMinDate}
+                                        openToDate={firstPositiveResultDate
+                                            ? firstPositiveResultDate
+                                            : dateValidFrom
+                                                ? new Date(dateValidFrom.getTime() - timeAfter)
+                                                : new Date()}
                                         required
                                     />
                                 </Col>
@@ -267,7 +277,11 @@ const RecordRecoveryCertData = (props: any) => {
                                         showYearDropdown
                                         dropdownMode="select"
                                         maxDate={new Date()}
-                                        minDate={dateValidTo ? new Date(dateValidTo.getTime() - expirationMilSeconds) : new Date(Date.now() - expirationMilSeconds)}
+                                        minDate={firstPositiveResultDate
+                                            ? new Date(firstPositiveResultDate.getTime() + timeAfter)
+                                            : dateValidTo
+                                                ? new Date(dateValidTo.getTime() + timeAfter - expirationMilSeconds)
+                                                : new Date(Date.now() + timeAfter - expirationMilSeconds)}
                                         openToDate={dateValidFrom ? dateValidFrom : new Date()}
                                         required
                                     />
@@ -283,7 +297,11 @@ const RecordRecoveryCertData = (props: any) => {
                                         showMonthDropdown
                                         showYearDropdown
                                         dropdownMode="select"
-                                        maxDate={dateValidFrom ? new Date(dateValidFrom.getTime() + expirationMilSeconds) : new Date(Date.now() + expirationMilSeconds)}
+                                        maxDate={firstPositiveResultDate
+                                            ? new Date(firstPositiveResultDate.getTime() + expirationMilSeconds)
+                                            : dateValidFrom
+                                                ? new Date(dateValidFrom.getTime() - timeAfter + expirationMilSeconds)
+                                                : new Date(Date.now() - timeAfter + expirationMilSeconds)}
                                         minDate={new Date()}
                                         openToDate={dateValidTo ? dateValidTo : new Date()}
                                         required
