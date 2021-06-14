@@ -34,7 +34,8 @@ export interface CertificateMetaData {
     kid: string,
     algId: number,
     countryCode: string,
-    expired: number
+    expired: number,
+    expiredDuration: number
 }
 
 export interface SignService {
@@ -64,8 +65,18 @@ const encodeCBOR = (certData: EUDGC, certMetaData: CertificateMetaData): Buffer 
 const getExpiration = (certData: EUDGC, certMetaData: CertificateMetaData) => {
     let result = certMetaData.expired;
 
-    if (certData && certData.r && certData.r[0]) {
-        result = new Date(certData.r[0].du).getTime() / 1000 | 0;
+    if (certData) {
+        if (certData.r && certData.r[0] && certData.r[0].du) {
+            result = new Date(certData.r[0].du).getTime() / 1000 | 0;
+        }
+
+        if (certData.v && certData.v[0] && certData.v[0].dt) {
+            result = new Date(certData.v[0].dt).getTime() / 1000 + certMetaData.expiredDuration;
+        }
+
+        if (certData.t && certData.t[0] && certData.t[0].sc) {
+            result = new Date(certData.t[0].sc).getTime() / 1000 + certMetaData.expiredDuration;
+        }
     }
 
     return result;
