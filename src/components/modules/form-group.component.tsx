@@ -215,14 +215,14 @@ export const PersonInputs = (props: any) => {
                 <FormGroupInput controlId='formGivenNameInput' title={t('translation:first-name')}
                     value={givenName}
                     onChange={(evt: any) => setGivenName(evt.target.value)}
-                    maxLength={50}
+                    maxLength={80}
                 />
 
                 {/* name input */}
                 <FormGroupInput controlId='formNameInput' title={t('translation:name')}
                     value={familyName}
                     onChange={(evt: any) => setFamilyName(evt.target.value)}
-                    maxLength={50}
+                    maxLength={80}
                 />
 
                 <hr />
@@ -232,7 +232,7 @@ export const PersonInputs = (props: any) => {
                     value={standardisedGivenName}
                     onChange={(evt: any) => handleStandardisedNameChanged(evt.target.value, setStandardisedGivenName)}
                     pattern={utils.pattern.standardisedName}
-                    maxLength={50}
+                    maxLength={80}
                 />
 
                 {/*standardised name input */}
@@ -241,7 +241,7 @@ export const PersonInputs = (props: any) => {
                     onChange={(evt: any) => handleStandardisedNameChanged(evt.target.value, setStandardisedFamilyName)}
                     required
                     pattern={utils.pattern.standardisedName}
-                    maxLength={50}
+                    maxLength={80}
                 />
 
                 <hr />
@@ -274,7 +274,6 @@ export const PersonInputs = (props: any) => {
                             maxDate={new Date()}
                             minDate={new Date(1900, 0, 1, 12)}
                             openToDate={new Date(1990, 0, 1)}
-                            required
                         />
                     </Col>
                 </Form.Group>

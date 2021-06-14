@@ -21,7 +21,7 @@
 
 import { createCertificateQRData, CertificateMetaData } from '../misc/edgcProcessor'
 import axios from 'axios';
-import { EUDCC1, RecoveryEntry, TestEntry, VaccinationEntry } from '../generated-files/dgc-combined-schema';
+import { EUDCC1 } from '../generated-files/dgc-combined-schema';
 
 const api = axios.create({
     baseURL: '',
@@ -65,22 +65,18 @@ const signerCall = (id: string, hash: string): Promise<SigResponse> => {
 const setDgci = (dgcPayload: EUDCC1, dgci: string) => {
     if (dgcPayload) {
 
-        const vacc: [VaccinationEntry] = dgcPayload.v as [VaccinationEntry];
-        const test: [TestEntry] = dgcPayload.t as [TestEntry];
-        const recovery: [RecoveryEntry] = dgcPayload.r as [RecoveryEntry];
-
         if (dgcPayload.v) {
-            for (let vac of vacc) {
+            for (let vac of dgcPayload.v) {
                 vac.ci = dgci;
             }
         }
         if (dgcPayload.r) {
-            for (let rec of recovery) {
+            for (let rec of dgcPayload.r) {
                 rec.ci = dgci;
             }
         }
         if (dgcPayload.t) {
-            for (let tst of test) {
+            for (let tst of dgcPayload.t) {
                 tst.ci = dgci;
             }
         }
