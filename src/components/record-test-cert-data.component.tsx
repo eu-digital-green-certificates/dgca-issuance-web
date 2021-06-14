@@ -41,6 +41,7 @@ import CardHeader from './modules/card-header.component';
 import { FormGroupInput, FormGroupISOCountrySelect, FormGroupValueSetSelect, IPersonData, PersonInputs } from './modules/form-group.component';
 import CardFooter from './modules/card-footer.component';
 import useLocalStorage from '../misc/local-storage';
+import moment from 'moment';
 
 const validator = new Validator();
 
@@ -165,15 +166,14 @@ const RecordTestCertData = (props: any) => {
                     gn: person!.givenName,
                     gnt: person!.standardisedGivenName
                 },
-                dob: person!.dateOfBirth!.toISOString().split('T')[0],
+                dob: moment(person!.dateOfBirth!)
+                    .format(person!.dobFormat === 'yyyy-MM-dd' ? 'yyyy-MM-DD' : person!.dobFormat),
                 t: [test]
             }
 
             var result = validator.validate(eudgc, schema);
 
             if (result.valid) {
-                // console.log(JSON.stringify(eudgc));
-
                 props.setEudgc(eudgc);
                 setTimeout(navigation!.toShowCert, 200);
             }

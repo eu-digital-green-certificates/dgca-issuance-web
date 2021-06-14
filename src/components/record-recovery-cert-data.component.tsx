@@ -40,6 +40,7 @@ import { Validator } from 'jsonschema';
 import CardHeader from './modules/card-header.component';
 import { PersonInputs, IPersonData, FormGroupInput, FormGroupValueSetSelect, FormGroupISOCountrySelect } from './modules/form-group.component';
 import CardFooter from './modules/card-footer.component';
+import moment from 'moment';
 
 const validator = new Validator();
 const expirationMilSeconds = 60 * 60 * 24 * 180 * 1000;
@@ -155,7 +156,8 @@ const RecordRecoveryCertData = (props: any) => {
                     gn: person!.givenName,
                     gnt: person!.standardisedGivenName
                 },
-                dob: person!.dateOfBirth!.toISOString().split('T')[0],
+                dob: moment(person!.dateOfBirth!)
+                    .format(person!.dobFormat === 'yyyy-MM-dd' ? 'yyyy-MM-DD' : person!.dobFormat),
                 r: [r]
             }
 
