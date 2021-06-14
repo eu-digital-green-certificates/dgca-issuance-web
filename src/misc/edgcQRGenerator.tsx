@@ -21,7 +21,7 @@
 
 import { createCertificateQRData, CertificateMetaData } from '../misc/edgcProcessor'
 import axios from 'axios';
-import { EUDGC } from '../generated-files/dgc-combined-schema';
+import { EUDCC1 } from '../generated-files/dgc-combined-schema';
 
 const api = axios.create({
     baseURL: '',
@@ -62,25 +62,28 @@ const signerCall = (id: string, hash: string): Promise<SigResponse> => {
         });
 }
 
-const setDgci = (dgcPayload: EUDGC, dgci: string) => {
-    if (dgcPayload.v) {
-        for (let vac of dgcPayload.v) {
-            vac.ci = dgci;  
+const setDgci = (dgcPayload: EUDCC1, dgci: string) => {
+    if (dgcPayload) {
+
+        if (dgcPayload.v) {
+            for (let vac of dgcPayload.v) {
+                vac.ci = dgci;
+            }
         }
-    }
-    if (dgcPayload.r) {
-        for (let recovery of dgcPayload.r) {
-            recovery.ci = dgci;  
+        if (dgcPayload.r) {
+            for (let rec of dgcPayload.r) {
+                rec.ci = dgci;
+            }
         }
-    }
-    if (dgcPayload.t) {
-        for (let test of dgcPayload.t) {
-            test.ci = dgci;  
+        if (dgcPayload.t) {
+            for (let tst of dgcPayload.t) {
+                tst.ci = dgci;
+            }
         }
     }
 }
 
-const getEdgcType = (edgcPayload: EUDGC) : CertType => {
+const getEdgcType = (edgcPayload: EUDCC1): CertType => {
     return edgcPayload.r ? CertType.Recovery
         : edgcPayload.t
             ? CertType.Test
@@ -88,7 +91,7 @@ const getEdgcType = (edgcPayload: EUDGC) : CertType => {
 }
 
 
-const generateQRCode = (edgcPayload: EUDGC): Promise<CertResult> => {
+const generateQRCode = (edgcPayload: EUDCC1): Promise<CertResult> => {
     const certInit: CertificateInit = {
         greenCertificateType: getEdgcType(edgcPayload)
     }

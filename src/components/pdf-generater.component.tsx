@@ -32,7 +32,7 @@ import flag_seperator from '../assets/images/flag_seperator.png';
 import yellow_seperator from '../assets/images/yellow_seperator.png';
 import folding_instruction from '../assets/images/folding-instruction.png';
 
-import { EUDGC, RecoveryEntry, TestEntry, VaccinationEntry } from '../generated-files/dgc-combined-schema';
+import { EUDCC1, RecoveryEntry, TestEntry, VaccinationEntry } from '../generated-files/dgc-combined-schema';
 import {
     useGetDiseaseAgents, useGetVaccineManufacturers, useGetVaccines,
     useGetVaccinMedicalData, useGetTestManufacturers, useGetTestResult, useGetTestType
@@ -87,7 +87,7 @@ interface IPageParameter {
     space: number
 }
 
-const usePdfGenerator = (qrCodeCanvasElementProp: any, eudgcProp: EUDGC | undefined, onIsInit: (isInit: boolean) => void, onIsReady: (isReady: boolean) => void) => {
+const usePdfGenerator = (qrCodeCanvasElementProp: any, eudccProp: EUDCC1 | undefined, onIsInit: (isInit: boolean) => void, onIsReady: (isReady: boolean) => void) => {
     const { t } = useTranslation();
     const french = i18n.getDataByLanguage('fr');
 
@@ -153,7 +153,7 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudgcProp: EUDGC | undefi
 
     const [pdf, setPdf] = React.useState<jsPDF>();
 
-    const [eudgc, setEudgc] = React.useState<EUDGC>();
+    const [eudcc, setEudcc] = React.useState<EUDCC1>();
     const [vaccinationSet, setVaccinationSet] = React.useState<VaccinationEntry>();
     const [testSet, setTestSet] = React.useState<TestEntry>();
     const [recoverySet, setRecoverySet] = React.useState<RecoveryEntry>();
@@ -206,15 +206,20 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudgcProp: EUDGC | undefi
         }
     }, [firstPageIsReady, secondPageIsReady, thirdPageIsReady, fourthPageIsReady])
 
-    // on receiving eudgc obj set specific ValueSet
+    // on receiving eudcc obj set specific ValueSet
     React.useEffect(() => {
-        if (eudgcProp) {
-            setEudgc(eudgcProp);
-            setVaccinationSet(eudgcProp.v ? eudgcProp.v[0] : undefined);
-            setTestSet(eudgcProp.t ? eudgcProp.t[0] : undefined);
-            setRecoverySet(eudgcProp.r ? eudgcProp.r[0] : undefined);
+        if (eudccProp) {
+            setEudcc(eudccProp);
+
+            const vacc : [VaccinationEntry] = eudccProp.v as [VaccinationEntry];
+            const test : [TestEntry] = eudccProp.t as [TestEntry];
+            const recovery: [RecoveryEntry] = eudccProp.r as [RecoveryEntry];
+
+            setVaccinationSet(vacc ? vacc[0] : undefined);
+            setTestSet(test ? test[0] : undefined);
+            setRecoverySet(recovery ? recovery[0] : undefined);
         }
-    }, [eudgcProp])
+    }, [eudccProp])
 
     // set qrcode element from props
     React.useEffect(() => {
@@ -254,18 +259,18 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudgcProp: EUDGC | undefi
     }, [recoverySet, isInit])
 
     React.useEffect(() => {
-        if (qrCodeCanvasElement && ci && isInit && eudgc) {
+        if (qrCodeCanvasElement && ci && isInit && eudcc) {
             prepareSecondPage();
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [qrCodeCanvasElement, ci, isInit, eudgc]);
+    }, [qrCodeCanvasElement, ci, isInit, eudcc]);
 
     React.useEffect(() => {
-        if (co && isInit && eudgc) {
+        if (co && isInit && eudcc) {
             prepareFirstPage();
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [co, isInit, eudgc]);
+    }, [co, isInit, eudcc]);
 
     const printDottedLine = () => {
         if (pdf) {
@@ -308,7 +313,7 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudgcProp: EUDGC | undefi
     }
 
     const prepareFirstPage = () => {
-        if (pdf && french && eudgc && co) {
+        if (pdf && french && eudcc && co) {
             for (let page = 1; page < 3; page++) {
                 let x = 0;
                 let y = 0;
@@ -380,7 +385,7 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudgcProp: EUDGC | undefi
     }
 
     const prepareSecondPage = () => {
-        if (pdf && eudgc && ci && qrCodeCanvasElement && french) {
+        if (pdf && eudcc && ci && qrCodeCanvasElement && french) {
 
             const space = mm2point(5);
 
@@ -424,12 +429,12 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudgcProp: EUDGC | undefi
                 y = printHorizontalBlockPerson(x, y,
                     t('translation:pdfSurname'),
                     french.translation.pdfSurname,
-                    (eudgc.nam.fnt + ' ') + (eudgc.nam.gnt ? eudgc.nam.gnt : ''));
+                    (eudcc!.nam!.fnt + ' ') + (eudcc!.nam!.gnt ? eudcc!.nam!.gnt : ''));
 
                 y = printHorizontalBlockPerson(x, y,
                     t('translation:pdfDateOfBirth'),
                     french.translation.pdfDateOfBirth,
-                    eudgc.dob);
+                    eudcc.dob);
 
                 y = printHorizontalBlockPerson(x, y,
                     t('translation:pdfCi'),
@@ -750,12 +755,6 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudgcProp: EUDGC | undefi
                         lineHeight, true);
 
                     y = printVerticalBlock(x, y,
-                        t('translation:pdfDateTestResult'),
-                        french.translation.pdfDateTestResult,
-                        testSet.dr ? convertDateToOutputFormat(testSet.dr) : '',
-                        lineHeight, true);
-
-                    y = printVerticalBlock(x, y,
                         t('translation:pdfTestResult'),
                         french.translation.pdfTestResult,
                         getValueSetDisplay(testSet.tr, testResultValueSet),
@@ -824,12 +823,6 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudgcProp: EUDGC | undefi
                 t('translation:pdfDateSampleCollection'),
                 french.translation.pdfDateSampleCollection,
                 convertDateToOutputFormat(testSet.sc),
-                lineHeight, true);
-
-            y = printVerticalBlockRotated(x, y,
-                t('translation:pdfDateTestResult'),
-                french.translation.pdfDateTestResult,
-                convertDateToOutputFormat(testSet.dr ? testSet.dr : ' '),
                 lineHeight, true);
 
             y = printVerticalBlockRotated(x, y,

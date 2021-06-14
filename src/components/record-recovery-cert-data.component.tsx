@@ -32,7 +32,7 @@ import Spinner from './spinner/spinner.component';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
-import { EUDGC, RecoveryEntry } from '../generated-files/dgc-combined-schema';
+import { EUDCC1, RecoveryEntry } from '../generated-files/dgc-combined-schema';
 import { useGetDiseaseAgents } from '../api';
 
 import schema from '../generated-files/DGC.combined-schema.json';
@@ -136,7 +136,7 @@ const RecordRecoveryCertData = (props: any) => {
 
         const form = event.currentTarget;
 
-        if (form.checkValidity()) {
+        if (form.checkValidity() && person) {
 
             const r: RecoveryEntry = {
                 tg: disease,
@@ -148,16 +148,17 @@ const RecordRecoveryCertData = (props: any) => {
                 ci: ''
             };
 
-            const eudgc: EUDGC = {
-                ver: '1.0.0',
+            const eudgc: EUDCC1 = {
+                ver: '1.3.0',
                 nam: {
-                    fn: person!.familyName,
-                    fnt: person!.standardisedFamilyName!,
-                    gn: person!.givenName,
-                    gnt: person!.standardisedGivenName
+                    fn: person.familyName,
+                    fnt: person.standardisedFamilyName!,
+                    gn: person.givenName,
+                    gnt: person.standardisedGivenName
                 },
-                dob: moment(person!.dateOfBirth!)
-                    .format(person!.dobFormat === 'yyyy-MM-dd' ? 'yyyy-MM-DD' : person!.dobFormat),
+                dob: person.dateOfBirth
+                    ? moment(person.dateOfBirth).format(person.dobFormat === 'yyyy-MM-dd' ? 'yyyy-MM-DD' : person.dobFormat)
+                    : '',
                 r: [r]
             }
 
@@ -246,7 +247,7 @@ const RecordRecoveryCertData = (props: any) => {
                                 value={certificateIssuer}
                                 onChange={(evt: any) => setCertificateIssuer(evt.target.value)}
                                 required
-                                maxLength={50}
+                                maxLength={80}
                             />
 
                             {/* Date: Certificate Valid From - To */}

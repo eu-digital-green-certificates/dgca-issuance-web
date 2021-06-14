@@ -1,4 +1,4 @@
-import { EUDGC, RecoveryEntry, TestEntry, VaccinationEntry } from '../generated-files/dgc-combined-schema'
+import { EUDCC1, RecoveryEntry, TestEntry, VaccinationEntry } from '../generated-files/dgc-combined-schema'
 import i18n from 'i18next'
 import { IValueSet } from '../api';
 import moment from 'moment';
@@ -30,7 +30,7 @@ export const ShowCertificateData = (props: any) => {
     const testResultValueSet = useGetTestResult();
     const testTypeValueSet = useGetTestType();
 
-    const [eudgc, setEudgc] = React.useState<EUDGC>();
+    const [eudgc, setEudgc] = React.useState<EUDCC1>();
     const [vaccinationSet, setVaccinationSet] = React.useState<VaccinationEntry>();
     const [testSet, setTestSet] = React.useState<TestEntry>();
     const [recoverySet, setRecoverySet] = React.useState<RecoveryEntry>();
@@ -46,9 +46,13 @@ export const ShowCertificateData = (props: any) => {
 
     React.useEffect(() => {
         if (eudgc) {
-            setVaccinationSet(eudgc.v ? eudgc.v[0] : undefined);
-            setTestSet(eudgc.t ? eudgc.t[0] : undefined);
-            setRecoverySet(eudgc.r ? eudgc.r[0] : undefined);
+            const vacc : [VaccinationEntry] = eudgc.v as [VaccinationEntry];
+            const test : [TestEntry] = eudgc.t as [TestEntry];
+            const recovery: [RecoveryEntry] = eudgc.r as [RecoveryEntry];
+            
+            setVaccinationSet(vacc ? vacc[0] : undefined);
+            setTestSet(test ? test[0] : undefined);
+            setRecoverySet(recovery ? recovery[0] : undefined);
 
             setPersonalData(getPersonalData());
         }
@@ -81,8 +85,8 @@ export const ShowCertificateData = (props: any) => {
             {
                 title: i18n.t('translation:personal-data'),
                 entries: [
-                    { label: i18n.t('translation:name'), data: eudgc?.nam.fn || defaultString },
-                    { label: i18n.t('translation:first-name'), data: eudgc?.nam.gn || defaultString },
+                    { label: i18n.t('translation:name'), data: eudgc?.nam?.fn || defaultString },
+                    { label: i18n.t('translation:first-name'), data: eudgc?.nam?.gn || defaultString },
                     { label: i18n.t('translation:date-of-birth'), data: eudgc?.dob || defaultString },
                 ]
             }
@@ -134,7 +138,7 @@ export const ShowCertificateData = (props: any) => {
                 title: i18n.t('translation:test-data'),
                 entries: [
                     { label: i18n.t('translation:sampleDateTime'), data: convertDateToOutputFormat(testSet?.sc || '') },
-                    { label: i18n.t('translation:testDateTime'), data: convertDateToOutputFormat(testSet?.dr || defaultString) },
+                    // { label: i18n.t('translation:testDateTime'), data: convertDateToOutputFormat(testSet?.dr || defaultString) },
                     { label: i18n.t('translation:testResult'), data: getValueSetDisplay(testSet?.tr, testResultValueSet) || defaultString },
                     { label: i18n.t('translation:testCenter'), data: testSet?.tc || defaultString }
                 ]

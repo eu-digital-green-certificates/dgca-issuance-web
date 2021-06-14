@@ -31,7 +31,7 @@ import Spinner from './spinner/spinner.component';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
-import { EUDGC, TestEntry } from '../generated-files/dgc-combined-schema';
+import { EUDCC1, TestEntry } from '../generated-files/dgc-combined-schema';
 import { useGetDiseaseAgents, useGetTestManufacturers, useGetTestResult, useGetTestType } from '../api';
 
 import schema from '../generated-files/DGC.combined-schema.json';
@@ -61,7 +61,6 @@ const RecordTestCertData = (props: any) => {
     const [testManufacturers, setTestManufacturers] = useLocalStorage('testManufacturers', '');
 
     const [sampleDateTime, setSampleDateTime] = React.useState<Date>();
-    const [testDateTime, setTestDateTime] = React.useState<Date | undefined>();
 
     const [testResult, setTestResult] = React.useState<string>('');
     const [testCenter, setTestCenter] = useLocalStorage('testCenter', '');
@@ -90,10 +89,6 @@ const RecordTestCertData = (props: any) => {
 
         setSampleDateTime(new Date(test.sc));
 
-        if (test.dr) {
-            setTestDateTime(new Date(test.dr));
-        }
-
         setTestResult(test.tr);
         setTestCenter(test.tc);
 
@@ -112,11 +107,6 @@ const RecordTestCertData = (props: any) => {
     const handleSampleDateTimeChange = (evt: Date | [Date, Date] | null) => {
         const date = handleDateTimeChange(evt);
         setSampleDateTime(date);
-    }
-
-    const handleTestDateTimeChange = (evt: Date | [Date, Date] | null) => {
-        const date = handleDateTimeChange(evt);
-        setTestDateTime(date);
     }
 
     const handleDateTimeChange = (evt: Date | [Date, Date] | null) => {
@@ -142,7 +132,7 @@ const RecordTestCertData = (props: any) => {
 
         const form = event.currentTarget;
 
-        if (form.checkValidity()) {
+        if (form.checkValidity() && person) {
 
             const test: TestEntry = {
                 tg: disease,
@@ -150,7 +140,6 @@ const RecordTestCertData = (props: any) => {
                 nm: testName ? testName : undefined,
                 ma: testManufacturers ? testManufacturers : undefined,
                 sc: sampleDateTime!.toISOString(),
-                dr: testDateTime ? testDateTime.toISOString() : undefined,
                 tr: testResult,
                 tc: testCenter,
                 co: issuerCountryCode,
@@ -158,16 +147,17 @@ const RecordTestCertData = (props: any) => {
                 ci: ''
             };
 
-            const eudgc: EUDGC = {
-                ver: '1.0.0',
+            const eudgc: EUDCC1 = {
+                ver: '1.3.0',
                 nam: {
-                    fn: person!.familyName,
-                    fnt: person!.standardisedFamilyName!,
-                    gn: person!.givenName,
-                    gnt: person!.standardisedGivenName
+                    fn: person.familyName,
+                    fnt: person.standardisedFamilyName!,
+                    gn: person.givenName,
+                    gnt: person.standardisedGivenName
                 },
-                dob: moment(person!.dateOfBirth!)
-                    .format(person!.dobFormat === 'yyyy-MM-dd' ? 'yyyy-MM-DD' : person!.dobFormat),
+                dob: person.dateOfBirth
+                    ? moment(person.dateOfBirth).format(person.dobFormat === 'yyyy-MM-dd' ? 'yyyy-MM-DD' : person.dobFormat)
+                    : '',
                 t: [test]
             }
 
@@ -225,7 +215,7 @@ const RecordTestCertData = (props: any) => {
                             <FormGroupInput controlId='formTestNameInput' title={t('translation:testName')}
                                 value={testName}
                                 onChange={(evt: any) => setTestName(evt.target.value)}
-                                maxLength={50}
+                                maxLength={80}
                             />
 
                             {/* combobox testManufacturers */}
@@ -238,7 +228,7 @@ const RecordTestCertData = (props: any) => {
                             <hr />
 
                             {/* sampleDateTime */}
-                            <Form.Group as={Row} controlId='formSampleDateTimeInput'className='pb-3 mb-0'>
+                            <Form.Group as={Row} controlId='formSampleDateTimeInput' className='pb-3 mb-0'>
                                 <Form.Label className='input-label ' column xs='5' sm='3'>{t('translation:sampleDateTime') + '*'}</Form.Label>
 
                                 <Col xs='7' sm='9' className='d-flex'>
@@ -260,28 +250,6 @@ const RecordTestCertData = (props: any) => {
                                 </Col>
                             </Form.Group>
 
-                            {/* testDateTime */}
-                            <Form.Group as={Row} controlId='formTestDateTimeInput'className='pb-3 mb-0'>
-                                <Form.Label className='input-label ' column xs='5' sm='3'>{t('translation:testDateTime')}</Form.Label>
-
-                                <Col xs='7' sm='9' className='d-flex'>
-                                    <DatePicker
-                                        selected={testDateTime}
-                                        onChange={handleTestDateTimeChange}
-                                        dateFormat={utils.pickerDateTimeFormat}
-                                        placeholderText={t('translation:testDateTime')}
-                                        className='qt-input form-control'
-                                        wrapperClassName='align-self-center'
-                                        showMonthDropdown
-                                        showYearDropdown
-                                        showTimeSelect
-                                        dropdownMode="select"
-                                        minDate={new Date(2020, 10)}
-                                        openToDate={new Date()}
-                                    />
-                                </Col>
-                            </Form.Group>
-
                             {/* combobox testResult */}
                             <FormGroupValueSetSelect controlId='formTestResultInput' title={t('translation:testResult')}
                                 value={testResult}
@@ -295,7 +263,7 @@ const RecordTestCertData = (props: any) => {
                                 value={testCenter}
                                 onChange={(evt: any) => setTestCenter(evt.target.value)}
                                 required
-                                maxLength={50}
+                                maxLength={80}
                             />
 
                             <hr />
@@ -312,7 +280,7 @@ const RecordTestCertData = (props: any) => {
                                 value={certificateIssuer}
                                 onChange={(evt: any) => setCertificateIssuer(evt.target.value)}
                                 required
-                                maxLength={50}
+                                maxLength={80}
                             />
                             <hr />
                         </Card.Body>

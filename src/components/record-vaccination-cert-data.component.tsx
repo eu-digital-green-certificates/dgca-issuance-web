@@ -32,7 +32,7 @@ import Spinner from './spinner/spinner.component';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
-import { EUDGC, VaccinationEntry } from '../generated-files/dgc-combined-schema';
+import { EUDCC1, VaccinationEntry } from '../generated-files/dgc-combined-schema';
 import { useGetDiseaseAgents, useGetVaccineManufacturers, useGetVaccines, useGetVaccinMedicalData } from '../api';
 
 import schema from '../generated-files/DGC.combined-schema.json';
@@ -132,7 +132,7 @@ const RecordVaccinationCertData = (props: any) => {
 
         const form = event.currentTarget;
 
-        if (form.checkValidity()) {
+        if (form.checkValidity() && person) {
 
             const vacc: VaccinationEntry = {
                 tg: disease,
@@ -147,18 +147,24 @@ const RecordVaccinationCertData = (props: any) => {
                 ci: ''
             };
 
-            const eudgc: EUDGC = {
-                ver: '1.0.0',
+            const eudgc: EUDCC1 = {
+                ver: '1.3.0',
                 nam: {
-                    fn: person!.familyName,
-                    fnt: person!.standardisedFamilyName!,
-                    gn: person!.givenName,
-                    gnt: person!.standardisedGivenName
+                    fn: person.familyName,
+                    fnt: person.standardisedFamilyName!,
+                    gn: person.givenName,
+                    gnt: person.standardisedGivenName
                 },
-                dob: moment(person!.dateOfBirth!)
-                    .format(person!.dobFormat === 'yyyy-MM-dd' ? 'yyyy-MM-DD' : person!.dobFormat),
+                dob: person.dateOfBirth
+                    ? moment(person.dateOfBirth).format(person.dobFormat === 'yyyy-MM-dd' ? 'yyyy-MM-DD' : person.dobFormat)
+                    : '',
                 v: [vacc]
             }
+
+            // console.log(JSON.stringify(eudgc));
+            // let vac = eudgc.v[0];
+            // console.log(vac);
+            // console.log(vac.tg);
 
             var result = validator.validate(eudgc, schema);
 
@@ -284,7 +290,7 @@ const RecordVaccinationCertData = (props: any) => {
                                 value={certificateIssuer}
                                 onChange={(evt: any) => setCertificateIssuer(evt.target.value)}
                                 required
-                                maxLength={50}
+                                maxLength={80}
                             />
                             <hr />
                         </Card.Body>
