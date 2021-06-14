@@ -137,8 +137,8 @@ const RecordTestCertData = (props: any) => {
             const test: TestEntry = {
                 tg: disease,
                 tt: testType,
-                nm: testName ? testName : undefined,
-                ma: testManufacturers ? testManufacturers : undefined,
+                nm: testName && testType === 'LP6464-4' ? testName : undefined,
+                ma: testManufacturers && testType === 'LP217198-3' ? testManufacturers : undefined,
                 sc: sampleDateTime!.toISOString(),
                 tr: testResult,
                 tc: testCenter,
@@ -215,6 +215,7 @@ const RecordTestCertData = (props: any) => {
                             <FormGroupInput controlId='formTestNameInput' title={t('translation:testName')}
                                 value={testName}
                                 onChange={(evt: any) => setTestName(evt.target.value)}
+                                hidden={testType !== 'LP6464-4'}
                                 maxLength={80}
                             />
 
@@ -222,6 +223,7 @@ const RecordTestCertData = (props: any) => {
                             <FormGroupValueSetSelect controlId='formTestManufactorersInput' title={t('translation:testManufacturers')}
                                 value={testManufacturers}
                                 onChange={(evt: any) => setTestManufacturers(evt.target.value)}
+                                hidden={testType !== 'LP217198-3'}
                                 valueSet={useGetTestManufacturers}
                             />
 
