@@ -21,7 +21,7 @@
 
 import { createCertificateQRData, CertificateMetaData } from '../misc/edgcProcessor'
 import axios from 'axios';
-import { EUDCC, RecoveryEntry, TestEntry, VaccinationEntry } from '../generated-files/dgc-combined-schema';
+import { EUDCC1, RecoveryEntry, TestEntry, VaccinationEntry } from '../generated-files/dgc-combined-schema';
 
 const api = axios.create({
     baseURL: '',
@@ -62,7 +62,7 @@ const signerCall = (id: string, hash: string): Promise<SigResponse> => {
         });
 }
 
-const setDgci = (dgcPayload: EUDCC, dgci: string) => {
+const setDgci = (dgcPayload: EUDCC1, dgci: string) => {
     if (dgcPayload) {
 
         const vacc: [VaccinationEntry] = dgcPayload.v as [VaccinationEntry];
@@ -87,7 +87,7 @@ const setDgci = (dgcPayload: EUDCC, dgci: string) => {
     }
 }
 
-const getEdgcType = (edgcPayload: EUDCC): CertType => {
+const getEdgcType = (edgcPayload: EUDCC1): CertType => {
     return edgcPayload.r ? CertType.Recovery
         : edgcPayload.t
             ? CertType.Test
@@ -95,7 +95,7 @@ const getEdgcType = (edgcPayload: EUDCC): CertType => {
 }
 
 
-const generateQRCode = (edgcPayload: EUDCC): Promise<CertResult> => {
+const generateQRCode = (edgcPayload: EUDCC1): Promise<CertResult> => {
     const certInit: CertificateInit = {
         greenCertificateType: getEdgcType(edgcPayload)
     }

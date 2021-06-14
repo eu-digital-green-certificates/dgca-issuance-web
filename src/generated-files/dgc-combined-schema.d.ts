@@ -8,43 +8,7 @@
 /**
  * EU Digital Covid Certificate
  */
-export type EUDCC = {
-  ver: SchemaVersion;
-  /**
-   * Surname(s), given name(s) - in that order
-   */
-  nam: {
-    fn?: Surname;
-    fnt: StandardisedSurname;
-    gn?: Forename;
-    gnt?: StandardisedForename;
-    [k: string]: unknown;
-  };
-  dob: DateOfBirth;
-  [k: string]: unknown;
-} & (
-  | {
-      /**
-       * Vaccination Group
-       */
-      v: [VaccinationEntry];
-      [k: string]: unknown;
-    }
-  | {
-      /**
-       * Test Group
-       */
-      t: [TestEntry];
-      [k: string]: unknown;
-    }
-  | {
-      /**
-       * Recovery Group
-       */
-      r: [RecoveryEntry];
-      [k: string]: unknown;
-    }
-);
+export type EUDCC = EUDCC1 & EUDCC2;
 /**
  * Version of the schema, according to Semantic versioning (ISO, https://semver.org/ version 2.0.0 or newer)
  */
@@ -66,14 +30,44 @@ export type Forename = string;
  */
 export type StandardisedForename = string;
 /**
- * Date of Birth of the person addressed in the DCC. ISO 8601 date format restricted to range 1900-2099
+ * Date of Birth of the person addressed in the DCC. ISO 8601 date format restricted to range 1900-2099 or empty
  */
 export type DateOfBirth = string;
 /**
  * EU eHealthNetwork: Value Sets for Digital Covid Certificates. version 1.0, 2021-04-16, section 2.1
  */
 export type DiseaseAgentTargeted = string;
+export type EUDCC2 = {
+  [k: string]: unknown;
+};
 
+export interface EUDCC1 {
+  ver?: SchemaVersion;
+  /**
+   * Surname(s), forename(s) - in that order
+   */
+  nam?: {
+    fn?: Surname;
+    fnt: StandardisedSurname;
+    gn?: Forename;
+    gnt?: StandardisedForename;
+    [k: string]: unknown;
+  };
+  dob?: DateOfBirth;
+  /**
+   * Vaccination Group
+   */
+  v?: [VaccinationEntry];
+  /**
+   * Test Group
+   */
+  t?: [TestEntry];
+  /**
+   * Recovery Group
+   */
+  r?: [RecoveryEntry];
+  [k: string]: unknown;
+}
 /**
  * Vaccination Entry
  */
@@ -148,7 +142,7 @@ export interface TestEntry {
   /**
    * Testing Centre
    */
-  tc: string;
+  tc?: string;
   /**
    * Country of Test
    */

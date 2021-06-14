@@ -32,7 +32,7 @@ import flag_seperator from '../assets/images/flag_seperator.png';
 import yellow_seperator from '../assets/images/yellow_seperator.png';
 import folding_instruction from '../assets/images/folding-instruction.png';
 
-import { EUDCC, RecoveryEntry, TestEntry, VaccinationEntry } from '../generated-files/dgc-combined-schema';
+import { EUDCC1, RecoveryEntry, TestEntry, VaccinationEntry } from '../generated-files/dgc-combined-schema';
 import {
     useGetDiseaseAgents, useGetVaccineManufacturers, useGetVaccines,
     useGetVaccinMedicalData, useGetTestManufacturers, useGetTestResult, useGetTestType
@@ -87,7 +87,7 @@ interface IPageParameter {
     space: number
 }
 
-const usePdfGenerator = (qrCodeCanvasElementProp: any, eudccProp: EUDCC | undefined, onIsInit: (isInit: boolean) => void, onIsReady: (isReady: boolean) => void) => {
+const usePdfGenerator = (qrCodeCanvasElementProp: any, eudccProp: EUDCC1 | undefined, onIsInit: (isInit: boolean) => void, onIsReady: (isReady: boolean) => void) => {
     const { t } = useTranslation();
     const french = i18n.getDataByLanguage('fr');
 
@@ -153,7 +153,7 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudccProp: EUDCC | undefi
 
     const [pdf, setPdf] = React.useState<jsPDF>();
 
-    const [eudcc, setEudcc] = React.useState<EUDCC>();
+    const [eudcc, setEudcc] = React.useState<EUDCC1>();
     const [vaccinationSet, setVaccinationSet] = React.useState<VaccinationEntry>();
     const [testSet, setTestSet] = React.useState<TestEntry>();
     const [recoverySet, setRecoverySet] = React.useState<RecoveryEntry>();
@@ -429,7 +429,7 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudccProp: EUDCC | undefi
                 y = printHorizontalBlockPerson(x, y,
                     t('translation:pdfSurname'),
                     french.translation.pdfSurname,
-                    (eudcc.nam.fnt + ' ') + (eudcc.nam.gnt ? eudcc.nam.gnt : ''));
+                    (eudcc!.nam!.fnt + ' ') + (eudcc!.nam!.gnt ? eudcc!.nam!.gnt : ''));
 
                 y = printHorizontalBlockPerson(x, y,
                     t('translation:pdfDateOfBirth'),

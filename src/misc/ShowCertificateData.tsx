@@ -1,4 +1,4 @@
-import { EUDCC, RecoveryEntry, TestEntry, VaccinationEntry } from '../generated-files/dgc-combined-schema'
+import { EUDCC1, RecoveryEntry, TestEntry, VaccinationEntry } from '../generated-files/dgc-combined-schema'
 import i18n from 'i18next'
 import { IValueSet } from '../api';
 import moment from 'moment';
@@ -30,7 +30,7 @@ export const ShowCertificateData = (props: any) => {
     const testResultValueSet = useGetTestResult();
     const testTypeValueSet = useGetTestType();
 
-    const [eudgc, setEudgc] = React.useState<EUDCC>();
+    const [eudgc, setEudgc] = React.useState<EUDCC1>();
     const [vaccinationSet, setVaccinationSet] = React.useState<VaccinationEntry>();
     const [testSet, setTestSet] = React.useState<TestEntry>();
     const [recoverySet, setRecoverySet] = React.useState<RecoveryEntry>();
@@ -85,8 +85,8 @@ export const ShowCertificateData = (props: any) => {
             {
                 title: i18n.t('translation:personal-data'),
                 entries: [
-                    { label: i18n.t('translation:name'), data: eudgc?.nam.fn || defaultString },
-                    { label: i18n.t('translation:first-name'), data: eudgc?.nam.gn || defaultString },
+                    { label: i18n.t('translation:name'), data: eudgc?.nam?.fn || defaultString },
+                    { label: i18n.t('translation:first-name'), data: eudgc?.nam?.gn || defaultString },
                     { label: i18n.t('translation:date-of-birth'), data: eudgc?.dob || defaultString },
                 ]
             }

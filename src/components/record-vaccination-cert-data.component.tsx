@@ -32,7 +32,7 @@ import Spinner from './spinner/spinner.component';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
-import { EUDCC, VaccinationEntry } from '../generated-files/dgc-combined-schema';
+import { EUDCC1, VaccinationEntry } from '../generated-files/dgc-combined-schema';
 import { useGetDiseaseAgents, useGetVaccineManufacturers, useGetVaccines, useGetVaccinMedicalData } from '../api';
 
 import schema from '../generated-files/DGC.combined-schema.json';
@@ -146,7 +146,7 @@ const RecordVaccinationCertData = (props: any) => {
                 ci: ''
             };
 
-            const eudgc: EUDCC = {
+            const eudgc: EUDCC1 = {
                 ver: '1.3.0',
                 nam: {
                     fn: person!.familyName,

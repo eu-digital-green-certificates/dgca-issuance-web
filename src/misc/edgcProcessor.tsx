@@ -24,7 +24,7 @@ import base45 from './wbase45'
 import CryptoJS from 'crypto-js';
 
 import zlib from 'browserify-zlib'
-import { EUDCC, RecoveryEntry } from '../generated-files/dgc-combined-schema';
+import { EUDCC1, RecoveryEntry } from '../generated-files/dgc-combined-schema';
 
 const edgcPrefix = 'HC1:'
 
@@ -42,7 +42,7 @@ export interface SignService {
     (hash: string): Promise<string>;
 }
 
-const encodeCBOR = (certData: EUDCC, certMetaData: CertificateMetaData): Buffer => {
+const encodeCBOR = (certData: EUDCC1, certMetaData: CertificateMetaData): Buffer => {
 
     const cborMap = new cbor.Map();
     const issuedAtSec = Date.now() / 1000 | 0;
@@ -61,7 +61,7 @@ const encodeCBOR = (certData: EUDCC, certMetaData: CertificateMetaData): Buffer 
     return cbor.encodeOne(cborMap, { omitUndefinedProperties: true });
 }
 
-const getExpiration = (certData: EUDCC, certMetaData: CertificateMetaData) => {
+const getExpiration = (certData: EUDCC1, certMetaData: CertificateMetaData) => {
     let result = certMetaData.expired;
 
     if (certData && certData.r) {
@@ -126,7 +126,7 @@ const dataPrefix = (data: string): string => {
 }
 
 
-export const createCertificateQRData = (certData: EUDCC, certMetaData: CertificateMetaData, signService: SignService): Promise<string> => {
+export const createCertificateQRData = (certData: EUDCC1, certMetaData: CertificateMetaData, signService: SignService): Promise<string> => {
 
     let cbor = encodeCBOR(certData, certMetaData);
 

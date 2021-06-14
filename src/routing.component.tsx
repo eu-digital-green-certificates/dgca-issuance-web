@@ -37,7 +37,7 @@ import IError from './misc/error';
 import ErrorPage from './components/error-page.component';
 import RecordVaccinationCertData from './components/record-vaccination-cert-data.component';
 import ShowCertificate from './components/show-certificate.component';
-import { EUDCC } from './generated-files/dgc-combined-schema';
+import { EUDCC1 } from './generated-files/dgc-combined-schema';
 import RecordTestCertData from './components/record-test-cert-data.component';
 import RecordRecoveryCertData from './components/record-recovery-cert-data.component';
 import Header from './components/header.component';
@@ -48,7 +48,7 @@ const Routing = (props: any) => {
 
     const navigation = useNavigation();
     const { t } = useTranslation();
-    const [eudgc, setEudgc] = React.useState<EUDCC>();
+    const [eudgc, setEudgc] = React.useState<EUDCC1>();
     const [error, setError] = React.useState<IError>();
     const [errorShow, setErrorShow] = React.useState(false);
     const [dataPrivacyShow, setDataPrivacyShow] = React.useState(false);
