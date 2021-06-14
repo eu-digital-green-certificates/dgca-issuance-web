@@ -40,6 +40,7 @@ import { Validator } from 'jsonschema';
 import CardHeader from './modules/card-header.component';
 import { PersonInputs, IPersonData, FormGroupInput, FormGroupValueSetSelect, FormGroupISOCountrySelect } from './modules/form-group.component';
 import CardFooter from './modules/card-footer.component';
+import moment from 'moment';
 
 const validator = new Validator();
 const expirationMilSeconds = 60 * 60 * 24 * 180 * 1000;
@@ -155,7 +156,8 @@ const RecordRecoveryCertData = (props: any) => {
                     gn: person!.givenName,
                     gnt: person!.standardisedGivenName
                 },
-                dob: person!.dateOfBirth!.toISOString().split('T')[0],
+                dob: moment(person!.dateOfBirth!)
+                    .format(person!.dobFormat === 'yyyy-MM-dd' ? 'yyyy-MM-DD' : person!.dobFormat),
                 r: [r]
             }
 
@@ -223,8 +225,8 @@ const RecordRecoveryCertData = (props: any) => {
                                         showYearDropdown
                                         dropdownMode="select"
                                         maxDate={new Date()}
-                                        minDate={new Date(2020, 10)}
-                                        openToDate={new Date()}
+                                        minDate={new Date(Date.now() - expirationMilSeconds)}
+                                        openToDate={dateValidFrom ? dateValidFrom : new Date()}
                                         required
                                     />
                                 </Col>
@@ -248,7 +250,7 @@ const RecordRecoveryCertData = (props: any) => {
                             />
 
                             {/* Date: Certificate Valid From - To */}
-                            <Form.Group as={Row} controlId='formDateOfBirthInput' className='pb-3 mb-0'>
+                            <Form.Group as={Row} controlId='formDateValidFromToInput' className='pb-3 mb-0'>
                                 <Form.Label className='input-label ' column xs='5' sm='3'>{t('translation:cert-valid-from-to') + '*'}</Form.Label>
 
                                 <Col xs='7' sm='9' className='d-flex'>

@@ -31,6 +31,7 @@ import Vaccines from './assets/json-res/vaccine-prophylaxis.json';
 import TestManufacturers from './assets/json-res/test-manf.json';
 import TestResult from './assets/json-res/test-result.json';
 import TestType from './assets/json-res/test-type.json';
+import { useTranslation } from 'react-i18next';
 
 interface IValue {
     active: boolean,
@@ -43,6 +44,23 @@ interface IValue {
 
 export interface IValueSet {
     [key: string]: IValue;
+}
+
+// Date of Birth Formats
+export const useGetDateFormats = () => {
+    const {t} = useTranslation();
+    const [dateFormats] = React.useState({
+        "yyyy-MM-dd": {
+            "display": t('translation:date-full')
+        },
+        "yyyy-MM": {
+            "display": t('translation:date-no-day')
+        },
+        "yyyy": {
+            "display": t('translation:date-year')
+        }
+    });
+    return dateFormats
 }
 
 
@@ -77,7 +95,7 @@ export const useGetDiseaseAgents = () => {
         const diseaseAgentsData = DiseaseAgents.valueSetValues;
         setDiseaseAgents(diseaseAgentsData);
     }, [])
-    
+
     return diseaseAgents;
 }
 
@@ -113,7 +131,7 @@ export const useGetVaccines = () => {
         const vaccinesData = Vaccines.valueSetValues;
         setVaccines(vaccinesData);
     }, [])
-    
+
     return vaccines;
 }
 

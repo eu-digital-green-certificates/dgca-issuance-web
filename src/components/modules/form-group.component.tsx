@@ -8,7 +8,7 @@ import utils from "../../misc/utils";
 import DatePicker from "react-datepicker";
 // import { registerLocale } from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { IValueSet } from "../../api";
+import { IValueSet, useGetDateFormats } from "../../api";
 
 const iso3311a2 = require('iso-3166-1-alpha-2');
 
@@ -19,6 +19,7 @@ export interface IPersonData {
     standardisedGivenName?: string;
     standardisedFamilyName: string;
     dateOfBirth: Date | undefined;
+    dobFormat: string;
 }
 
 export const FormGroupInput = (props: any) => {
@@ -96,8 +97,8 @@ export const FormGroupISOCountrySelect = (props: any) => {
         const options: JSX.Element[] = [];
         // const codes: string[] = iso3311a2.getCodes().sort();
         const eu_country_codes: string[] = ["AT", "BE", "BG", "HR", "CY", "CZ", "DK", "EE", "FI", "FR",
-                                    "DE", "GR", "HU", "IE", "IT", "LV", "LT", "LU", "MT", "NL", "PL",
-                                    "PT", "RO", "SK", "SI", "ES", "SE"].sort();
+            "DE", "GR", "HU", "IE", "IT", "LV", "LT", "LU", "MT", "NL", "PL",
+            "PT", "RO", "SK", "SI", "ES", "SE"].sort();
 
         for (const code of eu_country_codes) {
             options.push(<option key={code} value={code}>{code + " : " + iso3311a2.getCountry(code)}</option>)
@@ -139,7 +140,7 @@ export const PersonInputs = (props: any) => {
     const [standardisedFamilyName, setStandardisedFamilyName] = React.useState<string>('');
 
     const [dateOfBirth, setDateOfBirth] = React.useState<Date>();
-
+    const [dateFormat, setDateFormat] = React.useState('yyyy-MM-dd');
 
     React.useEffect(() => {
         if (props && props.eudgc && props.eudgc.nam) {
@@ -169,7 +170,8 @@ export const PersonInputs = (props: any) => {
             familyName: familyName ? familyName : undefined,
             standardisedGivenName: standardisedGivenName ? standardisedGivenName : undefined,
             standardisedFamilyName: standardisedFamilyName,
-            dateOfBirth: dateOfBirth
+            dateOfBirth: dateOfBirth,
+            dobFormat: dateFormat
         }
 
         props.onChange(result);
@@ -244,6 +246,15 @@ export const PersonInputs = (props: any) => {
 
                 <hr />
 
+                {/* date of birth format */}
+                <FormGroupValueSetSelect title={t('translation:date-of-birth-format')}
+                    value={dateFormat}
+                    onChange={(evt: any) => setDateFormat(evt.target.value)}
+                    valueSet={useGetDateFormats}
+                    required
+                />
+
+
                 {/* date of birth input */}
                 <Form.Group as={Row} controlId='formDateOfBirthInput' className='pb-3 mb-0'>
                     <Form.Label className='input-label ' column xs='5' sm='3'>{t('translation:date-of-birth') + '*'}</Form.Label>
@@ -252,7 +263,7 @@ export const PersonInputs = (props: any) => {
                         <DatePicker
                             selected={dateOfBirth}
                             onChange={handleDateOfBirthChange}
-                            dateFormat={utils.pickerDateFormat}
+                            dateFormat={dateFormat}
                             isClearable
                             placeholderText={t('translation:date-of-birth')}
                             className='qt-input form-control'
