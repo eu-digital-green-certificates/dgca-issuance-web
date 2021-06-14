@@ -25,7 +25,7 @@ export interface IPersonData {
 export const FormGroupInput = (props: any) => {
 
     return (!props ? <></> :
-        <Form.Group as={Row} controlId={props.controlId} className='pb-3 mb-0'>
+        <Form.Group as={Row} hidden={props.hidden} controlId={props.controlId} className='pb-3 mb-0'>
             <Form.Label className='input-label' column xs='5' sm='3'>{props.title + (props.required ? '*' : '')}</Form.Label>
 
             <Col xs='7' sm='9' className='d-flex'>
@@ -70,7 +70,7 @@ export const FormGroupValueSetSelect = (props: any) => {
     }
 
     return (!(props && options) ? <></> :
-        <Form.Group as={Row} controlId={props.controlId} className='pb-3 mb-0'>
+        <Form.Group as={Row} hidden={props.hidden} controlId={props.controlId} className='pb-3 mb-0'>
             <Form.Label className='input-label' column xs='5' sm='3'>{props.title + (props.required ? '*' : '')}</Form.Label>
 
             <Col xs='7' sm='9' className='d-flex'>
