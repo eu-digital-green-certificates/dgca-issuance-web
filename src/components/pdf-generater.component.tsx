@@ -269,41 +269,41 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudgcProp: EUDGC | undefi
 
     const printDottedLine = () => {
         if (pdf) {
-            pdf.setPage(1);
-            let curX = 0;
-            let curY = 0;
-            let deltaX = mm2point(10);
-            let deltaY = mm2point(10);
+            // pdf.setPage(1);
+            // let curX = 0;
+            // let curY = 0;
+            // let deltaX = mm2point(10);
+            // let deltaY = mm2point(10);
 
-            pdf.line(curX, params.a6height, curX + deltaX, params.a6height);
-            pdf.line(params.a6width * 2 - curX, params.a6height, params.a6width * 2 - curX - deltaX, params.a6height);
+            // pdf.line(curX, params.a6height, curX + deltaX, params.a6height);
+            // pdf.line(params.a6width * 2 - curX, params.a6height, params.a6width * 2 - curX - deltaX, params.a6height);
 
-            pdf.line(params.a6width, curY, params.a6width, curY + deltaY);
-            pdf.line(params.a6width, params.a6height * 2 - deltaY, params.a6width, params.a6height * 2);
+            // pdf.line(params.a6width, curY, params.a6width, curY + deltaY);
+            // pdf.line(params.a6width, params.a6height * 2 - deltaY, params.a6width, params.a6height * 2);
 
-            pdf.line(params.a6width, params.a6height - deltaY / 2, params.a6width, params.a6height + deltaY / 2);
-            pdf.line(params.a6width - deltaX / 2, params.a6height, params.a6width + deltaX / 2, params.a6height);
+            // pdf.line(params.a6width, params.a6height - deltaY / 2, params.a6width, params.a6height + deltaY / 2);
+            // pdf.line(params.a6width - deltaX / 2, params.a6height, params.a6width + deltaX / 2, params.a6height);
 
-            // for (let page = 1; page < 3; page++) {
-            //     pdf.setPage(page)
-            //     let curX = 0 + params.marginLeft;
-            //     let curY = params.a6height;
-            //     let xTo = params.a6width * 2 - params.marginRight;
-            //     let deltaX = 3;
-            //     let deltaY = 3;
-            //     while (curX <= xTo) {
-            //         pdf.line(curX, curY, curX + deltaX, curY);
-            //         curX += 2 * deltaX;
-            //     }
+            for (let page = 1; page < 3; page++) {
+                pdf.setPage(page)
+                let curX = 0 + params.marginLeft;
+                let curY = params.a6height;
+                let xTo = params.a6width * 2 - params.marginRight;
+                let deltaX = 3;
+                let deltaY = 3;
+                while (curX <= xTo) {
+                    pdf.line(curX, curY, curX + deltaX, curY);
+                    curX += 2 * deltaX;
+                }
 
-            //     curX = params.a6width;
-            //     curY = 0 + params.marginTop;
-            //     let yTo = params.a6height * 2 - params.marginBottom;
-            //     while (curY <= yTo) {
-            //         pdf.line(curX, curY, curX, curY + deltaY);
-            //         curY += 2 * deltaY;
-            //     }
-            // }
+                curX = params.a6width;
+                curY = 0 + params.marginTop;
+                let yTo = params.a6height * 2 - params.marginBottom;
+                while (curY <= yTo) {
+                    pdf.line(curX, curY, curX, curY + deltaY);
+                    curY += 2 * deltaY;
+                }
+            }
         }
     }
 
@@ -577,7 +577,7 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudgcProp: EUDGC | undefi
 
                     const lineHeight = params.lineHeight10;
 
-                    let y = printCertificateHeader(t('translation:pdfHeaderVaccination'), french.translation.pdfHeaderVaccination, params.paddingTop);
+                    let y = printCertificateHeader(t('translation:pdfHeaderVaccination'), french.translation.pdfHeaderVaccination);
                     y += params.space;
 
                     //For the labels on the left side
@@ -643,7 +643,7 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudgcProp: EUDGC | undefi
         if (pdf && vaccinationSet && french) {
             const lineHeight = params.lineHeight10;
 
-            let y = printCertificateHeaderRotated(t('translation:pdfHeaderVaccination'), french.translation.pdfHeaderVaccination, params.paddingTop);
+            let y = printCertificateHeaderRotated(t('translation:pdfHeaderVaccination'), french.translation.pdfHeaderVaccination);
             y += params.space;
 
             //For the labels on the left side
