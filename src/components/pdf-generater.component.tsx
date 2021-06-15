@@ -486,7 +486,7 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudgcProp: EUDGC | undefi
                     infotext = pdf.splitTextToSize(infotext, lblLength);
                     pdf.text(infotext, x, y, { align: 'center', maxWidth: lblLength, isSymmetricSwapping: true });
 
-                    y += space + params.lineHeight9 * infotext.length;
+                    y += mm2point(1) + params.lineHeight9 * infotext.length;
                     setTextColorBlue();
                     pdf.setFontSize(params.fontSize10);
                     infotext = t('translation:pdfInfoURL');
@@ -538,22 +538,22 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudgcProp: EUDGC | undefi
                 y,
                 params.a6width - params.paddingLeft - params.paddingRight,
                 true);
-            y -= params.lineHeight9 * 2;
+            y -= params.lineHeight9 * 2 + mm2point(2);
 
-            y -= mm2point(2);
             infotext = t('translation:pdfRelevantInformation');
             infotext = pdf.splitTextToSize(infotext, lblLength);
             y = centerSplittedText(infotext, x, y) - params.lineHeight9;
 
+            y += mm2point(3);
             setTextColorBlue();
             pdf.setFontSize(params.fontSize10);
             infotext = t('translation:pdfInfoURL');
             infotext = pdf.splitTextToSize(infotext, lblLength);
             y = centerSplittedText(infotext, x, y);
 
-            pdf.line(params.a6width + params.paddingLeft, y + 4, params.a6width * 2 - params.paddingRight, y + 4);
+            pdf.line(params.a6width + params.paddingLeft, y - 2, params.a6width * 2 - params.paddingRight, y - 2);
 
-            y -= params.lineHeight9;
+            y -= params.lineHeight9 + mm2point(2);
             setTextColorBlack();
             pdf.setFontSize(params.fontSize9);
             pdf.setFont('arial', 'italic');
@@ -1246,13 +1246,17 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudgcProp: EUDGC | undefi
         let lineNumber = 0;
         let wordsInfo: IWordInfo[] = [];
         let lineLength = 0;
+        //let txtLines : [IWordInfo[]] = [[]];
+        let txtLines: Array<IWordInfo[]> = new Array();
         for (const word of words) {
             const wordLength = pdfGen.getTextWidth(word + ' ');
             if (wordLength + lineLength > textWidth) {
                 if (!rotation) {
                     writeLine(pdfGen, wordsInfo, lineLength, lineNumber++, xStart, yStart, lineHeight, textWidth);
                 } else {
-                    writeLineRotated(pdfGen, wordsInfo, lineLength, lineNumber++, xStart, yStart, lineHeight, textWidth);
+                    let words: IWordInfo[] = [...wordsInfo]
+                    txtLines.push(words);
+                    //writeLineRotated(pdfGen, wordsInfo, lineLength, lineNumber++, xStart, yStart, lineHeight, textWidth);
                 }
                 wordsInfo = [];
                 lineLength = 0;
@@ -1264,14 +1268,26 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudgcProp: EUDGC | undefi
             if (!rotation) {
                 writeLastLine(wordsInfo, pdfGen, xStart, yStart, lineNumber, lineHeight, textWidth);
             } else {
-                writeLastLineRotated(wordsInfo, pdfGen, xStart, yStart, lineNumber, lineHeight, textWidth);
+                txtLines.push(wordsInfo);
+                console.log(txtLines);
+                for (let i = txtLines.length - 1; i >= 0; --i) {
+                    console.log(txtLines[i]);
+                    
+                    
+                    if (i === txtLines.length - 1) {
+                       //writeLastLineRotated(wordsInfo, pdfGen, xStart, yStart, lineNumber, lineHeight, textWidth);
+                       writeLastLineRotated(txtLines[i], pdfGen, xStart, yStart, lineNumber, lineHeight, textWidth);
+                    } else {
+                        writeLineRotated(pdfGen, txtLines[i], lineNumber++, xStart, yStart, lineHeight, textWidth);
+                    }
+                }
             }
         }
     }
 
     const writeLastLine = (wordsInfo: IWordInfo[], pdfGen: jsPDF, xStart: number, yStart: number, lineNumber: number, lineHeight: number, textWidth: number) => {
         const line = wordsInfo.map(x => x.text).join(' ');
-        xStart = params.paddingLeft + (textWidth/2);
+        xStart = params.paddingLeft + (textWidth / 2);
         pdfGen.text(line, xStart, yStart + lineNumber * lineHeight, { align: 'center' });
     }
 
@@ -1283,7 +1299,6 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudgcProp: EUDGC | undefi
     }
 
     const writeLine = (pdfGen: jsPDF, wordsInfo: IWordInfo[], lineLength: number, lineNumber: number, xStart: number, yStart: number, lineHeight: number, textWidth: number) => {
-
         const wordSpacing = (textWidth - lineLength) / (wordsInfo.length - 1);
         let x = xStart;
         const y = yStart + lineNumber * lineHeight;
@@ -1293,7 +1308,12 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudgcProp: EUDGC | undefi
         }
     }
 
-    const writeLineRotated = (pdfGen: jsPDF, wordsInfo: IWordInfo[], lineLength: number, lineNumber: number, xStart: number, yStart: number, lineHeight: number, textWidth: number) => {
+    const writeLineRotated = (pdfGen: jsPDF, wordsInfo: IWordInfo[], lineNumber: number, xStart: number, yStart: number, lineHeight: number, textWidth: number) => {
+
+        let lineLength = 0;
+        for (const wordInfo of wordsInfo) {
+            lineLength += wordInfo.wordLength;
+        }
 
         const wordSpacing = (textWidth - lineLength) / (wordsInfo.length - 1);
         let x = xStart;

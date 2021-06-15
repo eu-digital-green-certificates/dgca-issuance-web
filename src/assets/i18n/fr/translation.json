@@ -23,7 +23,7 @@
     "pdfStateOfVaccination" : "État membre dans lequel le test a été effectué",
     "pdfHeaderRecovery" : "Certificat de rétablissement",
     "pdfDatePositiveTestResult" : "Date du premier résultat de test TAAN positif du titulaire",
-    "pdfStateOfTest" : "état membre du test dans lequel le test a été effectué",
+    "pdfStateOfTest" : "État membre du test dans lequel le test a été effectué",
     "pdfValidFrom" : "Certificat valable à partir du",
     "pdfValidTo" : "Certificat valable jusqu’au (180 jours au maximum après la date du premier résultat positif)"
 }

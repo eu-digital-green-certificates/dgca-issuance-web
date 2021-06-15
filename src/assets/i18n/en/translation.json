@@ -63,7 +63,7 @@
   "pdfCi":"Unique certificate identifier",
   "pdfGreenCertificate" : "EU Digital COVID Certificate",
   "pdfMemberPlaceholder" : "Member State Placeholder",
-  "pdfInfoText" : "This certificate is not a travel document. The scientific evidence on COVID-19 vaccination, testing and recovery continues to evolve, also in view of new variants of concern of the virus. Before traveling, please check the applicable public health measures and related restrictions applied at the point of destination.",
+  "pdfInfoText" : "This certificate is not a travel document. The scientific evidence on COVID-19 vaccination, testing and recovery continues to evolve, including with regard to new virus variants of concern. Before travelling, please check the applicable public health measures and related restrictions applicable at the point of destination.",
   "pdfRelevantInformation" : "Relevant information can be found here:",
   "pdfInfoURL" : "https://reopen.europa.eu/en",
   "pdfFoldingInstruction" : "Folding instructions",
@@ -90,4 +90,5 @@
   "pdfStateOfTest" : "Member State in which test was carried out",
   "pdfValidFrom" : "Certificate valid from",
   "pdfValidTo" : "Certificate valid until (not more than 180 days after the date of first positive test result)"
+
 }
