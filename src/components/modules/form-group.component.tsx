@@ -274,7 +274,7 @@ export const PersonInputs = (props: any) => {
                             dropdownMode="select"
                             maxDate={new Date()}
                             minDate={new Date(1900, 0, 1, 12)}
-                            openToDate={new Date(1990, 0, 1)}
+                            openToDate={dateOfBirth ? dateOfBirth : new Date(1990, 0, 1)}
                         />
                     </Col>
                 </Form.Group>
