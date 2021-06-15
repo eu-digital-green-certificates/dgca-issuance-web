@@ -87,6 +87,11 @@ interface IPageParameter {
     space: number
 }
 
+interface IWordInfo {
+    text: string;
+    wordLength: number;
+}
+
 const usePdfGenerator = (qrCodeCanvasElementProp: any, eudgcProp: EUDGC | undefined, onIsInit: (isInit: boolean) => void, onIsReady: (isReady: boolean) => void) => {
     const { t } = useTranslation();
     const french = i18n.getDataByLanguage('fr');
@@ -477,7 +482,7 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudgcProp: EUDGC | undefi
                     pdf.setFontSize(params.fontSize8);
                     let infotext = t('translation:pdfInfoText');
                     infotext = pdf.splitTextToSize(infotext, params.a6width - params.paddingLeft - params.paddingRight);
-                    justify(pdf, t('translation:pdfInfoText'), x, y, params.a6width - params.paddingLeft - params.paddingRight);
+                    justify(t('translation:pdfInfoText'), x, y, params.a6width - params.paddingLeft - params.paddingRight);
                     // pdf.text(infotext, x, y, { align: 'justify', maxWidth: params.a6width - params.paddingLeft - params.paddingRight });
 
                     y += mm2point(2) + params.lineHeight9 * infotext.length;
@@ -532,8 +537,7 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudgcProp: EUDGC | undefi
             pdf.setFontSize(params.fontSize8);
             let infotext = t('translation:pdfInfoText');
             infotext = pdf.splitTextToSize(infotext, lblLength);
-            justify(pdf,
-                t('translation:pdfInfoText'),
+            justify(t('translation:pdfInfoText'),
                 x - params.paddingRight,
                 y,
                 params.a6width - params.paddingLeft - params.paddingRight,
@@ -1237,63 +1241,58 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudgcProp: EUDGC | undefi
         pdf!.setTextColor(256, 256, 256);
     }
 
-    const justify = (pdfGen: jsPDF, text: string, xStart: number, yStart: number, textWidth: number, rotation?: boolean) => {
-        rotation = rotation ? rotation : false;
-        text = text.replace(/(?:\r\n|\r|\n)/g, ' ');
-        text = text.replace(/ +(?= )/g, '');
-        const lineHeight = pdfGen.getTextDimensions('a').h * 1.15;
-        const words = text.split(' ');
-        let lineNumber = 0;
-        let wordsInfo: IWordInfo[] = [];
-        let lineLength = 0;
-        //let txtLines : [IWordInfo[]] = [[]];
-        let txtLines: Array<IWordInfo[]> = new Array();
-        for (const word of words) {
-            const wordLength = pdfGen.getTextWidth(word + ' ');
-            if (wordLength + lineLength > textWidth) {
-                if (!rotation) {
-                    writeLine(pdfGen, wordsInfo, lineLength, lineNumber++, xStart, yStart, lineHeight, textWidth);
-                } else {
-                    let words: IWordInfo[] = [...wordsInfo]
-                    txtLines.push(words);
-                    //writeLineRotated(pdfGen, wordsInfo, lineLength, lineNumber++, xStart, yStart, lineHeight, textWidth);
-                }
-                wordsInfo = [];
-                lineLength = 0;
-            }
-            wordsInfo.push({ text: word, wordLength });
-            lineLength += wordLength;
-        }
-        if (wordsInfo.length > 0) {
-            if (!rotation) {
-                writeLastLine(wordsInfo, pdfGen, xStart, yStart, lineNumber, lineHeight, textWidth);
-            } else {
-                txtLines.push(wordsInfo);
-                console.log(txtLines);
-                for (let i = txtLines.length - 1; i >= 0; --i) {
-                    console.log(txtLines[i]);
-                    
-                    
-                    if (i === txtLines.length - 1) {
-                       //writeLastLineRotated(wordsInfo, pdfGen, xStart, yStart, lineNumber, lineHeight, textWidth);
-                       writeLastLineRotated(txtLines[i], pdfGen, xStart, yStart, lineNumber, lineHeight, textWidth);
+    const justify = (text: string, xStart: number, yStart: number, textWidth: number, rotation?: boolean) => {
+        if (pdf) {
+            rotation = rotation ? rotation : false;
+            text = text.replace(/(?:\r\n|\r|\n)/g, ' ');
+            text = text.replace(/ +(?= )/g, '');
+            const lineHeight = pdf.getTextDimensions('a').h * 1.15;
+            const words = text.split(' ');
+            let lineNumber = 0;
+            let wordsInfo: IWordInfo[] = [];
+            let lineLength = 0;
+            let txtLines: Array<IWordInfo[]> = new Array();
+            for (const word of words) {
+                const wordLength = pdf.getTextWidth(word + ' ');
+                if (wordLength + lineLength > textWidth) {
+                    if (!rotation) {
+                        writeLine(pdf, wordsInfo, lineLength, lineNumber++, xStart, yStart, lineHeight, textWidth);
                     } else {
-                        writeLineRotated(pdfGen, txtLines[i], lineNumber++, xStart, yStart, lineHeight, textWidth);
+                        let words: IWordInfo[] = [...wordsInfo]
+                        txtLines.push(words);
+                    }
+                    wordsInfo = [];
+                    lineLength = 0;
+                }
+                wordsInfo.push({ text: word, wordLength });
+                lineLength += wordLength;
+            }
+            if (wordsInfo.length > 0) {
+                if (!rotation) {
+                    writeLastLine(wordsInfo, pdf, yStart, lineNumber, lineHeight, textWidth);
+                } else {
+                    txtLines.push(wordsInfo);
+                    for (let i = txtLines.length - 1; i >= 0; --i) {
+                        if (i === txtLines.length - 1) {
+                            writeLastLineRotated(txtLines[i], pdf, yStart, lineHeight, textWidth);
+                        } else {
+                            writeLineRotated(pdf, txtLines[i], lineNumber++, xStart, yStart, lineHeight, textWidth);
+                        }
                     }
                 }
             }
         }
     }
 
-    const writeLastLine = (wordsInfo: IWordInfo[], pdfGen: jsPDF, xStart: number, yStart: number, lineNumber: number, lineHeight: number, textWidth: number) => {
+    const writeLastLine = (wordsInfo: IWordInfo[], pdfGen: jsPDF, yStart: number, lineNumber: number, lineHeight: number, textWidth: number) => {
         const line = wordsInfo.map(x => x.text).join(' ');
-        xStart = params.paddingLeft + (textWidth / 2);
+        let xStart = params.paddingLeft + (textWidth / 2);
         pdfGen.text(line, xStart, yStart + lineNumber * lineHeight, { align: 'center' });
     }
 
-    const writeLastLineRotated = (wordsInfo: IWordInfo[], pdfGen: jsPDF, xStart: number, yStart: number, lineNumber: number, lineHeight: number, textWidth: number) => {
+    const writeLastLineRotated = (wordsInfo: IWordInfo[], pdfGen: jsPDF, yStart: number, lineHeight: number, textWidth: number) => {
         let line = wordsInfo.map(x => x.text).join(' ');
-        xStart = params.a6width * 2;
+        let xStart = params.a6width * 2;
         line = pdfGen.splitTextToSize(line, textWidth);
         centerSplittedText(line, xStart, yStart - lineHeight);
     }
@@ -1309,7 +1308,6 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudgcProp: EUDGC | undefi
     }
 
     const writeLineRotated = (pdfGen: jsPDF, wordsInfo: IWordInfo[], lineNumber: number, xStart: number, yStart: number, lineHeight: number, textWidth: number) => {
-
         let lineLength = 0;
         for (const wordInfo of wordsInfo) {
             lineLength += wordInfo.wordLength;
@@ -1322,11 +1320,6 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudgcProp: EUDGC | undefi
             pdfGen.text(wordInfo.text, x, y, { align: 'left', angle: 180 });
             x -= wordInfo.wordLength + wordSpacing;
         }
-    }
-
-    interface IWordInfo {
-        text: string;
-        wordLength: number;
     }
 
     return pdf;
