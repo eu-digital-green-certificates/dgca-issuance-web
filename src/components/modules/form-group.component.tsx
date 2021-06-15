@@ -9,6 +9,7 @@ import DatePicker from "react-datepicker";
 // import { registerLocale } from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { IValueSet, useGetDateFormats } from "../../api";
+import useLocalStorage from "../../misc/local-storage";
 
 const iso3311a2 = require('iso-3166-1-alpha-2');
 
@@ -140,7 +141,7 @@ export const PersonInputs = (props: any) => {
     const [standardisedFamilyName, setStandardisedFamilyName] = React.useState<string>('');
 
     const [dateOfBirth, setDateOfBirth] = React.useState<Date>();
-    const [dateFormat, setDateFormat] = React.useState('yyyy-MM-dd');
+    const [dateFormat, setDateFormat] = useLocalStorage('dateFormat', 'yyyy-MM-dd');
 
     React.useEffect(() => {
         if (props && props.eudgc && props.eudgc.nam) {
@@ -177,7 +178,7 @@ export const PersonInputs = (props: any) => {
         props.onChange(result);
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [givenName, familyName, standardisedGivenName, standardisedFamilyName, dateOfBirth])
+    }, [givenName, familyName, standardisedGivenName, standardisedFamilyName, dateOfBirth, dateFormat])
 
 
     const handleStandardisedNameChanged = (changedValue: string, setStandardisedName: (value: string) => void) => {
