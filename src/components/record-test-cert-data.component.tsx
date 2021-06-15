@@ -139,7 +139,7 @@ const RecordTestCertData = (props: any) => {
                 tt: testType,
                 nm: testName && testType === 'LP6464-4' ? testName : undefined,
                 ma: testManufacturers && testType === 'LP217198-3' ? testManufacturers : undefined,
-                sc: sampleDateTime!.toISOString(),
+                sc: moment.utc(sampleDateTime).format(),
                 tr: testResult,
                 tc: testCenter,
                 co: issuerCountryCode,
