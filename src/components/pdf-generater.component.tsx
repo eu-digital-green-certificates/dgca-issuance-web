@@ -597,9 +597,13 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudgcProp: EUDGC | undefi
 
                     pdf.setFontSize(params.fontSize10);
 
-                    y = printDisease(xLeft, y, lineHeight,
-                        getValueSetDisplay(vaccinationSet.tg,
-                            diseaseAgentsData));
+                    let disease = getValueSetDisplay(vaccinationSet.tg, diseaseAgentsData);
+                    let lblDisease = t('translation:pdfDisease');
+                    lblDisease = lblDisease.replace("diseaseName", disease ? disease : '');
+                    let lblFrench = french.translation.pdfDisease;
+                    lblFrench = lblFrench.replace("diseaseName", disease ? disease : '');
+
+                    y = printDisease(xLeft, y, lineHeight, lblDisease, lblFrench);
 
                     y = printVerticalBlock(xLeft, y,
                         t('translation:pdfVaccineProphylaxis'),
@@ -649,57 +653,38 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudgcProp: EUDGC | undefi
         }
     }
 
-    const printDisease = (x: number, y: number, lineHeight: number, value?: string): number => {
+    const printDisease = (x: number, y: number, lineHeight: number, value: string, lblFrench: string): number => {
         if (pdf && french) {
             pdf.setFont('arial', 'bold');
-            let lbl = t('translation:pdfDisease');
-            lbl += value;
-            pdf.text(lbl, x, y);
+            value = pdf.splitTextToSize(value, params.a6width);
+            pdf.text(value, x, y);
 
-            y += lineHeight;
-            lbl = t('translation:pdfDisease2');
-            pdf.text(lbl, x, y);
+            y += lineHeight * value.length + mm2point(1);
 
             pdf.setFont('arial', 'italic');
+            lblFrench = pdf.splitTextToSize(lblFrench, params.a6width);
+            pdf.text(lblFrench, x, y);
 
-            y += lineHeight + mm2point(1);
-            lbl = french.translation.pdfDisease;
-            lbl += value;
-            pdf.text(lbl, x, y);
-
-            y += lineHeight;
-            lbl = french.translation.pdfDisease2;
-            pdf.text(lbl, x, y);
-
-            y += lineHeight + mm2point(2);
+            y += lineHeight * lblFrench.length + mm2point(2);
         }
 
         return y;
     }
 
-    const printDiseaseRotated = (x: number, y: number, lineHeight: number, value?: string): number => {
+    const printDiseaseRotated = (x: number, y: number, lineHeight: number, value: string, lblFrench: string): number => {
         if (pdf && french) {
             pdf.setFont('arial', 'bold');
-            let lbl = t('translation:pdfDisease');
-            lbl += value;
-            pdf.text(lbl, x, y, { align: 'left', angle: 180 });
+            value = pdf.splitTextToSize(value, params.a6width);
+            pdf.text(value, x, y, { align: 'left', angle: 180 });
 
-            y -= lineHeight;
-            lbl = t('translation:pdfDisease2');
-            pdf.text(lbl, x, y, { align: 'left', angle: 180 });
+            y -= lineHeight * value.length + mm2point(1);
 
             pdf.setFont('arial', 'italic');
 
-            y -= lineHeight + mm2point(1);
-            lbl = french.translation.pdfDisease;
-            lbl += value;
-            pdf.text(lbl, x, y, { align: 'left', angle: 180 });
+            lblFrench = pdf.splitTextToSize(lblFrench, params.a6width);
+            pdf.text(lblFrench, x, y, { align: 'left', angle: 180 });
 
-            y -= lineHeight;
-            lbl = french.translation.pdfDisease2;
-            pdf.text(lbl, x, y, { align: 'left', angle: 180 });
-
-            y -= lineHeight + 6;
+            y -= lineHeight * lblFrench.length + 6;
         }
 
         return y;
@@ -717,9 +702,16 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudgcProp: EUDGC | undefi
 
             pdf.setFontSize(params.fontSize10);
 
+            let disease = getValueSetDisplay(vaccinationSet.tg, diseaseAgentsData);
+            let lblDisease = t('translation:pdfDisease');
+            lblDisease = lblDisease.replace("diseaseName", disease ? disease : '');
+            let lblFrench = french.translation.pdfDisease;
+            lblFrench = lblFrench.replace("diseaseName", disease ? disease : '');
+
             y = printDiseaseRotated(xLeft, y,
                 lineHeight,
-                getValueSetDisplay(vaccinationSet.tg, diseaseAgentsData));
+                lblDisease,
+                lblFrench);
 
             y = printVerticalBlockRotated(xLeft, y,
                 t('translation:pdfVaccineProphylaxis'),
@@ -783,9 +775,13 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudgcProp: EUDGC | undefi
 
                     pdf.setFontSize(params.fontSize9);
 
-                    y = printDisease(x, y, lineHeight,
-                        getValueSetDisplay(testSet.tg,
-                            diseaseAgentsData));
+                    let disease = getValueSetDisplay(testSet.tg, diseaseAgentsData);
+                    let lblDisease = t('translation:pdfDisease');
+                    lblDisease = lblDisease.replace("diseaseName", disease ? disease : '');
+                    let lblFrench = french.translation.pdfDiseaseRecovery;
+                    lblFrench = lblFrench.replace("diseaseName", disease ? disease : '');
+
+                    y = printDisease(x, y, lineHeight, lblDisease, lblFrench);
 
                     y = printVerticalBlock(x, y,
                         t('translation:pdfTypeOfTest'),
@@ -850,11 +846,18 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudgcProp: EUDGC | undefi
 
             let x = params.a6width - params.paddingInnerLeft;
 
-            pdf.setFontSize(params.fontSize9);
+            pdf.setFontSize(params.fontSize10);
+
+            let disease = getValueSetDisplay(testSet.tg, diseaseAgentsData);
+            let lblDisease = t('translation:pdfDiseaseRecovery');
+            lblDisease = lblDisease.replace("diseaseName", disease ? disease : '');
+            let lblFrench = french.translation.pdfDiseaseRecovery;
+            lblFrench = lblFrench.replace("diseaseName", disease ? disease : '');
 
             y = printDiseaseRotated(x, y,
                 lineHeight,
-                getValueSetDisplay(testSet.tg, diseaseAgentsData));
+                lblDisease,
+                lblFrench);
 
             y = printVerticalBlockRotated(x, y,
                 t('translation:pdfTypeOfTest'),
@@ -927,9 +930,13 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudgcProp: EUDGC | undefi
 
                     pdf.setFontSize(params.fontSize10);
 
-                    y = printDisease(xLeft, y,
-                        lineHeight,
-                        getValueSetDisplay(recoverySet.tg, diseaseAgentsData));
+                    let disease = getValueSetDisplay(recoverySet.tg, diseaseAgentsData);
+                    let lblDisease = t('translation:pdfDiseaseRecovery');
+                    lblDisease = lblDisease.replace("diseaseName", disease ? disease : '');
+                    let lblFrench = french.translation.pdfDiseaseRecovery;
+                    lblFrench = lblFrench.replace("diseaseName", disease ? disease : '');
+
+                    y = printDisease(xLeft, y, lineHeight, lblDisease, lblFrench);
 
                     y = printVerticalBlock(xLeft, y,
                         t('translation:pdfDatePositiveTestResult'),
@@ -982,9 +989,16 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudgcProp: EUDGC | undefi
 
             pdf.setFontSize(params.fontSize10);
 
+            let disease = getValueSetDisplay(recoverySet.tg, diseaseAgentsData);
+            let lblDisease = t('translation:pdfDiseaseRecovery');
+            lblDisease = lblDisease.replace("diseaseName", disease ? disease : '');
+            let lblFrench = french.translation.pdfDiseaseRecovery;
+            lblFrench = lblFrench.replace("diseaseName", disease ? disease : '');
+
             y = printDiseaseRotated(xLeft, y,
                 lineHeight,
-                getValueSetDisplay(recoverySet.tg, diseaseAgentsData));
+                lblDisease,
+                lblFrench);
 
             y = printVerticalBlockRotated(xLeft, y,
                 t('translation:pdfDatePositiveTestResult'),

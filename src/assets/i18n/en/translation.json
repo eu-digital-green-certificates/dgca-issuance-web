@@ -68,8 +68,7 @@
   "pdfInfoURL" : "https://reopen.europa.eu/en",
   "pdfFoldingInstruction" : "Folding instructions",
   "pdfHeaderVaccination" : "Vaccination certificate",
-  "pdfDisease" : "Disease or agent targeted: ",
-  "pdfDisease2" : "(SARS-CoV-2 or one of its variants)",
+  "pdfDisease" : "Disease or agent targeted: diseaseName\n(SARS-CoV-2 or one of its variants)",
   "pdfVaccineProphylaxis" : "COVID-19 vaccine or prophylaxis",
   "pdfVaccineMedicalProduct" : "COVID-19 vaccine medicinal product",
   "pdfVaccineManufacturer" : "COVID-19 vaccine marketing authorisation holder or manufacturer",
@@ -89,6 +88,6 @@
   "pdfDatePositiveTestResult" : "Date of the holders’ first positive NAAT test result",
   "pdfStateOfTest" : "Member State in which test was carried out",
   "pdfValidFrom" : "Certificate valid from",
-  "pdfValidTo" : "Certificate valid until (not more than 180 days after the date of first positive test result)"
-
+  "pdfValidTo" : "Certificate valid until (not more than 180 days after the date of first positive test result)",
+  "pdfDiseaseRecovery" : "Disease or agent from which the\nholder has recovered : diseaseName\n(SARS-CoV-2 or one of its variants)"
 }

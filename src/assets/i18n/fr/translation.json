@@ -4,8 +4,7 @@
     "pdfCi": "Identifiant unique du certificat",
     "pdfGreenCertificate": "Certificat numérique européen COVID",
     "pdfHeaderVaccination": "Certificat de vaccination",
-    "pdfDisease": "Maladie ou agent ciblé: ",
-    "pdfDisease2": "(SARS-CoV-2 ou l’un de ses variants)",
+    "pdfDisease": "Maladie ou agent ciblé: diseaseName\n(SARS-CoV-2 ou l’un de ses variants)",
     "pdfVaccineProphylaxis": "Vaccin or prophylaxie contre la COVID-19",
     "pdfVaccineMedicalProduct": "Médicament vaccinal contre la COVID-19",
     "pdfVaccineManufacturer": "Fabricant ou titulaire de l’autorisation de mise sur le marché du vaccin contre la COVID-19",
@@ -25,5 +24,7 @@
     "pdfDatePositiveTestResult" : "Date du premier résultat de test TAAN positif du titulaire",
     "pdfStateOfTest" : "État membre du test dans lequel le test a été effectué",
     "pdfValidFrom" : "Certificat valable à partir du",
-    "pdfValidTo" : "Certificat valable jusqu’au (180 jours au maximum après la date du premier résultat positif)"
+    "pdfValidTo" : "Certificat valable jusqu’au (180 jours au maximum après la date du premier résultat positif)",
+    "pdfDiseaseRecovery" : "Maladie ou agent dont le citoyen s’est\nrétabli : diseaseName (à savoir aussi\nSARS-CoV2 ou l’un de ses variants)"
+
 }
