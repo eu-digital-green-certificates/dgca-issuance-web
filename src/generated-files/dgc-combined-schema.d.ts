@@ -6,62 +6,66 @@
  */
 
 /**
+ * EU Digital Covid Certificate
+ */
+export type EUDCC = EUDCC1 & EUDCC2;
+/**
  * Version of the schema, according to Semantic versioning (ISO, https://semver.org/ version 2.0.0 or newer)
  */
 export type SchemaVersion = string;
 /**
- * The family or primary name(s) of the person addressed in the certificate
+ * The surname or primary name(s) of the person addressed in the certificate
  */
-export type FamilyName = string;
+export type Surname = string;
 /**
- * The family name(s) of the person transliterated
+ * The surname(s) of the person, transliterated ICAO 9303
  */
-export type StandardisedFamilyName = string;
+export type StandardisedSurname = string;
 /**
- * The given name(s) of the person addressed in the certificate
+ * The forename(s) of the person addressed in the certificate
  */
-export type GivenName = string;
+export type Forename = string;
 /**
- * The given name(s) of the person transliterated
+ * The forename(s) of the person, transliterated ICAO 9303
  */
-export type StandardisedGivenName = string;
+export type StandardisedForename = string;
 /**
- * Date of Birth of the person addressed in the DGC. ISO 8601 date format restricted to range 1900-2099
+ * Date of Birth of the person addressed in the DCC. ISO 8601 date format restricted to range 1900-2099 or empty
  */
 export type DateOfBirth = string;
 /**
- * EU eHealthNetwork: Value Sets for Digital Green Certificates. version 1.0, 2021-04-16, section 2.1
+ * EU eHealthNetwork: Value Sets for Digital Covid Certificates. version 1.0, 2021-04-16, section 2.1
  */
 export type DiseaseAgentTargeted = string;
+export type EUDCC2 = {
+  [k: string]: unknown;
+};
 
-/**
- * EU Digital Green Certificate
- */
-export interface EUDGC {
-  ver: SchemaVersion;
+export interface EUDCC1 {
+  ver?: SchemaVersion;
   /**
-   * Surname(s), given name(s) - in that order
+   * Surname(s), forename(s) - in that order
    */
-  nam: {
-    fn?: FamilyName;
-    fnt: StandardisedFamilyName;
-    gn?: GivenName;
-    gnt?: StandardisedGivenName;
+  nam?: {
+    fn?: Surname;
+    fnt: StandardisedSurname;
+    gn?: Forename;
+    gnt?: StandardisedForename;
     [k: string]: unknown;
   };
-  dob: DateOfBirth;
+  dob?: DateOfBirth;
   /**
    * Vaccination Group
    */
-  v?: [VaccinationEntry, ...VaccinationEntry[]];
+  v?: [VaccinationEntry];
   /**
    * Test Group
    */
-  t?: [TestEntry, ...TestEntry[]];
+  t?: [TestEntry];
   /**
    * Recovery Group
    */
-  r?: [RecoveryEntry, ...RecoveryEntry[]];
+  r?: [RecoveryEntry];
   [k: string]: unknown;
 }
 /**
@@ -93,7 +97,7 @@ export interface VaccinationEntry {
    */
   sd: number;
   /**
-   * Date of Vaccination
+   * ISO8601 complete date: Date of Vaccination
    */
   dt: string;
   /**
@@ -132,17 +136,13 @@ export interface TestEntry {
    */
   sc: string;
   /**
-   * Date/Time of Test Result
-   */
-  dr?: string;
-  /**
    * Test Result
    */
   tr: string;
   /**
    * Testing Centre
    */
-  tc: string;
+  tc?: string;
   /**
    * Country of Test
    */
@@ -163,7 +163,7 @@ export interface TestEntry {
 export interface RecoveryEntry {
   tg: DiseaseAgentTargeted;
   /**
-   * ISO 8601 Date of First Positive Test Result
+   * ISO 8601 complete date of first positive NAA test result
    */
   fr: string;
   /**
@@ -175,11 +175,11 @@ export interface RecoveryEntry {
    */
   is: string;
   /**
-   * ISO 8601 Date: Certificate Valid From
+   * ISO 8601 complete date: Certificate Valid From
    */
   df: string;
   /**
-   * Certificate Valid Until
+   * ISO 8601 complete date: Certificate Valid Until
    */
   du: string;
   /**

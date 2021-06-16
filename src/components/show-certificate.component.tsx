@@ -30,7 +30,7 @@ import useNavigation from '../misc/navigation';
 import QRCode from 'qrcode.react';
 
 import Spinner from './spinner/spinner.component';
-import { EUDGC } from '../generated-files/dgc-combined-schema';
+import { EUDCC1 } from '../generated-files/dgc-combined-schema';
 import genEDGCQR, { CertResult } from '../misc/edgcQRGenerator';
 
 import ShowCertificateData from '../misc/ShowCertificateData';
@@ -46,13 +46,13 @@ const ShowCertificate = (props: any) => {
     const [isInit, setIsInit] = React.useState(false)
     const [pdfIsInit, setPdfIsInit] = React.useState(false)
     const [pdfIsReady, setPdfIsReady] = React.useState(false)
-    const [eudgc, setEudgc] = React.useState<EUDGC>();
+    const [eudgc, setEudgc] = React.useState<EUDCC1>();
     const [qrCodeValue, setQrCodeValue] = React.useState('');
 
     const [tan, setTAN] = React.useState('');
 
     const [qrCodeForPDF, setQrCodeForPDF] = React.useState<any>();
-    const [eudgcForPDF, setEudgcForPDF] = React.useState<EUDGC>();
+    const [eudgcForPDF, setEudgcForPDF] = React.useState<EUDCC1>();
     const pdf = usePdfGenerator(qrCodeForPDF, eudgcForPDF, (isInit) => setPdfIsInit(isInit), (isReady) => setPdfIsReady(isReady));
 
     // set patient data on mount and set hash from uuid

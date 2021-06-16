@@ -32,7 +32,7 @@ import Spinner from './spinner/spinner.component';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
-import { EUDGC, VaccinationEntry } from '../generated-files/dgc-combined-schema';
+import { EUDCC1, VaccinationEntry } from '../generated-files/dgc-combined-schema';
 import { useGetDiseaseAgents, useGetVaccineManufacturers, useGetVaccines, useGetVaccinMedicalData } from '../api';
 
 import schema from '../generated-files/DGC.combined-schema.json';
@@ -40,6 +40,7 @@ import { Validator } from 'jsonschema';
 import CardHeader from './modules/card-header.component';
 import { PersonInputs, IPersonData, FormGroupInput, FormGroupValueSetSelect, FormGroupISOCountrySelect } from './modules/form-group.component';
 import CardFooter from './modules/card-footer.component';
+import moment from 'moment';
 
 const validator = new Validator();
 
@@ -131,7 +132,7 @@ const RecordVaccinationCertData = (props: any) => {
 
         const form = event.currentTarget;
 
-        if (form.checkValidity()) {
+        if (form.checkValidity() && person) {
 
             const vacc: VaccinationEntry = {
                 tg: disease,
@@ -146,17 +147,24 @@ const RecordVaccinationCertData = (props: any) => {
                 ci: ''
             };
 
-            const eudgc: EUDGC = {
-                ver: '1.0.0',
+            const eudgc: EUDCC1 = {
+                ver: '1.3.0',
                 nam: {
-                    fn: person!.familyName,
-                    fnt: person!.standardisedFamilyName!,
-                    gn: person!.givenName,
-                    gnt: person!.standardisedGivenName
+                    fn: person.familyName,
+                    fnt: person.standardisedFamilyName!,
+                    gn: person.givenName,
+                    gnt: person.standardisedGivenName
                 },
-                dob: person!.dateOfBirth!.toISOString().split('T')[0],
+                dob: person.dateOfBirth
+                    ? moment(person.dateOfBirth).format(person.dobFormat === 'yyyy-MM-dd' ? 'yyyy-MM-DD' : person.dobFormat)
+                    : '',
                 v: [vacc]
             }
+
+            // console.log(JSON.stringify(eudgc));
+            // let vac = eudgc.v[0];
+            // console.log(vac);
+            // console.log(vac.tg);
 
             var result = validator.validate(eudgc, schema);
 
@@ -246,7 +254,7 @@ const RecordVaccinationCertData = (props: any) => {
                             />
 
                             {/* vacLastDate */}
-                            <Form.Group as={Row} controlId='formLastDateInput'className='pb-3 mb-0'>
+                            <Form.Group as={Row} controlId='formLastDateInput' className='pb-3 mb-0'>
                                 <Form.Label className='input-label ' column xs='5' sm='3'>{t('translation:vac-last-date') + '*'}</Form.Label>
 
                                 <Col xs='7' sm='9' className='d-flex'>
@@ -282,7 +290,7 @@ const RecordVaccinationCertData = (props: any) => {
                                 value={certificateIssuer}
                                 onChange={(evt: any) => setCertificateIssuer(evt.target.value)}
                                 required
-                                maxLength={50}
+                                maxLength={80}
                             />
                             <hr />
                         </Card.Body>

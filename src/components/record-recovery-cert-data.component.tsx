@@ -32,7 +32,7 @@ import Spinner from './spinner/spinner.component';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
-import { EUDGC, RecoveryEntry } from '../generated-files/dgc-combined-schema';
+import { EUDCC1, RecoveryEntry } from '../generated-files/dgc-combined-schema';
 import { useGetDiseaseAgents } from '../api';
 
 import schema from '../generated-files/DGC.combined-schema.json';
@@ -40,9 +40,13 @@ import { Validator } from 'jsonschema';
 import CardHeader from './modules/card-header.component';
 import { PersonInputs, IPersonData, FormGroupInput, FormGroupValueSetSelect, FormGroupISOCountrySelect } from './modules/form-group.component';
 import CardFooter from './modules/card-footer.component';
+import moment from 'moment';
 
 const validator = new Validator();
+// 180 days
 const expirationMilSeconds = 60 * 60 * 24 * 180 * 1000;
+// 11 days
+const timeAfter = 60 * 60 * 24 * 11 * 1000;
 
 const RecordRecoveryCertData = (props: any) => {
 
@@ -60,6 +64,8 @@ const RecordRecoveryCertData = (props: any) => {
     const [testCountryCode, setTestCountryCode] = useLocalStorage('testCountryCode', '');
     const [dateValidFrom, setDateValidFrom] = React.useState<Date>();
     const [dateValidTo, setDateValidTo] = React.useState<Date>();
+    const [firstPosMinDate] = React.useState<Date>(new Date(Date.now() - expirationMilSeconds));
+    const [firstPosMaxDate] = React.useState<Date>(new Date(Date.now() - timeAfter));
 
     React.useEffect(() => {
         if (!props.eudgc || !props.eudgc.r || !props.eudgc.r[0]) {
@@ -96,6 +102,7 @@ const RecordRecoveryCertData = (props: any) => {
     const handleFirstPositiveResultDate = (evt: Date | [Date, Date] | null) => {
         const date = handleDateChange(evt);
         setFirstPositiveResultDate(date);
+
     }
 
     const handleDateValidFrom = (evt: Date | [Date, Date] | null) => {
@@ -135,7 +142,7 @@ const RecordRecoveryCertData = (props: any) => {
 
         const form = event.currentTarget;
 
-        if (form.checkValidity()) {
+        if (form.checkValidity() && person) {
 
             const r: RecoveryEntry = {
                 tg: disease,
@@ -147,15 +154,17 @@ const RecordRecoveryCertData = (props: any) => {
                 ci: ''
             };
 
-            const eudgc: EUDGC = {
-                ver: '1.0.0',
+            const eudgc: EUDCC1 = {
+                ver: '1.3.0',
                 nam: {
-                    fn: person!.familyName,
-                    fnt: person!.standardisedFamilyName!,
-                    gn: person!.givenName,
-                    gnt: person!.standardisedGivenName
+                    fn: person.familyName,
+                    fnt: person.standardisedFamilyName!,
+                    gn: person.givenName,
+                    gnt: person.standardisedGivenName
                 },
-                dob: person!.dateOfBirth!.toISOString().split('T')[0],
+                dob: person.dateOfBirth
+                    ? moment(person.dateOfBirth).format(person.dobFormat === 'yyyy-MM-dd' ? 'yyyy-MM-DD' : person.dobFormat)
+                    : '',
                 r: [r]
             }
 
@@ -222,9 +231,13 @@ const RecordRecoveryCertData = (props: any) => {
                                         showMonthDropdown
                                         showYearDropdown
                                         dropdownMode="select"
-                                        maxDate={new Date()}
-                                        minDate={new Date(2020, 10)}
-                                        openToDate={new Date()}
+                                        maxDate={dateValidFrom ? new Date(dateValidFrom.getTime() - timeAfter) : firstPosMaxDate}
+                                        minDate={dateValidTo ? new Date(dateValidTo.getTime() - expirationMilSeconds) : firstPosMinDate}
+                                        openToDate={firstPositiveResultDate
+                                            ? firstPositiveResultDate
+                                            : dateValidFrom
+                                                ? new Date(dateValidFrom.getTime() - timeAfter)
+                                                : new Date()}
                                         required
                                     />
                                 </Col>
@@ -244,11 +257,11 @@ const RecordRecoveryCertData = (props: any) => {
                                 value={certificateIssuer}
                                 onChange={(evt: any) => setCertificateIssuer(evt.target.value)}
                                 required
-                                maxLength={50}
+                                maxLength={80}
                             />
 
                             {/* Date: Certificate Valid From - To */}
-                            <Form.Group as={Row} controlId='formDateOfBirthInput' className='pb-3 mb-0'>
+                            <Form.Group as={Row} controlId='formDateValidFromToInput' className='pb-3 mb-0'>
                                 <Form.Label className='input-label ' column xs='5' sm='3'>{t('translation:cert-valid-from-to') + '*'}</Form.Label>
 
                                 <Col xs='7' sm='9' className='d-flex'>
@@ -264,7 +277,11 @@ const RecordRecoveryCertData = (props: any) => {
                                         showYearDropdown
                                         dropdownMode="select"
                                         maxDate={new Date()}
-                                        minDate={dateValidTo ? new Date(dateValidTo.getTime() - expirationMilSeconds) : new Date(Date.now() - expirationMilSeconds)}
+                                        minDate={firstPositiveResultDate
+                                            ? new Date(firstPositiveResultDate.getTime() + timeAfter)
+                                            : dateValidTo
+                                                ? new Date(dateValidTo.getTime() + timeAfter - expirationMilSeconds)
+                                                : new Date(Date.now() + timeAfter - expirationMilSeconds)}
                                         openToDate={dateValidFrom ? dateValidFrom : new Date()}
                                         required
                                     />
@@ -280,7 +297,11 @@ const RecordRecoveryCertData = (props: any) => {
                                         showMonthDropdown
                                         showYearDropdown
                                         dropdownMode="select"
-                                        maxDate={dateValidFrom ? new Date(dateValidFrom.getTime() + expirationMilSeconds) : new Date(Date.now() + expirationMilSeconds)}
+                                        maxDate={firstPositiveResultDate
+                                            ? new Date(firstPositiveResultDate.getTime() + expirationMilSeconds)
+                                            : dateValidFrom
+                                                ? new Date(dateValidFrom.getTime() - timeAfter + expirationMilSeconds)
+                                                : new Date(Date.now() - timeAfter + expirationMilSeconds)}
                                         minDate={new Date()}
                                         openToDate={dateValidTo ? dateValidTo : new Date()}
                                         required

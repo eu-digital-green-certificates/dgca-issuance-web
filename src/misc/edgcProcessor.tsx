@@ -24,7 +24,7 @@ import base45 from './wbase45'
 import CryptoJS from 'crypto-js';
 
 import zlib from 'browserify-zlib'
-import { EUDGC } from '../generated-files/dgc-combined-schema';
+import { EUDCC1 } from '../generated-files/dgc-combined-schema';
 
 const edgcPrefix = 'HC1:'
 
@@ -34,7 +34,8 @@ export interface CertificateMetaData {
     kid: string,
     algId: number,
     countryCode: string,
-    expired: number
+    expired: number,
+    expiredDuration: number
 }
 
 export interface SignService {
@@ -42,7 +43,7 @@ export interface SignService {
     (hash: string): Promise<string>;
 }
 
-const encodeCBOR = (certData: EUDGC, certMetaData: CertificateMetaData): Buffer => {
+const encodeCBOR = (certData: EUDCC1, certMetaData: CertificateMetaData): Buffer => {
 
     const cborMap = new cbor.Map();
     const issuedAtSec = Date.now() / 1000 | 0;
@@ -61,11 +62,21 @@ const encodeCBOR = (certData: EUDGC, certMetaData: CertificateMetaData): Buffer 
     return cbor.encodeOne(cborMap, { omitUndefinedProperties: true });
 }
 
-const getExpiration = (certData: EUDGC, certMetaData: CertificateMetaData) => {
+const getExpiration = (certData: EUDCC1, certMetaData: CertificateMetaData) => {
     let result = certMetaData.expired;
 
-    if (certData && certData.r && certData.r[0]) {
-        result = new Date(certData.r[0].du).getTime() / 1000 | 0;
+    if (certData) {
+        if (certData.r && certData.r[0] && certData.r[0].du) {
+            result = new Date(certData.r[0].du).getTime() / 1000 | 0;
+        }
+
+        if (certData.v && certData.v[0] && certData.v[0].dt) {
+            result = new Date(certData.v[0].dt).getTime() / 1000 + certMetaData.expiredDuration;
+        }
+
+        if (certData.t && certData.t[0] && certData.t[0].sc) {
+            result = new Date(certData.t[0].sc).getTime() / 1000 + certMetaData.expiredDuration;
+        }
     }
 
     return result;
@@ -125,7 +136,7 @@ const dataPrefix = (data: string): string => {
 }
 
 
-export const createCertificateQRData = (certData: EUDGC, certMetaData: CertificateMetaData, signService: SignService): Promise<string> => {
+export const createCertificateQRData = (certData: EUDCC1, certMetaData: CertificateMetaData, signService: SignService): Promise<string> => {
 
     let cbor = encodeCBOR(certData, certMetaData);
 

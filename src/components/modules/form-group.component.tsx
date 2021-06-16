@@ -8,7 +8,8 @@ import utils from "../../misc/utils";
 import DatePicker from "react-datepicker";
 // import { registerLocale } from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { IValueSet } from "../../api";
+import { IValueSet, useGetDateFormats } from "../../api";
+import useLocalStorage from "../../misc/local-storage";
 
 const iso3311a2 = require('iso-3166-1-alpha-2');
 
@@ -19,12 +20,13 @@ export interface IPersonData {
     standardisedGivenName?: string;
     standardisedFamilyName: string;
     dateOfBirth: Date | undefined;
+    dobFormat: string;
 }
 
 export const FormGroupInput = (props: any) => {
 
     return (!props ? <></> :
-        <Form.Group as={Row} controlId={props.controlId} className='pb-3 mb-0'>
+        <Form.Group as={Row} hidden={props.hidden} controlId={props.controlId} className='pb-3 mb-0'>
             <Form.Label className='input-label' column xs='5' sm='3'>{props.title + (props.required ? '*' : '')}</Form.Label>
 
             <Col xs='7' sm='9' className='d-flex'>
@@ -69,7 +71,7 @@ export const FormGroupValueSetSelect = (props: any) => {
     }
 
     return (!(props && options) ? <></> :
-        <Form.Group as={Row} controlId={props.controlId} className='pb-3 mb-0'>
+        <Form.Group as={Row} hidden={props.hidden} controlId={props.controlId} className='pb-3 mb-0'>
             <Form.Label className='input-label' column xs='5' sm='3'>{props.title + (props.required ? '*' : '')}</Form.Label>
 
             <Col xs='7' sm='9' className='d-flex'>
@@ -96,8 +98,8 @@ export const FormGroupISOCountrySelect = (props: any) => {
         const options: JSX.Element[] = [];
         // const codes: string[] = iso3311a2.getCodes().sort();
         const eu_country_codes: string[] = ["AT", "BE", "BG", "HR", "CY", "CZ", "DK", "EE", "FI", "FR",
-                                    "DE", "GR", "HU", "IE", "IT", "LV", "LT", "LU", "MT", "NL", "PL",
-                                    "PT", "RO", "SK", "SI", "ES", "SE"].sort();
+            "DE", "GR", "HU", "IE", "IT", "LV", "LT", "LU", "MT", "NL", "PL",
+            "PT", "RO", "SK", "SI", "ES", "SE"].sort();
 
         for (const code of eu_country_codes) {
             options.push(<option key={code} value={code}>{code + " : " + iso3311a2.getCountry(code)}</option>)
@@ -139,7 +141,7 @@ export const PersonInputs = (props: any) => {
     const [standardisedFamilyName, setStandardisedFamilyName] = React.useState<string>('');
 
     const [dateOfBirth, setDateOfBirth] = React.useState<Date>();
-
+    const [dateFormat, setDateFormat] = useLocalStorage('dateFormat', 'yyyy-MM-dd');
 
     React.useEffect(() => {
         if (props && props.eudgc && props.eudgc.nam) {
@@ -169,13 +171,14 @@ export const PersonInputs = (props: any) => {
             familyName: familyName ? familyName : undefined,
             standardisedGivenName: standardisedGivenName ? standardisedGivenName : undefined,
             standardisedFamilyName: standardisedFamilyName,
-            dateOfBirth: dateOfBirth
+            dateOfBirth: dateOfBirth,
+            dobFormat: dateFormat
         }
 
         props.onChange(result);
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [givenName, familyName, standardisedGivenName, standardisedFamilyName, dateOfBirth])
+    }, [givenName, familyName, standardisedGivenName, standardisedFamilyName, dateOfBirth, dateFormat])
 
 
     const handleStandardisedNameChanged = (changedValue: string, setStandardisedName: (value: string) => void) => {
@@ -213,14 +216,14 @@ export const PersonInputs = (props: any) => {
                 <FormGroupInput controlId='formGivenNameInput' title={t('translation:first-name')}
                     value={givenName}
                     onChange={(evt: any) => setGivenName(evt.target.value)}
-                    maxLength={50}
+                    maxLength={80}
                 />
 
                 {/* name input */}
                 <FormGroupInput controlId='formNameInput' title={t('translation:name')}
                     value={familyName}
                     onChange={(evt: any) => setFamilyName(evt.target.value)}
-                    maxLength={50}
+                    maxLength={80}
                 />
 
                 <hr />
@@ -230,7 +233,7 @@ export const PersonInputs = (props: any) => {
                     value={standardisedGivenName}
                     onChange={(evt: any) => handleStandardisedNameChanged(evt.target.value, setStandardisedGivenName)}
                     pattern={utils.pattern.standardisedName}
-                    maxLength={50}
+                    maxLength={80}
                 />
 
                 {/*standardised name input */}
@@ -239,10 +242,19 @@ export const PersonInputs = (props: any) => {
                     onChange={(evt: any) => handleStandardisedNameChanged(evt.target.value, setStandardisedFamilyName)}
                     required
                     pattern={utils.pattern.standardisedName}
-                    maxLength={50}
+                    maxLength={80}
                 />
 
                 <hr />
+
+                {/* date of birth format */}
+                <FormGroupValueSetSelect title={t('translation:date-of-birth-format')}
+                    value={dateFormat}
+                    onChange={(evt: any) => setDateFormat(evt.target.value)}
+                    valueSet={useGetDateFormats}
+                    required
+                />
+
 
                 {/* date of birth input */}
                 <Form.Group as={Row} controlId='formDateOfBirthInput' className='pb-3 mb-0'>
@@ -252,7 +264,7 @@ export const PersonInputs = (props: any) => {
                         <DatePicker
                             selected={dateOfBirth}
                             onChange={handleDateOfBirthChange}
-                            dateFormat={utils.pickerDateFormat}
+                            dateFormat={dateFormat}
                             isClearable
                             placeholderText={t('translation:date-of-birth')}
                             className='qt-input form-control'
@@ -262,8 +274,7 @@ export const PersonInputs = (props: any) => {
                             dropdownMode="select"
                             maxDate={new Date()}
                             minDate={new Date(1900, 0, 1, 12)}
-                            openToDate={new Date(1990, 0, 1)}
-                            required
+                            openToDate={dateOfBirth ? dateOfBirth : new Date(1990, 0, 1)}
                         />
                     </Col>
                 </Form.Group>
