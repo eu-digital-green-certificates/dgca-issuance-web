@@ -216,8 +216,8 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudccProp: EUDCC1 | undef
         if (eudccProp) {
             setEudcc(eudccProp);
 
-            const vacc : [VaccinationEntry] = eudccProp.v as [VaccinationEntry];
-            const test : [TestEntry] = eudccProp.t as [TestEntry];
+            const vacc: [VaccinationEntry] = eudccProp.v as [VaccinationEntry];
+            const test: [TestEntry] = eudccProp.t as [TestEntry];
             const recovery: [RecoveryEntry] = eudccProp.r as [RecoveryEntry];
 
             setVaccinationSet(vacc ? vacc[0] : undefined);
@@ -610,43 +610,43 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudccProp: EUDCC1 | undef
 
                     y = printDisease(xLeft, y, lineHeight, lblDisease, lblFrench);
 
-                    y = printAsTableRow(xLeft, y,
+                    y = printHorizontalBlock(xLeft, y,
                         t('translation:pdfVaccineProphylaxis'),
                         french.translation.pdfVaccineProphylaxis,
                         getValueSetDisplay(vaccinationSet.vp, vaccines),
                         lineHeight, true);
 
-                    y = printAsTableRow(xLeft, y,
+                    y = printHorizontalBlock(xLeft, y,
                         t('translation:pdfVaccineMedicalProduct'),
                         french.translation.pdfVaccineMedicalProduct,
                         getValueSetDisplay(vaccinationSet.mp, vacMedsData),
                         lineHeight, true);
 
-                    y = printAsTableRow(xLeft, y,
+                    y = printHorizontalBlock(xLeft, y,
                         t('translation:pdfVaccineManufacturer'),
                         french.translation.pdfVaccineManufacturer,
                         getValueSetDisplay(vaccinationSet.ma, vaccineManufacturers),
                         lineHeight, true);
 
-                    y = printAsTableRow(xLeft, y,
+                    y = printHorizontalBlock(xLeft, y,
                         t('translation:pdfNumberOfDoses'),
                         french.translation.pdfNumberOfDoses,
                         vaccinationSet.dn.toString() + ' / ' + vaccinationSet.sd.toString(),
                         lineHeight, true);
 
-                    y = printAsTableRow(xLeft, y,
+                    y = printHorizontalBlock(xLeft, y,
                         t('translation:pdfDateOfVaccination'),
                         french.translation.pdfDateOfVaccination,
                         vaccinationSet.dt,
                         lineHeight, true);
 
-                    y = printAsTableRow(xLeft, y,
+                    y = printHorizontalBlock(xLeft, y,
                         t('translation:pdfMemberStateOfVaccination'),
                         french.translation.pdfMemberStateOfVaccination,
                         vaccinationSet.co,
                         lineHeight, true);
 
-                    printAsTableRow(xLeft, y,
+                    printHorizontalBlock(xLeft, y,
                         t('translation:pdfCertificateIssuer'),
                         french.translation.pdfCertificateIssuer,
                         vaccinationSet.is,
@@ -718,43 +718,43 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudccProp: EUDCC1 | undef
                 lblDisease,
                 lblFrench);
 
-            y = printAsTableRowRotated(xLeft, y,
+            y = printHorizontalBlockRotated(xLeft, y,
                 t('translation:pdfVaccineProphylaxis'),
                 french.translation.pdfVaccineProphylaxis,
                 getValueSetDisplay(vaccinationSet.vp, vaccines),
                 lineHeight, true);
 
-            y = printAsTableRowRotated(xLeft, y,
+            y = printHorizontalBlockRotated(xLeft, y,
                 t('translation:pdfVaccineMedicalProduct'),
                 french.translation.pdfVaccineMedicalProduct,
                 getValueSetDisplay(vaccinationSet.mp, vacMedsData),
                 lineHeight, true);
 
-            y = printAsTableRowRotated(xLeft, y,
+            y = printHorizontalBlockRotated(xLeft, y,
                 t('translation:pdfVaccineManufacturer'),
                 french.translation.pdfVaccineManufacturer,
                 getValueSetDisplay(vaccinationSet.ma, vaccineManufacturers),
                 lineHeight, true);
 
-            y = printAsTableRowRotated(xLeft, y,
+            y = printHorizontalBlockRotated(xLeft, y,
                 t('translation:pdfNumberOfDoses'),
                 french.translation.pdfNumberOfDoses,
                 vaccinationSet.dn.toString() + ' / ' + vaccinationSet.sd.toString(),
                 lineHeight, true);
 
-            y = printAsTableRowRotated(xLeft, y,
+            y = printHorizontalBlockRotated(xLeft, y,
                 t('translation:pdfDateOfVaccination'),
                 french.translation.pdfDateOfVaccination,
                 vaccinationSet.dt,
                 lineHeight, true);
 
-            y = printAsTableRowRotated(xLeft, y,
+            y = printHorizontalBlockRotated(xLeft, y,
                 t('translation:pdfMemberStateOfVaccination'),
                 french.translation.pdfMemberStateOfVaccination,
                 vaccinationSet.co,
                 lineHeight, true);
 
-            printAsTableRowRotated(xLeft, y,
+            printHorizontalBlockRotated(xLeft, y,
                 t('translation:pdfCertificateIssuer'),
                 french.translation.pdfCertificateIssuer,
                 vaccinationSet.is,
@@ -788,49 +788,49 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudccProp: EUDCC1 | undef
 
                     y = printDisease(x, y, lineHeight, lblDisease, lblFrench);
 
-                    y = printAsTableRow(x, y,
+                    y = printHorizontalBlock(x, y,
                         t('translation:pdfTypeOfTest'),
                         french.translation.pdfTypeOfTest,
                         getValueSetDisplay(testSet.tt, testTypeValueSet),
                         lineHeight, true);
 
-                    y = printAsTableRow(x, y,
+                    y = printHorizontalBlock(x, y,
                         t('translation:pdfTestName'),
                         french.translation.pdfTestName,
                         testSet.nm,
                         lineHeight, true);
 
-                    y = printAsTableRow(x, y,
+                    y = printHorizontalBlock(x, y,
                         t('translation:pdfTestManufacturer'),
                         french.translation.pdfTestManufacturer,
                         getValueSetDisplay(testSet.ma, testManufacturersValueSet),
                         lineHeight, true);
 
-                    y = printAsTableRow(x, y,
+                    y = printHorizontalBlock(x, y,
                         t('translation:pdfDateSampleCollection'),
                         french.translation.pdfDateSampleCollection,
                         convertDateToOutputFormat(testSet.sc),
                         lineHeight, true);
 
-                    y = printAsTableRow(x, y,
+                    y = printHorizontalBlock(x, y,
                         t('translation:pdfTestResult'),
                         french.translation.pdfTestResult,
                         getValueSetDisplay(testSet.tr, testResultValueSet),
                         lineHeight, true);
 
-                    y = printAsTableRow(x, y,
+                    y = printHorizontalBlock(x, y,
                         t('translation:pdfTestingCentre'),
                         french.translation.pdfTestingCentre,
                         testSet.tc,
                         lineHeight, true);
 
-                    y = printAsTableRow(x, y,
+                    y = printHorizontalBlock(x, y,
                         t('translation:pdfStateOfVaccination'),
                         french.translation.pdfStateOfVaccination,
                         testSet.co,
                         lineHeight, true);
 
-                    printAsTableRow(x, y,
+                    printHorizontalBlock(x, y,
                         t('translation:pdfCertificateIssuer'),
                         french.translation.pdfCertificateIssuer,
                         testSet.is,
@@ -851,7 +851,7 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudccProp: EUDCC1 | undef
 
             let x = params.a6width - params.paddingInnerLeft;
 
-            pdf.setFontSize(params.fontSize10);
+            pdf.setFontSize(params.fontSize9);
 
             let disease = getValueSetDisplay(testSet.tg, diseaseAgentsData);
             let lblDisease = t('translation:pdfDiseaseRecovery');
@@ -864,49 +864,49 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudccProp: EUDCC1 | undef
                 lblDisease,
                 lblFrench);
 
-            y = printAsTableRowRotated(x, y,
+            y = printHorizontalBlockRotated(x, y,
                 t('translation:pdfTypeOfTest'),
                 french.translation.pdfTypeOfTest,
                 getValueSetDisplay(testSet.tt, testTypeValueSet),
                 lineHeight, true);
 
-            y = printAsTableRowRotated(x, y,
+            y = printHorizontalBlockRotated(x, y,
                 t('translation:pdfTestName'),
                 french.translation.pdfTestName,
                 testSet.nm ? testSet.nm : ' ',
                 lineHeight, true);
 
-            y = printAsTableRowRotated(x, y,
+            y = printHorizontalBlockRotated(x, y,
                 t('translation:pdfTestManufacturer'),
                 french.translation.pdfTestManufacturer,
                 getValueSetDisplay(testSet.ma, testManufacturersValueSet),
                 lineHeight, true);
 
-            y = printAsTableRowRotated(x, y,
+            y = printHorizontalBlockRotated(x, y,
                 t('translation:pdfDateSampleCollection'),
                 french.translation.pdfDateSampleCollection,
                 convertDateToOutputFormat(testSet.sc),
                 lineHeight, true);
 
-            y = printAsTableRowRotated(x, y,
+            y = printHorizontalBlockRotated(x, y,
                 t('translation:pdfTestResult'),
                 french.translation.pdfTestResult,
                 getValueSetDisplay(testSet.tr, testResultValueSet),
                 lineHeight, true);
 
-            y = printAsTableRowRotated(x, y,
+            y = printHorizontalBlockRotated(x, y,
                 t('translation:pdfTestingCentre'),
                 french.translation.pdfTestingCentre,
                 testSet.tc,
                 lineHeight, true);
 
-            y = printAsTableRowRotated(x, y,
+            y = printHorizontalBlockRotated(x, y,
                 t('translation:pdfStateOfVaccination'),
                 french.translation.pdfStateOfVaccination,
                 testSet.co,
                 lineHeight, true);
 
-            printAsTableRowRotated(x, y,
+            printHorizontalBlockRotated(x, y,
                 t('translation:pdfCertificateIssuer'),
                 french.translation.pdfCertificateIssuer,
                 testSet.is,
@@ -943,30 +943,30 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudccProp: EUDCC1 | undef
 
                     y = printDisease(xLeft, y, lineHeight, lblDisease, lblFrench);
 
-                    y = printAsTableRow(xLeft, y,
+                    y = printHorizontalBlock(xLeft, y,
                         t('translation:pdfDatePositiveTestResult'),
                         french.translation.pdfDatePositiveTestResult,
                         recoverySet.fr);
 
-                    y = printAsTableRow(xLeft, y,
+                    y = printHorizontalBlock(xLeft, y,
                         t('translation:pdfStateOfTest'),
                         french.translation.pdfStateOfTest,
                         recoverySet.co,
                         lineHeight, true);
 
-                    y = printAsTableRow(xLeft, y,
+                    y = printHorizontalBlock(xLeft, y,
                         t('translation:pdfCertificateIssuer'),
                         french.translation.pdfCertificateIssuer,
                         recoverySet.is,
                         lineHeight, true);
 
-                    y = printAsTableRow(xLeft, y,
+                    y = printHorizontalBlock(xLeft, y,
                         t('translation:pdfValidFrom'),
                         french.translation.pdfValidFrom,
                         recoverySet.df,
                         lineHeight, true);
 
-                    printAsTableRow(xLeft, y,
+                    printHorizontalBlock(xLeft, y,
                         t('translation:pdfValidTo'),
                         french.translation.pdfValidTo,
                         recoverySet.du,
@@ -1005,30 +1005,30 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudccProp: EUDCC1 | undef
                 lblDisease,
                 lblFrench);
 
-            y = printAsTableRowRotated(xLeft, y,
+            y = printHorizontalBlockRotated(xLeft, y,
                 t('translation:pdfDatePositiveTestResult'),
                 french.translation.pdfDatePositiveTestResult,
                 recoverySet.fr);
 
-            y = printAsTableRowRotated(xLeft, y,
+            y = printHorizontalBlockRotated(xLeft, y,
                 t('translation:pdfStateOfTest'),
                 french.translation.pdfStateOfTest,
                 recoverySet.co,
                 lineHeight, true);
 
-            y = printAsTableRowRotated(xLeft, y,
+            y = printHorizontalBlockRotated(xLeft, y,
                 t('translation:pdfCertificateIssuer'),
                 french.translation.pdfCertificateIssuer,
                 recoverySet.is,
                 lineHeight, true);
 
-            y = printAsTableRowRotated(xLeft, y,
+            y = printHorizontalBlockRotated(xLeft, y,
                 t('translation:pdfValidFrom'),
                 french.translation.pdfValidFrom,
                 recoverySet.df,
                 lineHeight, true);
 
-            printAsTableRowRotated(xLeft, y,
+            printHorizontalBlockRotated(xLeft, y,
                 t('translation:pdfValidTo'),
                 french.translation.pdfValidTo,
                 recoverySet.du,
@@ -1036,28 +1036,7 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudccProp: EUDCC1 | undef
         }
     }
 
-    // const printSplittedLine = (x: number, y: number, lblLeft: any, lblLeftFrench: any): number => {
-    //     let result = 0;
-
-    //     if (pdf) {
-    //         pdf.setFont('arial', 'bold');
-    //         lblLeft = pdf.splitTextToSize(lblLeft, lblLength);
-    //         pdf.text(lblLeft, x, y);
-
-    //         pdf.setFont('arial', 'normal');
-
-    //         const lineheight = lblLeft.length > 2 ? params.lineHeight10 + 1 : params.lineHeight10;
-    //         y += (lineheight * lblLeft.length) + params.space;
-    //         lblLeftFrench = pdf.splitTextToSize(lblLeftFrench, lblLength);
-    //         pdf.text(lblLeftFrench, x, y);
-
-    //         result = y + params.lineHeight10 * lblLeftFrench.length;
-    //     }
-
-    //     return result;
-    // }
-
-    const printVerticalBlock = (x: number, y: number, lbl: any, lblFrench: any, value?: string, lineHeight?: number, isItalic?: boolean): number => {
+    const printHorizontalBlock = (x: number, y: number, lbl: any, lblFrench: any, value?: string, lineHeight?: number, isItalic?: boolean): number => {
         let result = y;
         lineHeight = lineHeight ? lineHeight : params.lineHeight;
 
@@ -1154,7 +1133,7 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudccProp: EUDCC1 | undef
         return result;
     }
 
-    const printVerticalBlockRotated = (x: number, y: number, lbl: any, lblFrench: any, value?: string, lineHeight?: number, isItalic?: boolean): number => {
+    const printHorizontalBlockRotated = (x: number, y: number, lbl: any, lblFrench: any, value?: string, lineHeight?: number, isItalic?: boolean): number => {
         let result = y;
         lineHeight = lineHeight ? lineHeight : params.lineHeight;
 
