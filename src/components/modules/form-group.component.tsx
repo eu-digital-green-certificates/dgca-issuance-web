@@ -50,12 +50,12 @@ export const FormGroupInput = (props: any) => {
 
 export const FormGroupValueSetSelect = (props: any) => {
 
-    const valueSet = props.valueSet();
+    const valueSet = props.valueSet;
     const [options, setOptions] = React.useState<JSX.Element[]>();
 
     React.useEffect(() => {
         if (valueSet) {
-            const options = getOptionsForValueSet(valueSet)
+            const options = getOptionsForValueSet(valueSet);
             setOptions(options);
         }
     }, [valueSet])
@@ -251,7 +251,7 @@ export const PersonInputs = (props: any) => {
                 <FormGroupValueSetSelect title={t('translation:date-of-birth-format')}
                     value={dateFormat}
                     onChange={(evt: any) => setDateFormat(evt.target.value)}
-                    valueSet={useGetDateFormats}
+                    valueSet={useGetDateFormats()}
                     required
                 />
 

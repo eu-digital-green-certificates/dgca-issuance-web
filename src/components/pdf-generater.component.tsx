@@ -33,10 +33,7 @@ import yellow_seperator from '../assets/images/yellow_seperator.png';
 import folding_instruction from '../assets/images/folding-instruction.png';
 
 import { EUDCC1, RecoveryEntry, TestEntry, VaccinationEntry } from '../generated-files/dgc-combined-schema';
-import {
-    useGetDiseaseAgents, useGetVaccineManufacturers, useGetVaccines,
-    useGetVaccinMedicalData, useGetTestManufacturers, useGetTestResult, useGetTestType
-} from '../api';
+import { IValueSetListItem, Value_Sets } from '../api';
 import { getValueSetDisplay, convertDateToOutputFormat } from '../misc/ShowCertificateData';
 // import pdfParams from '../pdf-settings.json';
 
@@ -92,17 +89,17 @@ interface IWordInfo {
     wordLength: number;
 }
 
-const usePdfGenerator = (qrCodeCanvasElementProp: any, eudccProp: EUDCC1 | undefined, onIsInit: (isInit: boolean) => void, onIsReady: (isReady: boolean) => void) => {
+const usePdfGenerator = (qrCodeCanvasElementProp: any, eudccProp: EUDCC1 | undefined, valueSetList: IValueSetListItem, onIsInit: (isInit: boolean) => void, onIsReady: (isReady: boolean) => void) => {
     const { t } = useTranslation();
     const french = i18n.getDataByLanguage('fr');
 
-    const vacMedsData = useGetVaccinMedicalData();
-    const diseaseAgentsData = useGetDiseaseAgents();
-    const vaccineManufacturers = useGetVaccineManufacturers();
-    const vaccines = useGetVaccines();
-    const testManufacturersValueSet = useGetTestManufacturers();
-    const testResultValueSet = useGetTestResult();
-    const testTypeValueSet = useGetTestType();
+    const vacMedsData = valueSetList[Value_Sets.Vaccines];
+    const diseaseAgentsData = valueSetList[Value_Sets.DiseaseAgent];
+    const vaccineManufacturers = valueSetList[Value_Sets.VaccinesManufacturer];
+    const vaccines = valueSetList[Value_Sets.VaccineType];
+    const testManufacturersValueSet = valueSetList[Value_Sets.TestManufacturer];
+    const testResultValueSet = valueSetList[Value_Sets.TestResult];
+    const testTypeValueSet = valueSetList[Value_Sets.TestType];
 
     //A4 210 x 297 mm or 2480 x 3508 pixels or 595 × 842 points
     //A6 105 x 74 mm or 1240 x 1748 pixels or 298 × 420 points
@@ -216,8 +213,8 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudccProp: EUDCC1 | undef
         if (eudccProp) {
             setEudcc(eudccProp);
 
-            const vacc : [VaccinationEntry] = eudccProp.v as [VaccinationEntry];
-            const test : [TestEntry] = eudccProp.t as [TestEntry];
+            const vacc: [VaccinationEntry] = eudccProp.v as [VaccinationEntry];
+            const test: [TestEntry] = eudccProp.t as [TestEntry];
             const recovery: [RecoveryEntry] = eudccProp.r as [RecoveryEntry];
 
             setVaccinationSet(vacc ? vacc[0] : undefined);
@@ -1199,8 +1196,6 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudccProp: EUDCC1 | undef
                 value = pdf.splitTextToSize(value, lblRightLength);
                 tmpPosition = leftSplittedTextRotated(value!, xLeft, result);
                 if (y > tmpPosition) {
-                    console.log(y);
-                    console.log(tmpPosition);
                     y = tmpPosition;
                 }
             }

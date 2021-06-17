@@ -35,6 +35,7 @@ import genEDGCQR, { CertResult } from '../misc/edgcQRGenerator';
 
 import ShowCertificateData from '../misc/ShowCertificateData';
 import usePdfGenerator from './pdf-generater.component';
+import { useGetValueSets } from '../api';
 
 // import { usePostPatient } from '../api';
 
@@ -53,7 +54,10 @@ const ShowCertificate = (props: any) => {
 
     const [qrCodeForPDF, setQrCodeForPDF] = React.useState<any>();
     const [eudgcForPDF, setEudgcForPDF] = React.useState<EUDCC1>();
-    const pdf = usePdfGenerator(qrCodeForPDF, eudgcForPDF, (isInit) => setPdfIsInit(isInit), (isReady) => setPdfIsReady(isReady));
+
+    const valuesetList = useGetValueSets((isInit) => setTimeout(setIsInit, 200, isInit));
+
+    const pdf = usePdfGenerator(qrCodeForPDF, eudgcForPDF, valuesetList, (isInit) => setPdfIsInit(isInit), (isReady) => setPdfIsReady(isReady));
 
     // set patient data on mount and set hash from uuid
     React.useEffect(() => {
@@ -83,14 +87,6 @@ const ShowCertificate = (props: any) => {
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [eudgc])
-
-
-    // set ready state for spinner
-    React.useEffect(() => {
-        if (navigation) {
-            setTimeout(setIsInit, 200, true);
-        }
-    }, [navigation]);
 
     React.useEffect(() => {
         if (pdf) {
@@ -159,7 +155,7 @@ const ShowCertificate = (props: any) => {
                         <Row>
                             <Col sm='6' className='p-3'>
 
-                                <ShowCertificateData eudgc={eudgc} />
+                                <ShowCertificateData eudgc={eudgc} valueSetList={valuesetList} />
 
                             </Col>
                             <Col sm='6' className='p-3'>

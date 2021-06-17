@@ -33,7 +33,7 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
 import { EUDCC1, RecoveryEntry } from '../generated-files/dgc-combined-schema';
-import { useGetDiseaseAgents } from '../api';
+import { useGetValueSets, Value_Sets } from '../api';
 
 import schema from '../generated-files/DGC.combined-schema.json';
 import { Validator } from 'jsonschema';
@@ -66,6 +66,8 @@ const RecordRecoveryCertData = (props: any) => {
     const [dateValidTo, setDateValidTo] = React.useState<Date>();
     const [firstPosMinDate] = React.useState<Date>(new Date(Date.now() - expirationMilSeconds));
     const [firstPosMaxDate] = React.useState<Date>(new Date(Date.now() - timeAfter));
+    
+    const valuesetList= useGetValueSets((isInit)=>setTimeout(setIsInit, 200, isInit));
 
     React.useEffect(() => {
         if (!props.eudgc || !props.eudgc.r || !props.eudgc.r[0]) {
@@ -83,21 +85,6 @@ const RecordRecoveryCertData = (props: any) => {
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [props.eudgc]);
-
-    React.useEffect(() => {
-        if (navigation) {
-            setTimeout(setIsInit, 200, true);
-        }
-    }, [navigation]);
-
-    // const handleError = (error: any) => {
-    //     let msg = '';
-
-    //     if (error) {
-    //         msg = error.message
-    //     }
-    //     props.setError({ error: error, message: msg, onCancel: navigation!.toLanding });
-    // }
 
     const handleFirstPositiveResultDate = (evt: Date | [Date, Date] | null) => {
         const date = handleDateChange(evt);
@@ -171,8 +158,6 @@ const RecordRecoveryCertData = (props: any) => {
             var result = validator.validate(eudgc, schema);
 
             if (result.valid) {
-                //console.log(JSON.stringify(eudgc));
-
                 props.setEudgc(eudgc);
                 setTimeout(navigation!.toShowCert, 200);
             }
@@ -210,7 +195,7 @@ const RecordRecoveryCertData = (props: any) => {
                                 value={disease}
                                 onChange={(evt: any) => setDisease(evt.target.value)}
                                 required
-                                valueSet={useGetDiseaseAgents}
+                                valueSet={valuesetList[Value_Sets.DiseaseAgent]}
                             />
 
                             <hr />

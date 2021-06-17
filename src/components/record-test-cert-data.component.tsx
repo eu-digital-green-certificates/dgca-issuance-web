@@ -32,7 +32,7 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
 import { EUDCC1, TestEntry } from '../generated-files/dgc-combined-schema';
-import { useGetDiseaseAgents, useGetTestManufacturers, useGetTestResult, useGetTestType } from '../api';
+import { useGetValueSets, Value_Sets } from '../api';
 
 import schema from '../generated-files/DGC.combined-schema.json';
 import { Validator } from 'jsonschema';
@@ -68,6 +68,8 @@ const RecordTestCertData = (props: any) => {
     const [certificateIssuer, setCertificateIssuer] = useLocalStorage('certificateIssuer', '');
     const [issuerCountryCode, setIssuerCountryCode] = useLocalStorage('issuerCountryCode', '');
 
+    const valuesetList = useGetValueSets((isInit) => setTimeout(setIsInit, 200, isInit));
+
     React.useEffect(() => {
         if (!props.eudgc || !props.eudgc.t || !props.eudgc.t[0]) {
             return;
@@ -97,12 +99,6 @@ const RecordTestCertData = (props: any) => {
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [props.eudgc]);
-
-    React.useEffect(() => {
-        if (navigation) {
-            setTimeout(setIsInit, 200, true);
-        }
-    }, [navigation]);
 
     const handleSampleDateTimeChange = (evt: Date | [Date, Date] | null) => {
         const date = handleDateTimeChange(evt);
@@ -200,7 +196,7 @@ const RecordTestCertData = (props: any) => {
                                 value={disease}
                                 onChange={(evt: any) => setDisease(evt.target.value)}
                                 required
-                                valueSet={useGetDiseaseAgents}
+                                valueSet={valuesetList[Value_Sets.DiseaseAgent]}
                             />
 
                             {/* testType input */}
@@ -208,7 +204,7 @@ const RecordTestCertData = (props: any) => {
                                 value={testType}
                                 onChange={(evt: any) => setTestType(evt.target.value)}
                                 required
-                                valueSet={useGetTestType}
+                                valueSet={valuesetList[Value_Sets.TestType]}
                             />
 
                             {/* testName input */}
@@ -224,7 +220,7 @@ const RecordTestCertData = (props: any) => {
                                 value={testManufacturers}
                                 onChange={(evt: any) => setTestManufacturers(evt.target.value)}
                                 hidden={testType !== 'LP217198-3'}
-                                valueSet={useGetTestManufacturers}
+                                valueSet={valuesetList[Value_Sets.TestManufacturer]}
                             />
 
                             <hr />
@@ -257,7 +253,7 @@ const RecordTestCertData = (props: any) => {
                                 value={testResult}
                                 onChange={(evt: any) => setTestResult(evt.target.value)}
                                 required
-                                valueSet={useGetTestResult}
+                                valueSet={valuesetList[Value_Sets.TestResult]}
                             />
 
                             {/* testCenter input */}

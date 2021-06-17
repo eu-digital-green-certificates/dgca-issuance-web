@@ -1,9 +1,8 @@
 import { EUDCC1, RecoveryEntry, TestEntry, VaccinationEntry } from '../generated-files/dgc-combined-schema'
 import i18n from 'i18next'
-import { IValueSet } from '../api';
+import { IValueSet, Value_Sets } from '../api';
 import moment from 'moment';
 import utils from './utils';
-import { useGetDiseaseAgents, useGetVaccineManufacturers, useGetVaccines, useGetVaccinMedicalData, useGetTestManufacturers, useGetTestResult, useGetTestType } from '../api';
 import React from 'react';
 import { Card } from 'react-bootstrap';
 
@@ -22,13 +21,13 @@ export const ShowCertificateData = (props: any) => {
 
     const defaultString = '';
 
-    const vacMedsData = useGetVaccinMedicalData();
-    const diseaseAgentsData = useGetDiseaseAgents();
-    const vaccineManufacturers = useGetVaccineManufacturers();
-    const vaccines = useGetVaccines();
-    const testManufacturersValueSet = useGetTestManufacturers();
-    const testResultValueSet = useGetTestResult();
-    const testTypeValueSet = useGetTestType();
+    const vacMedsData = props.valueSetList[Value_Sets.Vaccines];
+    const diseaseAgentsData = props.valueSetList[Value_Sets.DiseaseAgent];
+    const vaccineManufacturers = props.valueSetList[Value_Sets.VaccinesManufacturer];
+    const vaccines = props.valueSetList[Value_Sets.VaccineType];
+    const testManufacturersValueSet = props.valueSetList[Value_Sets.TestManufacturer];
+    const testResultValueSet = props.valueSetList[Value_Sets.TestResult];
+    const testTypeValueSet = props.valueSetList[Value_Sets.TestType];
 
     const [eudgc, setEudgc] = React.useState<EUDCC1>();
     const [vaccinationSet, setVaccinationSet] = React.useState<VaccinationEntry>();
@@ -46,10 +45,10 @@ export const ShowCertificateData = (props: any) => {
 
     React.useEffect(() => {
         if (eudgc) {
-            const vacc : [VaccinationEntry] = eudgc.v as [VaccinationEntry];
-            const test : [TestEntry] = eudgc.t as [TestEntry];
+            const vacc: [VaccinationEntry] = eudgc.v as [VaccinationEntry];
+            const test: [TestEntry] = eudgc.t as [TestEntry];
             const recovery: [RecoveryEntry] = eudgc.r as [RecoveryEntry];
-            
+
             setVaccinationSet(vacc ? vacc[0] : undefined);
             setTestSet(test ? test[0] : undefined);
             setRecoverySet(recovery ? recovery[0] : undefined);

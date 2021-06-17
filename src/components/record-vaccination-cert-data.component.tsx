@@ -33,7 +33,7 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
 import { EUDCC1, VaccinationEntry } from '../generated-files/dgc-combined-schema';
-import { useGetDiseaseAgents, useGetVaccineManufacturers, useGetVaccines, useGetVaccinMedicalData } from '../api';
+import { useGetValueSets, Value_Sets } from '../api';
 
 import schema from '../generated-files/DGC.combined-schema.json';
 import { Validator } from 'jsonschema';
@@ -64,6 +64,7 @@ const RecordVaccinationCertData = (props: any) => {
     const [certificateIssuer, setCertificateIssuer] = useLocalStorage('certificateIssuer', '');
     const [issuerCountryCode, setIssuerCountryCode] = useLocalStorage('issuerCountryCode', '');
 
+    const valuesetList= useGetValueSets((isInit)=>setTimeout(setIsInit, 200, isInit));
 
     React.useEffect(() => {
         if (!props.eudgc || !props.eudgc.v || !props.eudgc.v[0]) {
@@ -84,13 +85,6 @@ const RecordVaccinationCertData = (props: any) => {
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [props.eudgc]);
-
-
-    React.useEffect(() => {
-        if (navigation) {
-            setTimeout(setIsInit, 200, true);
-        }
-    }, [navigation]);
 
     const handleVacLastDate = (evt: Date | [Date, Date] | null) => {
         const date = handleDateChange(evt);
@@ -161,16 +155,9 @@ const RecordVaccinationCertData = (props: any) => {
                 v: [vacc]
             }
 
-            // console.log(JSON.stringify(eudgc));
-            // let vac = eudgc.v[0];
-            // console.log(vac);
-            // console.log(vac.tg);
-
             var result = validator.validate(eudgc, schema);
 
             if (result.valid) {
-                // console.log(JSON.stringify(eudgc));
-
                 props.setEudgc(eudgc);
                 setTimeout(navigation!.toShowCert, 200);
             }
@@ -208,7 +195,7 @@ const RecordVaccinationCertData = (props: any) => {
                                 value={disease}
                                 onChange={(evt: any) => setDisease(evt.target.value)}
                                 required
-                                valueSet={useGetDiseaseAgents}
+                                valueSet={valuesetList[Value_Sets.DiseaseAgent]}
                             />
 
                             {/* combobox vaccine */}
@@ -216,7 +203,7 @@ const RecordVaccinationCertData = (props: any) => {
                                 value={vaccine}
                                 onChange={(evt: any) => setVaccine(evt.target.value)}
                                 required
-                                valueSet={useGetVaccines}
+                                valueSet={valuesetList[Value_Sets.VaccineType]}
                             />
 
                             {/* combobox medicalProduct */}
@@ -224,7 +211,7 @@ const RecordVaccinationCertData = (props: any) => {
                                 value={medicalProduct}
                                 onChange={(evt: any) => setMedicalProduct(evt.target.value)}
                                 required
-                                valueSet={useGetVaccinMedicalData}
+                                valueSet={valuesetList[Value_Sets.Vaccines]}
                             />
 
                             {/* combobox marketingHolder */}
@@ -232,7 +219,7 @@ const RecordVaccinationCertData = (props: any) => {
                                 value={marketingHolder}
                                 onChange={(evt: any) => setMarketingHolder(evt.target.value)}
                                 required
-                                valueSet={useGetVaccineManufacturers}
+                                valueSet={valuesetList[Value_Sets.VaccinesManufacturer]}
                             />
 
                             <hr />
