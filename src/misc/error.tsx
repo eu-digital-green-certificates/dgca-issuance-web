@@ -19,8 +19,8 @@
  * under the License.
  */
 
-export default interface IError{
-    error:any;
-    message:string;
-    onCancel:() => void;
+export default interface IError {
+    error: any;
+    message: string;
+    onCancel: () => void;
 }

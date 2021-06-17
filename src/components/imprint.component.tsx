@@ -35,7 +35,7 @@ const ImprintPage = (props: any) => {
         if (props)
             setShow(props.show);
 
-            // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [props.show])
 
     const handleClose = () => {
@@ -64,10 +64,10 @@ const ImprintPage = (props: any) => {
                 <Modal.Body className='px-3'>
 
                     <h5 className='text-justify'>
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam ornare rhoncus enim, sed tincidunt erat lobortis nec. Etiam ac erat vel sem mattis consequat. Pellentesque aliquam consequat tellus, eu sagittis neque laoreet vitae. 
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam ornare rhoncus enim, sed tincidunt erat lobortis nec. Etiam ac erat vel sem mattis consequat. Pellentesque aliquam consequat tellus, eu sagittis neque laoreet vitae.
                     </h5>
 
-                    
+
                 </Modal.Body>
                 <hr className='mx-3 mt-0' />
                 {/*

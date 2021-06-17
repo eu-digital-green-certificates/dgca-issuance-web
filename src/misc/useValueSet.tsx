@@ -50,7 +50,7 @@ interface IValue {
 }
 
 const valueSetApi = axios.create({
-    baseURL: 'https://dgca-businessrule-service.cfapps.eu10.hana.ondemand.com',
+    baseURL: '',
     headers: { 'Cache-Control': ' max-age=300' }
 });
 
@@ -58,7 +58,7 @@ export interface IValueSet {
     [key: string]: IValue;
 }
 
-export interface IValueSetListItem {
+export interface IValueSetList {
     [key: string]: IValueSet;
 }
 
@@ -83,7 +83,7 @@ export const useGetValueSets = (onInit?: (isInit: boolean) => void) => {
 
     const [valueSetHashList, setValueSetHashList] = React.useState<IValueSetHashListItem[]>();
 
-    const [valueSetList] = React.useState<IValueSetListItem>({});
+    const [valueSetList] = React.useState<IValueSetList>({});
     const [isInit, setIsInit] = React.useState<boolean>(false);
 
     // on mount load hash list
@@ -155,144 +155,12 @@ export const useGetValueSetHashList = () => {
     return valueSetList;
 }
 
-/////////////////////                        /////////////////////
-/////////////////////        Single          /////////////////////
-/////////////////////                        /////////////////////
+// returns display value for key 
+export const getValueSetDisplay = (key: string | undefined, valueSet: IValueSet | undefined): string | undefined => {
+    let result = key;
 
-// generic ValueSet
-export const useGetValueSet = (id: string, valueSetList: IValueSetHashListItem[] | undefined, onError?: (error: any) => void) => {
-
-    const [valueSet, setValueSet] = React.useState<IValueSet>();
-
-    React.useEffect(() => {
-        if (id && valueSetList && valueSetList) {
-            const find = valueSetList.find((item) => id === item.id);
-
-            if (find && find.hash) {
-                const uri = '/valuesets/' + find.hash;
-
-                valueSetApi.get(uri)
-                    .then((response) => {
-                        setValueSet(response.data.valueSetValues);
-                    })
-                    .catch((error) => {
-                        console.log(error);
-                        if (onError) {
-                            onError(error);
-                        }
-                    });
-            }
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [id, valueSetList])
-
-    return valueSet;
-}
-
-// Medical Products
-export const useGetVaccinMedicalData = () => {
-
-    const valueSet = useGetValueSet(Value_Sets.Vaccines, useGetValueSetHashList())
-    const [result, setResult] = React.useState<IValueSet>();
-
-    React.useEffect(() => {
-        if (valueSet) {
-            setResult(valueSet);
-        }
-    }, [valueSet])
-
-    return result;
-}
-
-
-// Disease Agents
-export const useGetDiseaseAgents = () => {
-
-    const valueSet = useGetValueSet(Value_Sets.DiseaseAgent, useGetValueSetHashList())
-    const [result, setResult] = React.useState<IValueSet>();
-
-    React.useEffect(() => {
-        if (valueSet) {
-            setResult(valueSet);
-        }
-    }, [valueSet])
-
-    return result;
-}
-
-
-// Vaccine Manufacturers
-export const useGetVaccineManufacturers = () => {
-
-    const valueSet = useGetValueSet(Value_Sets.VaccinesManufacturer, useGetValueSetHashList())
-    const [result, setResult] = React.useState<IValueSet>();
-
-    React.useEffect(() => {
-        if (valueSet) {
-            setResult(valueSet);
-        }
-    }, [valueSet])
-
-    return result;
-}
-
-
-// Vaccine / Prophylaxis
-export const useGetVaccines = () => {
-
-    const valueSet = useGetValueSet(Value_Sets.VaccineType, useGetValueSetHashList())
-    const [result, setResult] = React.useState<IValueSet>();
-
-    React.useEffect(() => {
-        if (valueSet) {
-            setResult(valueSet);
-        }
-    }, [valueSet])
-
-    return result;
-}
-
-// TestType
-export const useGetTestType = () => {
-
-    const valueSet = useGetValueSet(Value_Sets.TestType, useGetValueSetHashList())
-    const [result, setResult] = React.useState<IValueSet>();
-
-    React.useEffect(() => {
-        if (valueSet) {
-            setResult(valueSet);
-        }
-    }, [valueSet])
-
-    return result;
-}
-
-// TestManufacturers
-export const useGetTestManufacturers = () => {
-
-    const valueSet = useGetValueSet(Value_Sets.TestManufacturer, useGetValueSetHashList())
-    const [result, setResult] = React.useState<IValueSet>();
-
-    React.useEffect(() => {
-        if (valueSet) {
-            setResult(valueSet);
-        }
-    }, [valueSet])
-
-    return result;
-}
-
-// TestResult
-export const useGetTestResult = () => {
-
-    const valueSet = useGetValueSet(Value_Sets.TestResult, useGetValueSetHashList())
-    const [result, setResult] = React.useState<IValueSet>();
-
-    React.useEffect(() => {
-        if (valueSet) {
-            setResult(valueSet);
-        }
-    }, [valueSet])
-
+    if (valueSet && key && valueSet[key]) {
+        result = valueSet[key].display;
+    }
     return result;
 }

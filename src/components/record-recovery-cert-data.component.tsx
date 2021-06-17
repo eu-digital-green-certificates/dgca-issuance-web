@@ -24,16 +24,15 @@ import { Card, Col, Form, Row } from 'react-bootstrap';
 
 import '../i18n';
 import { useTranslation } from 'react-i18next';
-import useLocalStorage from '../misc/local-storage';
+import useLocalStorage from '../misc/useLocalStorage';
 
-import useNavigation from '../misc/navigation';
 import Spinner from './spinner/spinner.component';
 
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
 import { EUDCC1, RecoveryEntry } from '../generated-files/dgc-combined-schema';
-import { useGetValueSets, Value_Sets } from '../api';
+import { Value_Sets } from '../misc/useValueSet';
 
 import schema from '../generated-files/DGC.combined-schema.json';
 import { Validator } from 'jsonschema';
@@ -41,6 +40,7 @@ import CardHeader from './modules/card-header.component';
 import { PersonInputs, IPersonData, FormGroupInput, FormGroupValueSetSelect, FormGroupISOCountrySelect } from './modules/form-group.component';
 import CardFooter from './modules/card-footer.component';
 import moment from 'moment';
+import AppContext from '../misc/appContext';
 
 const validator = new Validator();
 // 180 days
@@ -50,7 +50,7 @@ const timeAfter = 60 * 60 * 24 * 11 * 1000;
 
 const RecordRecoveryCertData = (props: any) => {
 
-    const navigation = useNavigation();
+    const context = React.useContext(AppContext);
     const { t } = useTranslation();
 
     const [isInit, setIsInit] = React.useState(false)
@@ -66,8 +66,6 @@ const RecordRecoveryCertData = (props: any) => {
     const [dateValidTo, setDateValidTo] = React.useState<Date>();
     const [firstPosMinDate] = React.useState<Date>(new Date(Date.now() - expirationMilSeconds));
     const [firstPosMaxDate] = React.useState<Date>(new Date(Date.now() - timeAfter));
-    
-    const valuesetList= useGetValueSets((isInit)=>setTimeout(setIsInit, 200, isInit));
 
     React.useEffect(() => {
         if (!props.eudgc || !props.eudgc.r || !props.eudgc.r[0]) {
@@ -85,6 +83,11 @@ const RecordRecoveryCertData = (props: any) => {
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [props.eudgc]);
+
+    React.useEffect(() => {
+        if (context.navigation && context.valueSets)
+            setIsInit(true);
+    }, [context.navigation, context.valueSets])
 
     const handleFirstPositiveResultDate = (evt: Date | [Date, Date] | null) => {
         const date = handleDateChange(evt);
@@ -119,7 +122,7 @@ const RecordRecoveryCertData = (props: any) => {
 
     const handleCancel = () => {
         props.setEudgc(undefined);
-        navigation?.toLanding();
+        context.navigation?.toLanding();
     }
 
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
@@ -159,17 +162,17 @@ const RecordRecoveryCertData = (props: any) => {
 
             if (result.valid) {
                 props.setEudgc(eudgc);
-                setTimeout(navigation!.toShowCert, 200);
+                setTimeout(context.navigation!.toShowCert, 200);
             }
             else {
                 console.error(result);
-                props.setError({ error: result, message: result.errors[0].message, onCancel: navigation!.toLanding });
+                props.setError({ error: result, message: result.errors[0].message, onCancel: context.navigation!.toLanding });
             }
         }
     }
 
     return (
-        !isInit ? <Spinner /> :
+        !(isInit && context && context.valueSets) ? <Spinner /> :
             <>
                 <Card id='data-card'>
 
@@ -195,7 +198,7 @@ const RecordRecoveryCertData = (props: any) => {
                                 value={disease}
                                 onChange={(evt: any) => setDisease(evt.target.value)}
                                 required
-                                valueSet={valuesetList[Value_Sets.DiseaseAgent]}
+                                valueSet={context.valueSets[Value_Sets.DiseaseAgent]}
                             />
 
                             <hr />

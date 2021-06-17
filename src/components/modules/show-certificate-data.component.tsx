@@ -1,8 +1,7 @@
-import { EUDCC1, RecoveryEntry, TestEntry, VaccinationEntry } from '../generated-files/dgc-combined-schema'
+import { EUDCC1, RecoveryEntry, TestEntry, VaccinationEntry } from '../../generated-files/dgc-combined-schema'
 import i18n from 'i18next'
-import { IValueSet, Value_Sets } from '../api';
-import moment from 'moment';
-import utils from './utils';
+import { getValueSetDisplay, Value_Sets } from '../../misc/useValueSet';
+import utils from '../../misc/utils';
 import React from 'react';
 import { Card } from 'react-bootstrap';
 
@@ -136,7 +135,7 @@ export const ShowCertificateData = (props: any) => {
             {
                 title: i18n.t('translation:test-data'),
                 entries: [
-                    { label: i18n.t('translation:sampleDateTime'), data: convertDateToOutputFormat(testSet?.sc || '') },
+                    { label: i18n.t('translation:sampleDateTime'), data: utils.convertDateToOutputFormat(testSet?.sc || '') },
                     // { label: i18n.t('translation:testDateTime'), data: convertDateToOutputFormat(testSet?.dr || defaultString) },
                     { label: i18n.t('translation:testResult'), data: getValueSetDisplay(testSet?.tr, testResultValueSet) || defaultString },
                     { label: i18n.t('translation:testCenter'), data: testSet?.tc || defaultString }
@@ -199,15 +198,3 @@ export const ShowCertificateData = (props: any) => {
 }
 
 export default ShowCertificateData
-
-export const convertDateToOutputFormat = (dateString?: string): string => dateString ? moment(dateString, 'YYYY-MM-DDTHH:mm:ss.sssZ').format(utils.momentDateTimeFormat).toString() : '';
-
-// returns display value for key 
-export const getValueSetDisplay = (key: string | undefined, valueSet: IValueSet | undefined): string | undefined => {
-    let result = key;
-
-    if (valueSet && key && valueSet[key]) {
-        result = valueSet[key].display;
-    }
-    return result;
-}

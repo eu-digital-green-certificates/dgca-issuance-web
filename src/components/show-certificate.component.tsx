@@ -25,23 +25,22 @@ import { Button, Card, Col, Container, Row } from 'react-bootstrap'
 import '../i18n';
 import { useTranslation } from 'react-i18next';
 
-import useNavigation from '../misc/navigation';
-
 import QRCode from 'qrcode.react';
 
 import Spinner from './spinner/spinner.component';
 import { EUDCC1 } from '../generated-files/dgc-combined-schema';
 import genEDGCQR, { CertResult } from '../misc/edgcQRGenerator';
 
-import ShowCertificateData from '../misc/ShowCertificateData';
-import usePdfGenerator from './pdf-generater.component';
-import { useGetValueSets } from '../api';
+import ShowCertificateData from './modules/show-certificate-data.component';
+import usePdfGenerator from '../misc/usePdfGenerator';
+import AppContext from '../misc/appContext';
+import { IValueSetList } from '../misc/useValueSet';
 
 // import { usePostPatient } from '../api';
 
 const ShowCertificate = (props: any) => {
 
-    const navigation = useNavigation();
+    const context = React.useContext(AppContext);
     const { t } = useTranslation();
 
     const [isInit, setIsInit] = React.useState(false)
@@ -54,10 +53,9 @@ const ShowCertificate = (props: any) => {
 
     const [qrCodeForPDF, setQrCodeForPDF] = React.useState<any>();
     const [eudgcForPDF, setEudgcForPDF] = React.useState<EUDCC1>();
+    const [valueSetsForPDF, setValueSetsForPDF] = React.useState<IValueSetList>();
 
-    const valuesetList = useGetValueSets((isInit) => setTimeout(setIsInit, 200, isInit));
-
-    const pdf = usePdfGenerator(qrCodeForPDF, eudgcForPDF, valuesetList, (isInit) => setPdfIsInit(isInit), (isReady) => setPdfIsReady(isReady));
+    const pdf = usePdfGenerator(qrCodeForPDF, eudgcForPDF, valueSetsForPDF, (isInit) => setPdfIsInit(isInit), (isReady) => setPdfIsReady(isReady));
 
     // set patient data on mount and set hash from uuid
     React.useEffect(() => {
@@ -66,7 +64,7 @@ const ShowCertificate = (props: any) => {
                 setEudgc(props.eudgc)
             }
             else
-                props.setError({ error: '', message: t('translation:error-patient-data-load'), onCancel: navigation!.toLanding });
+                props.setError({ error: '', message: t('translation:error-patient-data-load'), onCancel: context.navigation!.toLanding });
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isInit])
@@ -95,9 +93,15 @@ const ShowCertificate = (props: any) => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [pdfIsReady]);
 
+    React.useEffect(() => {
+        if (context.navigation && context.valueSets)
+            setIsInit(true);
+        setValueSetsForPDF(context.valueSets);
+    }, [context.navigation, context.valueSets])
+
     const finishProcess = () => {
         props.setEudgc(undefined);
-        navigation!.toLanding();
+        context.navigation!.toLanding();
     }
 
     const handleError = (error: any) => {
@@ -106,23 +110,23 @@ const ShowCertificate = (props: any) => {
         if (error) {
             msg = error.message
         }
-        props.setError({ error: error, message: msg, onCancel: navigation!.toLanding });
+        props.setError({ error: error, message: msg, onCancel: context.navigation!.toLanding });
     }
 
     const handleBack = () => {
         if (eudgc) {
             if (eudgc.v) {
-                navigation!.toRecordVac();
+                context.navigation!.toRecordVac();
             }
             if (eudgc.t) {
-                navigation!.toRecordTest();
+                context.navigation!.toRecordTest();
             }
             if (eudgc.r) {
-                navigation!.toRecordRecovery();
+                context.navigation!.toRecordRecovery();
             }
         }
         else {
-            navigation!.toLanding();
+            context.navigation!.toLanding();
         }
     }
 
@@ -140,7 +144,7 @@ const ShowCertificate = (props: any) => {
     }
 
     return (
-        !(isInit && eudgc && qrCodeValue) ? <Spinner /> :
+        !(isInit && context.valueSets && eudgc && qrCodeValue) ? <Spinner /> :
             <>
                 <Card id='data-card'>
                     {/*    content area with patient inputs and check box    */}
@@ -155,7 +159,7 @@ const ShowCertificate = (props: any) => {
                         <Row>
                             <Col sm='6' className='p-3'>
 
-                                <ShowCertificateData eudgc={eudgc} valueSetList={valuesetList} />
+                                <ShowCertificateData eudgc={eudgc} valueSetList={context.valueSets} />
 
                             </Col>
                             <Col sm='6' className='p-3'>
