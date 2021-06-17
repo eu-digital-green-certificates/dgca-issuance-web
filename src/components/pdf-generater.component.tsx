@@ -851,7 +851,7 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudccProp: EUDCC1 | undef
 
             let x = params.a6width - params.paddingInnerLeft;
 
-            pdf.setFontSize(params.fontSize9);
+            pdf.setFontSize(params.fontSize10);
 
             let disease = getValueSetDisplay(testSet.tg, diseaseAgentsData);
             let lblDisease = t('translation:pdfDiseaseRecovery');
