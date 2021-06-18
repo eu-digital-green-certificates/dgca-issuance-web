@@ -37,7 +37,7 @@ import schema from '../generated-files/DGC.combined-schema.json';
 import { Validator } from 'jsonschema';
 import utils from '../misc/utils';
 import CardHeader from './modules/card-header.component';
-import { FormGroupInput, FormGroupISOCountrySelect, FormGroupValueSetSelect, IPersonData, PersonInputs } from './modules/form-group.component';
+import { FormGroupInput, FormGroupValueSetSelect, IPersonData, PersonInputs } from './modules/form-group.component';
 import CardFooter from './modules/card-footer.component';
 import useLocalStorage from '../misc/useLocalStorage';
 import moment from 'moment';
@@ -270,10 +270,11 @@ const RecordTestCertData = (props: any) => {
                             <hr />
 
                             {/* Combobox for the vaccin countries in iso-3166-1-alpha-2 */}
-                            <FormGroupISOCountrySelect controlId='formVacCountryInput' title={t('translation:vac-country')}
+                            <FormGroupValueSetSelect controlId='formVacCountryInput' title={t('translation:vac-country')}
                                 value={issuerCountryCode}
                                 onChange={(evt: any) => setIssuerCountryCode(evt.target.value)}
                                 required
+                                valueSet={context.valueSets[Value_Sets.CountryCodes]}
                             />
 
                             {/* certificateIssuer */}

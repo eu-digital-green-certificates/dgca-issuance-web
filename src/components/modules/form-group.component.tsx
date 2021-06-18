@@ -11,7 +11,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import { IValueSet, useGetDateFormats } from "../../misc/useValueSet";
 import useLocalStorage from "../../misc/useLocalStorage";
 
-const iso3311a2 = require('iso-3166-1-alpha-2');
+// const iso3311a2 = require('iso-3166-1-alpha-2');
 
 
 export interface IPersonData {
@@ -90,44 +90,44 @@ export const FormGroupValueSetSelect = (props: any) => {
     )
 }
 
-export const FormGroupISOCountrySelect = (props: any) => {
+// export const FormGroupISOCountrySelect = (props: any) => {
 
-    const [options, setOptions] = React.useState<JSX.Element[]>();
+//     const [options, setOptions] = React.useState<JSX.Element[]>();
 
-    React.useEffect(() => {
-        const options: JSX.Element[] = [];
-        // const codes: string[] = iso3311a2.getCodes().sort();
-        const eu_country_codes: string[] = ["AT", "BE", "BG", "HR", "CY", "CZ", "DK", "EE", "FI", "FR",
-            "DE", "GR", "HU", "IE", "IT", "LV", "LT", "LU", "MT", "NL", "PL",
-            "PT", "RO", "SK", "SI", "ES", "SE"].sort();
+//     React.useEffect(() => {
+//         const options: JSX.Element[] = [];
+//         // const codes: string[] = iso3311a2.getCodes().sort();
+//         const eu_country_codes: string[] = ["AT", "BE", "BG", "HR", "CY", "CZ", "DK", "EE", "FI", "FR",
+//             "DE", "GR", "HU", "IE", "IT", "LV", "LT", "LU", "MT", "NL", "PL",
+//             "PT", "RO", "SK", "SI", "ES", "SE"].sort();
 
-        for (const code of eu_country_codes) {
-            options.push(<option key={code} value={code}>{code + " : " + iso3311a2.getCountry(code)}</option>)
-        }
+//         for (const code of eu_country_codes) {
+//             options.push(<option key={code} value={code}>{code + " : " + iso3311a2.getCountry(code)}</option>)
+//         }
 
-        setOptions(options);
-    }, [])
+//         setOptions(options);
+//     }, [])
 
 
-    return (!(props && options) ? <></> :
-        <Form.Group as={Row} controlId={props.controlId} className='pb-3 mb-0'>
-            <Form.Label className='input-label' column xs='5' sm='3'>{props.title + (props.required ? '*' : '')}</Form.Label>
+//     return (!(props && options) ? <></> :
+//         <Form.Group as={Row} controlId={props.controlId} className='pb-3 mb-0'>
+//             <Form.Label className='input-label' column xs='5' sm='3'>{props.title + (props.required ? '*' : '')}</Form.Label>
 
-            <Col xs='7' sm='9' className='d-flex'>
-                <Form.Control as="select"
-                    className={!props.value ? 'selection-placeholder qt-input' : 'qt-input'}
-                    value={props.value}
-                    onChange={props.onChange}
-                    placeholder={props.placeholder ? props.placeholder : props.title}
-                    required={props.required}
-                >
-                    <option disabled key={0} value={''} >{props.placeholder ? props.placeholder : props.title}</option>
-                    {options}
-                </Form.Control>
-            </Col>
-        </Form.Group>
-    )
-}
+//             <Col xs='7' sm='9' className='d-flex'>
+//                 <Form.Control as="select"
+//                     className={!props.value ? 'selection-placeholder qt-input' : 'qt-input'}
+//                     value={props.value}
+//                     onChange={props.onChange}
+//                     placeholder={props.placeholder ? props.placeholder : props.title}
+//                     required={props.required}
+//                 >
+//                     <option disabled key={0} value={''} >{props.placeholder ? props.placeholder : props.title}</option>
+//                     {options}
+//                 </Form.Control>
+//             </Col>
+//         </Form.Group>
+//     )
+// }
 
 
 export const PersonInputs = (props: any) => {

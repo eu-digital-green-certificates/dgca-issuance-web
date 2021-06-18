@@ -20,6 +20,7 @@ export const ShowCertificateData = (props: any) => {
 
     const defaultString = '';
 
+    const countryCodeValueSet = props.valueSetList[Value_Sets.CountryCodes];
     const vacMedsData = props.valueSetList[Value_Sets.Vaccines];
     const diseaseAgentsData = props.valueSetList[Value_Sets.DiseaseAgent];
     const vaccineManufacturers = props.valueSetList[Value_Sets.VaccinesManufacturer];
@@ -114,7 +115,7 @@ export const ShowCertificateData = (props: any) => {
             {
                 title: i18n.t('translation:certificate-data'),
                 entries: [
-                    { label: i18n.t('translation:vac-country'), data: vaccinationSet?.co || defaultString },
+                    { label: i18n.t('translation:vac-country'), data: getValueSetDisplay(vaccinationSet?.co, countryCodeValueSet) || defaultString },
                     { label: i18n.t('translation:adm'), data: vaccinationSet?.is || defaultString }
                 ]
             }
@@ -144,7 +145,7 @@ export const ShowCertificateData = (props: any) => {
             {
                 title: i18n.t('translation:certificate-data'),
                 entries: [
-                    { label: i18n.t('translation:vac-country'), data: testSet?.co || defaultString },
+                    { label: i18n.t('translation:vac-country'), data: getValueSetDisplay(testSet?.co, countryCodeValueSet) || defaultString },
                     { label: i18n.t('translation:adm'), data: testSet?.is || defaultString }
                 ]
             }
@@ -159,7 +160,7 @@ export const ShowCertificateData = (props: any) => {
                 entries: [
                     { label: i18n.t('translation:disease-agent'), data: getValueSetDisplay(recoverySet?.tg, diseaseAgentsData) || defaultString },
                     { label: i18n.t('translation:first-positive-test-date'), data: recoverySet?.fr || defaultString },
-                    { label: i18n.t('translation:recovery-country'), data: recoverySet?.co || defaultString },
+                    { label: i18n.t('translation:recovery-country'), data: getValueSetDisplay(recoverySet?.co, countryCodeValueSet) || defaultString },
                 ]
             },
             {

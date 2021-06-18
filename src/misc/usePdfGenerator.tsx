@@ -161,6 +161,7 @@ const usePdfGenerator = (
     const [co, setCo] = React.useState<string>();
     const [qrCodeCanvasElement, setQrCodeCanvasElement] = React.useState<any>();
 
+    const [countryCodeValueSet, setCountryCodeValueSet] = React.useState<IValueSet>();
     const [vacMedsData, setVacMedsData] = React.useState<IValueSet>();
     const [diseaseAgentsData, setDiseaseAgentsData] = React.useState<IValueSet>();
     const [vaccineManufacturers, setVaccineManufacturers] = React.useState<IValueSet>();
@@ -194,7 +195,7 @@ const usePdfGenerator = (
         if (pdf && diseaseAgentsData && vaccines && vaccineManufacturers && vacMedsData && testResultValueSet && testManufacturersValueSet) {
             setIsInit(true);
         }
-    }, [pdf, diseaseAgentsData, vaccines, vaccineManufacturers, vacMedsData, testResultValueSet, testManufacturersValueSet])
+    }, [pdf, diseaseAgentsData, vaccines, vaccineManufacturers, vacMedsData, testResultValueSet, testManufacturersValueSet, countryCodeValueSet])
 
     React.useEffect(() => {
         if (onIsInit) {
@@ -232,6 +233,7 @@ const usePdfGenerator = (
     // on receiving valueSetList obj set specific ValueSet
     React.useEffect(() => {
         if (valueSetListProp) {
+            setCountryCodeValueSet(valueSetListProp[Value_Sets.CountryCodes]);
             setVacMedsData(valueSetListProp[Value_Sets.Vaccines]);
             setDiseaseAgentsData(valueSetListProp[Value_Sets.DiseaseAgent]);
             setVaccineManufacturers(valueSetListProp[Value_Sets.VaccinesManufacturer]);
@@ -658,7 +660,7 @@ const usePdfGenerator = (
                     y = printHorizontalBlock(xLeft, y,
                         t('translation:pdfMemberStateOfVaccination'),
                         french.translation.pdfMemberStateOfVaccination,
-                        vaccinationSet.co,
+                        getValueSetDisplay(vaccinationSet.co, countryCodeValueSet),
                         lineHeight, true);
 
                     printHorizontalBlock(xLeft, y,
@@ -766,7 +768,7 @@ const usePdfGenerator = (
             y = printHorizontalBlockRotated(xLeft, y,
                 t('translation:pdfMemberStateOfVaccination'),
                 french.translation.pdfMemberStateOfVaccination,
-                vaccinationSet.co,
+                getValueSetDisplay(vaccinationSet.co, countryCodeValueSet),
                 lineHeight, true);
 
             printHorizontalBlockRotated(xLeft, y,
@@ -842,7 +844,7 @@ const usePdfGenerator = (
                     y = printHorizontalBlock(x, y,
                         t('translation:pdfStateOfVaccination'),
                         french.translation.pdfStateOfVaccination,
-                        testSet.co,
+                        getValueSetDisplay(testSet.co, countryCodeValueSet),
                         lineHeight, true);
 
                     printHorizontalBlock(x, y,
@@ -918,7 +920,7 @@ const usePdfGenerator = (
             y = printHorizontalBlockRotated(x, y,
                 t('translation:pdfStateOfVaccination'),
                 french.translation.pdfStateOfVaccination,
-                testSet.co,
+                getValueSetDisplay(testSet.co, countryCodeValueSet),
                 lineHeight, true);
 
             printHorizontalBlockRotated(x, y,
@@ -966,7 +968,7 @@ const usePdfGenerator = (
                     y = printHorizontalBlock(xLeft, y,
                         t('translation:pdfStateOfTest'),
                         french.translation.pdfStateOfTest,
-                        recoverySet.co,
+                        getValueSetDisplay(recoverySet.co, countryCodeValueSet),
                         lineHeight, true);
 
                     y = printHorizontalBlock(xLeft, y,
@@ -1028,7 +1030,7 @@ const usePdfGenerator = (
             y = printHorizontalBlockRotated(xLeft, y,
                 t('translation:pdfStateOfTest'),
                 french.translation.pdfStateOfTest,
-                recoverySet.co,
+                getValueSetDisplay(recoverySet.co, countryCodeValueSet),
                 lineHeight, true);
 
             y = printHorizontalBlockRotated(xLeft, y,
