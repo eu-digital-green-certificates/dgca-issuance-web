@@ -11,17 +11,30 @@ services:
     environment:
     - SERVER_PORT=8080
     - DGCA_ISSUANCE_SERVICE_URL=http://dgc-issuance-service:8081
+    - DGCA_BUSINESSRULE_SERVICE_URL=http://dgc-businessrule-service:8082
     networks:
       internal:
 
   dgc-issuance-service:
-    image: docker.pkg.github.com/eu-digital-green-certificates/dgca-issuance-service/dgca-issuance-service:1.0.0
+    image: docker.pkg.github.com/eu-digital-green-certificates/dgca-issuance-service/dgca-issuance-service:1.0.3
     container_name: dgc-issuance-service
     hostname: dgc-issuance-service
     ports:
     - 8081:8081
     environment:
     - SERVER_PORT=8081
+    networks:
+      internal:
+    restart: unless-stopped
+
+  dgc-businessrule-service:
+    image: docker.pkg.github.com/eu-digital-green-certificates/dgca-businessrule-service/dgca-businessrule-service:0.0.1
+    container_name: dgc-businessrule-service
+    hostname: dgc-businessrule-service
+    ports:
+      - 8082:8082
+    environment:
+      - SERVER_PORT=8082
     networks:
       internal:
     restart: unless-stopped

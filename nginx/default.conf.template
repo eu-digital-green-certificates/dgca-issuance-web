@@ -18,4 +18,8 @@ server {
         proxy_ssl_server_name on;
         proxy_pass ${DGCA_ISSUANCE_SERVICE_URL}/;
     }
+    location /dgca-businessrule-service/ {
+        proxy_ssl_server_name on;
+        proxy_pass ${DGCA_BUSINESSRULE_SERVICE_URL}/;
+    }
 }
