@@ -105,7 +105,7 @@ export const useGetValueSets = (onInit?: (isInit: boolean) => void, onError?: (m
                     onError(error.message);
                 }
             });
-
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
     // 4 hashlist load all valueSets
@@ -125,7 +125,7 @@ export const useGetValueSets = (onInit?: (isInit: boolean) => void, onError?: (m
     }, [isInit, onInit])
 
     const setValueSet = (hashListItem: IValueSetHashListItem) => {
-        if (hashListItem) {
+        if (hashListItem && hashListItem.hash) {
             const uri = '/valuesets/' + hashListItem.hash;
 
             valueSetApi.get(uri)
@@ -142,6 +142,10 @@ export const useGetValueSets = (onInit?: (isInit: boolean) => void, onError?: (m
                         setIsInit(true);
                     }
                 });
+        }
+        else {
+            console.log('no valid valueset hash');
+
         }
     }
 
