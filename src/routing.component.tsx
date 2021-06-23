@@ -59,7 +59,7 @@ const Routing = () => {
 
     const context: IAppContext = {
         navigation: useNavigation(),
-        valueSets: useGetValueSets(),
+        valueSets: useGetValueSets(undefined, (msg) => { setError({ message: msg }) }),
         utils: utils
     }
 
@@ -85,7 +85,7 @@ const Routing = () => {
     */}
                 <Route path={context.navigation.routes.root}>
                     <Header />
-                    <ErrorPage error={error} show={errorShow} onCancel={error?.onCancel} onHide={() => setErrorShow(false)} />
+                    <ErrorPage error={error} show={errorShow} onCancel={error?.onCancel ? error?.onCancel : context.navigation.toLanding} onHide={() => setErrorShow(false)} />
                     <DataprivacyPage show={dataPrivacyShow} setShow={setDataPrivacyShow} />
                     <ImprintPage show={imprintShow} setShow={setImprintShow} />
                 </Route>

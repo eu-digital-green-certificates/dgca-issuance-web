@@ -79,7 +79,7 @@ export const useGetDateFormats = () => {
     return dateFormats
 }
 
-export const useGetValueSets = (onInit?: (isInit: boolean) => void) => {
+export const useGetValueSets = (onInit?: (isInit: boolean) => void, onError?: (msg: string) => void) => {
 
     const [valueSetHashList, setValueSetHashList] = React.useState<IValueSetHashListItem[]>();
 
@@ -91,8 +91,20 @@ export const useGetValueSets = (onInit?: (isInit: boolean) => void) => {
         const uri = '/valuesets';
 
         valueSetApi.get(uri).then((response) => {
-            setValueSetHashList(response.data);
-        });
+            if (response && response.data && response.data.length > 0) {
+                setValueSetHashList(response.data);
+            }
+            else {
+                if (onError) {
+                    onError('failed to request valuesets');
+                }
+            }
+        })
+            .catch((error) => {
+                if (onError) {
+                    onError(error.message);
+                }
+            });
 
     }, [])
 
