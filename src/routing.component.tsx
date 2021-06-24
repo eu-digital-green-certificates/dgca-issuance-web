@@ -26,7 +26,7 @@ import { Container } from 'react-bootstrap'
 import './i18n';
 import { useTranslation } from 'react-i18next';
 
-import useNavigation from './misc/navigation';
+import useNavigation from './misc/useNavigation';
 
 import Footer from './components/footer.component';
 // import Header from './components/header.component';
@@ -43,16 +43,25 @@ import RecordRecoveryCertData from './components/record-recovery-cert-data.compo
 import Header from './components/header.component';
 import DataprivacyPage from './components/dataprivacy.component';
 import ImprintPage from './components/imprint.component';
+import { useGetValueSets } from './misc/useValueSet';
+import AppContext, { IAppContext } from './misc/appContext';
+import utils from './misc/utils';
+import Spinner from './components/spinner/spinner.component';
 
-const Routing = (props: any) => {
-
-    const navigation = useNavigation();
+const Routing = () => {
     const { t } = useTranslation();
+
     const [eudgc, setEudgc] = React.useState<EUDCC1>();
     const [error, setError] = React.useState<IError>();
     const [errorShow, setErrorShow] = React.useState(false);
     const [dataPrivacyShow, setDataPrivacyShow] = React.useState(false);
     const [imprintShow, setImprintShow] = React.useState(false);
+
+    const context: IAppContext = {
+        navigation: useNavigation(),
+        valueSets: useGetValueSets(undefined, (msg) => { setError({ message: msg }) }),
+        utils: utils
+    }
 
     document.title = t('translation:title');
 
@@ -68,68 +77,69 @@ const Routing = (props: any) => {
         }
     }, [errorShow])
 
-    return (!navigation ? <></> :
+    return (!(context.valueSets && context.navigation) ? <Spinner background='#cfcfcf' /> :
         <>
-            {/*
+            <AppContext.Provider value={context}>
+                {/*
     header, every time shown. fit its children
     */}
-            <Route path={navigation.routes.root}>
-                <Header />
-                <ErrorPage error={error} show={errorShow} onCancel={error?.onCancel} onHide={() => setErrorShow(false)} />
-                <DataprivacyPage show={dataPrivacyShow} setShow={setDataPrivacyShow} />
-                <ImprintPage show={imprintShow} setShow={setImprintShow} />
-            </Route>
+                <Route path={context.navigation.routes.root}>
+                    <Header />
+                    <ErrorPage error={error} show={errorShow} onCancel={error?.onCancel ? error?.onCancel : context.navigation.toLanding} onHide={() => setErrorShow(false)} />
+                    <DataprivacyPage show={dataPrivacyShow} setShow={setDataPrivacyShow} />
+                    <ImprintPage show={imprintShow} setShow={setImprintShow} />
+                </Route>
 
-            {/*
+                {/*
     Content area. fit the rest of screen and children
     */}
-            <Container id='qt-body'>
+                <Container id='qt-body'>
 
-                {/* Landing */}
-                <Route
-                    exact
-                    path={navigation.routes.landing}
-                >
-                    <LandingPage />
-                </Route>
+                    {/* Landing */}
+                    <Route
+                        exact
+                        path={context.navigation.routes.landing}
+                    >
+                        <LandingPage />
+                    </Route>
 
-                <Route
-                    exact
-                    path={navigation.routes.recordVac}
-                >
-                    <RecordVaccinationCertData setEudgc={setEudgc} eudgc={eudgc} setError={setError} />
-                </Route>
+                    <Route
+                        exact
+                        path={context.navigation.routes.recordVac}
+                    >
+                        <RecordVaccinationCertData setEudgc={setEudgc} eudgc={eudgc} setError={setError} />
+                    </Route>
 
-                <Route
-                    exact
-                    path={navigation.routes.recordTest}
-                >
-                    <RecordTestCertData setEudgc={setEudgc} eudgc={eudgc} setError={setError} />
-                </Route>
+                    <Route
+                        exact
+                        path={context.navigation.routes.recordTest}
+                    >
+                        <RecordTestCertData setEudgc={setEudgc} eudgc={eudgc} setError={setError} />
+                    </Route>
 
-                <Route
-                    exact
-                    path={navigation.routes.recordRecovery}
-                >
-                    <RecordRecoveryCertData setEudgc={setEudgc} eudgc={eudgc} setError={setError} />
-                </Route>
+                    <Route
+                        exact
+                        path={context.navigation.routes.recordRecovery}
+                    >
+                        <RecordRecoveryCertData setEudgc={setEudgc} eudgc={eudgc} setError={setError} />
+                    </Route>
 
-                <Route
-                    exact
-                    path={navigation.routes.showCert}
-                >
-                    <ShowCertificate setEudgc={setEudgc} eudgc={eudgc} setError={setError} />
-                </Route>
+                    <Route
+                        exact
+                        path={context.navigation.routes.showCert}
+                    >
+                        <ShowCertificate setEudgc={setEudgc} eudgc={eudgc} setError={setError} />
+                    </Route>
 
-            </Container>
+                </Container>
 
-            {/*
+                {/*
     footer, every time shown. fit its children
     */}
-            <Route path={navigation.routes.root}>
-                <Footer setDataPrivacyShow={setDataPrivacyShow} setImprintShow={setImprintShow} />
-            </Route>
-
+                <Route path={context.navigation.routes.root}>
+                    <Footer setDataPrivacyShow={setDataPrivacyShow} setImprintShow={setImprintShow} />
+                </Route>
+            </AppContext.Provider>
         </>
     )
 }

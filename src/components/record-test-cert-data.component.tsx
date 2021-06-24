@@ -25,29 +25,29 @@ import { Card, Col, Form, Row } from 'react-bootstrap';
 import '../i18n';
 import { useTranslation } from 'react-i18next';
 
-import useNavigation from '../misc/navigation';
 import Spinner from './spinner/spinner.component';
 
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
 import { EUDCC1, TestEntry } from '../generated-files/dgc-combined-schema';
-import { useGetDiseaseAgents, useGetTestManufacturers, useGetTestResult, useGetTestType } from '../api';
+import { Value_Sets } from '../misc/useValueSet';
 
 import schema from '../generated-files/DGC.combined-schema.json';
 import { Validator } from 'jsonschema';
 import utils from '../misc/utils';
 import CardHeader from './modules/card-header.component';
-import { FormGroupInput, FormGroupISOCountrySelect, FormGroupValueSetSelect, IPersonData, PersonInputs } from './modules/form-group.component';
+import { FormGroupInput, FormGroupValueSetSelect, IPersonData, PersonInputs } from './modules/form-group.component';
 import CardFooter from './modules/card-footer.component';
-import useLocalStorage from '../misc/local-storage';
+import useLocalStorage from '../misc/useLocalStorage';
 import moment from 'moment';
+import AppContext from '../misc/appContext';
 
 const validator = new Validator();
 
 const RecordTestCertData = (props: any) => {
 
-    const navigation = useNavigation();
+    const context = React.useContext(AppContext);
     const { t } = useTranslation();
 
     const [isInit, setIsInit] = React.useState(false)
@@ -99,10 +99,9 @@ const RecordTestCertData = (props: any) => {
     }, [props.eudgc]);
 
     React.useEffect(() => {
-        if (navigation) {
-            setTimeout(setIsInit, 200, true);
-        }
-    }, [navigation]);
+        if (context.navigation && context.valueSets)
+            setIsInit(true);
+    }, [context.navigation, context.valueSets])
 
     const handleSampleDateTimeChange = (evt: Date | [Date, Date] | null) => {
         const date = handleDateTimeChange(evt);
@@ -122,7 +121,7 @@ const RecordTestCertData = (props: any) => {
 
     const handleCancel = () => {
         props.setEudgc(undefined);
-        navigation?.toLanding();
+        context.navigation?.toLanding();
     }
 
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
@@ -165,17 +164,17 @@ const RecordTestCertData = (props: any) => {
 
             if (result.valid) {
                 props.setEudgc(eudgc);
-                setTimeout(navigation!.toShowCert, 200);
+                setTimeout(context.navigation!.toShowCert, 200);
             }
             else {
                 console.error(result);
-                props.setError({ error: result, message: result.errors[0].message, onCancel: navigation!.toLanding });
+                props.setError({ error: result, message: result.errors[0].message, onCancel: context.navigation!.toLanding });
             }
         }
     }
 
     return (
-        !isInit ? <Spinner /> :
+        !(isInit && context && context.valueSets) ? <Spinner /> :
             <>
                 <Card id='data-card'>
 
@@ -200,7 +199,7 @@ const RecordTestCertData = (props: any) => {
                                 value={disease}
                                 onChange={(evt: any) => setDisease(evt.target.value)}
                                 required
-                                valueSet={useGetDiseaseAgents}
+                                valueSet={context.valueSets[Value_Sets.DiseaseAgent]}
                             />
 
                             {/* testType input */}
@@ -208,7 +207,7 @@ const RecordTestCertData = (props: any) => {
                                 value={testType}
                                 onChange={(evt: any) => setTestType(evt.target.value)}
                                 required
-                                valueSet={useGetTestType}
+                                valueSet={context.valueSets[Value_Sets.TestType]}
                             />
 
                             {/* testName input */}
@@ -224,7 +223,7 @@ const RecordTestCertData = (props: any) => {
                                 value={testManufacturers}
                                 onChange={(evt: any) => setTestManufacturers(evt.target.value)}
                                 hidden={testType !== 'LP217198-3'}
-                                valueSet={useGetTestManufacturers}
+                                valueSet={context.valueSets[Value_Sets.TestManufacturer]}
                             />
 
                             <hr />
@@ -257,7 +256,7 @@ const RecordTestCertData = (props: any) => {
                                 value={testResult}
                                 onChange={(evt: any) => setTestResult(evt.target.value)}
                                 required
-                                valueSet={useGetTestResult}
+                                valueSet={context.valueSets[Value_Sets.TestResult]}
                             />
 
                             {/* testCenter input */}
@@ -271,10 +270,11 @@ const RecordTestCertData = (props: any) => {
                             <hr />
 
                             {/* Combobox for the vaccin countries in iso-3166-1-alpha-2 */}
-                            <FormGroupISOCountrySelect controlId='formVacCountryInput' title={t('translation:vac-country')}
+                            <FormGroupValueSetSelect controlId='formVacCountryInput' title={t('translation:vac-country')}
                                 value={issuerCountryCode}
                                 onChange={(evt: any) => setIssuerCountryCode(evt.target.value)}
                                 required
+                                valueSet={context.valueSets[Value_Sets.CountryCodes]}
                             />
 
                             {/* certificateIssuer */}

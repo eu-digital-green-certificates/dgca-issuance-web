@@ -28,15 +28,15 @@ import './assets/SCSS/custom.scss';
 
 import reportWebVitals from './reportWebVitals';
 
-import Root from './root.component';
+import Routing from './routing.component';
 
 
 ReactDOM.render(
   <React.StrictMode>
     <BrowserRouter >
-      <Root />
+      <Routing />
     </BrowserRouter>
-    
+
   </React.StrictMode>,
 
   document.getElementById('root')

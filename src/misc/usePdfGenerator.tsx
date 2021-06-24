@@ -33,11 +33,8 @@ import yellow_seperator from '../assets/images/yellow_seperator.png';
 import folding_instruction from '../assets/images/folding-instruction.png';
 
 import { EUDCC1, RecoveryEntry, TestEntry, VaccinationEntry } from '../generated-files/dgc-combined-schema';
-import {
-    useGetDiseaseAgents, useGetVaccineManufacturers, useGetVaccines,
-    useGetVaccinMedicalData, useGetTestManufacturers, useGetTestResult, useGetTestType
-} from '../api';
-import { getValueSetDisplay, convertDateToOutputFormat } from '../misc/ShowCertificateData';
+import { IValueSetList, Value_Sets, getValueSetDisplay, IValueSet } from './useValueSet';
+import utils from './utils';
 // import pdfParams from '../pdf-settings.json';
 
 require('../assets/SCSS/fonts/arial-normal.js');
@@ -92,17 +89,15 @@ interface IWordInfo {
     wordLength: number;
 }
 
-const usePdfGenerator = (qrCodeCanvasElementProp: any, eudccProp: EUDCC1 | undefined, onIsInit: (isInit: boolean) => void, onIsReady: (isReady: boolean) => void) => {
+const usePdfGenerator = (
+    qrCodeCanvasElementProp: any,
+    eudccProp: EUDCC1 | undefined,
+    valueSetListProp: IValueSetList | undefined,
+    onIsInit: (isInit: boolean) => void,
+    onIsReady: (isReady: boolean) => void) => {
+
     const { t } = useTranslation();
     const french = i18n.getDataByLanguage('fr');
-
-    const vacMedsData = useGetVaccinMedicalData();
-    const diseaseAgentsData = useGetDiseaseAgents();
-    const vaccineManufacturers = useGetVaccineManufacturers();
-    const vaccines = useGetVaccines();
-    const testManufacturersValueSet = useGetTestManufacturers();
-    const testResultValueSet = useGetTestResult();
-    const testTypeValueSet = useGetTestType();
 
     //A4 210 x 297 mm or 2480 x 3508 pixels or 595 × 842 points
     //A6 105 x 74 mm or 1240 x 1748 pixels or 298 × 420 points
@@ -166,6 +161,15 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudccProp: EUDCC1 | undef
     const [co, setCo] = React.useState<string>();
     const [qrCodeCanvasElement, setQrCodeCanvasElement] = React.useState<any>();
 
+    const [countryCodeValueSet, setCountryCodeValueSet] = React.useState<IValueSet>();
+    const [vacMedsData, setVacMedsData] = React.useState<IValueSet>();
+    const [diseaseAgentsData, setDiseaseAgentsData] = React.useState<IValueSet>();
+    const [vaccineManufacturers, setVaccineManufacturers] = React.useState<IValueSet>();
+    const [vaccines, setVaccines] = React.useState<IValueSet>();
+    const [testManufacturersValueSet, setTestManufacturersValueSet] = React.useState<IValueSet>();
+    const [testResultValueSet, setTestResultValueSet] = React.useState<IValueSet>();
+    const [testTypeValueSet, setTestTypeValueSet] = React.useState<IValueSet>();
+
     // on mount generate pdf
     React.useEffect(() => {
         const _pdf = new jsPDF("p", "pt", "a4", true);
@@ -191,7 +195,7 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudccProp: EUDCC1 | undef
         if (pdf && diseaseAgentsData && vaccines && vaccineManufacturers && vacMedsData && testResultValueSet && testManufacturersValueSet) {
             setIsInit(true);
         }
-    }, [pdf, diseaseAgentsData, vaccines, vaccineManufacturers, vacMedsData, testResultValueSet, testManufacturersValueSet])
+    }, [pdf, diseaseAgentsData, vaccines, vaccineManufacturers, vacMedsData, testResultValueSet, testManufacturersValueSet, countryCodeValueSet])
 
     React.useEffect(() => {
         if (onIsInit) {
@@ -225,6 +229,20 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudccProp: EUDCC1 | undef
             setRecoverySet(recovery ? recovery[0] : undefined);
         }
     }, [eudccProp])
+
+    // on receiving valueSetList obj set specific ValueSet
+    React.useEffect(() => {
+        if (valueSetListProp) {
+            setCountryCodeValueSet(valueSetListProp[Value_Sets.CountryCodes]);
+            setVacMedsData(valueSetListProp[Value_Sets.Vaccines]);
+            setDiseaseAgentsData(valueSetListProp[Value_Sets.DiseaseAgent]);
+            setVaccineManufacturers(valueSetListProp[Value_Sets.VaccinesManufacturer]);
+            setVaccines(valueSetListProp[Value_Sets.VaccineType]);
+            setTestManufacturersValueSet(valueSetListProp[Value_Sets.TestManufacturer]);
+            setTestResultValueSet(valueSetListProp[Value_Sets.TestResult]);
+            setTestTypeValueSet(valueSetListProp[Value_Sets.TestType]);
+        }
+    }, [valueSetListProp])
 
     // set qrcode element from props
     React.useEffect(() => {
@@ -461,7 +479,6 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudccProp: EUDCC1 | undef
                 } else {
 
                     let lblLength = params.a6width - params.paddingLeft - params.paddingRight - mm2point(14);
-                    let space = mm2point(3);
                     let imageWidth = 225.75;
                     let imageHeight = 54.75;
                     let y = params.a6height + mm2point(4);
@@ -643,7 +660,7 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudccProp: EUDCC1 | undef
                     y = printHorizontalBlock(xLeft, y,
                         t('translation:pdfMemberStateOfVaccination'),
                         french.translation.pdfMemberStateOfVaccination,
-                        vaccinationSet.co,
+                        getValueSetDisplay(vaccinationSet.co, countryCodeValueSet),
                         lineHeight, true);
 
                     printHorizontalBlock(xLeft, y,
@@ -751,7 +768,7 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudccProp: EUDCC1 | undef
             y = printHorizontalBlockRotated(xLeft, y,
                 t('translation:pdfMemberStateOfVaccination'),
                 french.translation.pdfMemberStateOfVaccination,
-                vaccinationSet.co,
+                getValueSetDisplay(vaccinationSet.co, countryCodeValueSet),
                 lineHeight, true);
 
             printHorizontalBlockRotated(xLeft, y,
@@ -809,7 +826,7 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudccProp: EUDCC1 | undef
                     y = printHorizontalBlock(x, y,
                         t('translation:pdfDateSampleCollection'),
                         french.translation.pdfDateSampleCollection,
-                        convertDateToOutputFormat(testSet.sc),
+                        utils.convertDateToOutputFormat(testSet.sc),
                         lineHeight, true);
 
                     y = printHorizontalBlock(x, y,
@@ -827,7 +844,7 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudccProp: EUDCC1 | undef
                     y = printHorizontalBlock(x, y,
                         t('translation:pdfStateOfVaccination'),
                         french.translation.pdfStateOfVaccination,
-                        testSet.co,
+                        getValueSetDisplay(testSet.co, countryCodeValueSet),
                         lineHeight, true);
 
                     printHorizontalBlock(x, y,
@@ -885,7 +902,7 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudccProp: EUDCC1 | undef
             y = printHorizontalBlockRotated(x, y,
                 t('translation:pdfDateSampleCollection'),
                 french.translation.pdfDateSampleCollection,
-                convertDateToOutputFormat(testSet.sc),
+                utils.convertDateToOutputFormat(testSet.sc),
                 lineHeight, true);
 
             y = printHorizontalBlockRotated(x, y,
@@ -903,7 +920,7 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudccProp: EUDCC1 | undef
             y = printHorizontalBlockRotated(x, y,
                 t('translation:pdfStateOfVaccination'),
                 french.translation.pdfStateOfVaccination,
-                testSet.co,
+                getValueSetDisplay(testSet.co, countryCodeValueSet),
                 lineHeight, true);
 
             printHorizontalBlockRotated(x, y,
@@ -951,7 +968,7 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudccProp: EUDCC1 | undef
                     y = printHorizontalBlock(xLeft, y,
                         t('translation:pdfStateOfTest'),
                         french.translation.pdfStateOfTest,
-                        recoverySet.co,
+                        getValueSetDisplay(recoverySet.co, countryCodeValueSet),
                         lineHeight, true);
 
                     y = printHorizontalBlock(xLeft, y,
@@ -1013,7 +1030,7 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudccProp: EUDCC1 | undef
             y = printHorizontalBlockRotated(xLeft, y,
                 t('translation:pdfStateOfTest'),
                 french.translation.pdfStateOfTest,
-                recoverySet.co,
+                getValueSetDisplay(recoverySet.co, countryCodeValueSet),
                 lineHeight, true);
 
             y = printHorizontalBlockRotated(xLeft, y,
@@ -1067,41 +1084,41 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudccProp: EUDCC1 | undef
         return result;
     }
 
-    const printAsTableRow = (x: number, y: number, lbl: any, lblFrench: any, value?: string, lineHeight?: number, isItalic?: boolean): number => {
-        let result = y;
-        let lblRightLength = params.a6width / 4;
-        let lblLeftLength = lblRightLength * 2 + mm2point(12);
-        let xRight = x + lblLeftLength + mm2point(2);
-        lineHeight = lineHeight ? lineHeight : params.lineHeight;
+    // const printAsTableRow = (x: number, y: number, lbl: any, lblFrench: any, value?: string, lineHeight?: number, isItalic?: boolean): number => {
+    //     let result = y;
+    //     let lblRightLength = params.a6width / 4;
+    //     let lblLeftLength = lblRightLength * 2 + mm2point(12);
+    //     let xRight = x + lblLeftLength + mm2point(2);
+    //     lineHeight = lineHeight ? lineHeight : params.lineHeight;
 
-        if (pdf) {
-            pdf.setFont('arial', 'bold');
-            lbl = pdf.splitTextToSize(lbl, lblLeftLength);
-            pdf.text(lbl, x, y);
+    //     if (pdf) {
+    //         pdf.setFont('arial', 'bold');
+    //         lbl = pdf.splitTextToSize(lbl, lblLeftLength);
+    //         pdf.text(lbl, x, y);
 
-            if (value) {
-                // pdf.setFont('arial', 'normal');
-                value = pdf.splitTextToSize(value, lblRightLength);
-                pdf.text(value!, xRight, y, { align: 'left' });
-            }
+    //         if (value) {
+    //             // pdf.setFont('arial', 'normal');
+    //             value = pdf.splitTextToSize(value, lblRightLength);
+    //             pdf.text(value!, xRight, y, { align: 'left' });
+    //         }
 
-            if (value) {
-                y += lineHeight * (lbl.length > value.length ? lbl.length : value.length / 1.35);
-            } else {
-                y += lineHeight * lbl.length;
-            }
+    //         if (value) {
+    //             y += lineHeight * (lbl.length > value.length ? lbl.length : value.length / 1.35);
+    //         } else {
+    //             y += lineHeight * lbl.length;
+    //         }
 
-            pdf.setFont('arial', 'italic');
+    //         pdf.setFont('arial', 'italic');
 
-            const frenchText = pdf.splitTextToSize(lblFrench, lblLeftLength);
-            pdf.text(frenchText, x, result + lineHeight * lbl.length);
-            y += lineHeight * frenchText.length;
+    //         const frenchText = pdf.splitTextToSize(lblFrench, lblLeftLength);
+    //         pdf.text(frenchText, x, result + lineHeight * lbl.length);
+    //         y += lineHeight * frenchText.length;
 
-            result = y + mm2point(2);
-        }
+    //         result = y + mm2point(2);
+    //     }
 
-        return result;
-    }
+    //     return result;
+    // }
 
     const printHorizontalBlockPerson = (x: number, y: number, lbl: any, lblFrench: any, value?: string): number => {
         let result = y;
@@ -1160,46 +1177,44 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudccProp: EUDCC1 | undef
         return result;
     }
 
-    const printAsTableRowRotated = (x: number, y: number, lbl: any, lblFrench: any, value?: string, lineHeight?: number, isItalic?: boolean): number => {
-        let result = y;
-        let lblRightLength = params.a6width / 4;
-        let xLeft = params.paddingLeft + lblRightLength - mm2point(2);
-        let lblLeftLength = lblRightLength * 2 + mm2point(12);
-        lineHeight = lineHeight ? lineHeight : params.lineHeight;
-        let tmpPosition = 0;
+    // const printAsTableRowRotated = (x: number, y: number, lbl: any, lblFrench: any, value?: string, lineHeight?: number, isItalic?: boolean): number => {
+    //     let result = y;
+    //     let lblRightLength = params.a6width / 4;
+    //     let xLeft = params.paddingLeft + lblRightLength - mm2point(2);
+    //     let lblLeftLength = lblRightLength * 2 + mm2point(12);
+    //     lineHeight = lineHeight ? lineHeight : params.lineHeight;
+    //     let tmpPosition = 0;
 
-        if (value && pdf) {
-            pdf.setFont('arial', 'bold');
-            lbl = pdf.splitTextToSize(lbl, lblLeftLength);
-            y = leftSplittedTextRotated(lbl, x, y);
+    //     if (value && pdf) {
+    //         pdf.setFont('arial', 'bold');
+    //         lbl = pdf.splitTextToSize(lbl, lblLeftLength);
+    //         y = leftSplittedTextRotated(lbl, x, y);
 
-            if (value) {
-                //pdf.setFont('arial', 'normal');
-                value = pdf.splitTextToSize(value, lblRightLength);
-                tmpPosition = leftSplittedTextRotated(value!, xLeft, result);
-                if (y > tmpPosition) {
-                    console.log(y);
-                    console.log(tmpPosition);
-                    y = tmpPosition;
-                }
-            }
+    //         if (value) {
+    //             //pdf.setFont('arial', 'normal');
+    //             value = pdf.splitTextToSize(value, lblRightLength);
+    //             tmpPosition = leftSplittedTextRotated(value!, xLeft, result);
+    //             if (y > tmpPosition) {
+    //                 y = tmpPosition;
+    //             }
+    //         }
 
-            if (isItalic) {
-                pdf.setFont('arial', 'italic');
-            } else {
-                pdf.setFont('arial', 'normal');
-            }
-            const frenchText = pdf.splitTextToSize(lblFrench, lblLeftLength);
-            tmpPosition = leftSplittedTextRotated(frenchText, x, result - lineHeight * lbl.length);
-            if (y > tmpPosition) {
-                y = tmpPosition;
-            }
+    //         if (isItalic) {
+    //             pdf.setFont('arial', 'italic');
+    //         } else {
+    //             pdf.setFont('arial', 'normal');
+    //         }
+    //         const frenchText = pdf.splitTextToSize(lblFrench, lblLeftLength);
+    //         tmpPosition = leftSplittedTextRotated(frenchText, x, result - lineHeight * lbl.length);
+    //         if (y > tmpPosition) {
+    //             y = tmpPosition;
+    //         }
 
-            result = y - 3;
-        }
+    //         result = y - 3;
+    //     }
 
-        return result;
-    }
+    //     return result;
+    // }
 
     const printCertificateHeader = (header: any, frenchHeader: string, paddingTop?: number): number => {
         let result = 0;
@@ -1313,7 +1328,7 @@ const usePdfGenerator = (qrCodeCanvasElementProp: any, eudccProp: EUDCC1 | undef
             let lineNumber = 0;
             let wordsInfo: IWordInfo[] = [];
             let lineLength = 0;
-            let txtLines: Array<IWordInfo[]> = new Array();
+            let txtLines: Array<IWordInfo[]> = [];
             for (const word of words) {
                 const wordLength = pdf.getTextWidth(word + ' ');
                 if (wordLength + lineLength > textWidth) {

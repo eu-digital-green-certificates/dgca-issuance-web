@@ -24,29 +24,29 @@ import { Card, Col, Form, Row } from 'react-bootstrap';
 
 import '../i18n';
 import { useTranslation } from 'react-i18next';
-import useLocalStorage from '../misc/local-storage';
+import useLocalStorage from '../misc/useLocalStorage';
 
-import useNavigation from '../misc/navigation';
 import Spinner from './spinner/spinner.component';
 
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
 import { EUDCC1, VaccinationEntry } from '../generated-files/dgc-combined-schema';
-import { useGetDiseaseAgents, useGetVaccineManufacturers, useGetVaccines, useGetVaccinMedicalData } from '../api';
+import { Value_Sets } from '../misc/useValueSet';
 
 import schema from '../generated-files/DGC.combined-schema.json';
 import { Validator } from 'jsonschema';
 import CardHeader from './modules/card-header.component';
-import { PersonInputs, IPersonData, FormGroupInput, FormGroupValueSetSelect, FormGroupISOCountrySelect } from './modules/form-group.component';
+import { PersonInputs, IPersonData, FormGroupInput, FormGroupValueSetSelect } from './modules/form-group.component';
 import CardFooter from './modules/card-footer.component';
 import moment from 'moment';
+import AppContext from '../misc/appContext';
 
 const validator = new Validator();
 
 const RecordVaccinationCertData = (props: any) => {
 
-    const navigation = useNavigation();
+    const context = React.useContext(AppContext);
     const { t } = useTranslation();
 
     const [isInit, setIsInit] = React.useState(false)
@@ -63,7 +63,6 @@ const RecordVaccinationCertData = (props: any) => {
     const [vacLastDate, setVacLastDate] = React.useState<Date>(new Date());
     const [certificateIssuer, setCertificateIssuer] = useLocalStorage('certificateIssuer', '');
     const [issuerCountryCode, setIssuerCountryCode] = useLocalStorage('issuerCountryCode', '');
-
 
     React.useEffect(() => {
         if (!props.eudgc || !props.eudgc.v || !props.eudgc.v[0]) {
@@ -85,12 +84,11 @@ const RecordVaccinationCertData = (props: any) => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [props.eudgc]);
 
-
     React.useEffect(() => {
-        if (navigation) {
-            setTimeout(setIsInit, 200, true);
-        }
-    }, [navigation]);
+        if (context.navigation && context.valueSets)
+            setIsInit(true);
+    }, [context.navigation, context.valueSets])
+
 
     const handleVacLastDate = (evt: Date | [Date, Date] | null) => {
         const date = handleDateChange(evt);
@@ -122,7 +120,7 @@ const RecordVaccinationCertData = (props: any) => {
 
     const handleCancel = () => {
         props.setEudgc(undefined);
-        navigation?.toLanding();
+        context.navigation?.toLanding();
     }
 
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
@@ -161,28 +159,21 @@ const RecordVaccinationCertData = (props: any) => {
                 v: [vacc]
             }
 
-            // console.log(JSON.stringify(eudgc));
-            // let vac = eudgc.v[0];
-            // console.log(vac);
-            // console.log(vac.tg);
-
             var result = validator.validate(eudgc, schema);
 
             if (result.valid) {
-                // console.log(JSON.stringify(eudgc));
-
                 props.setEudgc(eudgc);
-                setTimeout(navigation!.toShowCert, 200);
+                setTimeout(context.navigation!.toShowCert, 200);
             }
             else {
                 console.error(result);
-                props.setError({ error: result, message: result.errors[0].message, onCancel: navigation!.toLanding });
+                props.setError({ error: result, message: result.errors[0].message, onCancel: context.navigation!.toLanding });
             }
         }
     }
 
     return (
-        !isInit ? <Spinner /> :
+        !(isInit && context && context.valueSets) ? <Spinner /> :
             <>
                 <Card id='data-card'>
 
@@ -208,7 +199,7 @@ const RecordVaccinationCertData = (props: any) => {
                                 value={disease}
                                 onChange={(evt: any) => setDisease(evt.target.value)}
                                 required
-                                valueSet={useGetDiseaseAgents}
+                                valueSet={context.valueSets[Value_Sets.DiseaseAgent]}
                             />
 
                             {/* combobox vaccine */}
@@ -216,7 +207,7 @@ const RecordVaccinationCertData = (props: any) => {
                                 value={vaccine}
                                 onChange={(evt: any) => setVaccine(evt.target.value)}
                                 required
-                                valueSet={useGetVaccines}
+                                valueSet={context.valueSets[Value_Sets.VaccineType]}
                             />
 
                             {/* combobox medicalProduct */}
@@ -224,7 +215,7 @@ const RecordVaccinationCertData = (props: any) => {
                                 value={medicalProduct}
                                 onChange={(evt: any) => setMedicalProduct(evt.target.value)}
                                 required
-                                valueSet={useGetVaccinMedicalData}
+                                valueSet={context.valueSets[Value_Sets.Vaccines]}
                             />
 
                             {/* combobox marketingHolder */}
@@ -232,7 +223,7 @@ const RecordVaccinationCertData = (props: any) => {
                                 value={marketingHolder}
                                 onChange={(evt: any) => setMarketingHolder(evt.target.value)}
                                 required
-                                valueSet={useGetVaccineManufacturers}
+                                valueSet={context.valueSets[Value_Sets.VaccinesManufacturer]}
                             />
 
                             <hr />
@@ -279,10 +270,11 @@ const RecordVaccinationCertData = (props: any) => {
                             <hr />
 
                             {/* Combobox for the vaccin countries in iso-3166-1-alpha-2 */}
-                            <FormGroupISOCountrySelect controlId='formVacCountryInput' title={t('translation:vac-country')}
+                            <FormGroupValueSetSelect controlId='formVacCountryInput' title={t('translation:vac-country')}
                                 value={issuerCountryCode}
                                 onChange={(evt: any) => setIssuerCountryCode(evt.target.value)}
                                 required
+                                valueSet={context.valueSets[Value_Sets.CountryCodes]}
                             />
 
                             {/* certificateIssuer */}

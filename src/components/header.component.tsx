@@ -25,30 +25,23 @@ import { Image, Container } from 'react-bootstrap'
 import '../i18n';
 import { useTranslation } from 'react-i18next';
 
-import useNavigation from '../misc/navigation';
 import EULogo from '../assets/images/Flag+EU.png'
 
 const Header = (props: any) => {
 
-    const navigation = useNavigation();
     const { t } = useTranslation();
 
-    const [isInit, setIsInit] = React.useState(false)
+    const [isInit] = React.useState(true);
 
-    React.useEffect(() => {
-        if (navigation)
-            setIsInit(true);
-    }, [navigation])
-
-    return (!isInit?<></>:
+    return (!isInit ? <></> :
         <>
-        <Container className='bg-white px-0 position-relative'>
-            {/* simple header with logo */}
-            <Image src={EULogo} className='m-3' />
-        </Container>
-        <Container className='d-flex bg-gray-1 px-0 position-relative'>
-            <span className='header-title'>{t('translation:title')}</span>
-        </Container>
+            <Container className='bg-white px-0 position-relative'>
+                {/* simple header with logo */}
+                <Image src={EULogo} className='m-3' />
+            </Container>
+            <Container className='d-flex bg-gray-1 px-0 position-relative'>
+                <span className='header-title'>{t('translation:title')}</span>
+            </Container>
         </>
     )
 }

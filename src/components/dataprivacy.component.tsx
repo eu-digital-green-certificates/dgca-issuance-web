@@ -34,7 +34,7 @@ const DataprivacyPage = (props: any) => {
     React.useEffect(() => {
         if (props)
             setShow(props.show);
-            
+
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [props.show])
 
@@ -60,17 +60,17 @@ const DataprivacyPage = (props: any) => {
                         </Col>
                     </Row>
                 </Modal.Header>
-                    <hr className='mx-3 mb-0' />
+                <hr className='mx-3 mb-0' />
                 <Modal.Body className='px-3'>
                     <Container className='px-1 px-sm-2 px-md-3'>
                         <h5 className='text-justify'>
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam ornare rhoncus enim, sed tincidunt erat lobortis nec. Etiam ac erat vel sem mattis consequat. Pellentesque aliquam consequat tellus, eu sagittis neque laoreet vitae. 
-                    </h5>
+                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam ornare rhoncus enim, sed tincidunt erat lobortis nec. Etiam ac erat vel sem mattis consequat. Pellentesque aliquam consequat tellus, eu sagittis neque laoreet vitae.
+                        </h5>
 
-                        
+
                     </Container>
                 </Modal.Body>
-                    <hr className='mx-3 mt-0' />
+                <hr className='mx-3 mt-0' />
 
                 {/*
     footer with ok button

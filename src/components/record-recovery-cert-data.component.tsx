@@ -24,23 +24,23 @@ import { Card, Col, Form, Row } from 'react-bootstrap';
 
 import '../i18n';
 import { useTranslation } from 'react-i18next';
-import useLocalStorage from '../misc/local-storage';
+import useLocalStorage from '../misc/useLocalStorage';
 
-import useNavigation from '../misc/navigation';
 import Spinner from './spinner/spinner.component';
 
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
 import { EUDCC1, RecoveryEntry } from '../generated-files/dgc-combined-schema';
-import { useGetDiseaseAgents } from '../api';
+import { Value_Sets } from '../misc/useValueSet';
 
 import schema from '../generated-files/DGC.combined-schema.json';
 import { Validator } from 'jsonschema';
 import CardHeader from './modules/card-header.component';
-import { PersonInputs, IPersonData, FormGroupInput, FormGroupValueSetSelect, FormGroupISOCountrySelect } from './modules/form-group.component';
+import { PersonInputs, IPersonData, FormGroupInput, FormGroupValueSetSelect } from './modules/form-group.component';
 import CardFooter from './modules/card-footer.component';
 import moment from 'moment';
+import AppContext from '../misc/appContext';
 
 const validator = new Validator();
 // 180 days
@@ -50,7 +50,7 @@ const timeAfter = 60 * 60 * 24 * 11 * 1000;
 
 const RecordRecoveryCertData = (props: any) => {
 
-    const navigation = useNavigation();
+    const context = React.useContext(AppContext);
     const { t } = useTranslation();
 
     const [isInit, setIsInit] = React.useState(false)
@@ -85,19 +85,9 @@ const RecordRecoveryCertData = (props: any) => {
     }, [props.eudgc]);
 
     React.useEffect(() => {
-        if (navigation) {
-            setTimeout(setIsInit, 200, true);
-        }
-    }, [navigation]);
-
-    // const handleError = (error: any) => {
-    //     let msg = '';
-
-    //     if (error) {
-    //         msg = error.message
-    //     }
-    //     props.setError({ error: error, message: msg, onCancel: navigation!.toLanding });
-    // }
+        if (context.navigation && context.valueSets)
+            setIsInit(true);
+    }, [context.navigation, context.valueSets])
 
     const handleFirstPositiveResultDate = (evt: Date | [Date, Date] | null) => {
         const date = handleDateChange(evt);
@@ -132,7 +122,7 @@ const RecordRecoveryCertData = (props: any) => {
 
     const handleCancel = () => {
         props.setEudgc(undefined);
-        navigation?.toLanding();
+        context.navigation?.toLanding();
     }
 
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
@@ -171,20 +161,18 @@ const RecordRecoveryCertData = (props: any) => {
             var result = validator.validate(eudgc, schema);
 
             if (result.valid) {
-                //console.log(JSON.stringify(eudgc));
-
                 props.setEudgc(eudgc);
-                setTimeout(navigation!.toShowCert, 200);
+                setTimeout(context.navigation!.toShowCert, 200);
             }
             else {
                 console.error(result);
-                props.setError({ error: result, message: result.errors[0].message, onCancel: navigation!.toLanding });
+                props.setError({ error: result, message: result.errors[0].message, onCancel: context.navigation!.toLanding });
             }
         }
     }
 
     return (
-        !isInit ? <Spinner /> :
+        !(isInit && context && context.valueSets) ? <Spinner /> :
             <>
                 <Card id='data-card'>
 
@@ -210,7 +198,7 @@ const RecordRecoveryCertData = (props: any) => {
                                 value={disease}
                                 onChange={(evt: any) => setDisease(evt.target.value)}
                                 required
-                                valueSet={useGetDiseaseAgents}
+                                valueSet={context.valueSets[Value_Sets.DiseaseAgent]}
                             />
 
                             <hr />
@@ -244,10 +232,11 @@ const RecordRecoveryCertData = (props: any) => {
                             </Form.Group>
 
                             {/* Combobox for the vaccin countries in iso-3166-1-alpha-2 */}
-                            <FormGroupISOCountrySelect controlId='formVacCountryInput' title={t('translation:recovery-country')}
+                            <FormGroupValueSetSelect controlId='formVacCountryInput' title={t('translation:recovery-country')}
                                 value={testCountryCode}
                                 onChange={(evt: any) => setTestCountryCode(evt.target.value)}
                                 required
+                                valueSet={context.valueSets[Value_Sets.CountryCodes]}
                             />
 
                             <hr />

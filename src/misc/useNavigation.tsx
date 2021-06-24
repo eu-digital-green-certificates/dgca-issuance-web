@@ -54,7 +54,7 @@ export const useRoutes = () => {
     return result;
 }
 
-export const useNavigation = () => {
+const useNavigation = () => {
 
     const history = useHistory();
     const _routes = useRoutes();
