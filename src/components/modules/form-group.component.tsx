@@ -64,7 +64,9 @@ export const FormGroupValueSetSelect = (props: any) => {
     const getOptionsForValueSet = (valueSet: IValueSet): JSX.Element[] => {
         const result: JSX.Element[] = [];
         for (const key of Object.keys(valueSet)) {
-            result.push(<option key={key} value={key}>{valueSet[key].display}</option>)
+            result.push(valueSet[key].active === false
+                ? <option key={key} value={key}>&#xf071; {valueSet[key].display}</option>
+                : <option key={key} value={key}>{valueSet[key].display}</option>);
         }
 
         return result;
