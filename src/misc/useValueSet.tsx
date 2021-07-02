@@ -50,7 +50,7 @@ interface IValue {
 }
 
 const valueSetApi = axios.create({
-    baseURL: 'dgca-businessrule-service',
+    baseURL: '/dgca-businessrule-service',
     headers: { 'Cache-Control': ' max-age=300' }
 });
 
