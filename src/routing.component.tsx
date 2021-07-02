@@ -56,6 +56,7 @@ const Routing = () => {
     const [errorShow, setErrorShow] = React.useState(false);
     const [dataPrivacyShow, setDataPrivacyShow] = React.useState(false);
     const [imprintShow, setImprintShow] = React.useState(false);
+    const [isInit, setIsInit] = React.useState(false);
 
     const context: IAppContext = {
         navigation: useNavigation(),
@@ -77,7 +78,12 @@ const Routing = () => {
         }
     }, [errorShow])
 
-    return (!(context.valueSets && context.navigation) ? <Spinner background='#cfcfcf' /> :
+    React.useEffect(() => {
+        if (context.valueSets && Object.entries(context.valueSets).length > 0 && context.navigation)
+            setIsInit(true);
+    }, [context.navigation, context.valueSets])
+
+    return (!(isInit && context.valueSets && context.navigation) ? <Spinner background='#cfcfcf' /> :
         <>
             <AppContext.Provider value={context}>
                 {/*

@@ -19,7 +19,7 @@
  * under the License.
  */
 
-import { Button, Container } from 'react-bootstrap'
+import { Button, Container, Fade } from 'react-bootstrap'
 
 import '../i18n';
 import { useTranslation } from 'react-i18next';
@@ -41,15 +41,16 @@ const LandingPage = () => {
     }, [context.navigation])
 
     return (!isInit ? <Spinner /> :
-        <Container className='center-content'>
+        <Fade appear={true} in={true} >
+            <Container className='center-content'>
+                <span className='landing-title mx-auto mb-4'>{t('translation:welcome')}</span>
 
-            <span className='landing-title mx-auto mb-4'>{t('translation:welcome')}</span>
+                <Button block className='landing-btn my-2' onClick={context.navigation!.toRecordVac}>{t('translation:record-vaccination-cert-dat')}</Button>
+                <Button block className='landing-btn my-2' onClick={context.navigation!.toRecordTest}>{t('translation:record-test-cert-dat')}</Button>
+                <Button block className='landing-btn my-2' onClick={context.navigation!.toRecordRecovery}>{t('translation:record-recovery-cert-dat')}</Button>
 
-            <Button block className='landing-btn my-2' onClick={context.navigation!.toRecordVac}>{t('translation:record-vaccination-cert-dat')}</Button>
-            <Button block className='landing-btn my-2' onClick={context.navigation!.toRecordTest}>{t('translation:record-test-cert-dat')}</Button>
-            <Button block className='landing-btn my-2' onClick={context.navigation!.toRecordRecovery}>{t('translation:record-recovery-cert-dat')}</Button>
-
-        </Container>
+            </Container>
+        </Fade>
     )
 }
 

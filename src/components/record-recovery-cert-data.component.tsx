@@ -20,7 +20,7 @@
  */
 
 import React from 'react';
-import { Card, Col, Form, Row } from 'react-bootstrap';
+import { Card, Col, Fade, Form, Row } from 'react-bootstrap';
 
 import '../i18n';
 import { useTranslation } from 'react-i18next';
@@ -174,140 +174,141 @@ const RecordRecoveryCertData = (props: any) => {
     return (
         !(isInit && context && context.valueSets) ? <Spinner /> :
             <>
-                <Card id='data-card'>
+                <Fade appear={true} in={true} >
+                    <Card id='data-card'>
 
-                    <Form className='form-flex' onSubmit={handleSubmit} /*validated={validated}*/>
+                        <Form className='form-flex' onSubmit={handleSubmit} /*validated={validated}*/>
 
-                        {/*
+                            {/*
                             header with title and id card query
                         */}
-                        <CardHeader title={t('translation:record-recovery-cert-dat')} />
+                            <CardHeader title={t('translation:record-recovery-cert-dat')} />
 
-                        {/*
+                            {/*
                             content area with patient inputs and check box
                         */}
-                        <Card.Body id='data-body' className='p-3'>
+                            <Card.Body id='data-body'>
 
-                            {/* name inputs */}
-                            <PersonInputs eudgc={props.eudgc} onChange={setPerson} />
+                                {/* name inputs */}
+                                <PersonInputs eudgc={props.eudgc} onChange={setPerson} />
 
-                            <hr />
+                                <hr />
 
-                            {/* combobox disease */}
-                            <FormGroupValueSetSelect controlId='formDiseaseInput' title={t('translation:disease-agent')} placeholder={t('translation:def-disease-agent')}
-                                value={disease}
-                                onChange={(evt: any) => setDisease(evt.target.value)}
-                                required
-                                valueSet={context.valueSets[Value_Sets.DiseaseAgent]}
-                            />
+                                {/* combobox disease */}
+                                <FormGroupValueSetSelect controlId='formDiseaseInput' title={t('translation:disease-agent')} placeholder={t('translation:def-disease-agent')}
+                                    value={disease}
+                                    onChange={(evt: any) => setDisease(evt.target.value)}
+                                    required
+                                    valueSet={context.valueSets[Value_Sets.DiseaseAgent]}
+                                />
 
-                            <hr />
+                                <hr />
 
-                            {/* Date of First Positive Test Result  */}
-                            <Form.Group as={Row} controlId='formLastDateInput' className='pb-3 mb-0'>
-                                <Form.Label className='input-label ' column xs='5' sm='3'>{t('translation:first-positive-test-date') + '*'}</Form.Label>
+                                {/* Date of First Positive Test Result  */}
+                                <Form.Group as={Row} controlId='formLastDateInput' className='pb-3 mb-0'>
+                                    <Form.Label className='input-label ' column xs='5' sm='3'>{t('translation:first-positive-test-date') + '*'}</Form.Label>
 
-                                <Col xs='7' sm='9' className='d-flex'>
-                                    <DatePicker
-                                        selected={firstPositiveResultDate}
-                                        onChange={handleFirstPositiveResultDate}
-                                        dateFormat='yyyy-MM-dd'
-                                        isClearable
-                                        placeholderText={t('translation:first-positive-test-date')}
-                                        className='qt-input form-control'
-                                        wrapperClassName='align-self-center'
-                                        showMonthDropdown
-                                        showYearDropdown
-                                        dropdownMode="select"
-                                        maxDate={dateValidFrom ? new Date(dateValidFrom.getTime() - timeAfter) : firstPosMaxDate}
-                                        minDate={dateValidTo ? new Date(dateValidTo.getTime() - expirationMilSeconds) : firstPosMinDate}
-                                        openToDate={firstPositiveResultDate
-                                            ? firstPositiveResultDate
-                                            : dateValidFrom
-                                                ? new Date(dateValidFrom.getTime() - timeAfter)
-                                                : new Date()}
-                                        required
-                                    />
-                                </Col>
-                            </Form.Group>
+                                    <Col xs='7' sm='9' className='d-flex'>
+                                        <DatePicker
+                                            selected={firstPositiveResultDate}
+                                            onChange={handleFirstPositiveResultDate}
+                                            dateFormat='yyyy-MM-dd'
+                                            isClearable
+                                            placeholderText={t('translation:first-positive-test-date')}
+                                            className='qt-input form-control'
+                                            wrapperClassName='align-self-center'
+                                            showMonthDropdown
+                                            showYearDropdown
+                                            dropdownMode="select"
+                                            maxDate={dateValidFrom ? new Date(dateValidFrom.getTime() - timeAfter) : firstPosMaxDate}
+                                            minDate={dateValidTo ? new Date(dateValidTo.getTime() - expirationMilSeconds) : firstPosMinDate}
+                                            openToDate={firstPositiveResultDate
+                                                ? firstPositiveResultDate
+                                                : dateValidFrom
+                                                    ? new Date(dateValidFrom.getTime() - timeAfter)
+                                                    : new Date()}
+                                            required
+                                        />
+                                    </Col>
+                                </Form.Group>
 
-                            {/* Combobox for the vaccin countries in iso-3166-1-alpha-2 */}
-                            <FormGroupValueSetSelect controlId='formVacCountryInput' title={t('translation:recovery-country')}
-                                value={testCountryCode}
-                                onChange={(evt: any) => setTestCountryCode(evt.target.value)}
-                                required
-                                valueSet={context.valueSets[Value_Sets.CountryCodes]}
-                            />
+                                {/* Combobox for the vaccin countries in iso-3166-1-alpha-2 */}
+                                <FormGroupValueSetSelect controlId='formVacCountryInput' title={t('translation:recovery-country')}
+                                    value={testCountryCode}
+                                    onChange={(evt: any) => setTestCountryCode(evt.target.value)}
+                                    required
+                                    valueSet={context.valueSets[Value_Sets.CountryCodes]}
+                                />
 
-                            <hr />
+                                <hr />
 
-                            {/* certificateIssuer */}
-                            <FormGroupInput controlId='formcertificateIssuerInput' title={t('translation:certificateIssuer')} placeholder={t('translation:certificateIssuer')}
-                                value={certificateIssuer}
-                                onChange={(evt: any) => setCertificateIssuer(evt.target.value)}
-                                required
-                                maxLength={80}
-                            />
+                                {/* certificateIssuer */}
+                                <FormGroupInput controlId='formcertificateIssuerInput' title={t('translation:certificateIssuer')} placeholder={t('translation:certificateIssuer')}
+                                    value={certificateIssuer}
+                                    onChange={(evt: any) => setCertificateIssuer(evt.target.value)}
+                                    required
+                                    maxLength={80}
+                                />
 
-                            {/* Date: Certificate Valid From - To */}
-                            <Form.Group as={Row} controlId='formDateValidFromToInput' className='pb-3 mb-0'>
-                                <Form.Label className='input-label ' column xs='5' sm='3'>{t('translation:cert-valid-from-to') + '*'}</Form.Label>
+                                {/* Date: Certificate Valid From - To */}
+                                <Form.Group as={Row} controlId='formDateValidFromToInput' className='pb-3 mb-0'>
+                                    <Form.Label className='input-label ' column xs='5' sm='3'>{t('translation:cert-valid-from-to') + '*'}</Form.Label>
 
-                                <Col xs='7' sm='9' className='d-flex'>
-                                    <DatePicker
-                                        selected={dateValidFrom}
-                                        onChange={handleDateValidFrom}
-                                        dateFormat='yyyy-MM-dd'
-                                        isClearable
-                                        placeholderText={t('translation:valid-from')}
-                                        className='qt-input form-control'
-                                        wrapperClassName='align-self-center'
-                                        showMonthDropdown
-                                        showYearDropdown
-                                        dropdownMode="select"
-                                        maxDate={new Date()}
-                                        minDate={firstPositiveResultDate
-                                            ? new Date(firstPositiveResultDate.getTime() + timeAfter)
-                                            : dateValidTo
-                                                ? new Date(dateValidTo.getTime() + timeAfter - expirationMilSeconds)
-                                                : new Date(Date.now() + timeAfter - expirationMilSeconds)}
-                                        openToDate={dateValidFrom ? dateValidFrom : new Date()}
-                                        required
-                                    />
-                                    <span className='space-five'>{'-'}</span>
-                                    <DatePicker
-                                        selected={dateValidTo}
-                                        onChange={handleDateValidTo}
-                                        dateFormat='yyyy-MM-dd'
-                                        isClearable
-                                        placeholderText={t('translation:valid-to')}
-                                        className='qt-input form-control'
-                                        wrapperClassName='align-self-center'
-                                        showMonthDropdown
-                                        showYearDropdown
-                                        dropdownMode="select"
-                                        maxDate={firstPositiveResultDate
-                                            ? new Date(firstPositiveResultDate.getTime() + expirationMilSeconds)
-                                            : dateValidFrom
-                                                ? new Date(dateValidFrom.getTime() - timeAfter + expirationMilSeconds)
-                                                : new Date(Date.now() - timeAfter + expirationMilSeconds)}
-                                        minDate={new Date()}
-                                        openToDate={dateValidTo ? dateValidTo : new Date()}
-                                        required
-                                    />
-                                </Col>
-                            </Form.Group>
+                                    <Col xs='7' sm='9' className='d-flex'>
+                                        <DatePicker
+                                            selected={dateValidFrom}
+                                            onChange={handleDateValidFrom}
+                                            dateFormat='yyyy-MM-dd'
+                                            isClearable
+                                            placeholderText={t('translation:valid-from')}
+                                            className='qt-input form-control'
+                                            wrapperClassName='align-self-center'
+                                            showMonthDropdown
+                                            showYearDropdown
+                                            dropdownMode="select"
+                                            maxDate={new Date()}
+                                            minDate={firstPositiveResultDate
+                                                ? new Date(firstPositiveResultDate.getTime() + timeAfter)
+                                                : dateValidTo
+                                                    ? new Date(dateValidTo.getTime() + timeAfter - expirationMilSeconds)
+                                                    : new Date(Date.now() + timeAfter - expirationMilSeconds)}
+                                            openToDate={dateValidFrom ? dateValidFrom : new Date()}
+                                            required
+                                        />
+                                        <span className='space-five'>{'-'}</span>
+                                        <DatePicker
+                                            selected={dateValidTo}
+                                            onChange={handleDateValidTo}
+                                            dateFormat='yyyy-MM-dd'
+                                            isClearable
+                                            placeholderText={t('translation:valid-to')}
+                                            className='qt-input form-control'
+                                            wrapperClassName='align-self-center'
+                                            showMonthDropdown
+                                            showYearDropdown
+                                            dropdownMode="select"
+                                            maxDate={firstPositiveResultDate
+                                                ? new Date(firstPositiveResultDate.getTime() + expirationMilSeconds)
+                                                : dateValidFrom
+                                                    ? new Date(dateValidFrom.getTime() - timeAfter + expirationMilSeconds)
+                                                    : new Date(Date.now() - timeAfter + expirationMilSeconds)}
+                                            minDate={new Date()}
+                                            openToDate={dateValidTo ? dateValidTo : new Date()}
+                                            required
+                                        />
+                                    </Col>
+                                </Form.Group>
 
-                            <hr />
-                        </Card.Body>
+                            </Card.Body>
 
-                        {/*
+                            {/*
                             footer with clear and nex button
                         */}
-                        <CardFooter handleCancel={handleCancel} />
+                            <CardFooter handleCancel={handleCancel} />
 
-                    </Form>
-                </Card>
+                        </Form>
+                    </Card>
+                </Fade>
             </>
     )
 }
