@@ -1,5 +1,5 @@
 //Font Definitions
-@import '@fortawesome/fontawesome-free/css/solid.min.css';
+@import "@fortawesome/fontawesome-free/css/solid.min.css";
 
 // Override default variables before the import
 $body-bg: #cfcfcf;
@@ -22,8 +22,12 @@ $data-card-border-radius: 0px;
 $input-border-radius: 4px;
 $user-image-width: 39px;
 
-select, option {
-    font-family: 'Font Awesome 5 Free', 'Arial';
+select,
+option {
+    font-family: "Font Awesome 5 Free", "Arial";
+}
+body {
+    overflow-y: scroll;
   }
 
 hr {
@@ -59,6 +63,10 @@ hr {
     background-color: white;
     border-radius: $data-card-border-radius;
     border: none;
+}
+#data-body {
+    padding: 1rem;
+    padding-bottom: 0px;
 }
 .data-modal {
     background-color: white;
@@ -325,6 +333,8 @@ hr {
     margin-left: 16px;
     display: flex;
     align-self: center;
+    padding-top: 2px;
+    height: 32px;
 }
 
 .bg-gray-1 {

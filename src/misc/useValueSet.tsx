@@ -84,6 +84,7 @@ export const useGetValueSets = (onInit?: (isInit: boolean) => void, onError?: (m
     const [valueSetHashList, setValueSetHashList] = React.useState<IValueSetHashListItem[]>();
 
     const [valueSetList] = React.useState<IValueSetList>({});
+    const [result, setResult] = React.useState<IValueSetList>();
     const [isInit, setIsInit] = React.useState<boolean>(false);
 
     // on mount load hash list
@@ -122,6 +123,10 @@ export const useGetValueSets = (onInit?: (isInit: boolean) => void, onError?: (m
         if (onInit) {
             onInit(isInit);
         }
+        if (isInit) {
+            setResult(valueSetList);
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isInit, onInit])
 
     const setValueSet = (hashListItem: IValueSetHashListItem) => {
@@ -145,11 +150,10 @@ export const useGetValueSets = (onInit?: (isInit: boolean) => void, onError?: (m
         }
         else {
             console.log('no valid valueset hash');
-
         }
     }
 
-    return valueSetList;
+    return result;
 }
 
 // ValueSetList

@@ -20,7 +20,7 @@
  */
 
 import React from 'react';
-import { Button, Card, Col, Container, Row } from 'react-bootstrap'
+import { Button, Card, Col, Container, Fade, Row } from 'react-bootstrap'
 
 import '../i18n';
 import { useTranslation } from 'react-i18next';
@@ -146,81 +146,83 @@ const ShowCertificate = (props: any) => {
     return (
         !(isInit && context.valueSets && eudgc && qrCodeValue) ? <Spinner /> :
             <>
-                <Card id='data-card'>
-                    {/*    content area with patient inputs and check box    */}
-                    <Card.Header id='data-header' className='p-3'>
-                        <Row>
-                            <Col md='6' className='pl-0'>
-                                <Card.Title className='m-md-0 tac-xs-tal-md jcc-xs-jcfs-md' as={'h3'} >{t('translation:your-certificate')}</Card.Title>
-                            </Col>
-                        </Row>
-                    </Card.Header>
-                    <Card.Body id='data-body' className='p-3'>
-                        <Row>
-                            <Col sm='6' className='p-3'>
+                <Fade appear={true} in={true} >
+                    <Card id='data-card'>
+                        {/*    content area with patient inputs and check box    */}
+                        <Card.Header id='data-header' className='p-3'>
+                            <Row>
+                                <Col md='6' className='pl-0'>
+                                    <Card.Title className='m-md-0 tac-xs-tal-md jcc-xs-jcfs-md' as={'h3'} >{t('translation:your-certificate')}</Card.Title>
+                                </Col>
+                            </Row>
+                        </Card.Header>
+                        <Card.Body id='data-body'>
+                            <Row>
+                                <Col sm='6' className='p-3'>
 
-                                <ShowCertificateData eudgc={eudgc} valueSetList={context.valueSets} />
+                                    <ShowCertificateData eudgc={eudgc} valueSetList={context.valueSets} />
 
-                            </Col>
-                            <Col sm='6' className='p-3'>
-                                <Container id='qr-code-container'>
-                                    {qrCodeValue ? <><QRCode id='qr-code' size={256} renderAs='svg' value={qrCodeValue} />
-                                        {/* <Card.Text className='input-label' >{qrCodeValue}</Card.Text> */}
-                                    </> : <></>}
-                                </Container>
-                                <Container id='qr-code-container' className='hidden'>
-                                    {qrCodeValue ? <> <QRCode id='qr-code-pdf' size={256} renderAs='canvas' value={qrCodeValue} />
-                                    </> : <></>}
-                                </Container>
-                                <Card.Text className='input-label jcc-xs-sm m-3 text-center' >TAN: {tan}</Card.Text>
-                            </Col>
-                        </Row>
-                    </Card.Body>
+                                </Col>
+                                <Col sm='6' className='p-3'>
+                                    <Container id='qr-code-container'>
+                                        {qrCodeValue ? <><QRCode id='qr-code' size={256} renderAs='svg' value={qrCodeValue} />
+                                            {/* <Card.Text className='input-label' >{qrCodeValue}</Card.Text> */}
+                                        </> : <></>}
+                                    </Container>
+                                    <Container id='qr-code-container' className='hidden'>
+                                        {qrCodeValue ? <> <QRCode id='qr-code-pdf' size={256} renderAs='canvas' value={qrCodeValue} />
+                                        </> : <></>}
+                                    </Container>
+                                    <Card.Text className='input-label jcc-xs-sm m-3 text-center' >TAN: {tan}</Card.Text>
+                                </Col>
+                            </Row>
+                        </Card.Body>
 
-                    {/*    footer with correction and finish button    */}
-                    <Card.Footer id='data-footer'>
-                        <Row>
-                            <Col xs='12' md='4' className='pl-md-0 pr-md-2 pb-3 pb-md-0'>
-                                <Button
-                                    className=''
-                                    variant='outline-primary'
-                                    block
-                                    onClick={handleBack}
-                                >
-                                    {t('translation:patient-data-correction')}
-                                </Button>
-                            </Col>
-                            <Col xs='6' md='4' className='px-md-2 pr-2'>
-                                <Button
-                                    className=''
-                                    block
-                                    onClick={handleGeneratePdf}
-                                    disabled={!pdfIsInit}
-                                    hidden={pdfIsReady}
-                                >
-                                    {t('translation:generate-pdf')}
-                                </Button>
-                                <Button
-                                    className='m-0'
-                                    block
-                                    onClick={handleShowPdf}
-                                    hidden={!pdfIsReady}
-                                >
-                                    {t('translation:show-pdf')}
-                                </Button>
-                            </Col>
-                            <Col xs='6' md='4' className='pr-md-0 pl-2'>
-                                <Button
-                                    className=''
-                                    block
-                                    onClick={finishProcess}
-                                >
-                                    {t('translation:process-finish')}
-                                </Button>
-                            </Col>
-                        </Row>
-                    </Card.Footer>
-                </Card>
+                        {/*    footer with correction and finish button    */}
+                        <Card.Footer id='data-footer'>
+                            <Row>
+                                <Col xs='12' md='4' className='pl-md-0 pr-md-2 pb-3 pb-md-0'>
+                                    <Button
+                                        className=''
+                                        variant='outline-primary'
+                                        block
+                                        onClick={handleBack}
+                                    >
+                                        {t('translation:patient-data-correction')}
+                                    </Button>
+                                </Col>
+                                <Col xs='6' md='4' className='px-md-2 pr-2'>
+                                    <Button
+                                        className=''
+                                        block
+                                        onClick={handleGeneratePdf}
+                                        disabled={!pdfIsInit}
+                                        hidden={pdfIsReady}
+                                    >
+                                        {t('translation:generate-pdf')}
+                                    </Button>
+                                    <Button
+                                        className='m-0'
+                                        block
+                                        onClick={handleShowPdf}
+                                        hidden={!pdfIsReady}
+                                    >
+                                        {t('translation:show-pdf')}
+                                    </Button>
+                                </Col>
+                                <Col xs='6' md='4' className='pr-md-0 pl-2'>
+                                    <Button
+                                        className=''
+                                        block
+                                        onClick={finishProcess}
+                                    >
+                                        {t('translation:process-finish')}
+                                    </Button>
+                                </Col>
+                            </Row>
+                        </Card.Footer>
+                    </Card>
+                </Fade>
             </>
 
     )

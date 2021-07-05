@@ -20,7 +20,7 @@
  */
 
 import React from 'react';
-import { Card, Col, Form, Row } from 'react-bootstrap';
+import { Card, Col, Fade, Form, Row } from 'react-bootstrap';
 
 import '../i18n';
 import { useTranslation } from 'react-i18next';
@@ -175,125 +175,126 @@ const RecordVaccinationCertData = (props: any) => {
     return (
         !(isInit && context && context.valueSets) ? <Spinner /> :
             <>
-                <Card id='data-card'>
+                <Fade appear={true} in={true} >
+                    <Card id='data-card'>
 
-                    <Form className='form-flex' onSubmit={handleSubmit} /*validated={validated}*/>
+                        <Form className='form-flex' onSubmit={handleSubmit} /*validated={validated}*/>
 
-                        {/*
+                            {/*
                             header with title and id card query
                         */}
-                        <CardHeader title={t('translation:vaccination-cert')} />
+                            <CardHeader title={t('translation:vaccination-cert')} />
 
-                        {/*
+                            {/*
                             content area with patient inputs and check box
                         */}
-                        <Card.Body id='data-body' className='p-3'>
+                            <Card.Body id='data-body'>
 
-                            {/* name inputs */}
-                            <PersonInputs eudgc={props.eudgc} onChange={setPerson} />
+                                {/* name inputs */}
+                                <PersonInputs eudgc={props.eudgc} onChange={setPerson} />
 
-                            <hr />
+                                <hr />
 
-                            {/* combobox disease */}
-                            <FormGroupValueSetSelect controlId='formDiseaseInput' title={t('translation:disease-agent')} placeholder={t('translation:def-disease-agent')}
-                                value={disease}
-                                onChange={(evt: any) => setDisease(evt.target.value)}
-                                required
-                                valueSet={context.valueSets[Value_Sets.DiseaseAgent]}
-                            />
+                                {/* combobox disease */}
+                                <FormGroupValueSetSelect controlId='formDiseaseInput' title={t('translation:disease-agent')} placeholder={t('translation:def-disease-agent')}
+                                    value={disease}
+                                    onChange={(evt: any) => setDisease(evt.target.value)}
+                                    required
+                                    valueSet={context.valueSets[Value_Sets.DiseaseAgent]}
+                                />
 
-                            {/* combobox vaccine */}
-                            <FormGroupValueSetSelect controlId='formVaccineInput' title={t('translation:vaccine')}
-                                value={vaccine}
-                                onChange={(evt: any) => setVaccine(evt.target.value)}
-                                required
-                                valueSet={context.valueSets[Value_Sets.VaccineType]}
-                            />
+                                {/* combobox vaccine */}
+                                <FormGroupValueSetSelect controlId='formVaccineInput' title={t('translation:vaccine')}
+                                    value={vaccine}
+                                    onChange={(evt: any) => setVaccine(evt.target.value)}
+                                    required
+                                    valueSet={context.valueSets[Value_Sets.VaccineType]}
+                                />
 
-                            {/* combobox medicalProduct */}
-                            <FormGroupValueSetSelect controlId='formMedicalProductInput' title={t('translation:vac-medical-product')}
-                                value={medicalProduct}
-                                onChange={(evt: any) => setMedicalProduct(evt.target.value)}
-                                required
-                                valueSet={context.valueSets[Value_Sets.Vaccines]}
-                            />
+                                {/* combobox medicalProduct */}
+                                <FormGroupValueSetSelect controlId='formMedicalProductInput' title={t('translation:vac-medical-product')}
+                                    value={medicalProduct}
+                                    onChange={(evt: any) => setMedicalProduct(evt.target.value)}
+                                    required
+                                    valueSet={context.valueSets[Value_Sets.Vaccines]}
+                                />
 
-                            {/* combobox marketingHolder */}
-                            <FormGroupValueSetSelect controlId='formMarketingHolderInput' title={t('translation:vac-marketing-holder')}
-                                value={marketingHolder}
-                                onChange={(evt: any) => setMarketingHolder(evt.target.value)}
-                                required
-                                valueSet={context.valueSets[Value_Sets.VaccinesManufacturer]}
-                            />
+                                {/* combobox marketingHolder */}
+                                <FormGroupValueSetSelect controlId='formMarketingHolderInput' title={t('translation:vac-marketing-holder')}
+                                    value={marketingHolder}
+                                    onChange={(evt: any) => setMarketingHolder(evt.target.value)}
+                                    required
+                                    valueSet={context.valueSets[Value_Sets.VaccinesManufacturer]}
+                                />
 
-                            <hr />
+                                <hr />
 
-                            {/* sequence */}
-                            <FormGroupInput controlId='formDoseNumberInput' title={t('translation:sequence')} placeholder={t('translation:def-sequence')}
-                                value={doseNumber}
-                                onChange={(evt: any) => handleNumber(evt.target.value, setDoseNumber)}
-                                required min={1} max={9} maxLength={1}
-                                type='number'
-                            />
+                                {/* sequence */}
+                                <FormGroupInput controlId='formDoseNumberInput' title={t('translation:sequence')} placeholder={t('translation:def-sequence')}
+                                    value={doseNumber}
+                                    onChange={(evt: any) => handleNumber(evt.target.value, setDoseNumber)}
+                                    required min={1} max={9} maxLength={1}
+                                    type='number'
+                                />
 
-                            {/* tot */}
-                            <FormGroupInput controlId='formTotInput' title={t('translation:tot')} placeholder={t('translation:def-tot')}
-                                value={totalDoseNumber}
-                                onChange={(evt: any) => handleNumber(evt.target.value, setTotalDoseNumber)}
-                                required min={1} max={9} maxLength={1}
-                                type='number'
-                            />
+                                {/* tot */}
+                                <FormGroupInput controlId='formTotInput' title={t('translation:tot')} placeholder={t('translation:def-tot')}
+                                    value={totalDoseNumber}
+                                    onChange={(evt: any) => handleNumber(evt.target.value, setTotalDoseNumber)}
+                                    required min={1} max={9} maxLength={1}
+                                    type='number'
+                                />
 
-                            {/* vacLastDate */}
-                            <Form.Group as={Row} controlId='formLastDateInput' className='pb-3 mb-0'>
-                                <Form.Label className='input-label ' column xs='5' sm='3'>{t('translation:vac-last-date') + '*'}</Form.Label>
+                                {/* vacLastDate */}
+                                <Form.Group as={Row} controlId='formLastDateInput' className='pb-3 mb-0'>
+                                    <Form.Label className='input-label ' column xs='5' sm='3'>{t('translation:vac-last-date') + '*'}</Form.Label>
 
-                                <Col xs='7' sm='9' className='d-flex'>
-                                    <DatePicker
-                                        selected={vacLastDate}
-                                        onChange={handleVacLastDate}
-                                        dateFormat='yyyy-MM-dd'
-                                        isClearable
-                                        placeholderText={t('translation:vac-last-date')}
-                                        className='qt-input form-control'
-                                        wrapperClassName='align-self-center'
-                                        showMonthDropdown
-                                        showYearDropdown
-                                        dropdownMode="select"
-                                        minDate={new Date(2020, 10)}
-                                        openToDate={new Date()}
-                                        required
-                                    />
-                                </Col>
-                            </Form.Group>
+                                    <Col xs='7' sm='9' className='d-flex'>
+                                        <DatePicker
+                                            selected={vacLastDate}
+                                            onChange={handleVacLastDate}
+                                            dateFormat='yyyy-MM-dd'
+                                            isClearable
+                                            placeholderText={t('translation:vac-last-date')}
+                                            className='qt-input form-control'
+                                            wrapperClassName='align-self-center'
+                                            showMonthDropdown
+                                            showYearDropdown
+                                            dropdownMode="select"
+                                            minDate={new Date(2020, 10)}
+                                            openToDate={new Date()}
+                                            required
+                                        />
+                                    </Col>
+                                </Form.Group>
 
-                            <hr />
+                                <hr />
 
-                            {/* Combobox for the vaccin countries in iso-3166-1-alpha-2 */}
-                            <FormGroupValueSetSelect controlId='formVacCountryInput' title={t('translation:vac-country')}
-                                value={issuerCountryCode}
-                                onChange={(evt: any) => setIssuerCountryCode(evt.target.value)}
-                                required
-                                valueSet={context.valueSets[Value_Sets.CountryCodes]}
-                            />
+                                {/* Combobox for the vaccin countries in iso-3166-1-alpha-2 */}
+                                <FormGroupValueSetSelect controlId='formVacCountryInput' title={t('translation:vac-country')}
+                                    value={issuerCountryCode}
+                                    onChange={(evt: any) => setIssuerCountryCode(evt.target.value)}
+                                    required
+                                    valueSet={context.valueSets[Value_Sets.CountryCodes]}
+                                />
 
-                            {/* certificateIssuer */}
-                            <FormGroupInput controlId='formcertificateIssuerInput' title={t('translation:certificateIssuer')}
-                                value={certificateIssuer}
-                                onChange={(evt: any) => setCertificateIssuer(evt.target.value)}
-                                required
-                                maxLength={80}
-                            />
-                            <hr />
-                        </Card.Body>
+                                {/* certificateIssuer */}
+                                <FormGroupInput controlId='formcertificateIssuerInput' title={t('translation:certificateIssuer')}
+                                    value={certificateIssuer}
+                                    onChange={(evt: any) => setCertificateIssuer(evt.target.value)}
+                                    required
+                                    maxLength={80}
+                                />
+                            </Card.Body>
 
-                        {/*
+                            {/*
                             footer with clear and nex button
                         */}
-                        <CardFooter handleCancel={handleCancel} />
+                            <CardFooter handleCancel={handleCancel} />
 
-                    </Form>
-                </Card>
+                        </Form>
+                    </Card>
+                </Fade>
             </>
     )
 }

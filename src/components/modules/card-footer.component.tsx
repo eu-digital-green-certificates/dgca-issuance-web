@@ -10,6 +10,8 @@ const CardFooter = (props: any) => {
 
     return (!props ? <></> :
         <Card.Footer id='data-footer'>
+            
+            <hr className='pb-3' />
             <Row>
                 <Col xs='6' md='3' className='pl-0 pr-2'>
                     <Button
