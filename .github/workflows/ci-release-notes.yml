@@ -3,6 +3,7 @@ on:
   release:
     types:
     - created
+    - edited
 jobs:
   release-notes:
     runs-on: ubuntu-20.04
