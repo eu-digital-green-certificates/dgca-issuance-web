@@ -34,7 +34,8 @@ const api = axios.create({
 export interface CertResult {
     qrCode: string,
     dgci: string,
-    tan: string
+    tan: string,
+    issuerCountryCode: string
 }
 
 enum CertType {
@@ -114,7 +115,8 @@ const generateQRCode = (edgcPayload: EUDCC1): Promise<CertResult> => {
                     return {
                         qrCode: qrCode,
                         dgci: certMetaData.dgci,
-                        tan: tan
+                        tan: tan,
+                        issuerCountryCode: certMetaData.countryCode
                     }
                 });
         });

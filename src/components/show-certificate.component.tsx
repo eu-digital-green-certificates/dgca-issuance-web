@@ -54,8 +54,9 @@ const ShowCertificate = (props: any) => {
     const [qrCodeForPDF, setQrCodeForPDF] = React.useState<any>();
     const [eudgcForPDF, setEudgcForPDF] = React.useState<EUDCC1>();
     const [valueSetsForPDF, setValueSetsForPDF] = React.useState<IValueSetList>();
+    const [issuerCountryCodeForPDF, setIssuerCountryCodeForPDF] = React.useState('');
 
-    const pdf = usePdfGenerator(qrCodeForPDF, eudgcForPDF, valueSetsForPDF, (isInit) => setPdfIsInit(isInit), (isReady) => setPdfIsReady(isReady));
+    const pdf = usePdfGenerator(qrCodeForPDF, eudgcForPDF, valueSetsForPDF, issuerCountryCodeForPDF, (isInit) => setPdfIsInit(isInit), (isReady) => setPdfIsReady(isReady));
 
     // set patient data on mount and set hash from uuid
     React.useEffect(() => {
@@ -78,6 +79,7 @@ const ShowCertificate = (props: any) => {
                     //console.log("qrcode: " + certResult.qrCode);
                     setQrCodeValue(certResult.qrCode);
                     setTAN(certResult.tan);
+                    setIssuerCountryCodeForPDF(certResult.issuerCountryCode);
                 })
                 .catch(error => {
                     handleError(error);

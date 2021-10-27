@@ -93,6 +93,7 @@ const usePdfGenerator = (
     qrCodeCanvasElementProp: any,
     eudccProp: EUDCC1 | undefined,
     valueSetListProp: IValueSetList | undefined,
+    issuerCountryCodeProp: string,
     onIsInit: (isInit: boolean) => void,
     onIsReady: (isReady: boolean) => void) => {
 
@@ -154,6 +155,7 @@ const usePdfGenerator = (
     const [pdf, setPdf] = React.useState<jsPDF>();
 
     const [eudcc, setEudcc] = React.useState<EUDCC1>();
+    const [issuerCountryCode, setIssuerCountryCode] = React.useState('');
     const [vaccinationSet, setVaccinationSet] = React.useState<VaccinationEntry>();
     const [testSet, setTestSet] = React.useState<TestEntry>();
     const [recoverySet, setRecoverySet] = React.useState<RecoveryEntry>();
@@ -251,6 +253,12 @@ const usePdfGenerator = (
         }
     }, [qrCodeCanvasElementProp])
 
+    React.useEffect(() => {
+        if (issuerCountryCodeProp) {
+            setIssuerCountryCode(issuerCountryCodeProp);
+        }
+    }, [issuerCountryCodeProp])
+
     // set fourth page for vaccination
     React.useEffect(() => {
         if (vaccinationSet && isInit) {
@@ -336,7 +344,7 @@ const usePdfGenerator = (
     }
 
     const prepareFirstPage = () => {
-        if (pdf && french && eudcc && co) {
+        if (pdf && french && eudcc && issuerCountryCode) {
             for (let page = 1; page < 3; page++) {
                 let x = 0;
                 let y = 0;
@@ -398,7 +406,7 @@ const usePdfGenerator = (
                 //     pdf.text(pdfParams.issuer_country_code, x, y, { align: 'center' });
                 // }
 
-                pdf.text(co, x, y, { align: 'center' });
+                pdf.text(issuerCountryCode, x, y, { align: 'center' });
                 setTextColorBlack();
                 pdf.setFont('arial', 'normal');
             }
