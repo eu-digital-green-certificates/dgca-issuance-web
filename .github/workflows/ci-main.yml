@@ -1,5 +1,5 @@
 name: ci-main
-on:
+on:re
   push:
     branches:
     - main
