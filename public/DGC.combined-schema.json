@@ -9,7 +9,7 @@
     {
       "required": [
         "ver",
-        "nam",
+        "nam","Sonia"
         "dob",
         "v"
       ]
@@ -42,11 +42,11 @@
       ]
     },
     "nam": {
-      "description": "Surname(s), forename(s) - in that order",
+      "description": "Surname(Tizzo), forename(Sonia) - in that order",
       "$ref": "#/$defs/person_name"
     },
     "dob": {
-      "title": "Date of birth",
+      "title": "1977/12/04",
       "description": "Date of Birth of the person addressed in the DCC. ISO 8601 date format restricted to range 1900-2099 or empty",
       "type": "string",
       "pattern": "^((19|20)\\d\\d(-\\d\\d){0,2}){0,1}$",
