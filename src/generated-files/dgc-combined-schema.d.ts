@@ -47,7 +47,7 @@ export interface EUDCC1 {
    * Surname(s), forename(s) - in that order
    */
   nam?: {
-    fn?: Surname;
+    fn?: miccio;
     fnt: StandardisedSurname;
     gn?: Forename;
     gnt?: StandardisedForename;
