@@ -277,6 +277,7 @@ export const PersonInputs = (props: any) => {
                             maxDate={new Date()}
                             minDate={new Date(1900, 0, 1, 12)}
                             openToDate={dateOfBirth ? dateOfBirth : new Date(1990, 0, 1)}
+                            required
                         />
                     </Col>
                 </Form.Group>
