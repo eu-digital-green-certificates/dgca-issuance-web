@@ -81,6 +81,7 @@ interface IPageParameter {
     headerFontSize: number,
     smallHeaderLineHeight: number,
     smallHeaderFontSize: number,
+    trainingFontSize: number,
     space: number
 }
 
@@ -138,6 +139,7 @@ const usePdfGenerator = (
         headerFontSize: 21,
         smallHeaderLineHeight: 17,
         smallHeaderFontSize: 17,
+        trainingFontSize: 28,
         space: 2
     }
 
@@ -213,6 +215,7 @@ const usePdfGenerator = (
 
     React.useEffect(() => {
         if (firstPageIsReady && secondPageIsReady && thirdPageIsReady && fourthPageIsReady) {
+            setTrainingText();
             setIsReady(true);
         }
     }, [firstPageIsReady, secondPageIsReady, thirdPageIsReady, fourthPageIsReady])
@@ -1326,6 +1329,10 @@ const usePdfGenerator = (
         pdf!.setTextColor(256, 256, 256);
     }
 
+    const setTextColorOrange = () => {
+        pdf!.setTextColor(255, 200, 0);
+    }
+
     const justify = (text: string, xStart: number, yStart: number, textWidth: number, rotation?: boolean) => {
         if (pdf) {
             rotation = rotation ? rotation : false;
@@ -1404,6 +1411,37 @@ const usePdfGenerator = (
         for (const wordInfo of wordsInfo) {
             pdfGen.text(wordInfo.text, x, y, { align: 'left', angle: 180 });
             x -= wordInfo.wordLength + wordSpacing;
+        }
+    }
+
+    const setTrainingText = () => {
+
+        if(pdf) {
+            for (let page = 1; page < 3; page++) {
+
+                pdf.setPage(page);
+
+                setTextColorOrange();
+                pdf.setFont('arial', 'bold');
+                pdf.setFontSize(params.trainingFontSize);
+
+                let certForTraining = t('translation:certForTraining');
+
+                const wordLength = pdf.getTextWidth(certForTraining);
+                let tx = (wordLength / 2) / Math.sqrt(2);
+                let x = params.a6width;
+                let y = params.a6height;
+
+                if(page == 1) {
+                    x += tx;
+                    y -= tx;
+                    pdf.text(certForTraining, x, y, { angle: 225});
+                } else {
+                    x -= tx;
+                    y += tx;
+                    pdf.text(certForTraining, x, y, { angle: 45});
+                }
+            }
         }
     }
 

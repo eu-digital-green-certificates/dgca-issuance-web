@@ -93,5 +93,6 @@
   "pdfDatePositiveTestResult": "Date of first positive test result",
   "pdfStateOfTest": "Member State of test",
   "pdfValidFrom": "Certificate valid from",
-  "pdfValidTo": "Certificate valid until (not more than 180 days after the date of first positive test result)"
+  "pdfValidTo": "Certificate valid until (not more than 180 days after the date of first positive test result)",
+  "certForTraining": "Nur zu Schulungszwecken"
 }
