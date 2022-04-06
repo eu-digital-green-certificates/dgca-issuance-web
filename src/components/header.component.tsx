@@ -35,9 +35,12 @@ const Header = (props: any) => {
 
     return (!isInit ? <></> :
         <>
-            <Container className='bg-white px-0 position-relative'>
+            <Container className='d-flex bg-white px-0 position-relative'>
                 {/* simple header with logo */}
                 <Image src={EULogo} className='m-3' />
+                <span className='environment-font my-auto mx-1'>
+                    {'\nenvironmentName' }
+                </span>
             </Container>
             <Container className='d-flex bg-gray-1 px-0 position-relative'>
                 <span className='header-title'>{t('translation:title')}</span>

@@ -94,5 +94,7 @@
   "pdfValidFrom" : "Certificate valid from",
   "pdfValidTo" : "Certificate valid until (not more than 180 days after the date of first positive test result)",
   "pdfDiseaseRecovery" : "Disease or agent from which the\nholder has recovered : diseaseName\n(SARS-CoV-2 or one of its variants)",
-  "certForTraining": "Only for training purposes"
+  "certForTraining": "Only for training purposes",
+  "environment-info1": "<strong>Hinweis</strong>: Dies ist ein <strong>Schulungssystem</strong>.\nFür die Erfassung <strong>echter Patientendaten</strong> darf nur das <strong>Produktivsystem</strong> genutzt werden.\n Das <strong>Produktivsystem</strong> erreichen Sie unter ",
+  "environment-info-link": "https://schnelltestportal.de/qt"
 }

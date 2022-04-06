@@ -22,7 +22,7 @@
 import { Button, Container, Fade } from 'react-bootstrap'
 
 import '../i18n';
-import { useTranslation } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 
 import React from 'react';
 import Spinner from './spinner/spinner.component';
@@ -42,14 +42,30 @@ const LandingPage = () => {
 
     return (!isInit ? <Spinner /> :
         <Fade appear={true} in={true} >
-            <Container className='center-content'>
-                <span className='landing-title mx-auto mb-4'>{t('translation:welcome')}</span>
+            <>
+                <Container className='bg-white px-0 position-relative'>
+                    <span className='environment-info-text py-3'>
+                            <Trans>
+                                {t('translation:environment-info1')}
+                                {<a
+                                    href={t('translation:environment-info-link')}
+                                    target='blank'
+                                >
+                                    {t('translation:environment-info-link')}
+                                </a>}
+                                {'.'}
+                            </Trans>
+                        </span>
+                </Container>
+                <Container className='center-content'>
+                    <span className='landing-title mx-auto mb-4'>{t('translation:welcome')}</span>
 
-                <Button block className='landing-btn my-2' onClick={context.navigation!.toRecordVac}>{t('translation:record-vaccination-cert-dat')}</Button>
-                <Button block className='landing-btn my-2' onClick={context.navigation!.toRecordTest}>{t('translation:record-test-cert-dat')}</Button>
-                <Button block className='landing-btn my-2' onClick={context.navigation!.toRecordRecovery}>{t('translation:record-recovery-cert-dat')}</Button>
+                    <Button block className='landing-btn my-2' onClick={context.navigation!.toRecordVac}>{t('translation:record-vaccination-cert-dat')}</Button>
+                    <Button block className='landing-btn my-2' onClick={context.navigation!.toRecordTest}>{t('translation:record-test-cert-dat')}</Button>
+                    <Button block className='landing-btn my-2' onClick={context.navigation!.toRecordRecovery}>{t('translation:record-recovery-cert-dat')}</Button>
 
-            </Container>
+                </Container>
+            </>
         </Fade>
     )
 }

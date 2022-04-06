@@ -347,3 +347,17 @@ hr {
     border: 0px;
     border-radius: $data-card-border-radius;
 }
+
+.environment-info-text {
+    width:100%;
+    display: block;
+    text-align: center;
+    white-space: pre-line;
+    margin: 0%;
+}
+
+.environment-font {
+    font-weight: bold;
+    font-size: 14px;
+    color: red;
+}
