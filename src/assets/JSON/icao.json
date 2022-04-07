@@ -1,0 +1,1175 @@
+{
+  "pattern": {
+    "mrz": "^[0-9A-Z<\\s]*$/g",
+    "findAllNonLetterNonNumber": "(?![\\p{N}<])(\\P{L})/gu",
+    "findAllSpaces": "[\\s\uFEFF\\xA0]+/g",
+    "findAllDeviding": "[\\s,-]+/g",
+    "findAllLessThan": "[<]+/g"
+  },
+  "transliterations": [
+    {
+      "utf8": "\u00C0",
+      "character": "À",
+      "description": "A grave",
+      "mrz": "A"
+    },
+    {
+      "utf8": "\u00C1",
+      "character": "Á",
+      "description": "A acute",
+      "mrz": "A"
+    },
+    {
+      "utf8": "\u00C2",
+      "character": "Â",
+      "description": "A circumflex",
+      "mrz": "A"
+    },
+    {
+      "utf8": "\u00C3",
+      "character": "Ã",
+      "description": "A tilde",
+      "mrz": "A"
+    },
+    {
+      "utf8": "\u00C4",
+      "character": "Ä",
+      "description": "A diaeresis",
+      "mrz": "AE"
+    },
+    {
+      "utf8": "\u00C5",
+      "character": "Å",
+      "description": "A ring above",
+      "mrz": "AA"
+    },
+    {
+      "utf8": "\u00C6",
+      "character": "Æ",
+      "description": "ligature AE",
+      "mrz": "AE"
+    },
+    {
+      "utf8": "\u00C7",
+      "character": "Ç",
+      "description": "C cedilla",
+      "mrz": "C"
+    },
+    {
+      "utf8": "\u00C8",
+      "character": "È",
+      "description": "E grave",
+      "mrz": "E"
+    },
+    {
+      "utf8": "\u00C9",
+      "character": "É",
+      "description": "E acute",
+      "mrz": "E"
+    },
+    {
+      "utf8": "\u00CA",
+      "character": "Ê",
+      "description": "E circumflex",
+      "mrz": "E"
+    },
+    {
+      "utf8": "\u00CB",
+      "character": "Ë",
+      "description": "E diaeresis",
+      "mrz": "E"
+    },
+    {
+      "utf8": "\u00CC",
+      "character": "Ì",
+      "description": "I grave",
+      "mrz": "I"
+    },
+    {
+      "utf8": "\u00CD",
+      "character": "Í",
+      "description": "I acute",
+      "mrz": "I"
+    },
+    {
+      "utf8": "\u00CE",
+      "character": "Î",
+      "description": "I circumflex",
+      "mrz": "I"
+    },
+    {
+      "utf8": "\u00CF",
+      "character": "Ï",
+      "description": "I diaeresis",
+      "mrz": "I"
+    },
+    {
+      "utf8": "\u00D0",
+      "character": "Ð",
+      "description": "Eth",
+      "mrz": "D"
+    },
+    {
+      "utf8": "\u00D1",
+      "character": "Ñ",
+      "description": "N tilde N or NXX",
+      "mrz": "N"
+    },
+    {
+      "utf8": "\u00D2",
+      "character": "Ò",
+      "description": "O grave",
+      "mrz": "O"
+    },
+    {
+      "utf8": "\u00D3",
+      "character": "Ó",
+      "description": "O acute",
+      "mrz": "O"
+    },
+    {
+      "utf8": "\u00D4",
+      "character": "Ó",
+      "description": "O acute",
+      "mrz": "O"
+    },
+    {
+      "utf8": "\u00D5",
+      "character": "Ô",
+      "description": "O circumflex",
+      "mrz": "O"
+    },
+    {
+      "utf8": "\u00D6",
+      "character": "Ö",
+      "description": "O diaeresis OE or O",
+      "mrz": "OE"
+    },
+    {
+      "utf8": "\u00D8",
+      "character": "Ø",
+      "description": "O stroke",
+      "mrz": "OE"
+    },
+    {
+      "utf8": "\u00D9",
+      "character": "Ù",
+      "description": "U grave",
+      "mrz": "U"
+    },
+    {
+      "utf8": "\u00DA",
+      "character": "Ú",
+      "description": "U acute",
+      "mrz": "U"
+    },
+    {
+      "utf8": "\u00DB",
+      "character": "Û",
+      "description": "U circumflex",
+      "mrz": "U"
+    },
+    {
+      "utf8": "\u00DC",
+      "character": "Ü",
+      "description": "U diaeresis UE or UXX or U",
+      "mrz": "UE"
+    },
+    {
+      "utf8": "\u00DD",
+      "character": "Ý",
+      "description": "Y acute",
+      "mrz": "Y"
+    },
+    {
+      "utf8": "\u00DE",
+      "character": "Þ",
+      "description": "Thorn (Iceland)",
+      "mrz": "TH"
+    },
+    {
+      "utf8": "\u0100",
+      "character": "Ā",
+      "description": "A macron",
+      "mrz": "A"
+    },
+    {
+      "utf8": "\u0102",
+      "character": "Ă",
+      "description": "A breve",
+      "mrz": "A"
+    },
+    {
+      "utf8": "\u0104",
+      "character": "Ą",
+      "description": "A ogonek",
+      "mrz": "A"
+    },
+    {
+      "utf8": "\u0106",
+      "character": "Ć",
+      "description": "C acute",
+      "mrz": "C"
+    },
+    {
+      "utf8": "\u0108",
+      "character": "Ĉ",
+      "description": "C circumflex",
+      "mrz": "C"
+    },
+    {
+      "utf8": "\u010A",
+      "character": "Ċ",
+      "description": "C  dot above",
+      "mrz": "C"
+    },
+    {
+      "utf8": "\u010C",
+      "character": "Č",
+      "description": "C caron",
+      "mrz": "C"
+    },
+    {
+      "utf8": "\u010E",
+      "character": "Ď",
+      "description": "D caron",
+      "mrz": "D"
+    },
+    {
+      "utf8": "\u0110",
+      "character": "Ð",
+      "description": "D stroke",
+      "mrz": "D"
+    },
+    {
+      "utf8": "\u0112",
+      "character": "Ē",
+      "description": "E macron",
+      "mrz": "E"
+    },
+    {
+      "utf8": "\u0114",
+      "character": "Ĕ",
+      "description": "E breve",
+      "mrz": "E"
+    },
+    {
+      "utf8": "\u0116",
+      "character": "Ė",
+      "description": "E  dot above",
+      "mrz": "E"
+    },
+    {
+      "utf8": "\u0118",
+      "character": "Ę",
+      "description": "E ogonek",
+      "mrz": "E"
+    },
+    {
+      "utf8": "\u011A",
+      "character": "Ě",
+      "description": "E caron",
+      "mrz": "E"
+    },
+    {
+      "utf8": "\u011C",
+      "character": "Ĝ",
+      "description": "G circumflex",
+      "mrz": "G"
+    },
+    {
+      "utf8": "\u011C",
+      "character": "Ğ",
+      "description": "G breve",
+      "mrz": "G"
+    },
+    {
+      "utf8": "\u011C",
+      "character": "Ġ",
+      "description": "G  dot above",
+      "mrz": "G"
+    },
+    {
+      "utf8": "\u011C",
+      "character": "Ģ",
+      "description": "G cedilla",
+      "mrz": "G"
+    },
+    {
+      "utf8": "\u0124",
+      "character": "Ĥ",
+      "description": "H circumflex",
+      "mrz": "H"
+    },
+    {
+      "utf8": "\u0126",
+      "character": "Ħ",
+      "description": "H stroke",
+      "mrz": "H"
+    },
+    {
+      "utf8": "\u0128",
+      "character": "Ĩ",
+      "description": "I tilde",
+      "mrz": "I"
+    },
+    {
+      "utf8": "\u012A",
+      "character": "Ī",
+      "description": "I macron",
+      "mrz": "I"
+    },
+    {
+      "utf8": "\u012C",
+      "character": "Ĭ",
+      "description": "I breve",
+      "mrz": "I"
+    },
+    {
+      "utf8": "\u012E",
+      "character": "Į",
+      "description": "I ogonek",
+      "mrz": "I"
+    },
+    {
+      "utf8": "\u0130",
+      "character": "İ",
+      "description": "I dot above",
+      "mrz": "I"
+    },
+    {
+      "utf8": "\u0131",
+      "character": "I",
+      "description": "I without dot (Turkey)",
+      "mrz": "I"
+    },
+    {
+      "utf8": "\u0132",
+      "character": "Ĳ",
+      "description": "ligature IJ",
+      "mrz": "IJ"
+    },
+    {
+      "utf8": "\u0134",
+      "character": "Ĵ",
+      "description": "J circumflex",
+      "mrz": "J"
+    },
+    {
+      "utf8": "\u0136",
+      "character": "Ķ",
+      "description": "K cedilla",
+      "mrz": "K"
+    },
+    {
+      "utf8": "\u0139",
+      "character": "Ĺ",
+      "description": "L acute",
+      "mrz": "L"
+    },
+    {
+      "utf8": "\u013B",
+      "character": "Ļ",
+      "description": "L cedilla",
+      "mrz": "L"
+    },
+    {
+      "utf8": "\u013D",
+      "character": "Ľ",
+      "description": "L caron",
+      "mrz": "L"
+    },
+    {
+      "utf8": "\u013F",
+      "character": "Ŀ",
+      "description": "L middle dot",
+      "mrz": "L"
+    },
+    {
+      "utf8": "\u0141",
+      "character": "Ł",
+      "description": "L stroke",
+      "mrz": "L"
+    },
+    {
+      "utf8": "\u0143",
+      "character": "Ń",
+      "description": "N acute",
+      "mrz": "N"
+    },
+    {
+      "utf8": "\u0145",
+      "character": "Ņ",
+      "description": "N cedilla",
+      "mrz": "N"
+    },
+    {
+      "utf8": "\u0147",
+      "character": "Ň",
+      "description": "N caron",
+      "mrz": "N"
+    },
+    {
+      "utf8": "\u014A",
+      "character": "Ŋ",
+      "description": "Eng",
+      "mrz": "N"
+    },
+    {
+      "utf8": "\u014C",
+      "character": "Ō",
+      "description": "O macron",
+      "mrz": "O"
+    },
+    {
+      "utf8": "\u014E",
+      "character": "Ŏ",
+      "description": "O breve",
+      "mrz": "O"
+    },
+    {
+      "utf8": "\u0150",
+      "character": "Ő",
+      "description": "O  double acute",
+      "mrz": "O"
+    },
+    {
+      "utf8": "\u0152",
+      "character": "Œ",
+      "description": "ligature OE",
+      "mrz": "OE"
+    },
+    {
+      "utf8": "\u0154",
+      "character": "Ŕ",
+      "description": "R acute",
+      "mrz": "R"
+    },
+    {
+      "utf8": "\u0156",
+      "character": "Ŗ",
+      "description": "R cedilla",
+      "mrz": "R"
+    },
+    {
+      "utf8": "\u0158",
+      "character": "Ř",
+      "description": "R caron",
+      "mrz": "R"
+    },
+    {
+      "utf8": "\u015A",
+      "character": "Ś",
+      "description": "S acute",
+      "mrz": "S"
+    },
+    {
+      "utf8": "\u015C",
+      "character": "Ŝ",
+      "description": "S circumflex",
+      "mrz": "S"
+    },
+    {
+      "utf8": "\u015E",
+      "character": "Ş",
+      "description": "S cedilla",
+      "mrz": "S"
+    },
+    {
+      "utf8": "\u0160",
+      "character": "Š",
+      "description": "S caron",
+      "mrz": "S"
+    },
+    {
+      "utf8": "\u0162",
+      "character": "Ţ",
+      "description": "T cedilla",
+      "mrz": "T"
+    },
+    {
+      "utf8": "\u0164",
+      "character": "Ť",
+      "description": "T caron",
+      "mrz": "T"
+    },
+    {
+      "utf8": "\u0166",
+      "character": "Ŧ",
+      "description": "T stroke",
+      "mrz": "T"
+    },
+    {
+      "utf8": "\u0168",
+      "character": "Ũ",
+      "description": "U tilde",
+      "mrz": "U"
+    },
+    {
+      "utf8": "\u016A",
+      "character": "Ū",
+      "description": "U macron",
+      "mrz": "U"
+    },
+    {
+      "utf8": "\u016C",
+      "character": "Ŭ",
+      "description": "U breve",
+      "mrz": "U"
+    },
+    {
+      "utf8": "\u016E",
+      "character": "Ů",
+      "description": "U ring above",
+      "mrz": "U"
+    },
+    {
+      "utf8": "\u0170",
+      "character": "Ű",
+      "description": "U double acute",
+      "mrz": "U"
+    },
+    {
+      "utf8": "\u0172",
+      "character": "Ų",
+      "description": "U ogonek",
+      "mrz": "U"
+    },
+    {
+      "utf8": "\u0174",
+      "character": "Ŵ",
+      "description": "W circumflex",
+      "mrz": "W"
+    },
+    {
+      "utf8": "\u0176",
+      "character": "Ŷ",
+      "description": "Y circumflex",
+      "mrz": "Y"
+    },
+    {
+      "utf8": "\u0178",
+      "character": "Ÿ",
+      "description": "Y diaeresis",
+      "mrz": "Y"
+    },
+    {
+      "utf8": "\u0179",
+      "character": "Ź",
+      "description": "Z acute",
+      "mrz": "Z"
+    },
+    {
+      "utf8": "\u017B",
+      "character": "Ż",
+      "description": "Z dot above",
+      "mrz": "Z"
+    },
+    {
+      "utf8": "\u017D",
+      "character": "Ź",
+      "description": "Z caron",
+      "mrz": "Z"
+    },
+    {
+      "utf8": "\u1E9E",
+      "character": "ẞ",
+      "description": "double s (Germany)",
+      "mrz": "SS"
+    },
+    {
+      "utf8": "\u0401",
+      "character": "Ð",
+      "description": "Cyrillic Character Ё (except Belorussian = IO)",
+      "mrz": "E"
+    },
+    {
+      "utf8": "\u0402",
+      "character": "Ћ",
+      "description": "Cyrillic Character D falsch lt. Windows-Zeichentabelle \u040B",
+      "mrz": "D"
+    },
+    {
+      "utf8": "\u0404",
+      "character": "Є",
+      "description": "Cyrillic Character IE (except if Ukrainian first character, then =YE)",
+      "mrz": "IE"
+    },
+    {
+      "utf8": "\u0405",
+      "character": "Ѕ",
+      "description": "Cyrillic Character Ѕ",
+      "mrz": "DZ"
+    },
+    {
+      "utf8": "\u0406",
+      "character": "І",
+      "description": "Cyrillic Character І",
+      "mrz": "I"
+    },
+    {
+      "utf8": "\u0407",
+      "character": "Ї",
+      "description": "Cyrillic Character IE I (except if Ukrainian first character, then =YI)",
+      "mrz": "I"
+    },
+    {
+      "utf8": "\u0408",
+      "character": "Ј",
+      "description": "Cyrillic Character Ј",
+      "mrz": "J"
+    },
+    {
+      "utf8": "\u0409",
+      "character": "Љ",
+      "description": "Cyrillic Character Љ",
+      "mrz": "LJ"
+    },
+    {
+      "utf8": "\u040A",
+      "character": "Њ",
+      "description": "Cyrillic Character Њ",
+      "mrz": "NJ"
+    },
+    {
+      "utf8": "\u040C",
+      "character": "Ќ",
+      "description": "Cyrillic Character K (except in the language spoken in the former Yugoslav Republic of Macedonia = KJ)",
+      "mrz": "K"
+    },
+    {
+      "utf8": "\u040E",
+      "character": "ў",
+      "description": "Cyrillic Character U",
+      "mrz": "U"
+    },
+    {
+      "utf8": "\u040F",
+      "character": "Џ",
+      "description": "Cyrillic Character DZ (except in the language spoken in the former Yugoslav Republic of Macedonia = DJ)",
+      "mrz": "DZ"
+    },
+    {
+      "utf8": "\u0410",
+      "character": "А",
+      "description": "Cyrillic Character А",
+      "mrz": "A"
+    },
+    {
+      "utf8": "\u0411",
+      "character": "Б",
+      "description": "Cyrillic Character Б",
+      "mrz": "B"
+    },
+    {
+      "utf8": "\u0412",
+      "character": "В",
+      "description": "Cyrillic Character В",
+      "mrz": "V"
+    },
+    {
+      "utf8": "\u00413",
+      "character": "Г",
+      "description": "Cyrillic Character G (except Belorussian, Serbian, and Ukrainian = H)",
+      "mrz": "G"
+    },
+    {
+      "utf8": "\u0414",
+      "character": "Д",
+      "description": "Cyrillic Character Д",
+      "mrz": "D"
+    },
+    {
+      "utf8": "\u0415",
+      "character": "Е",
+      "description": "Cyrillic Character Е",
+      "mrz": "E"
+    },
+    {
+      "utf8": "\u0416",
+      "character": "Ж",
+      "description": "Cyrillic Character ZH (except Serbian = Z)",
+      "mrz": "ZH"
+    },
+    {
+      "utf8": "\u0417",
+      "character": "З",
+      "description": "Cyrillic Character З",
+      "mrz": "Z"
+    },
+    {
+      "utf8": "\u0418",
+      "character": "И",
+      "description": "Cyrillic Character I (except Ukrainian = Y)",
+      "mrz": "I"
+    },
+    {
+      "utf8": "\u0419",
+      "character": "Й",
+      "description": "I (except if Ukrainian first character, then =Y)",
+      "mrz": "I"
+    },
+    {
+      "utf8": "\u041A",
+      "character": "К",
+      "description": "Cyrillic Character К",
+      "mrz": "K"
+    },
+    {
+      "utf8": "\u041B",
+      "character": "Л",
+      "description": "Cyrillic Character Л",
+      "mrz": "L"
+    },
+    {
+      "utf8": "\u041C",
+      "character": "M",
+      "description": "Cyrillic Character M",
+      "mrz": "M"
+    },
+    {
+      "utf8": "\u041D",
+      "character": "Н",
+      "description": "Cyrillic Character Н",
+      "mrz": "N"
+    },
+    {
+      "utf8": "\u041E",
+      "character": "О",
+      "description": "Cyrillic Character О",
+      "mrz": "O"
+    },
+    {
+      "utf8": "\u041F",
+      "character": "П",
+      "description": "Cyrillic Character П",
+      "mrz": "P"
+    },
+    {
+      "utf8": "\u0420",
+      "character": "Р",
+      "description": "Cyrillic Character Р",
+      "mrz": "R"
+    },
+    {
+      "utf8": "\u0421",
+      "character": "С",
+      "description": "Cyrillic Character С",
+      "mrz": "S"
+    },
+    {
+      "utf8": "\u0422",
+      "character": "Т",
+      "description": "Cyrillic Character Т",
+      "mrz": "T"
+    },
+    {
+      "utf8": "\u0423",
+      "character": "У",
+      "description": "Cyrillic Character У",
+      "mrz": "У"
+    },
+    {
+      "utf8": "\u0424",
+      "character": "Ф",
+      "description": "Cyrillic Character Ф",
+      "mrz": "F"
+    },
+    {
+      "utf8": "\u0621",
+      "character": "ء",
+      "description": "Arabic letter hamza",
+      "mrz": "XE"
+    },
+    {
+      "utf8": "\u0622",
+      "character": "آ",
+      "description": "Arabic letter alef with madda above",
+      "mrz": "XAA"
+    },
+    {
+      "utf8": "\u0623",
+      "character": "أ",
+      "description": "Arabic letter alef with hamza above",
+      "mrz": "XAE"
+    },
+    {
+      "utf8": "\u0624",
+      "character": "ؤ",
+      "description": "Arabic letter waw with hamza above",
+      "mrz": "U"
+    },
+    {
+      "utf8": "\u0625",
+      "character": "إ",
+      "description": "Arabic letter alef with hamza below",
+      "mrz": "I"
+    },
+    {
+      "utf8": "\u0626",
+      "character": "ئ ",
+      "description": "Arabic letter yeh with hamza above",
+      "mrz": "XI"
+    },
+    {
+      "utf8": "\u0627",
+      "character": "ا",
+      "description": "Arabic letter alef",
+      "mrz": "A"
+    },
+    {
+      "utf8": "\u0628",
+      "character": "ب",
+      "description": "Arabic letter beh",
+      "mrz": "B"
+    },
+    {
+      "utf8": "\u0629",
+      "character": "ة",
+      "description": "Arabic letter teh marbuta XTA/XAH todo: XTA is used generally, except if teh marbuta occurs at the end of the name component, in which case XAH is used.)",
+      "mrz": "XTA"
+    },
+    {
+      "utf8": "\u062A",
+      "character": "ت",
+      "description": "Arabic letter teh",
+      "mrz": "T"
+    },
+    {
+      "utf8": "\u062B",
+      "character": "ث",
+      "description": "Arabic letter theh",
+      "mrz": "XTH"
+    },
+    {
+      "utf8": "\u062C",
+      "character": "ج",
+      "description": "Arabic letter jeem",
+      "mrz": "J"
+    },
+    {
+      "utf8": "\u062D",
+      "character": "ح",
+      "description": "Arabic letter hah",
+      "mrz": "XH"
+    },
+    {
+      "utf8": "\u062E",
+      "character": "خ",
+      "description": "Arabic letter khah",
+      "mrz": "XKH"
+    },
+    {
+      "utf8": "\u062F",
+      "character": "د",
+      "description": "Arabic letter dal",
+      "mrz": "D"
+    },
+    {
+      "utf8": "\u0630",
+      "character": "ذ",
+      "description": "Arabic letter thal",
+      "mrz": "XDH"
+    },
+    {
+      "utf8": "\u0631",
+      "character": "ر",
+      "description": "Arabic letter reh",
+      "mrz": "R"
+    },
+    {
+      "utf8": "\u0632",
+      "character": "ز",
+      "description": "Arabic letter zain",
+      "mrz": "Z"
+    },
+    {
+      "utf8": "\u0633",
+      "character": "س",
+      "description": "Arabic letter seen",
+      "mrz": "S"
+    },
+    {
+      "utf8": "\u0634",
+      "character": "ش",
+      "description": "Arabic letter sheen",
+      "mrz": "XSH"
+    },
+    {
+      "utf8": "\u0635",
+      "character": "ص",
+      "description": "Arabic letter sad",
+      "mrz": "XSS"
+    },
+    {
+      "utf8": "\u0636",
+      "character": "ض",
+      "description": "Arabic letter dad",
+      "mrz": "XDZ"
+    },
+    {
+      "utf8": "\u0637",
+      "character": "ط",
+      "description": "Arabic letter tah",
+      "mrz": "XTT"
+    },
+    {
+      "utf8": "\u0638",
+      "character": "ظ",
+      "description": "Arabic letter zah",
+      "mrz": "XZZ"
+    },
+    {
+      "utf8": "\u0639",
+      "character": "ع",
+      "description": "Arabic letter ain",
+      "mrz": "E"
+    },
+    {
+      "utf8": "\u063A",
+      "character": "غ",
+      "description": "Arabic letter ghain",
+      "mrz": "G"
+    },
+    {
+      "utf8": "\u0641",
+      "character": "ف",
+      "description": "Arabic letter feh",
+      "mrz": "F"
+    },
+    {
+      "utf8": "\u0642",
+      "character": "ق",
+      "description": "Arabic letter qaf",
+      "mrz": "Q"
+    },
+    {
+      "utf8": "\u0643",
+      "character": "ك",
+      "description": "Arabic letter lam",
+      "mrz": "K"
+    },
+    {
+      "utf8": "\u0644",
+      "character": "ل",
+      "description": "Arabic letter lam",
+      "mrz": "L"
+    },
+    {
+      "utf8": "\u0645",
+      "character": "م",
+      "description": "Arabic letter meem",
+      "mrz": "M"
+    },
+    {
+      "utf8": "\u0646",
+      "character": "ن",
+      "description": "Arabic letter noon",
+      "mrz": "N"
+    },
+    {
+      "utf8": "\u0647",
+      "character": "ه",
+      "description": "Arabic letter heh",
+      "mrz": "H"
+    },
+    {
+      "utf8": "\u0648",
+      "character": "و",
+      "description": "Arabic letter waw",
+      "mrz": "W"
+    },
+    {
+      "utf8": "\u0649",
+      "character": "ى",
+      "description": "Arabic letter alef maksura",
+      "mrz": "XAY"
+    },
+    {
+      "utf8": "\u064A",
+      "character": "ي",
+      "description": "Arabic letter yeh",
+      "mrz": "Y"
+    },
+    {
+      "utf8": "\u0651",
+      "character": "shadda",
+      "description": "Arabic letter shadda todo: Shadda denotes doubling: Latin character or sequence is repeated",
+      "mrz": "TODO"
+    },
+    {
+      "utf8": "\u0671",
+      "character": "ٱ",
+      "description": "Arabic letter alef wasla",
+      "mrz": "XXA"
+    },
+    {
+      "utf8": "\u0679",
+      "character": "ٹ",
+      "description": "Arabic letter tteh",
+      "mrz": "XXT"
+    },
+    {
+      "utf8": "\u067C",
+      "character": "ټ",
+      "description": "Arabic letter teh with ring",
+      "mrz": "XRT"
+    },
+    {
+      "utf8": "\u067E",
+      "character": "پ",
+      "description": "Arabic letter peh",
+      "mrz": "P"
+    },
+    {
+      "utf8": "\u0681",
+      "character": "ځ",
+      "description": "Arabic letter hah with hamza above",
+      "mrz": "XKE"
+    },
+    {
+      "utf8": "\u0685",
+      "character": "څ",
+      "description": "Arabic letter hah with 3 dots above",
+      "mrz": "XXH"
+    },
+    {
+      "utf8": "\u0686",
+      "character": "چ",
+      "description": "Arabic letter tcheh",
+      "mrz": "XC"
+    },
+    {
+      "utf8": "\u0688",
+      "character": "ڈ",
+      "description": "Arabic letter ddal",
+      "mrz": "XXD"
+    },
+    {
+      "utf8": "\u0689",
+      "character": "ډ",
+      "description": "Arabic letter dal with ring",
+      "mrz": "XDR"
+    },
+    {
+      "utf8": "\u0691",
+      "character": "ڑ",
+      "description": "Arabic letter rreh",
+      "mrz": "XXR"
+    },
+    {
+      "utf8": "\u0693",
+      "character": "ړ",
+      "description": "Arabic letter reh with ring",
+      "mrz": "XRR"
+    },
+    {
+      "utf8": "\u0696",
+      "character": "ږ",
+      "description": "Arabic letter reh with dot below and dot above",
+      "mrz": "XRX"
+    },
+    {
+      "utf8": "\u0698",
+      "character": "ژ",
+      "description": "Arabic letter jeh",
+      "mrz": "XJ"
+    },
+    {
+      "utf8": "\u069A",
+      "character": "ښ",
+      "description": "Arabic letter seen with dot below and dot above",
+      "mrz": "XXS"
+    },
+    {
+      "utf8": "\u06AB",
+      "character": "ګ",
+      "description": "Arabic letter kaf with ring",
+      "mrz": "XXK"
+    },
+    {
+      "utf8": "\u06AD",
+      "character": "ڭ",
+      "description": "Arabic letter ng",
+      "mrz": "XNG"
+    },
+    {
+      "utf8": "\u06AF",
+      "character": "گ",
+      "description": "Arabic letter gaf",
+      "mrz": "XGG"
+    },
+    {
+      "utf8": "\u06BA",
+      "character": "ں",
+      "description": "Arabic letter noon ghunna",
+      "mrz": "XNN"
+    },
+    {
+      "utf8": "\u06BC",
+      "character": "ڼ",
+      "description": "Arabic letter noon with ring",
+      "mrz": "XXN"
+    },
+    {
+      "utf8": "\u06BE",
+      "character": "ه",
+      "description": "Arabic letter heh doachashmee",
+      "mrz": "XDO"
+    },
+    {
+      "utf8": "\u06C0",
+      "character": "ە",
+      "description": "Arabic letter heh with yeh above",
+      "mrz": "XYH"
+    },
+    {
+      "utf8": "\u06C1",
+      "character": "ہ",
+      "description": "Arabic letter heh goal",
+      "mrz": "XXG"
+    },
+    {
+      "utf8": "\u06C2",
+      "character": "ہ",
+      "description": "Arabic letter heh goal with hamza above",
+      "mrz": "XGE"
+    },
+    {
+      "utf8": "\u06C3",
+      "character": "ۃ",
+      "description": "Arabic letter teh marbuta goal",
+      "mrz": "XTG"
+    },
+    {
+      "utf8": "\u06CC",
+      "character": "ى",
+      "description": "Arabic letter farsi yeh",
+      "mrz": "XYA"
+    },
+    {
+      "utf8": "\u06CD",
+      "character": "ۍ",
+      "description": "Arabic letter yeh with tail",
+      "mrz": "XXY"
+    },
+    {
+      "utf8": "\u06D0",
+      "character": "ې",
+      "description": "Arabic letter yeh",
+      "mrz": "Y"
+    },
+    {
+      "utf8": "\u06D2",
+      "character": "ے",
+      "description": "Arabic letter yeh barree",
+      "mrz": "XYB"
+    },
+    {
+      "utf8": "\u06D3",
+      "character": "ۓ",
+      "description": "Arabic letter yeh barree with hamza above",
+      "mrz": "XBE"
+    }
+  ]
+}

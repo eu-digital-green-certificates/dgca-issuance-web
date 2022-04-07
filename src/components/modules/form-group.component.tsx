@@ -10,6 +10,7 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { IValueSet, useGetDateFormats } from "../../misc/useValueSet";
 import useLocalStorage from "../../misc/useLocalStorage";
+import useTransliterate from "../../misc/useTransliterate";
 
 // const iso3311a2 = require('iso-3166-1-alpha-2');
 
@@ -136,6 +137,9 @@ export const PersonInputs = (props: any) => {
 
     const { t } = useTranslation();
 
+    const [givenNameTransliteration, givenNameTransliterationUpdate] = useTransliterate();
+    const [familyNameTransliteration, familyNameTransliterationUpdate] = useTransliterate();
+
     const [givenName, setGivenName] = React.useState<string>('');
     const [familyName, setFamilyName] = React.useState<string>('');
 
@@ -182,6 +186,23 @@ export const PersonInputs = (props: any) => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [givenName, familyName, standardisedGivenName, standardisedFamilyName, dateOfBirth, dateFormat])
 
+    React.useEffect(() => {
+        setStandardisedGivenName(givenNameTransliteration);
+    }, [givenNameTransliteration])
+
+    React.useEffect(() => {
+        setStandardisedFamilyName(familyNameTransliteration);
+    }, [familyNameTransliteration])
+
+    const handleGivenNameChanged = (changedValue: string) => {
+        setGivenName(changedValue);
+        givenNameTransliterationUpdate(changedValue);
+    }
+
+    const handleFamilyNameChanged = (changedValue: string) => {
+        setFamilyName(changedValue);
+        familyNameTransliterationUpdate(changedValue);
+    }
 
     const handleStandardisedNameChanged = (changedValue: string, setStandardisedName: (value: string) => void) => {
         const upperCaseChangedValue = changedValue.toUpperCase();
@@ -217,14 +238,14 @@ export const PersonInputs = (props: any) => {
                 {/* first name input */}
                 <FormGroupInput controlId='formGivenNameInput' title={t('translation:first-name')}
                     value={givenName}
-                    onChange={(evt: any) => setGivenName(evt.target.value)}
+                    onChange={(evt: any) => handleGivenNameChanged(evt.target.value)}
                     maxLength={80}
                 />
 
                 {/* name input */}
                 <FormGroupInput controlId='formNameInput' title={t('translation:name')}
                     value={familyName}
-                    onChange={(evt: any) => setFamilyName(evt.target.value)}
+                    onChange={(evt: any) => handleFamilyNameChanged(evt.target.value)}
                     maxLength={80}
                 />
 
