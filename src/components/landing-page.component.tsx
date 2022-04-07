@@ -46,14 +46,7 @@ const LandingPage = () => {
                 <Container className='bg-white px-0 position-relative'>
                     <span className='environment-info-text py-3'>
                             <Trans>
-                                {t('translation:environment-info1')}
-                                {<a
-                                    href={t('translation:environment-info-link')}
-                                    target='blank'
-                                >
-                                    {t('translation:environment-info-link')}
-                                </a>}
-                                {'.'}
+                                {t('translation:environment-info')}
                             </Trans>
                         </span>
                 </Container>
